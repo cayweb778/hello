@@ -1,6 +1,5 @@
 package org.boozsoft
 
-import org.boozsoft.domain.entity.account.AccAgingRange
 import org.springbooz.datasource.r2dbc.EnableBoozR2dbcRouter
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -21,8 +20,8 @@ import reactivefeign.spring.config.EnableReactiveFeignClients
 @EnableAsync
 @EnableCaching
 @SpringBootApplication(scanBasePackages = ["org.boozsoft", "org.springbooz.webflux"])
-class AppApplication
+class ZhongzhangApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(AppApplication::class.java, *args)
+    SpringApplication.run(ZhongzhangApplication::class.java, *args)
 }

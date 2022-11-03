@@ -20,8 +20,8 @@ import reactivefeign.spring.config.EnableReactiveFeignClients
 @EnableAsync
 @EnableCaching
 @SpringBootApplication(scanBasePackages = ["org.boozsoft", "org.springbooz.webflux"])
-class StockApplication
+class SystemApplication
 
 fun main(args: Array<String>) {
-    SpringApplication.run(StockApplication::class.java, *args)
+    SpringApplication.run(SystemApplication::class.java, *args)
 }
