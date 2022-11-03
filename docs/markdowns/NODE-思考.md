@@ -1,0 +1,7 @@
+vite层是可以debugger的
+vue文件中debugger，idea无法监听vue 中的debugger断点
+概念:vue面向前端,会编译vue文件成js,传到前端，这个过程，永远不会被idea监听到，所以只能浏览器监听
+
+idea利用chrome debugger插件可以监听到debbugger
+
+idea中标记vue代码断点，这个根据成熟度，再很远的将来可能会适配

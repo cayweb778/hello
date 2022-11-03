@@ -1,0 +1,62 @@
+{
+  "name": "koa-router-decorator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "commit": "git-cz",
+    "dev": "nodemon",
+    "dev:lint": "eslint --ext .jsx,.js,.ts,.tsx src",
+    "dev:ts": "ts-node src/index.ts"
+  },
+  "repository": "git+https://github.com/wuxinweb/ts-koa-router-decorator.git",
+  "keywords": [],
+  "author": "不才 <1450941858@qq.com> (http://blog.ncgame.cc/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wuxinweb/ts-koa-router-decorator/issues"
+  },
+  "homepage": "https://github.com/wuxinweb/ts-koa-router-decorator#readme",
+  "devDependencies": {
+    "pg": "^8.7.1",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^5.0.2",
+    "@types/koa-router": "^7.4.4",
+    "@types/node": "^16.9.1",
+    "nodemon": "^2.0.12",
+    "pm2": "^5.1.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.2.1",
+    "tsconfig-paths": "^3.11.0",
+    "tsup": "^4.14.0",
+    "typescript": "^4.4.3",
+
+    "@typescript-eslint/eslint-plugin": "^2.4.0",
+    "@typescript-eslint/parser": "^2.4.0",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.5.1",
+    "eslint-config-alloy": "^3.0.0",
+    "npm-run-all": "^4.1.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-route": "^3.2.0",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa-websocket": "^6.0.0",
+    "koa2-cors": "^2.0.6",
+
+
+    "consola": "^2.10.1",
+
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.2.1"
+  }
+}

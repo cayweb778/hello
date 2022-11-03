@@ -1,0 +1,398 @@
+@Global-Border-Color: #c9c9c9; // 全局下划线颜色
+@Global-Label-Color: #666666; // 全局#c9c9c9颜色
+@Global-Comm-BcOrText-Color: #0096c7; // 全局#c9c9c9颜色
+.ant-table-container{
+  font-family: Arial;
+}
+
+.app-container {
+  background-color: #b4c8e3;
+  border-radius: 5px;
+  margin: 10px 10px 5px;
+  height: calc(100% - 20px);
+
+  img {
+    -webkit-user-drag: none;
+  }
+
+  .ant-btn {
+    border-color: #d2cfcf;
+    font-size: 14px;
+  }
+
+  .ant-btn:hover{
+    background-color: #0096c7;
+    color: white!important;
+  }
+
+  .ant-btn-default{
+    margin: 0 1px;
+  }
+
+  .act-two-d-right{
+    :deep(.ant-select-selector){
+      border-color: #d2cfcf;
+      border-right: none;
+    }
+  }
+  .ant-input-affix-wrapper {
+    border-color: #d2cfcf;
+    color: black;
+  }
+
+  .noneSpan{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
+  .special_select {
+    .ant-select-selector {
+      border-color: #d2cfcf;
+      border-radius: 4px;
+      height: 32px;
+    }
+  }
+
+
+  .app-container-head {
+    width: 100%;
+    font-size: 22px;
+    display: inline-block;
+    line-height: 0.42857;
+    .app-container-head-top{
+      width: 100%;
+      display: inline-flex;
+      justify-content: space-between;
+    }
+    .container-head-imgdiv{
+      width: 22%;
+    }
+    .ac-head-select{
+      background: transparent;
+      border: none;
+      border-bottom: 1px #aaaaaa solid;
+      text-align: center;
+      .ant-select-selector{
+        border: none;
+      }
+    }
+    .head-index-select {
+      border: 0 !important;
+      background: transparent !important;
+      width: 240px;
+      font-size: 18px;
+      line-height: 38px;
+      height: 38px;
+      text-align-last: center;
+      margin-left: 10px;
+    }
+    .head-index-year-month{
+      .ant-calendar-picker-input{
+        text-align: center;
+        background-color: white;
+        border: none;
+        width: 120px;
+      }
+    }
+
+    .ant-btn-group{
+      float: right;
+      display: inline-block;
+    }
+    .ant-btn-me {
+      color: #0096c7;
+      font-size: 14px;
+    }
+    .container-head-img{
+      float: left;
+      width: 42px;
+      margin-left: 6px;
+    }
+    .container-head-title{
+      margin-top: 5px;
+      padding-left: 1%;
+      float: left;
+      display: inline-block;
+      :deep(.ant-select-selector){
+        border: none;
+        background-color: #f1f1f1;
+        color: black;
+        border-bottom: 1px solid #d2cfcf;
+      }
+      > b {
+      }
+      .noneSpan{
+        padding-left: 3px;
+        font-size: 22px;
+        color: #0096c7;
+      }
+    }
+    .container-head-title2{
+      margin-top: 14px;
+      float: left;
+      display: inline-block;
+      :deep(.ant-select-selector){
+        border: none;
+        background-color: #f1f1f1;
+        color: black;
+        border-bottom: 1px solid #d2cfcf;
+      }
+      > b {
+      }
+      .noneSpan{
+        padding-left: 3px;
+        font-size: 22px;
+        color: #0096c7;
+      }
+    }
+  }
+
+  .app-container-neck {
+    display: block;
+    height: 32px;
+    > div{
+      float: right;
+      > button{
+        margin: 0px 1px;
+        font-size: 14px;
+      }
+    }
+    .acttd-right-d-search {
+      .acttdrd-search-select {
+
+        :deep(.ant-select-selector) {
+          border-color: @Global-Border-Color;
+          border-radius: 2px 0 0 2px;
+        }
+      }
+
+      .acttdrd-search-input {
+        width: 180px;
+        :deep(.ant-input){
+          border-radius: 0 2px 2px 0;
+          border-color: @Global-Border-Color;
+        }
+        :deep(.ant-btn){
+          border-radius: 0 2px 2px 0;
+          border-color: @Global-Border-Color;
+        }
+
+      }
+    }
+  }
+}
+.lcr-theme-div{
+  display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
+  >div:nth-of-type(1){
+    width: 40%;
+    position: relative;
+    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
+      position: inherit
+    }
+    >div:nth-of-type(2){
+      width: calc( 100% - 64px);display: inline-block;
+    }
+  }
+  >div:nth-of-type(2){
+    width: 20%;text-align:center;
+    >div:nth-of-type(2){margin-top: 14px;}
+  }
+  >div:nth-of-type(3){
+    width: 40%;text-align: right;
+
+    >div:nth-of-type(1){
+      .ant-btn-me {
+        color: #0096c7;
+      }
+    }
+    >div:nth-of-type(2){
+      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      .acttd-right-d-search {
+        .acttdrd-search-select {
+
+          :deep(.ant-select-selector) {
+            border-color: @Global-Border-Color;
+            border-radius: 2px 0 0 2px;
+          }
+        }
+
+        .acttdrd-search-input {
+          width: 180px;
+          :deep(.ant-input){
+            border-radius: 0 2px 2px 0;
+            border-color: @Global-Border-Color;
+          }
+          :deep(.ant-btn){
+            border-radius: 0 2px 2px 0;
+            border-color: @Global-Border-Color;
+          }
+
+        }
+      }
+    }
+  }
+}
+.group-btn-span-special{
+  font-size: 14px;
+  display: inline-block;
+  width: 120px;
+  padding: 5px 10%;
+}
+
+.group-btn-span-special:hover{
+  cursor: pointer;
+  color: #0096c7;
+}
+
+:deep(.vben-basic-table) {
+  .ant-table-wrapper {
+    padding: 0 !important;
+
+    .ant-table-thead {
+      th {
+        border-left: 1px solid @Global-Border-Color !important;
+        border-bottom: 1px solid @Global-Border-Color !important;
+        border-top: 1px solid @Global-Border-Color !important;
+        text-align: center !important;
+        background-color: #d8d8d8 !important;
+        font-weight: bold !important;
+      }
+
+      .ant-table-row-cell-ellipsis {
+        text-align: center !important;
+      }
+    }
+
+    .ant-table-tbody {
+      tr.ant-table-measure-row{
+        visibility: collapse!important;
+      }
+      td {
+        border-left: 1px solid @Global-Border-Color !important;
+        border-bottom: 1px solid @Global-Border-Color !important;
+        padding: 2px 8px !important;
+        .tableUStyle {
+          color: #0096c9;
+          text-decoration: none;
+          cursor: pointer;
+        }
+
+        .tableUStyle:hover {
+          color: black;
+        }
+      }
+    }
+
+    .ant-checkbox-inner, .ant-radio-inner {
+      border-color: @Global-Border-Color;
+    }
+  }
+  .ant-pagination{
+    margin: 10px!important;
+  }
+}
+
+:deep(.a-table-font-arial) {
+  font-family: Arial !important;
+}
+
+
+.a-table-font-size-16 :deep(th), .a-table-font-size-12 :deep(th) {
+  text-align: center !important;
+  padding: 2px 8px !important;
+  font-weight: bold;
+}
+.a-table-font-size-16 :deep(.ant-checkbox-inner), .a-table-font-size-12 :deep(.ant-checkbox-inner) {
+  border: 1px solid #c9c9c9;
+}
+.a-table-font-size-16 :deep(td),
+.a-table-font-size-16 :deep(th) {
+  font-size: 14px !important;
+}
+
+.a-table-font-size-12 :deep(td),
+.a-table-font-size-12 :deep(th) {
+  font-size: 12px !important;
+}
+.app-container:nth-of-type(1) {
+  background-color: #f2f2f2;
+  padding: 10px 5px;
+  margin: 10px 10px 5px;
+}
+
+.app-container:nth-of-type(2) {
+  padding: 0px;
+  margin: 5px 10px;
+  background: #b4c8e3 !important;
+}
+.ant-drawer-header{
+  background-color: #0799c8;
+  .ant-drawer-title{
+    color: white;
+    font-weight: bold;
+  }
+  .ant-drawer-close  > span{
+    color: white;
+  }
+  .ant-drawer-close  > span:hover{
+    color: #5f375c;
+  }
+}
+.ant-drawer-body{
+  padding: 10px;
+  .nc-drawer-special-div{
+    height: 50px;
+    background-color: whitesmoke;
+    text-align: center;
+    line-height: 50px;
+    color: #0799c8;
+    font-weight: bold;
+  }
+
+  .ant-collapse-header{
+    font-weight: bold;
+  }
+  ul{
+    font-size: 12px;
+    color: #626262;
+    li{
+      background: #f5f5f5;
+      margin: 5px 0;
+      span:nth-of-type(1){
+        color:  #0799c8;
+        font-weight: bold;
+        margin-left: 1em;
+      }
+    }
+  }
+}
+
+.lanmu-table{
+  :deep(.ant-table-content){
+    .ant-table-thead{
+      tr{
+        th{
+          padding: 5px 8px !important;
+          text-align: center !important;
+          font-weight: bold;
+          background-color: #f1f1f1 !important;
+          font-size: 13px !important;
+        }
+      }
+    }
+    .ant-table-tbody{
+      tr{
+        td{
+          padding:0 5px !important;
+          font-size: 12px !important;
+          .ant-radio-button-wrapper{
+            font-size: 12px;
+          }
+
+        }
+      }
+    }
+  }
+}
+

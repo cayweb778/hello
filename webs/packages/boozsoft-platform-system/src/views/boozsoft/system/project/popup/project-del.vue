@@ -1,0 +1,374 @@
+<template>
+    <BasicModal
+      width="900px"
+      v-bind="$attrs"
+      title="项目信息回收站"
+      @ok="handleOk()"
+      @cancel="handleOk()"
+      wrapClassName="head-title"
+      @register="register"
+    >
+      <template #title>
+        <div style="display: flex;height:30px;margin-top: 10px;margin-left: 10px;" class="vben-basic-title">
+        <span style="font-size: 24px;line-height:30px;">
+          <DeleteOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;项目信息回收站
+        </span>
+        </div>
+      </template>
+      <div class="nc-open-content" style="margin:0;padding:0;">
+        <div class="open-content-up" style="margin:0;padding:0;">
+          <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;">
+            <div class="a1">
+              <a-select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+                <a-select-option style="font-size: 12px;" value="projectCode">项目编码</a-select-option>
+                <a-select-option style="font-size: 12px;" value="projectName">项目名称</a-select-option>
+              </a-select>
+              <a-input-search
+                placeholder=""
+                style="width: 200px; border-radius: 4px"
+                v-model:value="formItems.selectValue"
+                @search="onSearch"
+              />
+            </div>
+            <div class="a2">
+              <button
+                type="button"
+                class="ant-btn ant-btn-me"
+                @click="recoverList()"
+              ><span>还原</span></button>
+              <button
+                type="button"
+                class="ant-btn ant-btn-me"
+                @click="delList()"
+              ><span>彻底删除</span></button>
+              <button
+                type="button"
+                class="ant-btn ant-btn-me"
+              ><span>导出</span></button>
+            </div>
+          </div>
+
+          <div style="height: 350px;padding:0;display: flex;justify-content : space-between;">
+              <BasicTable
+                :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
+                @row-click="condClick"
+                :scroll="{ y: 350 }"
+                @register="registerTable"
+                :dataSource="tableData"
+                class="tables"
+              >
+              </BasicTable>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <div>
+          <a-button @click="handleOk()" type="primary">关闭</a-button>
+        </div>
+      </template>
+
+    </BasicModal>
+</template>
+
+<script setup="props, {content}" lang="ts">
+import { PageWrapper } from '/@/components/Page'
+import {nextTick, onMounted, reactive, ref, unref} from 'vue'
+import {BasicModal, useModal, useModalInner} from '/@/components/Modal'
+import {
+  DeleteOutlined
+} from '@ant-design/icons-vue'
+import {
+  Select as ASelect,
+  Input as AInput,
+  Checkbox as ACheckbox,
+  Button as AButton,
+  message
+} from 'ant-design-vue'
+
+const AInputSearch = AInput.Search
+const ASelectOption = ASelect.Option
+import {useMessage} from "/@/hooks/web/useMessage";
+import {BasicTable, useTable} from "/@/components/Table";
+import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
+import {deleteDept, findDeptDelList, saveDept} from "/@/api/record/system/dept";
+import {deleteProjectList, findProjectDelList, saveProject} from "/@/api/record/system/project";
+
+const {
+  createErrorModal,
+  createConfirm,
+  createWarningModal
+} = useMessage()
+
+const emit = defineEmits(['register', 'save'])
+
+const formItems: any = ref({
+  selectType: 'projectCode',
+  selectValue: ''
+})
+const accountList: any = ref([])
+const dynamicTenantId = ref('')
+const tableData:any = ref([]);
+const tableDataAll:any = ref([]);
+const [register, {closeModal,setModalProps}] = useModalInner(async(data) => {
+  dynamicTenantId.value = data.dynamicTenantId
+  await reloadDept()
+  state.selectedRowKeys = []
+  checkRow.value = []
+})
+
+const columns = [
+  {
+    title: '项目编码',
+    dataIndex: 'projectCode',
+    ellipsis: true,
+    width: 100
+  },
+  {
+    title: '项目名称',
+    dataIndex: 'projectName',
+    align: 'left',
+    ellipsis: true,
+    width: 150,
+  },
+  {
+    title: '删除人',
+    dataIndex: 'delName',
+    width: 120,
+    ellipsis: true
+  },
+  {
+    title: '删除时间',
+    dataIndex: 'delDate',
+    width: 150,
+    ellipsis: true
+  }
+]
+
+// 这是示例组件
+const [registerTable, {reload,setPagination}] = useTable({
+  columns: columns,
+  bordered: true,
+  showIndexColumn: false,
+  pagination: false,
+  searchInfo: {
+    accId: '',
+    flag: '0',
+  }
+})
+
+const psnList:any = ref([])
+const thisCheckKey:any = ref('')
+async function reloadDept(){
+  const res:any = await useRouteApi(findProjectDelList,{schemaName: dynamicTenantId})({})
+  psnList.value = res
+  // console.log(thisCheckKey.value)
+  tableDataAll.value = psnList.value.filter(item=> {
+    if (thisCheckKey.value!=null && thisCheckKey.value!='0' && thisCheckKey.value!='' && thisCheckKey.value!='undefined') {
+      return thisCheckKey.value.indexOf(item.id)!=-1
+    }
+    return item
+  })
+  tableData.value = tableDataAll.value
+  await setPagination({
+    total: tableData.value.length
+  })
+}
+
+onMounted(async () => {
+})
+
+const condClick = () => {
+
+}
+
+//选中内容
+const state = reactive<{
+  selectedRowKeys: [];
+  loading: boolean;
+}>({
+  selectedRowKeys: [], // Check here to configure the default column
+  loading: false,
+});
+const checkRow: any = ref([])
+const onSelectChange = (selectedRowKeys, row) => {
+  // console.log('selectedRowKeys changed: ', row);
+  if(selectedRowKeys.length>0){
+    state.selectedRowKeys = selectedRowKeys;
+    checkRow.value = row
+  }
+};
+
+async function handleOk() {
+  emit('save', unref(formItems));
+  closeModal();
+}
+
+async function onSearch(){
+  tableData.value = tableDataAll.value.filter(item => {
+    //通过部门编码过滤
+    if (formItems.value.selectType == 'projectCode' && formItems.value.selectValue != '') {
+      return item.projectCode.indexOf(formItems.value.selectValue) != -1
+    }
+    //通过部门名称过滤
+    if (formItems.value.selectType == 'projectName' && formItems.value.selectValue != '') {
+      return item.projectName.indexOf(formItems.value.selectValue) != -1
+    }
+    return item
+  })
+  await setPagination({
+    total: tableData.value.length
+  })
+}
+
+async function recoverList() {
+  if (checkRow.value.length > 0) {
+    createConfirm({
+      iconType: 'warning',
+      title: '提示',
+      content: '你确认要还原吗?',
+      onOk: async () => {
+        for (let i = 0; i < checkRow.value.length; i++) {
+          const item = checkRow.value[i]
+          item.isDel = "0"
+          item.delName = null
+          item.delDate = null
+          await useRouteApi(saveProject, {schemaName: dynamicTenantId})(item)
+          // await useRouteApi(deletePsn, {schemaName: dynamicTenantId})(item)
+        }
+        checkRow.value = []
+        message.success('恢复成功！')
+        await reloadDept()
+      },
+      onCancel: () => {
+        return false
+      }
+    })
+  } else {
+    createWarningModal({
+      iconType: 'warning',
+      title: '恢复',
+      content: '请选择需要还原的内容！'
+    })
+  }
+}
+
+async function delList() {
+  if (checkRow.value.length > 0) {
+    createConfirm({
+      iconType: 'error',
+      title: '警告',
+      content: '删除后数据将不能恢复，你确认要删除吗?',
+      onOk: async () => {
+        await useRouteApi(deleteProjectList, {schemaName: dynamicTenantId})(checkRow.value)
+        checkRow.value = []
+        message.success('删除成功！')
+        await reloadDept()
+      },
+      onCancel: () => {
+        return false
+      }
+    })
+  } else {
+    createWarningModal({
+      iconType: 'warning',
+      title: '删除',
+      content: '请选择需要删除的内容！'
+    })
+  }
+}
+</script>
+<style scoped lang="less">
+.ant-modal-header{
+  border: none !important;
+}
+.vben-basic-title {
+  color: #0096c7 !important;
+  border: none !important;
+  margin-bottom: -20px !important;
+}
+
+:global(.ant-modal-body) {
+  padding: 0px;
+  border-bottom: 1px solid rgb(1, 129, 226);
+  border-left: none;
+  border-right: none;
+  margin-bottom: 0!important;
+  .scrollbar{
+    padding: 0px;
+    .scroll-container{
+      margin-bottom: 0!important;
+    }
+  }
+}
+
+.nc-open-content {
+  input:not(.ant-select-selection-search-input,.ant-input){
+    width: 50%;
+    border: none !important;
+    border-bottom: 1px solid #bdb9b9 !important;
+  }
+
+  .ant-input:focus {
+    box-shadow: none;
+  }
+
+  .ant-select-selector {
+    border: none !important;
+    border-bottom: 1px solid #bdb9b9 !important;
+  }
+
+  label {
+    text-align: left;
+    width: 110px;
+    display: inline-block;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: #535353;
+  }
+}
+
+.search input {
+  width: 100%;
+  border: none !important;
+}
+
+.tables :deep(td),
+.tables :deep(th) {
+  font-size: 14px !important;
+  padding: 2px 8px !important;
+}
+
+.tables :deep(th) {
+  text-align: center !important;
+  font-weight: bold;
+  background-color: #cccccc;
+  line-height:30px;
+}
+
+.bg-white{
+  width: 250px !important;
+  min-height: 385px !important;
+  height: calc(100%);
+  border: 1px #cccccc solid;
+  background:white !important;
+}
+
+:deep(.ant-table-row-selected) td{
+  background: #0096c7 !important;
+}
+
+:deep(.ant-tree-list){
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+
+
+</style>
+<style>
+.head-title .scroll-container .scrollbar__wrap {
+  margin-bottom: -45px !important;
+}
+
+</style>

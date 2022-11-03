@@ -1,0 +1,107 @@
+<template>
+ <div class="text-white  " style="margin:0 auto;height:1000px;overflow: scroll">
+  <div style="color:black">
+    用户信息
+    <textarea style="color:black;height:100px">
+     {{useUserStore().getUserInfo}}
+  </textarea>
+
+
+    角色信息
+    <textarea style="color:black;height:100px">
+     {{useUserStore().getRoleList}}
+  </textarea>
+
+
+    权限信息
+    <textarea style="color:black;height:100px">
+     {{usePermissionStore().getPermCodeList}}
+  </textarea>
+
+  </div>
+   <div class="bg-gray-700 w-full h-3 mb-4 p-3" style="width:800px">
+
+     产品模式:,TOKEN: mock token,用户名：dassda
+   </div>
+   <div class="bg-gray-700 w-full h-3 mb-4 p-3" style="width:800px">
+     账号id:10,当前登陆日期:2021/06/27,   当前账套：北京 ，所属身份:集团管理员、组织操作员、操作员
+   </div>
+   <div class="bg-gray-700 w-full h-64 mb-4 p-3">
+     账号信息<br>
+     token:dev token<br>
+     账号权限<br>
+     账号角色<br>
+   </div>
+
+
+   <div class="bg-gray-700 w-full h-64 mb-4 p-3 " style="overflow: scroll">
+     权限系统<br/>
+<br/>
+     集团管理<br/>
+<br/>
+     组织管理<br/>
+<br/>
+     系统管理<br/>
+     应用<br/>
+<br/>
+     总账<br/>
+<br/>
+     现金银行<br/>
+<br/>
+     应收账<br/>
+<br/>
+     固定资产<br/>
+<br/>
+     电子票据<br/>
+<br/>
+     华夏CRM<br/>
+     网上报销<br/>
+     财税达<br/>
+     应用管理<br/>
+   </div>
+
+   <div class="bg-gray-700 w-full h-64 mb-4 p-3">
+     所属身份:集团管理员、组织操作员、操作员<br>
+     集团管理员的信息:名字<br>
+     组织操作员:名字<br>
+     操作员:名字<br>
+   </div>
+   <div class="bg-gray-700 w-full h-64 mb-4 p-3">
+     当前账套名字:bj，<br/>
+     当前账套编码:bj，<br/>
+     起始：2021<br/>
+     账套列表:<textarea></textarea><br>
+     该账套是<br/>
+   </div>
+   <div class="bg-gray-700 w-full h-64 mb-4 p-3">
+     当前拥有角色:bj，
+     角色拥有的平台:
+     平台拥有的菜单:
+   </div>
+
+
+ </div>
+</template>
+
+<script setup lang="ts">
+import {BasicTable} from '/@/components/Table';
+import {usePermissionStore} from '/@/store/modules/permission';
+import {useUserStore} from '/@/store/modules/user';
+import {Form} from 'ant-design-vue'
+import {computed, ref} from 'vue';
+const FormItem=Form.Item
+
+
+
+
+const infoData={
+  logindate:'2020-01-02',
+  info:{
+    id:1005
+  },
+  roles:{
+
+  }
+}
+
+</script>

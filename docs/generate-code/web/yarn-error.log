@@ -1,0 +1,62 @@
+Arguments: 
+  /data/home/cay/DevelopManager/EnvFiles/node/node-v16.9.0-linux-x64/bin/node /data/home/cay/DevelopManager/EnvFiles/node/node-v16.9.0-linux-x64/bin/yarn
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/sbin:/usr/sbin:/data/home/cay/DevelopManager/EnvFiles/node/node-v16.9.0-linux-x64/bin
+
+Yarn version: 
+  1.22.11
+
+Node version: 
+  16.9.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.npm.taobao.org/vue: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:1080
+      at ClientRequest.onError (/data/home/cay/DevelopManager/EnvFiles/node/node-v16.9.0-linux-x64/lib/node_modules/yarn/lib/cli.js:152249:17)
+      at Object.onceWrapper (node:events:514:26)
+      at ClientRequest.emit (node:events:394:28)
+      at Socket.socketErrorListener (node:_http_client:447:9)
+      at Socket.emit (node:events:394:28)
+      at emitErrorNT (node:internal/streams/destroy:157:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:122:3)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "vite-vue3-tailwind-starter",
+    "version": "0.0.0",
+    "scripts": {
+      "dev": "vite --host",
+      "build": "vite build",
+      "serve": "vite preview"
+    },
+    "dependencies": {
+      "vue": "^3.2.11",
+      "vue-router": "^4.0.11",
+      "ant-design-vue": "2.2.7",
+      "less": "^4.1.1"
+    },
+    "devDependencies": {
+      "@headlessui/vue": "^1.4.1",
+      "@heroicons/vue": "^1.0.4",
+      "@tailwindcss/aspect-ratio": "^0.2.1",
+      "@tailwindcss/forms": "^0.3.3",
+      "@tailwindcss/line-clamp": "^0.2.1",
+      "@tailwindcss/typography": "^0.4.1",
+      "autoprefixer": "^10.3.4",
+      "@types/tailwindcss": "^2.2.1",
+      "tailwindcss": "^2.2.15",
+      "@vue/compiler-sfc": "^3.2.11",
+      "@vitejs/plugin-vue": "^1.6.2",
+      "vite": "^2.5.6"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

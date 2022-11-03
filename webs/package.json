@@ -1,0 +1,35 @@
+{
+  "scripts": {
+    "initial": " pnpm install && npm-run-all initial:*",
+    "initial:main": "cd packages/boozsoft-starter && pnpm install",
+    "initial:docs": "cd packages/boozsoft-docs && pnpm install",
+    "initial:cdn": "cd packages/boozsoft-cdn && pnpm install",
+    "initial:auth": "cd packages/boozsoft-auth && pnpm install",
+    "initial:home": "cd packages/boozsoft-platform-home && pnpm install",
+    "initial:system": "cd packages/boozsoft-platform-system && pnpm install",
+    "initial:stock": "cd packages/boozsoft-platform-stock && pnpm install",
+    "initial:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm install",
+    "initial:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm install",
+    "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",
+    "start": "run-p start:*",
+    "start:main": "cd packages/boozsoft-starter && pnpm dev",
+    "start:auth": "cd packages/boozsoft-auth && pnpm dev",
+    "start:system": "cd packages/boozsoft-platform-system && pnpm dev",
+    "start:home": "cd packages/boozsoft-platform-home && pnpm dev",
+    "start:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm dev",
+    "start:stock": "cd packages/boozsoft-platform-stock && pnpm dev",
+    "start:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm dev",
+    "build": "run-p build:*",
+    "build:main": "cd packages/boozsoft-starter && pnpm build",
+    "build:auth": "cd packages/boozsoft-auth && pnpm build",
+    "build:system": "cd packages/boozsoft-platform-system && pnpm build",
+    "build:home": "cd packages/boozsoft-platform-home && pnpm build",
+    "build:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm build",
+    "build:stock": "cd packages/boozsoft-platform-stock && pnpm build",
+    "build:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm build"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  },
+  "version": "1.0.0"
+}

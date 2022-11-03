@@ -1,0 +1,10 @@
+<script src="./aaa.js"></script>
+<script>
+    const bb="import './index.b42d9fcc.js';"
+    const b=bb.replace(/(from|import)(\s*['"])(\.\.?\/)/g,(a,$1,$2,$3)=>{
+        console.log($1)
+        console.log($2)
+        console.log($3)
+        return '111'
+    })
+</script>

@@ -1,0 +1,5 @@
+# Project exclude paths
+/node_modules/
+dist
+.pnpm-debug.log
+pnpm-lock.yaml

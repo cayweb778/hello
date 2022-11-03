@@ -1,0 +1,142 @@
+resourcesPath: http://boozsoft.gnway.vip/resources
+#dubbo:
+#  scan:
+#    base-packages: org.boozsoft
+#  protocol:
+#    name: dubbo
+#    port: -1
+#  registry:
+#    address: spring-cloud://localhost
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+##配置日志
+logging:
+  level:
+    # feign-reactor-spring-cloud-starter:3.0.3 会info (for example: not eligible for auto-proxying),先屏蔽掉，以后或许可以去掉此行
+    org.springframework.context.support.PostProcessorRegistrationDelegate: WARN
+#    root: WARN
+#    org.apache.dubbo: WARN
+#    com.alibaba.cloud.dubbo: WARN
+#  #不同目录下的日志可配置不同级别
+
+spring:
+  data:
+    # 手动指定r2dbc仓库
+    r2dbc:
+      repositories:
+        enabled: false
+    # 手动指定redis仓库
+    redis:
+      repositories:
+        enabled: false
+  redis:
+    #数据库索引
+    database: 3
+    host: 81.70.32.227
+    port: 6379
+    password: 123456
+    #连接超时时间
+    timeout: 5000
+  thymeleaf:
+    #    prefix:
+    #      classpath: /templates   # 访问template下的html文件需要配置模板，映射
+    cache: false # 开发时关闭缓存,不然没法看到实时页面
+  boot:
+    admin:
+      client:
+        url: http://121.36.67.38:18080
+        username: dth
+        password: 123456
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        ip: 127.0.0.1
+        server-addr: 81.70.32.227:8848
+      config:
+        server-addr: 81.70.32.227:8848
+  security:
+    oauth2:
+      client:
+        registration:
+          booz-oauth2-oidc:
+            provider: spring
+            client-id: booz-oauth2-oidc-uniqueid
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid
+            token-uri: asdsa
+            tokenUri: sadasdasdsa
+            client-name: booz-oauth2-oidc
+          messaging-client-authorization-code:
+            provider: spring
+            client-id: messaging-client222
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/authorized"
+            scope: message.readsadas
+            client-name: messaging-client-authorization-code
+          messaging-client-client-credentials:
+            provider: spring
+            client-id: messaging-client
+            client-secret: secret
+            authorization-grant-type: client_credentials
+            scope: message.readsadas
+            client-name: messaging-client-client-credentials
+        provider:
+          spring:
+            issuer-uri: http://account.chinabooz.com:9000
+            user-info-uri: http://account.chinabooz.com:9090/userinfo
+
+
+  booz:
+    r2dbc:
+      url: 81.70.32.227
+      port: 5433
+      name: boozsoft-nc`
+      username: postgres
+      password: Sigoo@@123
+      mode: router
+      properties:
+        search_path: public
+#        pool:
+#          # 初始数据库
+#          initial-size: 10
+#          # 最大连接
+#          max-size: 100
+#          # 最大Idel时间(分)
+#          idel-timeout: 10
+#          # 无说明
+#          maxAcquireTime: 10
+#          # 最长使用寿命
+#          max_life_time: 5
+#          # 最大创建连接时间(秒)
+#          max_create_connection_time: 5
+
+messages:
+  base-uri: http://account.chinabooz.com:9090/messages
+
+server:
+  port: 8081
+swagger:
+  enabled: true
+generator:
+  enabled: true
+feign:
+  httpclient:
+    # 是否启用httpclient
+    enabled: false
+    # 请求连接超时时间（毫秒）
+    connection-timeout: 3000
+  okhttp:
+    # 是否启用httpok（性能比httpclient高）
+    enabled: true
+  hystrix:
+    # 是否启用hystrix
+    enabled: true

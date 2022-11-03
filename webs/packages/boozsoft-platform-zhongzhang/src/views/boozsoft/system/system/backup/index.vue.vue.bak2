@@ -1,0 +1,173 @@
+<template>
+<div style="height:100%;position:fixed;width:100%">
+<!--  <div v-show="showPlatformChoose" :footer="null" style="height:100%">-->
+<!--    <div style="padding:30px;text-align: center;width:100%">-->
+<!--      <h1 style="font-size: 40px">请选择应用平台</h1>-->
+<!--      <template v-for="a in abc" >-->
+
+<!--      <Button  style="width:172px;margin:10px" @click="platformChoose(a.name)">{{a.name}}</Button><br>-->
+<!--      </template>-->
+<!--    </div>-->
+<!--  </div>-->
+  <div  style="height:100%">
+    菜单管理
+    <MenuManagerPage></MenuManagerPage>
+    <PlatformManagerPage></PlatformManagerPage>
+<!--    <div style="display:flex;height:calc(100% - 100px)">-->
+<!--      <div style="height:100%;display:flex">-->
+
+<!--        <Tabs type="line" tab-position="left" @change="platformChoose">-->
+<!--          <template :key="a.id"  v-for="a in abc">-->
+<!--            <TabPane  >-->
+<!--              <template #tab>-->
+<!--        <span>-->
+<!--          {{a.name}}-->
+<!--        </span>-->
+<!--              </template>-->
+<!--              <div style="width:100%;height:1000px;"></div>-->
+<!--            </TabPane>-->
+<!--          </template>-->
+<!--        </Tabs>-->
+<!--      </div>-->
+<!--      <div style="">-->
+<!--        <BasicTable @register="registerTable">-->
+<!--          &lt;!&ndash;       <template #toolbar>&ndash;&gt;-->
+<!--          &lt;!&ndash;         <Button type="primary" @click="handleCreate"> 新增菜单 </Button>&ndash;&gt;-->
+
+<!--          &lt;!&ndash;         <div style="position: absolute;left:100px;">&ndash;&gt;-->
+<!--          &lt;!&ndash;           <span>平台：【系统】系统管理</span>&ndash;&gt;-->
+<!--          &lt;!&ndash;           <Button style="margin:10px" value="jack">选择平台</Button><br>&ndash;&gt;-->
+<!--          &lt;!&ndash;         </div>&ndash;&gt;-->
+
+<!--          &lt;!&ndash;       </template>&ndash;&gt;-->
+<!--          <template #action="{ record }">-->
+<!--            <TableAction-->
+<!--              :actions="[-->
+<!--            {-->
+<!--              icon: 'clarity:note-edit-line',-->
+<!--              onClick: handleEdit.bind(null, record),-->
+<!--            },-->
+<!--            {-->
+<!--              icon: 'ant-design:delete-outlined',-->
+<!--              color: 'error',-->
+<!--              popConfirm: {-->
+<!--                title: '是否确认删除',-->
+<!--                confirm: handleDelete.bind(null, record),-->
+<!--              },-->
+<!--            },-->
+<!--          ]"-->
+<!--            />-->
+<!--          </template>-->
+<!--        </BasicTable>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <MenuDrawer @register="registerDrawer" @success="handleSuccess" />-->
+
+  </div>
+</div>
+</template>
+<script setup>
+import {GetMenuTree} from "/@/api/sys/menu";
+import {TableAction,BasicTable} from "../../../../../components/Table";
+import {onMounted, ref} from "vue";
+import {useTable} from "/@/components/Table";
+import {searchFormSchema,columns} from "./menu.data";
+import {useDrawer} from "../../../../../components/Drawer";
+import {Select,Button,Modal,Checkbox,Radio,Tabs} from 'ant-design-vue'
+
+import MenuManagerPage from "./popup/MenuManagerPage.vue"
+import PlatformManagerPage from "./popup/PlatformManagerPage.vue"
+const TabPane=Tabs.TabPane
+const RadioGroup=Radio.Group
+const Option=Select.Option
+import MenuDrawer from "./MenuDrawer.vue";
+import {GetMenuTree2, getMenuTreeByPlatformId} from '../../../../../api/sys/menu';
+import {usePlatformsStoreWidthOut} from '/@/store/modules/platforms';
+const abc=ref([])
+import {
+  delRole,
+  findAll, saveRole
+} from '/@/api/record/sys-role/data';
+const roleList=ref([])
+function updateOwnPlatform(){
+  console.log(abc.value)
+}
+const thisRole=ref()
+onMounted(async ()=>{
+  roleList.value=(await findAll()).map(it=>{
+    return {
+      key:it.id,
+      label:it.roleName,
+      value:it
+    }
+  })
+})
+const [registerTable, { reload }] = useTable({
+  title: '菜单列表',
+  api: getMenuTreeByPlatformId,
+  columns,
+  pagination:{ pageSize: 20 },
+  formConfig: {
+    labelWidth: 120,
+    schemas: searchFormSchema,
+  },
+  // pagination: false,
+  striped: false,
+  useSearchForm: true,
+  showTableSetting: true,
+  bordered: true,
+  showIndexColumn: false,
+  canResize: false,
+  immediate:false,
+  actionColumn: {
+    width: 80,
+    title: '操作',
+    dataIndex: 'action',
+    slots: { customRender: 'action' },
+    fixed: undefined,
+  },
+});
+onMounted(async ()=>{
+  abc.value=await usePlatformsStoreWidthOut().getPlatformListToNames()
+  reload({
+    searchInfo:{
+      platformId:abc.value[0].id
+    }
+  })
+})
+const  platformId=ref({key:'jack'})
+const [registerDrawer, { openDrawer }] = useDrawer();
+
+function handleEdit(record) {
+  openDrawer(true, {
+    record,
+    isUpdate: true,
+  });
+}
+
+function handleDelete(record) {
+  console.log(record);
+}
+
+function handleSuccess() {
+  reload();
+}
+function handleCreate() {
+  openDrawer(true, {
+    isUpdate: false,
+  });
+}
+
+
+const showPlatformChoose=ref(true)
+function platformChoose(platformId){
+  reload({
+    searchInfo:{
+      platformId
+    }
+  })
+}
+
+</script>
+<style src="../../../../../assets/styles/global-menu-index-block.less" lang="less" scoped></style><style lang='less' scoped ></style>
+<style src="../../../../../assets/styles/global-menu-index.less" lang="less" scoped></style><style lang='less' scoped ></style>

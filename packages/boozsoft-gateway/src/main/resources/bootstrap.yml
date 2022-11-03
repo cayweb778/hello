@@ -1,0 +1,17 @@
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: boozsoft-nc-gateway-service
+  cloud:
+    nacos:
+      discovery:
+        ip: 127.0.0.1
+        server-addr: 81.70.32.227:8848
+      config:
+        server-addr: 81.70.32.227:8848
+        file-extension: yaml  #指定yaml格式的配置
+server:
+  port: 8083
+#  连接发行版VM: -Dspring.profiles.active=dev

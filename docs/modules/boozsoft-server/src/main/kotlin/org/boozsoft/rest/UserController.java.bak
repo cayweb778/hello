@@ -1,0 +1,118 @@
+//package org.boozsoft.rest;
+//
+//import cn.hutool.core.bean.BeanUtil;
+//import cn.hutool.core.util.IdUtil;
+//import io.swagger.annotations.ApiOperation;
+//import org.boozsoft.domain.entity.UserCaozuoyuanRollback;
+//import org.boozsoft.domain.vo.UserCaozuoyuanVo;
+//import org.boozsoft.repo.UserCaozuoyuanRepository;
+//import org.boozsoft.repo.UserCaozuoyuanRollbackRepository;
+//import org.boozsoft.repo.UserRepository;
+//import org.boozsoft.repo.entity.User;
+//import org.boozsoft.service.UserCaozuoyuanService;
+//import org.springbooz.core.tool.result.R;
+//
+//import org.springbooz.datasource.r2dbc.annotation.SCHEMA_TYPE;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
+//import org.springframework.data.domain.Pageable;
+//import org.springframework.web.bind.annotation.*;
+//import reactor.core.publisher.Mono;
+//
+//import java.time.LocalDate;
+//import java.util.Objects;
+//
+//
+///**
+// * @author LZ
+// * @version 1.0
+// * @title 操作人员
+// * @company 财税达软件科技
+// * @date 2021/3/22 10:47 上午
+// */
+//@RestController
+//@RequestMapping("/sys/userCaozuo")
+//public class UserCaozuoyuanController {
+//
+//  @Autowired
+//  OAuth2ClientProperties oAuth2ClientProperties;
+//  @Autowired
+//  UserCaozuoyuanRepository userCaozuoyuanRepository;
+//  @Autowired
+//  UserCaozuoyuanRollbackRepository userCaozuoyuanRollbackRepository;
+//  @Autowired
+//  UserCaozuoyuanService userCaozuoyuanService;
+//  @Autowired
+//  UserRepository userRepository;
+//
+//  @DeleteMapping
+//  @ApiOperation(value = "删除", notes = "传入code")
+//  public Mono delete(String id) {
+//    return userCaozuoyuanRepository.findById(id)
+//        .map(item -> {
+//              UserCaozuoyuanRollback rollback = BeanUtil.copyProperties(item, UserCaozuoyuanRollback.class);
+//              rollback.setBiandongDate(LocalDate.now().toString());
+//              rollback.setBiandongMethod("3");
+//              rollback.setId(null);
+//              rollback.setBiandongName("2");
+//              rollback.setBiandongUniqueCode("1");
+//              return rollback;
+//            }
+//        )
+//        .flatMap(userCaozuoyuanRollbackRepository::save)
+//        .flatMap(v -> userCaozuoyuanRepository.deleteById(id)).then(Mono.just(R.ok()))
+//        .defaultIfEmpty(R.error());
+//  }
+//
+//  @GetMapping("findAll")
+//
+//  @ApiOperation(value = "查询列表", notes = "传入code")
+//  public Mono<R> findAll(Pageable pageable) {
+//    Mono<R> map = userCaozuoyuanRepository.findAllByOrderByFlagDesc(pageable).map(item -> {
+//      return userRepository.findByOpenid(item.getUniqueCode()).map(var -> {
+//        return item;
+//      });
+//    })
+//        .flatMap(item -> item)
+//        .collectList()
+//        .map(R::page);
+//    return userCaozuoyuanRepository.findAll().collectList().flatMap(item -> map);
+//  }
+//
+//  @GetMapping("findByZoneId")
+//  @ApiOperation(value = "查询", notes = "传入code")
+//  public Mono findByZoneId(String id) {
+//    Mono mono = userCaozuoyuanRepository.findById(id);
+//    return mono;
+//  }
+//
+//
+//
+//  @PostMapping
+//  @ApiOperation(value = "新增或修改用户", notes = "传入data")
+//  public Mono save(@RequestBody UserCaozuoyuanVo object) {
+//
+//    if (Objects.isNull(object.getUniqueCode())) {
+//      object.setFlag("1");
+//      // 设置唯一码和统一OpenID
+//      object.setUniqueCode(IdUtil.objectId());
+//    }
+//
+//    // 保存到鉴权服务器
+//    Mono<User> saveAuthServerMono = userCaozuoyuanService.saveAccount(object);
+//
+//    // 保存到sys_user和user_caozuoyuan表
+//    Mono<UserCaozuoyuanVo> saveSystemUserAndUserCaoZuoYuanMono = userCaozuoyuanService.saveNc(object);
+//
+//    return Mono.zip(saveAuthServerMono, saveSystemUserAndUserCaoZuoYuanMono)
+//        .map(o -> R.ok().setResult(o));
+//  }
+//
+//  @GetMapping("/updateFlag/{id}/{flag}")
+//  @ApiOperation(value = "启用停用", notes = "传入id和类型")
+//  public Mono updateFlag(@PathVariable String id, @PathVariable String flag) {
+//    return userCaozuoyuanService.updateFlagNc(id, flag).map(item -> {
+//      return userCaozuoyuanService.updateFlagAccount(item.getOpenid(), flag);
+//    }).map(o -> R.ok().setResult(o));
+//  }
+//}
