@@ -146,7 +146,7 @@ public class StockKcXCLController {
                 "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1) rate1,\n" +
                 "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id2),'0') rate2 " +
                 " from (select sbb.stock_id as cinvode "+cwhcodeColumn+" \n" +
-                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' union all \n" +
+                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode "+cwhcodeColumn1+" from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' union all \n" +
                 "               select distinct sws.cinvode "+cwhcodeColumn1+"\n" +
                 "               from stock_warehousings sws " + sb2 + " and sws.bill_style!='CGDD' union all\n" +
                 "               select distinct sws.cinvode "+cwhcodeColumn1+"\n" +

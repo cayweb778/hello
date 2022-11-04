@@ -72,9 +72,9 @@ public class ChineseAndEnglish {
 
     public static void main(String[] args) {
 
-        System.out.println(isChinese('员'));
+        System.out.println(isChinese("员"));
 
-        System.out.println(isChinese('s'));
+        System.out.println(isChinese("s"));
 
         System.out.println(isEnglish("程序员之家"));
 
