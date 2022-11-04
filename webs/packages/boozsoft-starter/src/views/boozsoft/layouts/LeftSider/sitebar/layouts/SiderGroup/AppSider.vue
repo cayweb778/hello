@@ -121,7 +121,7 @@ function toGoPlatformById(id : any){
   console.log(id)
   console.log('xxx')
   useCounterStore().setShowFooter(true)
-  if(id==1099){
+  if(id==1099 || id==20017 || id==1007){
     // router.push('/nc/gdzc')
     setTimeout(()=>{
       goGuDingZiChan(id)

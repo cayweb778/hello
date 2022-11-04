@@ -46,10 +46,17 @@ export const findMaxCcode=defRouteApi( ({num,sum,qzNum,qianzhui})=>{
   }
 })
 
-export const findByCvencode=defRouteApi( (cvencode)=>{
+export const findByCvencode=defRouteApi( ({cvencode, iyear})=>{
   return {
-    url: '/arBeginBalance/findByCvencode?cvencode='+cvencode,
+    url: '/arBeginBalance/findByCvencode?cvencode='+cvencode+'&iyear='+iyear,
     method: 'GET',
+  }
+})
+
+export const findWhxList = defRouteApi(({billStyle,iyear}) => {
+  return {
+    url: '/arBeginBalance/findWhxList?billStyle='+billStyle+'&iyear='+iyear,
+    method: 'GET'
   }
 })
 
@@ -110,9 +117,23 @@ export const findSkdYueList=defRouteApi( ({iyear,bcheck})=>{
   }
 })
 
+export const findFkdYueList=defRouteApi( ({iyear,bcheck})=>{
+  return {
+    url: '/arBeginBalance/findFkdYueList?iyear='+iyear+'&bcheck='+bcheck,
+    method: 'GET',
+  }
+})
+
 export const findSkdYueByCvencodeList=defRouteApi( ({bcheck,iyear,cvencode})=>{
   return {
     url: '/arBeginBalance/findSkdYueByCvencodeList?bcheck='+bcheck+'&iyear='+iyear+'&cvencode='+cvencode,
+    method: 'GET',
+  }
+})
+
+export const findFkdYueByCvencodeList=defRouteApi( ({bcheck,iyear,cvencode})=>{
+  return {
+    url: '/arBeginBalance/findFkdYueByCvencodeList?bcheck='+bcheck+'&iyear='+iyear+'&cvencode='+cvencode,
     method: 'GET',
   }
 })

@@ -21,3 +21,12 @@ export function findByStockAccId(accId) {
     method: 'GET',
   });
 }
+
+export function saveStocckAccount(params) {
+  return defHttp.request({
+    url: '/group/stockAccount/saveStocckAccount',
+    timeout: 100000000000,
+    method: 'POST',
+    params
+  });
+}

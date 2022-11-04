@@ -104,3 +104,10 @@ export const deleteByFunctionModuleAndCaozuoUnique = defRouteApi(async ({caozuoU
     method: 'POST',
   };
 });
+
+export const findByIyearAndCaozuoModule = defRouteApi( ({iyear,caozuoModule}) => {
+  return {
+    url: '/task/findByIyearAndCaozuoModule?iyear='+iyear+'&caozuoModule='+caozuoModule,
+    method: 'GET',
+  };
+});
