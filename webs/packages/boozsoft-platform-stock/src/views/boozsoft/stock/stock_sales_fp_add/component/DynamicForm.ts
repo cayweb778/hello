@@ -124,10 +124,10 @@ const defaultRows = () => {
       columnType: '1',
       field: 'xsRate',
       label: '销售税率',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: null,
       required: true,
-      readonly: true,
+      readonly: false,
       serial: 12,
       isShow: true
     },{

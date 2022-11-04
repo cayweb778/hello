@@ -437,3 +437,10 @@ export const findReceiptList = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const copyReceipt = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/saleousing/copyReceipt',
+    method: 'POST',
+    params,
+  };
+});

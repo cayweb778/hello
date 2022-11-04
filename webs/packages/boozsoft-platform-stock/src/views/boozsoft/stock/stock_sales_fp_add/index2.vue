@@ -47,9 +47,7 @@
           </Popover>
           <Popover placement="bottom">
             <template #content>
-              <span class="group-btn-span-special">&nbsp;复制&emsp;&emsp;</span><br/>
-              <span class="group-btn-span-special">&nbsp;关闭&emsp;&emsp;</span><br/>
-              <span class="group-btn-span-special">&nbsp;打开&emsp;&emsp;</span><br/>
+              <span class="group-btn-span-special" @click="startCopyBefore">&nbsp;复制&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;导入&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;导出&emsp;&emsp;</span><br/>
             </template>
@@ -57,8 +55,8 @@
           </Popover>
           <Button class="actod-btn actod-btn-last" @click="outBefore">退出</Button>
         </div>
-        <div :class="status != 3?'status-look':''">
-          <div class="acttd-right-d-search">
+        <div >
+          <div class="acttd-right-d-search" v-show="status == 3">
             <InputSearch
               class="acttdrd-search-input"
               placeholder="存货编码或名称"
@@ -67,7 +65,7 @@
               v-model:value="pageParameter.searchConditon.value"
             />
           </div>
-          <div class="acttd-right-d-btns">
+          <div class="acttd-right-d-btns" v-show="status == 3">
             <Button class="acttdrd-btn" @click="pageReload()">
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
@@ -113,6 +111,11 @@
                 <PicLeftOutlined :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
+          </div>
+          <div class="acttd-right-d-btns" v-show="status == 1">
+            <Button class="acttdrd-btn" @click="openCodePage">
+              <BarcodeOutlined :style="{ fontSize: '14px' }"/>
+            </Button>
           </div>
         </div>
       </div>
@@ -620,6 +623,7 @@
     <Print @save="loadPrint" @register="registerPrintPage"/>
     <Lack @register="registerLackPage" @modify="modelQuantity"/>
     <Refer @register="registerReferModalPage" @throwData="referThrowData"/>
+    <BarCode @register="registerBarCodeModalPage" />
   </div>
 </template>
 <script setup="props, {emit}" lang="ts">
@@ -662,7 +666,7 @@ import {
   SortDescendingOutlined,
   SyncOutlined,
   VerticalLeftOutlined,
-  VerticalRightOutlined,CopyOutlined,VerticalAlignTopOutlined,VerticalAlignBottomOutlined
+  VerticalRightOutlined,CopyOutlined,VerticalAlignTopOutlined,VerticalAlignBottomOutlined,BarcodeOutlined
 } from '@ant-design/icons-vue';
 import {getCurrentInstance, nextTick, provide, reactive, ref} from "vue";
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -697,7 +701,7 @@ import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInf
 import {findAll as findAllJiLang, findUnitInfoList} from "/@/api/record/system/unit-mea";
 import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import {
-  batchSelectorList, changeBefore,
+  batchSelectorList, changeBefore, copyReceipt,
   delBefore,
   delRuKu,
   findBillByCondition,
@@ -729,6 +733,7 @@ import {
   getPrintStencilParameter
 } from "/@/views/boozsoft/stock/stock_sales_add/popup/ts/printTemplate";
 import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerReferences";
+import BarCode from "/@/views/boozsoft/stock/stock_sales_add/popup/barCode.vue";
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 const InputSearch = Input.Search
@@ -2627,6 +2632,7 @@ async function tempTaskSave(method) {
 }
 /*** 参照 ***/
 const [registerReferModalPage, {openModal: openReferPage}] = useModal()
+const [registerBarCodeModalPage, {openModal: openBarCodePageM}] = useModal()
 function referData(t) {
   if(formFuns.value.getFormValue().cvencode==undefined){
     return message.error('请选择销售客户！')
@@ -2711,6 +2717,36 @@ const calculateTotal = () => {
   }
 }
 /*** 合计 ***/
+/********** 复制业务 *********/
+const startCopyBefore = async () => {
+  if (hasBlank(formItems.value?.id)) return createWarningModal({title: "温馨提示",content: `暂无可进行复制操作的单据，请刷新后重试！`})
+  createConfirm({
+    iconType: 'warning',
+    title: '复制单据',
+    content: '您确定要复制生成新单据吗!',
+    onOk: async () =>{
+      // 复制校验可用量
+      let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.xsUnitId) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + '')&& !hasBlank(it.isum + ''))
+      if (!(await stockCheck(list,formItems.value))) return false
+      let busDate = useCompanyOperateStoreWidthOut().getLoginDate;
+      let newCode = generateCode(busDate)
+      await useRouteApi(copyReceipt, {schemaName: dynamicTenantId})({code: formItems.value.ccode,date: busDate,newCode:newCode})
+      message.success('复制成功！')
+      // 跳页面编辑
+      pageReload()
+    },  onCancel:async () =>{
+      pageReload()
+    }
+  })
+}
+/********** 复制业务 *********/
+/*** 条形码 ***/
+const openCodePage = () => {
+  openBarCodePageM(true, {
+    dynamicTenant:dynamicTenant.value,
+  })
+}
+/*** 条形码 ***/
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色

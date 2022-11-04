@@ -2884,4 +2884,35 @@ public class StockSaleousingController {
         return listMono.map(a->R.ok().setResult(a));
     }
 
+
+    @PostMapping("copyReceipt")
+    @Transactional
+    public Mono<R> copyReceipt(@RequestBody Map map){
+        if (map.keySet().size() == 0)return Mono.just(R.ok(new ArrayList<>()));
+        String code = map.get("code").toString();
+        String ddte = map.get("date").toString();
+        String newCode = map.get("newCode").toString();
+        return Mono.zip(saleousingRepository.findByCcode(code),saleousingsRepository.findAllByCcode(code).collectList())
+                .flatMap(
+                tips-> {
+                    StockSaleousing t1 = tips.getT1();
+                    List<StockSaleousings> t2 = tips.getT2();
+                    t1.setId(null);
+                    t1.setCcode(newCode);
+                    t1.setCcodePl(null);
+                    t1.setDdate(ddte);
+                    for (StockSaleousings saleousings : t2) {
+                        saleousings.setId(null);
+                        saleousings.setCcode(newCode);
+                        saleousings.setDdate(ddte);
+                        saleousings.setSourcecode(null);
+                        saleousings.setSourcetype(null);
+                        saleousings.setSourcedate(null);
+                        saleousings.setSourcedetailId(null);
+                    }
+                    return saleousingRepository.save(t1).thenReturn("").zipWith(saleousingsRepository.saveAll(t2).collectList()).flatMap(tips2->Mono.just(R.ok()));
+                }
+        );
+    }
+
 }

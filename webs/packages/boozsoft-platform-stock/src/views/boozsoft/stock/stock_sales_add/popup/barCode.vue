@@ -48,7 +48,7 @@ const { createConfirm } = useMessage()
   }
 async function handleOk() {
 
-  emit('throwData', list)
+  emit('throwData', {})
   closeModal()
   return true;
 }
@@ -57,6 +57,7 @@ async function handleOk() {
 :deep(.ant-checkbox){
   margin-top: -8px;
 }
+
 :deep(.ant-select-selector) {
   border: none !important;
   border-bottom: 1px solid #bdb9b9 !important;
@@ -67,23 +68,28 @@ async function handleOk() {
     font-weight: bold;color: black;
   }
 }
+
 :deep(.ant-input){
   border: 1px solid;
 }
+
+:deep(.ant-input)::placeholder{
+  font-weight: bold;
+  font-size: 28px;
+}
+
 .nc-open-content {
   background-image: url(/@/assets/images/homes/bg-pattern.png);
   background-repeat: no-repeat;
   background-position: 66% 8%;
   background-size: contain;
   position: relative;
-
-
 }
-
 
 :global(.ant-modal-header) {
   padding: 10px 0 !important;
 }
+
 :global(.ant-modal-close-x){
   height: 30px !important;
   color: white;

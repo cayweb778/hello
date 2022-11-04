@@ -51,7 +51,7 @@
           </Popover>
           <Popover placement="bottom">
             <template #content>
-              <span class="group-btn-span-special">&nbsp;复制&emsp;&emsp;</span><br/>
+              <span class="group-btn-span-special" @click="startCopyBefore">&nbsp;复制&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;关闭&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;打开&emsp;&emsp;</span><br/>
             </template>
@@ -100,7 +100,8 @@
           <div class="acttd-right-d-btns" v-show="status == 1">
             <Button class="acttdrd-btn" @click="openCodePage">
               <BarcodeOutlined :style="{ fontSize: '14px' }"/>
-            </Button></div>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -647,7 +648,7 @@ import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInf
 import {findAll as findAllJiLang, findUnitInfoList} from "/@/api/record/system/unit-mea";
 import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import {
-  changeBefore,
+  changeBefore, copyReceipt,
   delRuKu,
   findBillByCondition,
   findBillCode,
@@ -3044,6 +3045,29 @@ const toReceipt = async (v) => {
   nextTick(async ()=>contentSwitch('curr'))
 }
 /********** 单据搜索 *********/
+/********** 复制业务 *********/
+const startCopyBefore = async () => {
+  if (hasBlank(formItems.value?.id)) return createWarningModal({title: "温馨提示",content: `暂无可进行复制操作的单据，请刷新后重试！`})
+  createConfirm({
+    iconType: 'warning',
+    title: '复制单据',
+    content: '您确定要复制生成新单据吗!',
+    onOk: async () =>{
+      // 复制校验可用量
+      let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.xsUnitId) && !hasBlank(it.quantity)  && !hasBlank(it.itaxrate+'') &&  !hasBlank(it.taxprice + '')&& !hasBlank(it.isum + ''))
+      if (!(await stockCheck(list,formItems.value))) return false
+      let busDate = useCompanyOperateStoreWidthOut().getLoginDate;
+      let newCode = generateCode(busDate)
+      await useRouteApi(copyReceipt, {schemaName: dynamicTenantId})({code: formItems.value.ccode,date: busDate,newCode:newCode})
+      message.success('复制成功！')
+      // 跳页面编辑
+      pageReload()
+    },  onCancel:async () =>{
+      pageReload()
+    }
+  })
+}
+/********** 复制业务 *********/
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色

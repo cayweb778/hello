@@ -59,9 +59,7 @@
           </Popover>
           <Popover placement="bottom">
             <template #content>
-              <span class="group-btn-span-special">&nbsp;复制&emsp;&emsp;</span><br/>
-              <span class="group-btn-span-special">&nbsp;关闭&emsp;&emsp;</span><br/>
-              <span class="group-btn-span-special">&nbsp;打开&emsp;&emsp;</span><br/>
+              <span class="group-btn-span-special" @click="startCopyBefore">&nbsp;复制&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;导入&emsp;&emsp;</span><br/>
               <span class="group-btn-span-special">&nbsp;导出&emsp;&emsp;</span><br/>
             </template>
@@ -74,11 +72,11 @@
         <Button class="actod-btn actod-btn-last" @click="testOpenCustomModal">测试客户</Button>
         <Button class="actod-btn actod-btn-last" @click="testOpenGysModal">测试供应商</Button>
         <Button class="actod-btn actod-btn-last" @click="testOpenGysModal">测试项目</Button>-->
-        <div :class="status != 3?'status-look':''">
-          <div class="acttd-right-d-search">
+        <div >
+          <div class="acttd-right-d-search" v-show="status == 3">
             <ReceiptSearch  :default-data="searchData" :dynamic-tenant-id="dynamicTenantId" @toggle="toReceipt"/>
           </div>
-          <div class="acttd-right-d-btns">
+          <div class="acttd-right-d-btns" v-show="status == 3">
             <Button class="acttdrd-btn" @click="pageReload()">
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
@@ -123,6 +121,11 @@
                 <PicLeftOutlined :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
+          </div>
+          <div class="acttd-right-d-btns" v-show="status == 1">
+            <Button class="acttdrd-btn" @click="openCodePage">
+              <BarcodeOutlined :style="{ fontSize: '14px' }"/>
+            </Button>
           </div>
         </div>
       </div>
@@ -589,6 +592,7 @@
     <BatchSelector @register="registerBatchSelectorPage" @throwData="modalData"/>
     <Print @save="loadPrint" @register="registerPrintPage"/>
     <Lack @register="registerLackPage" @modify="modelQuantity"/>
+    <BarCode @register="registerBarCodeModalPage" />
   </div>
 </template>
 
@@ -627,7 +631,7 @@ import {
   SyncOutlined,
   VerticalLeftOutlined,
   VerticalRightOutlined,
-  PicLeftOutlined
+  PicLeftOutlined,BarcodeOutlined
 } from '@ant-design/icons-vue';
 import {getCurrentInstance, nextTick, reactive, ref} from "vue";
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -656,6 +660,7 @@ import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn";
 import {
+  copyReceipt,
   delRuKu,
   findBillByCondition,
   findBillCode,
@@ -2276,6 +2281,7 @@ const [registerXySourcePage, {openModal: openXySourcePage}] = useModal()
 const [registerlySourcePage, {openModal: openLySourcePage}] = useModal()
 const [registerReferModalPage, {openModal: openReferPage}] = useModal()
 const [registerLackPage, { openModal: openLackPage }] = useModal();
+const [registerBarCodeModalPage, {openModal: openBarCodePageM}] = useModal()
 // 查看下游数据
 function xySourcePop() {
   if (hasBlank(formItems.value.ccode)){
@@ -2388,6 +2394,7 @@ import {getCkPriceList} from "/@/api/record/stock/stock_cost";
 import dayjs from "dayjs";
 import {findAvailability} from "/@/api/record/stock/stock-currents";
 import ReceiptSearch from "/@/views/boozsoft/stock/stock_sales_add/component/ReceiptSearch.vue";
+import BarCode from "/@/views/boozsoft/stock/stock_sales_add/popup/barCode.vue";
 const getInvoiceName = (v) => {
   return [{value:'zyfp',label:'专用发票'},{value:'ptfp',label:'普通发票'},{value:'nfcpfp',label:'农副产品发票'},{value:'sj',label: '收据'}].filter(it => it.value == v)[0]?.label || ''
 }
@@ -2678,6 +2685,38 @@ const toReceipt = async (v) => {
   nextTick(async ()=>contentSwitch('curr'))
 }
 /********** 单据搜索 *********/
+
+/********** 复制业务 *********/
+const startCopyBefore = async () => {
+  if (hasBlank(formItems.value?.id)) return createWarningModal({title: "温馨提示",content: `暂无可进行复制操作的单据，请刷新后重试！`})
+  createConfirm({
+    iconType: 'warning',
+    title: '复制单据',
+    content: '您确定要复制生成新单据吗!',
+    onOk: async () =>{
+      // 复制校验可用量
+      let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && (it.isBatch =='1'?!hasBlank(it.batchId):false))
+      if (!(await stockCheck(list,formItems.value))) return false
+      let busDate = useCompanyOperateStoreWidthOut().getLoginDate;
+      let newCode = generateCode(busDate)
+      await useRouteApi(copyReceipt, {schemaName: dynamicTenantId})({code: formItems.value.ccode,date: busDate,newCode:newCode})
+      message.success('复制成功！')
+      // 跳页面编辑
+      pageReload()
+    },  onCancel:async () =>{
+      pageReload()
+    }
+  })
+}
+/********** 复制业务 *********/
+/*** 条形码 ***/
+const openCodePage = () => {
+  openBarCodePageM(true, {
+    dynamicTenant:dynamicTenant.value,
+  })
+}
+/*** 条形码 ***/
+
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色

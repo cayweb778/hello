@@ -176,7 +176,7 @@ function createItem(it) {
     required: it['required'],
     componentProps: (it['component'] == 'DatePicker' ? {locale: localeCn,disabled: it['field']=='ddate'} : it['component'] == 'Select'?{
       options: it['list'],
-    }:it['component'] == 'Input'?{readonly: it['readonly']}:{}),
+    }:it['component'] == 'Input'?{readonly: it['readonly']}:it['component'] == 'InputNumber'?(it['field']=='theDeposit'?{min: 0,step:'0.00',controls: false}:{min: 0,step:'0.00'}):{}),
     slot: it['component'] == 'Select' ? it['field'] : null,
     show: it['isShow']
   }
@@ -245,16 +245,19 @@ function custChange(v,t) {
 </script>
 <style lang="less" scoped="scoped">
 .dynamic-form{
-  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
+  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper),:deep(.ant-input-number) {
     border: none;
     border-bottom: 1px solid #c9c9c9;
     background-color: white;
     color: black;
-
+    width: 100%;
     .ant-picker-input {
       > input {
         color: black;
       }
+    }
+    .ant-input-number-input[codefield="theDeposit"]{
+      text-align: right;
     }
   }
   :deep(.ant-col){

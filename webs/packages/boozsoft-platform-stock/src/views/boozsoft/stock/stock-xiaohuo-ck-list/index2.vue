@@ -58,10 +58,16 @@
         <div>
           <div>
             <Select v-model:value="formItems.selectType" style="font-size: 12px;font-weight: bold;" class="special_select">
-              <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
-              <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
-              <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
-              <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="1">单据编号</SelectOption>
+              <SelectOption style="font-size: 12px;" value="2">客户编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="3">客户名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="4">业务部门</SelectOption>
+              <SelectOption style="font-size: 12px;" value="5">业务员</SelectOption>
+              <SelectOption style="font-size: 12px;" value="6">制单人</SelectOption>
+              <SelectOption style="font-size: 12px;" value="7" v-if="typeFlag=='0'">存货编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="8" v-if="typeFlag=='0'">存货名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="9" v-if="typeFlag=='0'">批号</SelectOption>
+
             </Select>
             <!-- 搜索 -->
             <InputSearch
