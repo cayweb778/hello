@@ -47,4 +47,6 @@ public class StockCurrentLackVo implements Serializable {
 	private BigDecimal midWayXh;        			// 在途销货
 	private BigDecimal midWayCk;        			// 在途出库
 
+	// 存货有效期预警表
+	private String state;
 }

@@ -23,7 +23,7 @@
       <div style="width: calc(100% - 150px);height: 100%;">
         <div style="text-align: center;padding: 10px 0 5px;">
           <SearchOutlined style="font-size: 24px;color: #0096c7;margin-top: 2px"/>
-          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;存货批次现存量查询</span>
+          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;存货有效期预警表</span>
         </div>
         <div
           class="nc-open-content">
@@ -38,21 +38,14 @@
                 <ul>
                   <li style="margin: 2% 0px;">
                     <label style="text-align: left">仓库：</label>
-                    <Select :allowClear="true" v-model:value="ckId" style="width: 70%;margin-left: 28px;">
+                    <Select :allowClear="true" v-model:value="ckId" style="width: 70%;margin-left: 28px;text-align: center;">
                       <SelectOption :value="data.cangkuId" v-for="data in ckList">{{data.cangkuName}}</SelectOption>
                       <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
                     </Select>
                     &ensp;
-                    <!--          <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="cangkuPopShow('cangku')" /></a>-->
+                    <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="cangkuPopShow('cangku')" /></a>
                   </li>
-                  <li style="    margin: 2% 0px;">
-                    <label style="text-align: left">存货分类：</label>
-                    <Select v-model:value="stockClassId" mode="tags" style="width: 70%;" >
-                      <SelectOption :value="data.uniqueStockclass" v-for="data in stockClassList">{{ data.stockCclassName }}</SelectOption>
-                      <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
-                    </Select>
-                    &ensp; <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="cangkuPopShow('class')" /></a>
-                  </li>
+
                   <li  style="    margin: 2% 0px;">
                     <label style="text-align: left">存货名称：</label>
                     <Select mode="tags" v-model:value="stockId" style="width: 70%;">
@@ -61,28 +54,6 @@
                     </Select>
                     &ensp;
                     <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="cangkuPopShow('stock')" /></a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="border-div">
-              <span>批次条件</span>
-              <div style="margin-left: 14px;">
-                <ul>
-                  <li style="margin: 2% 0px;">
-                    <label style="text-align: left">批号：</label>
-                    <a-input v-model:value="batchId" style="width: 320px;margin-left: 27px;"/>
-                  </li>
-                  <li style="    margin: 2% 0px;">
-                    <label style="text-align: left">生产日期：</label>
-<!--                    <a-range-picker v-model:value="dpdate" style="width: 320px;" />-->
-                    <a-date-picker style="width: 160px;" v-model:value="dpdate" @change="datePickerChange()"/>
-                    <a-date-picker style="width: 160px;" v-model:value="dpdate2" @change="datePickerChange()"/>
-                  </li>
-                  <li  style="    margin: 2% 0px;">
-                    <label style="text-align: left">失效日期：</label>
-                    <a-date-picker style="width: 160px;" v-model:value="dvdate" @change="datePickerChange2()"/>
-                    <a-date-picker style="width: 160px;" v-model:value="dvdate2" @change="datePickerChange2()"/>
                   </li>
                 </ul>
               </div>
@@ -175,7 +146,7 @@ const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   console.log(data.data.openOne)
   formItems.value.openOne = data.data.openOne;
   openType.value=data.openType
-  setModalProps({ minHeight: 490 });
+  setModalProps({ minHeight: 300 });
 })
 const dynamicAdReload = async (obj) =>{
   ckId.value=''
@@ -277,12 +248,8 @@ function timeformat(dateData) {
 function handleOk() {
   let map={
     ckId:hasBlank(ckId.value)?'':ckId.value,
-    stockClassId:stockClassId.value,
     stockId:stockId.value,
     ckList:ckList.value,
-    batchId:batchId.value,
-    dpdate:hasBlank(dpdate.value)?'':timeformat(dpdate.value)+','+timeformat(dpdate2.value),
-    dvdate:hasBlank(dvdate.value)?'':timeformat(dvdate.value)+','+timeformat(dvdate2.value),
     databaseTrue:databaseTrue.value,
     stockCclassName:stockClassList.value.filter(a=>JSON.parse(JSON.stringify(stockClassId.value)).indexOf(a.uniqueStockclass)!=-1).map(a=>a.stockCclassName),
     stockNum:stockList.value.filter(a=>JSON.parse(JSON.stringify(stockId.value)).indexOf(a.id)!=-1).map(a=>a.stockNum),
@@ -347,7 +314,7 @@ function datePickerChange2(){
   background-position: 66% 8%;
   background-size: contain;
   position: relative;
-  :deep(.ant-select-selector),:deep(.ant-input),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
+  :deep(.ant-select-selector),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
     border: none !important;
     border-bottom: 1px solid #bdb9b9 !important;
     background: none;

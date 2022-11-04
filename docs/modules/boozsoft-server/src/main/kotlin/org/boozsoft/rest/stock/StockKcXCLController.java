@@ -19,6 +19,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -173,6 +175,16 @@ public class StockKcXCLController {
                 .collectList()
                 .flatMap(list -> {
                     list=list.stream().filter(a->!a.getXcl().equals(BigDecimal.ZERO)||!a.getKeyong().equals(BigDecimal.ZERO)||!a.getMidWayDh().equals(BigDecimal.ZERO)||!a.getMidWayRk().equals(BigDecimal.ZERO)||!a.getMidWayXh().equals(BigDecimal.ZERO)||!a.getMidWayCk().equals(BigDecimal.ZERO)).collect(Collectors.toList());
+                    list.stream().filter(tx->StrUtil.isNotBlank(tx.getDvdate())).forEach(tx->{
+                        long days = differentDaysByString(tx.getDvdate());
+                        if(days>15){
+                            tx.setState("正常");
+                        }else if(days==0||days<=15){
+                            tx.setState("临近");
+                        }else if(days<0){
+                            tx.setState("失效");
+                        }
+                    });
                     if (queryType.equals("pcxcl")) {
                         list=list.stream().filter(xcl -> StrUtil.isNotBlank(xcl.getCinvode())&&StrUtil.isNotBlank(xcl.getBatchId())).sorted(Comparator.comparing(StockCurrentLackVo::getCinvode).thenComparing(StockCurrentLackVo::getBatchId)).distinct().collect(Collectors.toList());
                     }else{
@@ -196,5 +208,18 @@ public class StockKcXCLController {
     @PostMapping("findXclListByYear")
     public Mono<R> findXclListByYear(@RequestBody Map map) {
         return currentstockRepository.findAllByIyearAndBatchIdIsNotNullOrderByInvCode(map.get("year").toString()).collectList().map(list -> CollUtil.sort(list, (o1, o2) -> Integer.valueOf(o1.getInvCode()).compareTo(Integer.valueOf(o2.getInvCode())))).map(R::ok);
+    }
+
+
+    /**
+     *
+     * @param startDate  开始日期
+     * @return 返回相差的天数
+     */
+    public static long differentDaysByString(String startDate) {
+        String newDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        long startDay= Long.parseLong(startDate.replaceAll("-",""));
+        long endDay= Long.parseLong(newDate);
+        return endDay-startDay;
     }
 }
