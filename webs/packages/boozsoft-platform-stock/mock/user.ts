@@ -400,7 +400,12 @@ export default [
     timeout: 0,
     method: 'get',
     async rawResponse(req,res) {
+
+
+
       const {body,sendObject,getQueryVariable}=await useBoozsoftResponse(req,res)
+
+
       const menus = menuMockState.data.filter(it=>it!=null)
         .filter(item => item.platformId == getQueryVariable(req.url)['platformId']);
 

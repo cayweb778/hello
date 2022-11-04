@@ -3,6 +3,7 @@ import { AppRouteRecordRaw } from '/@/router/types';
 import {getAuthCache, setAuthCache} from '/@/utils/auth';
 import {createLocalStorage} from '/@/utils/cache';
 import {Memory} from '/@/utils/cache/memory';
+import {sysMenuQueryAll} from "/@/utils/boozsoft/rbac/menuData";
 
 const ls=createLocalStorage()
 export async function findMenus({ layoutId }) {

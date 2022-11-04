@@ -41,8 +41,8 @@ import {isUseMock} from "/@/utils/env";
 
 (async () => {
   if(isUseMock()){
-    // const aa=sysMenuQueryAll()
-    // await putMenu(aa)
+    const aa=sysMenuQueryAll()
+    await putMenu(aa)
   }
 
   createWindowDebuggerInfo()
