@@ -47,10 +47,10 @@ const dynamicColumnAndDataModel = reactive({
       name: '状态',
       nameNew: '状态',
       check: true,
-      width: 90,
+      width: 60,
       max: 120,
-      min: 90,
-      align: 'left'
+      min: 60,
+      align: 'center'
     },
     {
       key: '1',

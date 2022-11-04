@@ -88,7 +88,17 @@
         :scroll="{ x: totalColumnWidth,y: windowHeight }"
         :loading="loadMark"
       >
-        <template #state="{ record }"> {{ record.state }} </template>
+        <template #state="{ record }">
+          <span v-if="record.state=='临近'">
+            <a-tag color="orange">临近</a-tag>
+          </span>
+          <span v-if="record.state=='正常'">
+            <a-tag color="green">正常</a-tag>
+          </span>
+          <span v-if="record.state=='失效'">
+            <a-tag color="red">失效</a-tag>
+          </span>
+        </template>
         <template #baseQuantity="{ record }"> {{ toThousandFilter(record.baseQuantity) }} </template>
         <template #subQuantity1="{ record }"> {{ toThousandFilter(record.subQuantity1) }} </template>
         <template #subQuantity2="{ record }"> {{ toThousandFilter(record.subQuantity2) }} </template>
@@ -145,6 +155,7 @@ import {
   message,
   Popover,
   Select,
+  Tag as ATag,
 } from 'ant-design-vue'
 
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -396,6 +407,13 @@ const lanMuData = ref({
 
 const ccc=ref(
   [
+    {
+      title: '状态',
+      dataIndex: 'state',
+      key: 'state',
+      align: 'left',ellipsis: true,
+      width: 100,fixed: 'left',slots: { customRender: 'state' }
+    },
     {
       title: '仓储位置',
       dataIndex: 'cwhcodeName',
