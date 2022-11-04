@@ -128,22 +128,22 @@
               <Row>
                 <Col :span="12">
                   <Checkbox v-model:checked="SJHZYSD">
-                    收款单按明细结转
+                    应收单按明细模式结转
                   </Checkbox>
                 </Col>
                 <Col :span="12">
-                  <Checkbox v-model:checked="SJHZYSD">
-                    应收单按明细模式结转
+                  <Checkbox v-model:checked="SJHZSKD">
+                    收款单按明细结转
                   </Checkbox>
                 </Col>
                 <br/><br/>
                 <Col :span="12" v-if="arCheckFlag!='1'">
-                  <Checkbox v-model:checked="SJHZSKD">
+                  <Checkbox v-model:checked="SJHZXHD">
                     销货单按明细结转
                   </Checkbox>
                 </Col>
                 <Col :span="12" v-if="arCheckFlag=='1'">
-                  <Checkbox v-model:checked="SJHZSKD">
+                  <Checkbox v-model:checked="SJHZXSFP">
                     销售哦发票按明细结转
                   </Checkbox>
                 </Col>
@@ -258,30 +258,7 @@ const {closeCurrent} = useTabs(router);
 const rateValue = ref(5)
 const stepValue = ref(0)
 const isClose = ref(false)
-const stepModel = ref({
-  '1': {
-    cg: {finish: false,number: 0},
-    qtr: {finish: false,number: 0},
-  },
-  '2':{
-    db: {finish: false,number: 0},
-  },
-  '3':{
-    xt: {finish: false,number: 0},
-  },
-  '4':{
-    pd: {finish: false,number: 0},
-  },
-  '5':{
-    ck: {finish: false,number: 0},
-    cl: {finish: false,number: 0},
-    qtc: {finish: false,number: 0},
-  },
-  '6':{
-    jh: {finish: false,number: 0},
-    wl: {finish: false,number: 0},
-  }
-})
+
 const indicator = ref(false)
 
 const currMonth = ref('12')
@@ -297,6 +274,26 @@ const tipText = ref('')
 const faAccountList = ref([])
 const month:any = ref('')
 const fromItems:any = ref({})
+
+const YSD:any = ref(true)
+const SKD:any = ref(true)
+const XHD:any = ref(true)
+const XSFP:any = ref(true)
+
+const WZDYSD:any = ref(true)
+const WZDSKD:any = ref(true)
+const WZDXHD:any = ref(true)
+const WZDXSFP:any = ref(true)
+
+const SJHZYSD:any = ref(true)
+const SJHZSKD:any = ref(true)
+const SJHZXHD:any = ref(true)
+const SJHZXSFP:any = ref(true)
+
+const WSHYSD:any = ref(true)
+const WSHSKD:any = ref(true)
+const WSHXHD:any = ref(true)
+const WSHXSFP:any = ref(true)
 
 const dynamicAdReload = async (obj) => {
   dynamicTenantId.value = obj.accountMode
@@ -584,6 +581,15 @@ const startBill = async () => {
     // 点击下一步
     stepValue.value += 1
     if (stepValue.value==3){
+      //查询上一年的数据
+      //应收单
+      if (YSD.value) {}
+      //收款单
+      if (SKD.value) {}
+      //销货单
+      if (XHD.value && arCheckFlag.value!='1') {}
+      //销售发票
+      if (XSFP.value && arCheckFlag.value=='1') {}
       isClose.value = true
     } else {
       isClose.value = false
