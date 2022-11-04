@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-    width="900px"
+    width="950px"
     class="spaceLogo"
     v-bind="$attrs"
     @ok="handleOk()"
@@ -132,7 +132,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="supPopShow('sup')" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('sup')" /></a>
                 <label style="margin-left: 20px;">结算供应商：</label>
                 &nbsp;
                 <a-select
@@ -149,7 +149,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="supPopShow('js')" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('js')" /></a>
               </div>
               <div>
                 <label>存货：</label>
@@ -168,7 +168,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockPopShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockPopShow" /></a>
                 <label style="margin-left: 20px;">规格型号：</label>
                 &nbsp;
                 <a-select
@@ -185,7 +185,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockCangKuModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
               </div>
               <div>
                 <label>仓库：</label>
@@ -204,7 +204,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockCangKuModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
                 <label style="margin-left: 20px;">存货分类：</label>
                 &nbsp;
                 <a-select
@@ -221,7 +221,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockClassModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockClassModalShow" /></a>
               </div>
             </div>
           </div>
@@ -433,7 +433,7 @@ const reLifeQueryParameter = async (dynamicTenant,id) => {
     let blist = dateList.value.filter(it => it.stockYear == busDates[0])
     if (blist.length > 0) { // 存在与业务日期相匹配的年度 使用业务期间 反之使用最大年度期间
       let busQj = blist.filter(it => it.stockMonth == (busDates[1]))[0]
-      maxPingzhengQj.value = (busQj.stockYear+''+busQj.stockMonth)
+      maxPingzhengQj.value = (busQj.stockYear+'-'+busQj.stockMonth)
       strDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
       endDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
     } else {
@@ -654,7 +654,7 @@ function timeformat(dateData) {
   background-position: 66% 8%;
   background-size: contain;
   position: relative;
-  :deep(.ant-select-selector),:deep(.ant-input),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
+  :deep(.ant-select-selector),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
     border: none !important;
     border-bottom: 1px solid #bdb9b9 !important;
     background: none;

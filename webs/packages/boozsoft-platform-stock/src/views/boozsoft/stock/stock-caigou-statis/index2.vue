@@ -643,11 +643,7 @@ async function saveQuery(e) {
   companyName.value = data.constant.companyName
   pageParameter.queryMark = data.constant.queryType
   pageParameter.query = data.variable
-  if (!hasBlank(data.variable.periodStart)){
-    qijianText.value = formatText(data.variable.periodStart)+ ' - '+formatText(data.variable.periodEnd)
-  }else{
-    qijianText.value = data.variable.dateStart.replaceAll(/-/g,'.')+ ' - '+data.variable.dateEnd.replaceAll(/-/g,'.')
-  }
+  qijianText.value=data.variable.strTimeView+' - '+data.variable.endTimeView
 
   findByAll()
   reloadList(e.map)

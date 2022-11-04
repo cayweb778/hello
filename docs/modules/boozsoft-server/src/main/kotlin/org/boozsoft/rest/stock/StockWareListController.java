@@ -377,16 +377,12 @@ public class StockWareListController {
             sb.append(" sws.cwhcode= '"+cwhcode+"' ");
             sb.append("www");
         }
-        // 日期
-        String dateStart=map.get("dateStart").toString();
-        String dateEnd=map.get("dateEnd").toString();
+
         // 期间
-        String periodStart=map.get("periodStart").toString();
-        String periodEnd=map.get("periodEnd").toString();
-        // 1期间 or 2日期
-        String radiovalue=map.get("radiovalue").toString();
-        if(radiovalue.equals("1")){
-            sb.append(" sws.ddate between '"+periodStart.substring(0,4)+"-"+periodStart.substring(4,6)+"-01' and '"+periodEnd.substring(0,4)+"-"+periodEnd.substring(4,6)+"-31' ");
+        String strTime=map.get("strTime").toString();
+        String endTime=map.get("endTime").toString();
+        if(StrUtil.isNotBlank(strTime)){
+            sb.append(" sws.ddate between '"+strTime+"' and '"+endTime+"' ");
             sb.append("www");
         }
         // 规格型号

@@ -49,7 +49,7 @@
                 <label style="margin-left: 100px;">仓库：</label>
                 <a-select
                   v-model:value="stockcangku"
-                  style="width: 200px;margin-left: 70px;"
+                  style="width: 200px;margin-left: 75px;"
                 >
                   <a-select-option
                     v-for="item in stockcangkuList"
@@ -61,7 +61,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openCangKuOne" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openCangKuOne" /></a>
               </div>
               <div>
                 <label style="margin-left: 10px;">审核状态：</label>
@@ -85,7 +85,7 @@
                   show-search
                   v-model:value="stockSup"
                   :filter-option="filterSupOption"
-                  style="width: 200px;margin-left: 30px;"
+                  style="width: 200px;margin-left: 35px;"
                 >
                   <a-select-option
                     v-for="item in stockSupList"
@@ -97,7 +97,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openSup" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openSup" /></a>
               </div>
               <div>
                 <label style="margin-left: 10px;">存货分类：</label>
@@ -119,7 +119,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openStockClass" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openStockClass" /></a>
 
                 <label style="margin-left: 20px;">存货档案：</label>
                 <a-select
@@ -139,7 +139,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openStockInfo" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openStockInfo" /></a>
               </div>
               <div>
                 <label style="margin-left: 10px;">业务部门：</label>
@@ -148,7 +148,7 @@
                   show-search
                   :filter-option="filterClassOption"
                   v-model:value="dept"
-                  style="width: 150px;margin-left: 20px;"
+                  style="width: 150px;margin-left: 23px;"
                 >
                   <a-select-option
                     v-for="item in deptList"
@@ -160,15 +160,15 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openDept" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openDept" /></a>
 
-                <label style="margin-left: 20px;">业务员：</label>
+                <label style="margin-left: 21px;">业务员：</label>
                 <a-select
                   :allowClear="true"
                   show-search
                   :filter-option="filterClassOption"
                   v-model:value="person"
-                  style="width: 200px;margin-left: 65px;"
+                  style="width: 200px;margin-left: 60px;"
                 >
                   <a-select-option
                     v-for="item in personList"
@@ -180,7 +180,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openPerson" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="openPerson" /></a>
               </div>
             </div>
           </div>

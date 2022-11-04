@@ -1817,8 +1817,6 @@ const startReview = async (b) => {
           let oldBillStyle=formItems.value.billStyle
           let oldddate=formItems.value.ddate
           let newRuKuNum=await useRouteApi(findBillCode, {schemaName: dynamicTenantId})({type: "CGRKD",date:  useCompanyOperateStoreWidthOut().getLoginDate,prefix: "",key: '3-10'})
-          // 入库单收发方式
-          let ecName= await useRouteApi(findByLikeEcName, { schemaName: dynamicTenantId })("采购入库")
           // 生成入库单
           formItems.value.id=null
           formItems.value.ccode=newRuKuNum
@@ -1828,7 +1826,7 @@ const startReview = async (b) => {
           formItems.value.bcheckUser=''
           formItems.value.sourcetype=oldBillStyle
           formItems.value.sourcecode=oldNum
-          formItems.value.bstyle=hasBlank(ecName)?'':ecName.ecCode
+          formItems.value.bstyle='采购入库'
           formItems.value.cmakerTime=newDate.value
           await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(formItems.value)
 
