@@ -3,10 +3,10 @@
   <component name="AutoImportedSourceRoots">
     <option name="directories">
       <list>
-        <option value="$MODULE_DIR$/src/main/java" />
-        <option value="$MODULE_DIR$/src/main/kotlin" />
-        <option value="$MODULE_DIR$/src/test/java" />
-        <option value="$MODULE_DIR$/src/test/kotlin" />
+        <option value="C:\ideaProject\boozsoft-nc\docs\modules\boozsoft-server/src/main/java" />
+        <option value="C:\ideaProject\boozsoft-nc\docs\modules\boozsoft-server/src/main/kotlin" />
+        <option value="C:\ideaProject\boozsoft-nc\docs\modules\boozsoft-server/src/test/java" />
+        <option value="C:\ideaProject\boozsoft-nc\docs\modules\boozsoft-server/src/test/kotlin" />
       </list>
     </option>
   </component>
