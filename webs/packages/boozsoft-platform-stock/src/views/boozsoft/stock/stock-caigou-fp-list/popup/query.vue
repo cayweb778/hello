@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-    width="900px"
+    width="950px"
     class="spaceLogo"
     v-bind="$attrs"
     @ok="handleOk()"
@@ -132,7 +132,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="supPopShow('sup')" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('sup')" /></a>
                 <label style="margin-left: 20px;">结算供应商：</label>
                 &nbsp;
                 <a-select
@@ -149,7 +149,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="supPopShow('js')" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('js')" /></a>
               </div>
               <div>
                 <label>存货：</label>
@@ -168,7 +168,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockPopShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockPopShow" /></a>
                 <label style="margin-left: 20px;">规格型号：</label>
                 &nbsp;
                 <a-select
@@ -185,7 +185,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockCangKuModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
               </div>
               <div>
                 <label>仓库：</label>
@@ -204,7 +204,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockCangKuModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
                 <label style="margin-left: 20px;">存货分类：</label>
                 &nbsp;
                 <a-select
@@ -221,7 +221,7 @@
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="stockClassModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockClassModalShow" /></a>
               </div>
             </div>
           </div>

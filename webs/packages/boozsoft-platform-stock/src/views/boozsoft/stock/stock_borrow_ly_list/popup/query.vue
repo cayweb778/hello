@@ -343,7 +343,7 @@ const reLifeQueryParameter = async (dynamicTenant,id) => {
     let blist = dateList.value.filter(it => it.stockYear == busDates[0])
     if (blist.length > 0) { // 存在与业务日期相匹配的年度 使用业务期间 反之使用最大年度期间
       let busQj = blist.filter(it => it.stockMonth == (busDates[1]))[0]
-      maxPingzhengQj.value = (busQj.stockYear+''+busQj.stockMonth)
+      maxPingzhengQj.value = (busQj.stockYear+'-'+busQj.stockMonth)
       strDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
       endDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
     } else {

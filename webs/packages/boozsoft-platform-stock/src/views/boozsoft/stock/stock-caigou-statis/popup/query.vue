@@ -564,10 +564,15 @@ async function handleOk() {
     return
   }
 
-  queryModel.variable.periodStart = startQj
-  queryModel.variable.periodEnd = endQj
-  queryModel.variable.dateStart = hasBlank(strDate2.value)?'':timeformat(strDate2.value)
-  queryModel.variable.dateEnd = hasBlank(endDate2.value)?'':timeformat(endDate2.value)
+  let strTimeView=radiovalue.value=='1'?strDate.value:timeformat(strDate2.value)
+  let endTimeView=radiovalue.value=='1'?endDate.value:timeformat(endDate2.value)
+  let strTime=radiovalue.value=='1'?strDate.value+'-01':timeformat(strDate2.value)
+  let endTime=radiovalue.value=='1'?endDate.value+'-31':timeformat(endDate2.value)
+
+  queryModel.variable.strTimeView = strTimeView
+  queryModel.variable.endTimeView = endTimeView
+  queryModel.variable.strTime = strTime
+  queryModel.variable.endTime = endTime
   modelLoadIng.value = false
   queryModel.constant.queryType = defaultTabsKey.value
   queryModel.constant.companyName = companyName.value

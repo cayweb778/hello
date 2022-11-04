@@ -1732,9 +1732,6 @@ async function saveData() {
       })
     }
   }
-
-  // 入库单收发方式
-  let ecName= await useRouteApi(findByLikeEcName, { schemaName: dynamicTenantId })("采购入库")
   let id = formItems.value.id
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
@@ -1744,7 +1741,7 @@ async function saveData() {
   formItems.value.cmaker = useUserStoreWidthOut().getUserInfo.id // 制单人
   formItems.value.billStyle = pageParameter.type
   formItems.value.bdocumStyle = titleValue.value == 0 ? "0" : "1"
-  formItems.value.bstyle=hasBlank(ecName)?'':ecName.ecCode
+  formItems.value.bstyle='采购入库'
   formItems.value.cmakerTime=!hasBlank(cmakerTime.value)?cmakerTime.value:new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," ")
 
   getDataSource().forEach(a=>{

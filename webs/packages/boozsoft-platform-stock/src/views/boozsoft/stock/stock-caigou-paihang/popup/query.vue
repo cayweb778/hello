@@ -42,8 +42,7 @@
               <span style="color: #5a5a5a">查询日期</span>
               <div>
                 <div class="sbd-left">
-                  <a-radio-group style="width: 100%" v-model:value="radiovalue"
-                                 @change="radiochange">
+                  <a-radio-group style="width: 100%" v-model:value="radiovalue" @change="radiochange">
                     <p>
                       <a-radio value="1"></a-radio>
                       <span style="font-size: 14px;" class="spanclass">会计期间：</span>
@@ -51,7 +50,7 @@
                         v-model:value="strDate"
                         show-search
                         :disabled="dateselflg"
-                        style="width: 94px;color: black;"
+                        style="width: 110px;color: black;"
                         @focus="focusStrDate"
                         @change="handleChangeStrDate"
                       >
@@ -68,7 +67,7 @@
                         v-model:value="endDate"
                         show-search
                         :disabled="dateselflg"
-                        style="width: 94px;color: black;"
+                        style="width: 110px;color: black;"
                         @focus="focusEndDate"
                         @change="handleChangeEndDate"
                       >
@@ -401,7 +400,7 @@ const reLifeQueryParameter = async (dynamicTenant,id) => {
     let blist = dateList.value.filter(it => it.stockYear == busDates[0])
     if (blist.length > 0) { // 存在与业务日期相匹配的年度 使用业务期间 反之使用最大年度期间
       let busQj = blist.filter(it => it.stockMonth == (busDates[1]))[0]
-      maxPingzhengQj.value = (busQj.stockYear+''+busQj.stockMonth)
+      maxPingzhengQj.value = (busQj.stockYear+'-'+busQj.stockMonth)
       strDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
       endDate.value = (busQj.stockYear+'-'+busQj.stockMonth)
     } else {
@@ -552,10 +551,15 @@ async function handleOk() {
     return
   }
 
-  queryModel.variable.periodStart = startQj
-  queryModel.variable.periodEnd = endQj
-  queryModel.variable.dateStart = timeformat(strDate2.value)
-  queryModel.variable.dateEnd = timeformat(endDate2.value)
+  let strTimeView=radiovalue.value=='1'?strDate.value:timeformat(strDate2.value)
+  let endTimeView=radiovalue.value=='1'?endDate.value:timeformat(endDate2.value)
+  let strTime=radiovalue.value=='1'?strDate.value+'-01':timeformat(strDate2.value)
+  let endTime=radiovalue.value=='1'?endDate.value+'-31':timeformat(endDate2.value)
+
+  queryModel.variable.strTimeView = strTimeView
+  queryModel.variable.endTimeView = endTimeView
+  queryModel.variable.strTime = strTime
+  queryModel.variable.endTime = endTime
   modelLoadIng.value = false
   queryModel.constant.queryType = defaultTabsKey.value
   queryModel.constant.companyName = companyName.value
