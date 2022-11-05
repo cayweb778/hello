@@ -64,10 +64,10 @@ const dynamicColumnAndDataModel = reactive({
     },
     {
       key: '2',
-      name: '单据编码',
-      nameNew: '单据编码',
+      name: '单据编号',
+      nameNew: '单据编号',
       check: true,
-      width: 120,
+      width: 150,
       max: 200,
       min: 80,
       align: 'left'

@@ -91,7 +91,7 @@
             </span>
           </template>
           <template #ccode="{ record }">
-            <a @click="toRouter(record)">{{record.ccode}}</a>
+            <a class="tableUStyle" @click="toRouter(record)">{{record.ccode}}</a>
           </template>
           <template #summary>
             <TableSummary fixed>
@@ -206,6 +206,31 @@ const openQuery = async () => {
   })
 }
 
+
+
+const route = useRoute();
+const routeData:any = route.query;
+onMounted(async() => {
+  if((JSON.stringify(routeData) == "{}")){
+    val.value.openOne = 1
+    openQueryPage(true, {
+      data: val.value
+    })
+    initTable()
+    reloadJiCiList()
+  }
+  // 统计跳转明细
+  else{
+    visible.value = true
+    setTimeout(()=>{
+        lanMuData.value.changeNumber+=1
+        visible.value = false
+      }
+      ,100)
+   await saveQuery({data:JSON.parse(routeData.data),map:JSON.parse(routeData.map)})
+  }
+})
+
 const dynamicColumnModel = ref({value:[]})
 const popData:any=ref('')
 const companyName=ref('')
@@ -224,15 +249,11 @@ async function saveQuery(e) {
   companyName.value = data.constant.companyName
   pageParameter.queryMark = data.constant.queryType
   pageParameter.query = data.variable
-  if (!hasBlank(data.variable.periodStart)){
-    qijianText.value = formatText(data.variable.periodStart)+ ' - '+formatText(data.variable.periodEnd)
-  }else{
-    qijianText.value = data.variable.dateStart.replaceAll(/-/g,'.')+ ' - '+data.variable.dateEnd.replaceAll(/-/g,'.')
-  }
+  qijianText.value=data.variable.strTimeView+' - '+data.variable.endTimeView
   findByAll()
   reloadList(e.map)
   pageParameter.selectClass=hasBlank(data.variable.cinvodeClass)?'':data.variable.cinvodeClass
-  reloadColumns()
+  await reloadColumns()
 }
 async function toRouter(data) {
   await closeToFullPaths('/cg-arrive')
@@ -716,24 +737,6 @@ const onSelectChange = (selectedRowKeys, row) => {
     checkRow.value = row
 };
 
-
-const route = useRoute();
-const routeData:any = route.query;
-onMounted(async() => {
-  if((JSON.stringify(routeData) == "{}")){
-    val.value.openOne = 1
-    openQueryPage(true, {
-      data: val.value
-    })
-    initTable()
-    reloadJiCiList()
-  }
-  // 统计跳转明细
-  else{
-    saveQuery({data:JSON.parse(routeData.data),map:JSON.parse(routeData.map)})
-  }
-})
-
 const [registerExcelPage, {openModal: openExcelPage}] = useModal()
 //文件导入
 const openExcel = async () => {
@@ -812,8 +815,6 @@ const dynamicAdReload = async (obj) => {
   accId.value=obj.accId
     // const dataBase:any = await findDataBase(obj.accId,obj.year)
     return false
-    // 底部分页信息
-    // await reloadTable()
 }
 const selectChange = (v) => {
 popData.value.cinvodeClass=v
@@ -834,6 +835,12 @@ return n
 </script>
 <style scoped lang="less">
 @import './global-menu-index.less';
+
+.tableUStyle{
+  cursor: pointer;
+  color: #0a84ff;
+}
+
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
   font-size: 14px !important;

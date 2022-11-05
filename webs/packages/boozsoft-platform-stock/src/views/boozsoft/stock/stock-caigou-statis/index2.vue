@@ -83,6 +83,7 @@
         <BasicTable
             ref="tableRef"
             :row-selection="{ type: 'checkbox'}"
+            @row-click="rowClick"
             :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
             @register="registerTable"
             :dataSource="tableData"
@@ -96,10 +97,8 @@
               </Tag>
             </span>
           </template>
-          <template #cnumber="{ record }"><span v-if="!isNaN(record.cnumber)" class="tableUStyle" @click="openNewPage(record)">
-            {{ parseFloat(record.cnumber).toFixed(2) }}
-          </span></template>
-          <template #baseQuantity="{ record }"><span v-if="!isNaN(record.cnumber)" class="tableUStyle" @click="openNewPage(record)">{{ parseFloat(record.baseQuantity).toFixed(2) }}</span></template>
+          <template #cnumber="{ record }"><span v-if="!isNaN(record.cnumber)">{{ parseFloat(record.cnumber).toFixed(2) }}</span></template>
+          <template #baseQuantity="{ record }"><a v-if="!isNaN(record.cnumber)" class="tableUStyle" @click="openNewPage(record)">{{ parseFloat(record.baseQuantity).toFixed(2) }}</a></template>
           <template #isumRuku="{ record }">{{ toThousandFilter(record.isumRuku) }}</template>
           <template #isumTuihuo="{ record }">{{ toThousandFilter(record.isumTuihuo) }}</template>
           <template #isumFapiao="{ record }">{{ toThousandFilter(record.isumFapiao) }}</template>
@@ -216,6 +215,11 @@ const pageParameter: any = reactive({
 const [registerQueryPage, {openModal: openQueryPage}] = useModal()
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
 
+function rowClick(a) {
+  if(hasBlank(a.ccode)){
+    deleteSelectRowByKey(a.key)
+  }
+}
 const replenishTrs = (list) =>{
   let l = list.length
   if(l<50){
@@ -794,6 +798,7 @@ function formatGgxh(cinvode){
 
 // 这是示例组件
 const [registerTable, {
+  deleteSelectRowByKey,
   reload,
   getDataSource,
   setTableData,
@@ -1020,11 +1025,6 @@ return n
 
 function openNewPage(e) {
   popDataAll.value.data.variable.cinvode2=e.cinvode
-  let data={
-    data: popDataAll.value.data,
-    map: popDataAll.value.map,
-  }
-
   message.success('两秒后将进入明细列表！')
   setTimeout(()=>{
     router.push({
@@ -1036,6 +1036,11 @@ function openNewPage(e) {
 </script>
 <style scoped lang="less">
 @import './global-menu-index.less';
+
+.tableUStyle{
+  cursor: pointer;
+  color: #0a84ff;
+}
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
   font-size: 14px !important;
