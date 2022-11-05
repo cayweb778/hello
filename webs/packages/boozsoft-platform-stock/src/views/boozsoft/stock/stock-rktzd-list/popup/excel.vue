@@ -22,7 +22,7 @@
           <div>
           </div>
           <div>
-            <span style="font-size: 16px;">导入内容：</span><span style="font-weight: bold;font-size: 16px;">出库调整单导入</span><br/><br/>
+            <span style="font-size: 16px;">导入内容：</span><span style="font-weight: bold;font-size: 16px;">采购入库单信息导入</span><br/><br/>
             <span style="font-size: 16px;">模板样式：</span>
             <Select
               v-model:value="codeTemplateId"
@@ -85,9 +85,9 @@
 <script setup="props, {content}" lang="ts">
 import {nextTick, ref, unref} from 'vue'
 import { BasicModal, useModalInner } from '/@/components/Modal'
-/*
-import {ImpExcel} from "/@/views/boozsoft/system/project/excel/components/importexcel";
-*/
+//// import {ImpExcel} from "/@/views/boozsoft/system/project/excel/components/importexcel";
+const ImpExcel=null
+
 import {
   Upload as AUpload,
   Spin as ASpin,
@@ -155,7 +155,7 @@ function exportExcel() {
   aoaToSheetXlsx({
     data: [],
     header: arrHeader,
-    filename: '出库调整单模板.xlsx',
+    filename: '采购出库单模板.xlsx',
   });
 }
 

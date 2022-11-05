@@ -71,13 +71,11 @@
         </template>
       </BasicTable>
     </div>
-<!--    <AddPage @save="saveData" @register="registerSavePage" />-->
+    <AddPage @save="saveData" @register="registerSavePage" />
   </BasicModal>
 </template>
 <script setup="props, { content }" lang="ts">
-/*
-import AddPage from '/@/views/boozsoft/system/acccode2/popup/save.vue';
-*/
+import AddPage from '/@/views/boozsoft/global/popup/accode2/save.vue';
 import {BasicTable, useTable} from '/@/components/Table';
 import { BasicTree } from '/@/components/Tree';
 import { SearchOutlined,CheckOutlined,CaretDownOutlined } from '@ant-design/icons-vue';
@@ -195,7 +193,7 @@ const pageParameter = reactive({
   iyearList: '',
 })
 
-/*const [registerSavePage, { openModal: openSavePage }] = useModal();*/
+const [registerSavePage, { openModal: openSavePage }] = useModal();
 // 这是示例组件
 const [registerTable, { reload,getSelectRows,getDataSource,setTableData }] = useTable({
   api: useRouteApi(company_findByYearsAllCode,{schemaName: database}),

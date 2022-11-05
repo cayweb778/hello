@@ -6,7 +6,7 @@ import MainView from './index2.vue'
 import {defineComponent} from "vue";
 
 export default defineComponent({
-  name: 'CktzdList',
+  name: 'Cktzd',
   components: {
     MainView
   },
