@@ -57,23 +57,21 @@
         </div>
         <div>
           <div>
-            <Select v-model:value="formItems.selectType" style="font-size: 12px;font-weight: bold;" class="special_select">
-              <SelectOption style="font-size: 12px;" value="1">单据编号</SelectOption>
-              <SelectOption style="font-size: 12px;" value="2">客户编码</SelectOption>
-              <SelectOption style="font-size: 12px;" value="3">客户名称</SelectOption>
-              <SelectOption style="font-size: 12px;" value="4">业务部门</SelectOption>
-              <SelectOption style="font-size: 12px;" value="5">业务员</SelectOption>
-              <SelectOption style="font-size: 12px;" value="6">制单人</SelectOption>
-              <SelectOption style="font-size: 12px;" value="7" v-if="typeFlag=='0'">存货编码</SelectOption>
-              <SelectOption style="font-size: 12px;" value="8" v-if="typeFlag=='0'">存货名称</SelectOption>
-              <SelectOption style="font-size: 12px;" value="9" v-if="typeFlag=='0'">批号</SelectOption>
-
+            <Select v-model:value="searchParameter.condition"
+                    class="acttdrd-search-select">
+              <SelectOption style="font-size: 12px;" value="ccode">单据编号</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cvencode">客户编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cvencodeName">客户名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cdepcode">业务部门</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cpersoncode">业务员</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cmaker">制单人</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cinvode" v-if="typeFlag=='0'">存货编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cinvodeName" v-if="typeFlag=='0'">存货名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="batchId" v-if="typeFlag=='0'">批号</SelectOption>
             </Select>
-            <!-- 搜索 -->
-            <InputSearch
-              placeholder=""
-              style="width: 150px; border-radius: 4px;margin-right: 4px"
-              @search="onSearch"
+            <InputSearch v-model:value="searchParameter.value"
+                         class="acttdrd-search-input"
+                         @search="onSearch"
             />
           </div>
 
@@ -918,7 +916,19 @@ const pageParameter: any = reactive({
     query: {}
 })
 
-function onSearch() {
+const searchParameter = reactive({condition: 'ccode',value: ''})
+function onSearch(v) {
+  if (typeFlag.value == '0'){
+    let list = JsonTool.parseProxy( hasBlank(v)?tableDataAll.value:tableDataAll.value.filter(item => item[searchParameter.condition]?.indexOf(v) != -1))
+    setTableData([])
+    tableData.value = replenishTrs(list)
+    setPagination({total: list.length})
+  }else {
+    let list = JsonTool.parseProxy( hasBlank(v)?tableDataAll1.value:tableDataAll1.value.filter(item => item[searchParameter.condition]?.indexOf(v) != -1))
+    setTableData1([])
+    tableData1.value = replenishTrs(list)
+    setPagination1({total: list.length})
+  }
 }
 
 const defaultPage = ref(false)

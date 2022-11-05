@@ -366,7 +366,8 @@ const paginationNumber = ref(0)
 const showPaginationText = ref(false)
 async function getStockXCL() {
   loadMark.value=true
-  let map = {searchMap:formItems.value,queryType:'pcxcl',iyear:pageParameter.year,rkBcheck:pageParameter.thisAdInfo.target?.kcCgrkCheck,ckBcheck:pageParameter.thisAdInfo.target?.kcXsckCheck,ckId: formItems.value.ckId,stockId: stockId.value}
+  let map = {searchMap:formItems.value,queryType:'pcxcl',iyear:pageParameter.year,rkBcheck:pageParameter.thisAdInfo.target?.kcCgrkCheck,ckBcheck:pageParameter.thisAdInfo.target?.kcXsckCheck,
+    ckId: formItems.value.ckId,stockId: stockId.value,batchId:batchId.value,dpdate:dpdate.value,dvdate:dvdate.value}
   let temp= await useRouteApi(findByStockXCL, {schemaName: dynamicTenantId})(map)
   temp.forEach(async (a)=>{
     // 默认为空，如勾选仓库显示具体仓库名称

@@ -89,14 +89,8 @@
         :loading="loadMark"
       >
         <template #state="{ record }">
-          <span v-if="record.state=='临近'">
-            <a-tag color="orange">临近</a-tag>
-          </span>
-          <span v-if="record.state=='正常'">
-            <a-tag color="green">正常</a-tag>
-          </span>
-          <span v-if="record.state=='失效'">
-            <a-tag color="red">失效</a-tag>
+          <span v-if="!hasBlank(record.state)">
+            <a-tag :color="record.state=='临近'?'orange':record.state=='正常'?'green':'red'">{{record.state}}</a-tag>
           </span>
         </template>
         <template #baseQuantity="{ record }"> {{ toThousandFilter(record.baseQuantity) }} </template>
@@ -174,7 +168,7 @@ import {
   saveStockLanMuList
 } from "/@/api/record/system/stock-column-view-settings";
 import {cloneDeep} from "lodash-es";
-import {kcPcXCLStore} from "/@/views/boozsoft/stock/stock-kc-pc-xcl/generalLedger";
+import {kcWarningStore} from "/@/views/boozsoft/stock/stock-warning-list/generalLedger";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {findByStockXCL} from "/@/api/record/stock/stock-kc-xcl";
 import {multiUnitOfMea, singleUnitOfMea} from "/@/api/record/stock/stock";
@@ -224,7 +218,7 @@ const parameter = reactive({
     value: '',
   },
 })
-const glStore = kcPcXCLStore()
+const glStore = kcWarningStore()
 const summaryTotals = ref({})
 const {
   createSuccessModal,
@@ -254,6 +248,7 @@ const openQuery = async () => {
 
 async function loadPage(data) {
   formItems.value.ckId=data.ckId
+  stockId.value=data.stockNum
   dynamicTenantId.value=data.databaseTrue
   getStockXCL()
 
@@ -629,6 +624,7 @@ function excelData() {
   data.forEach(v => {
     v.fujl1 = v.fujl1 == null ? '' : v.fujl1
     v.fujl2 = v.fujl2 == null ? '' : v.fujl2
+    v.cwhcodeName = v.cwhcodeName == null ? '' : v.cwhcodeName
     v.stockGgxh = v.stockGgxh == null ? '' : v.stockGgxh
     v.baseQuantity = v.baseQuantity == null ? '' : toThousandFilter(v.baseQuantity)
     v.subQuantity1 = v.subQuantity1 == null ? '' : toThousandFilter(v.subQuantity1)
