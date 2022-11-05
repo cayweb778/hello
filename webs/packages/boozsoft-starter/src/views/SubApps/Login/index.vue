@@ -14,19 +14,20 @@
 </template>
 <script setup lang="ts">
 import {ref, getCurrentInstance} from 'vue'
-import router from "../../router";
+import router from "../../../router";
 import {isProdMode} from "@/utils/env";
-import {modules} from "../../../pages/menuData";
+import {modules} from "../../../../pages/menuData";
 import {useCounterStore} from "@/stores/counter";
 
 const wujieVueRef = ref()
 const wujieAttrs = ref({
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/nchome' : '//localhost:3800',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncauth' : '//localhost:3100',
   props: {
     menuModules: modules,
     aa: 1,
     goSystem: (attrs: any) => {
       useCounterStore().setShowFooter(true)
+
       router.push('/home')
     }
   },

@@ -6,17 +6,35 @@ const router = createRouter({
         {
             path: '/login',
             name: 'login',
-            component: () => import('../views/Login/index.vue')
+            component: () => import('../views/SubApps/Login/index.vue')
         },
         {
             path: '/home',
-            name: 'home',
-            component: () => import('../views/Home/index.vue')
+            name: 'Home',
+            component: () => import('../views/SubApps/Home/index.vue')
+
         },
+        {
+            path: '/gdzc',
+            name: 'Gdzc',
+            component: () => import('../views/SubApps/Gdzc/index.vue')
+        },
+
+        {
+            path: '/stock',
+            name: 'Stock',
+            component: () => import('../views/SubApps/Stock/index.vue')
+        },
+        {
+            path: '/zongzhang',
+            name: 'Zongzhang',
+            component: () => import('../views/SubApps/Zongzhang/index.vue')
+        },
+
         {
             path: '/system',
             name: 'system',
-            component: () => import('../views/System/index.vue')
+            component: () => import('../views/SubApps/System/index.vue')
         },
         {
             path: '/about',

@@ -13,9 +13,9 @@
 </template>
 <script setup lang="ts">
 import {ref, getCurrentInstance, inject} from 'vue'
-import router from "../../router";
+import router from "../../../router";
 import {isProdMode} from "@/utils/env";
-import {modules} from "../../../pages/menuData";
+import {modules} from "../../../../pages/menuData";
 
 const wujieVueRef = ref()
 const NcProvider = inject('NcProvider')

@@ -1,8 +1,8 @@
 <template>
-  <div style="width:100vw;height:100vh"   v-show="showGdzc">
-    <HelloMicro></HelloMicro>
-  </div>
-  <div style="width:100vw;height:100vh" v-show="!showGdzc">
+<!--  <div style="width:100vw;height:100vh">-->
+<!--    <HelloMicro></HelloMicro>-->
+<!--  </div>-->
+  <div style="width:100vw;height:100vh">
     <ServerError v-if="showServerError"></ServerError>
     <App2 v-else></App2>
   </div>
@@ -11,7 +11,7 @@
 import App2 from './App2.vue'
 import {usePlatformsStoreWidthOut} from "/@/store/modules/platforms";
 import {defineCacheShowGdzc} from "/@/boozsoft/defineCacheShowGdzc";
-import HelloMicro from './SubApps/Gdzc.vue'
+// import HelloMicro from './SubApps/Gdzc.vue'
 import {ref} from "vue";
 
 const showGdzc=ref(false)

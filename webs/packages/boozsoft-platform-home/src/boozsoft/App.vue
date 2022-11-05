@@ -46,7 +46,6 @@ const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 
 // 跳转平台监听
 window?.$wujie.bus.$on("goGuDingZiChan", function (id) {
-  debugger
   setCacheShowGdzc(true)
   // /** 设定延时请求( 比如router.ready() )，防止首次加载,组件还未渲染 start **/
   window?.$wujie.bus.$emit('goGuDingZiChanxxxx',id)

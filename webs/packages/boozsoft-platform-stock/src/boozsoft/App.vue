@@ -29,6 +29,14 @@ import DesktopZoom from '/@/boozsoft/components/DesktopComponents/DesktopZoom/in
 import 'dayjs/locale/zh-cn';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import {getPopupContainer} from "/@/boozsoft/designs/antdFuns";
+import {usePlatformsStoreWidthOut} from "/@/store/modules/platforms";
+
+window?.$wujie.bus.$on("goStock", function (id) {
+  const layoutsStore = usePlatformsStoreWidthOut();
+
+
+  layoutsStore.switchPlatform({ id})
+});
 useTitle();
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>

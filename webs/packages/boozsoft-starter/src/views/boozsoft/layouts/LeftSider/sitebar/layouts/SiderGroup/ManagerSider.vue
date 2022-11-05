@@ -104,10 +104,10 @@ function abc() {
   // },1000)
 }
 
-import {goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
+import {goSystem} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
 
 function toGoPlatformById(id){
-  goPlatformById(id)
+  goSystem(id)
 }
 
 function clickItem(it){

@@ -112,25 +112,23 @@ function abdc(){
   bus.$emit("goPlatform",'11112321');
 }
 
-import {goGuDingZiChan, goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
+import {goZongZhang,goStock,goSystem,goGuDingZiChan, goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
 import router from "@/router";
 import {useCounterStore} from "@/stores/counter";
 
 function toGoPlatformById(id : any){
-  console.log('xxx')
-  console.log(id)
-  console.log('xxx')
   useCounterStore().setShowFooter(true)
-  if(id==1099 || id==20017 || id==1007){
+  if(id==1006 ||id==1001 || id==10131200){
+    goZongZhang(id)
+  }else if(id==20001){
+    goGuDingZiChan(id)
+  }else if(id==1099 || id==20017 || id==1007){
     // router.push('/nc/gdzc')
     setTimeout(()=>{
-      goGuDingZiChan(id)
+      goStock(id)
     },1000)
   }else{
-    router.push('/system')
-    console.log(999999)
-    console.log(id)
-    goPlatformById(id)
+    goSystem(id)
   }
 }
 function clickItem(it : any){

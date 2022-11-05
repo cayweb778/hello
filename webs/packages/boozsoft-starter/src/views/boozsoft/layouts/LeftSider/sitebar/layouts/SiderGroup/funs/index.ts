@@ -13,6 +13,25 @@ export function goPlatformById(id : any){
     bus.$emit("goPlatform",id);
 }
 
-export function goGuDingZiChan(id : any){
+
+export function goZongZhang(id : any){
+    router.push("/zongzhang")
     bus.$emit("goGuDingZiChan",id);
+}
+
+
+export function goStock(id : any){
+    router.push("/stock")
+    bus.$emit("goStock",id);
+}
+
+
+export function goGuDingZiChan(id : any){
+    router.push("/gdzc")
+    bus.$emit("goGuDingZiChan",id);
+}
+
+export function goSystem(id : any){
+    router.push("/system")
+    bus.$emit("goPlatform",id);
 }

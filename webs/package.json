@@ -17,6 +17,8 @@
     "start:system": "cd packages/boozsoft-platform-system && pnpm dev",
     "start:home": "cd packages/boozsoft-platform-home && pnpm dev",
     "start:stock": "cd packages/boozsoft-platform-stock && pnpm dev",
+    "start:zongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm dev",
+    "start:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm dev",
     "build": "run-p build:*",
     "build:main": "cd packages/boozsoft-starter && pnpm build",
     "build:auth": "cd packages/boozsoft-auth && pnpm build",
