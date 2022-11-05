@@ -1,382 +1,420 @@
 <template>
-  <BasicModal width="925px"
-              v-bind="$attrs"
-              :title="''"
-              @ok="handleOk()"
-              @register="register">
+  <BasicModal
+    width="700px"
+    class="spaceLogo"
+    v-bind="$attrs"
+    @ok="handleOk()"
+    @cancel="handleClose()"
+    @register="register"
+    :canFullscreen="false"
+    :footer="null"
+    loadingTip="查询参数初始化中"
+  >
     <template #title>
-      <div style="display: flex;" class="vben-basic-title">
-        <img src="/create.svg" style="width:25px;margin-right: 10px;"/>
-        <span style="line-height: 25px;font-size: 16px;">表头栏目设置</span>
+      <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;">
+        <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
+        <span style="font-size: 14px">库存管理</span>
       </div>
     </template>
-    <div class="nc-query-open-content">
-      <div class="content-head">
-        <Button type="primary" @click="addRow">
-          增行
-        </Button>&nbsp;&nbsp;
-        <Button @click="delRow">
-          删行
-        </Button>&nbsp;&nbsp;
-        <Button @click="exec('up')">
-          上调
-        </Button>&nbsp;&nbsp;
-        <Button @click="exec('down')">
-          下调
-        </Button>
+    <div style="display: inline-flex;justify-content: space-between;width: 100%;">
+      <div style="width: calc(100% - 150px);height: 100%;">
+        <div style="text-align: center;padding: 10px 0 5px;">
+          <SearchOutlined style="font-size: 24px;color: #0096c7;margin-top: 2px"/>
+          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;入库调整单</span>
+        </div>
+        <div class="nc-open-content">
+          <div class="open-content-up">
+            <div class="border-div">
+              <span>业务范围</span>
+              <AccountPicker  theme="three" @reloadTable="dynamicAdReload"/>
+            </div>
+            <div class="border-div">
+              <span>日期条件</span>
+              <div>
+                <div class="sbd-left" style="padding-left: 5%;">
+                  <p>
+                    <span><font style="color: red">*</font>制单日期：</span>
+                    <a-date-picker style="width: 160px;" v-model:value="formItems.dateStart" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
+                    -
+                    <a-date-picker style="width: 160px;" v-model:value="formItems.dateEnd" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="border-div">
+              <span>查询条件</span>
+              <div style="padding-left: 15px;">
+                <label>单据编码：</label>
+                <a-input  style="width: 280px;margin-left: 20px;" :allowClear="true" placeholder=""
+                         v-model:value="ccode"/>
+              </div>
+              <div style="padding-left: 15px;">
+                <label>存货仓库：</label>
+                <a-select
+                  v-model:value="cangrk"
+                  show-search
+                  style="width: 280px;margin-left: 20px;"
+                >
+                  <a-select-option
+                    v-for="item in cangkuList"
+                    :value="item.id"
+                  >
+                    {{ item.ckName }}
+                  </a-select-option>
+                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
+                </a-select>
+                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openHeadSelectContent('cangrk')" /></a>
+              </div>
+              <div style="padding-left: 15px;">
+                <label>业务部门：</label>
+                <a-select
+                  v-model:value="dept"
+                  show-search
+                  style="width: 280px;margin-left: 20px;"
+                >
+                  <a-select-option
+                    v-for="item in deptList"
+                    :key="item.uniqueCode"
+                    :value="item.uniqueCode"
+                  >
+                    {{ item.deptCode +'-'+ item.deptName}}
+                  </a-select-option>
+                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
+                </a-select>
+                <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openHeadSelectContent('dept')" /></a>
+              </div>
+
+             <div style="padding-left: 15px;">
+                <span class="right_span">业务人员：</span>
+               <a-select
+                 v-model:value="user"
+                 show-search
+                 style="width: 280px;margin-left: 20px;"
+               >
+                 <a-select-option
+                   v-for="item in psnList"
+                   :key="item.id"
+                   :value="item.id"
+                 >
+                   {{ item.psnName}}
+                 </a-select-option>
+                 <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
+               </a-select>
+               <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openHeadSelectContent('user')" /></a>
+              </div>
+
+
+
+              <div style="padding-left: 15px;">
+                <label > &nbsp;状 &nbsp;&nbsp;态：</label>
+                <a-select
+                  v-model:value="dataType"
+                  show-search
+                  style="width: 280px;text-align: center;margin-left: 30px;"
+                >
+                  <a-select-option
+                    v-for="item in dataTypeList"
+                    :value="item.value"
+                  >
+                    {{ item.title }}
+                  </a-select-option>
+                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
+                </a-select>
+              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="content-body">
-        <BasicTable
-          :row-selection="{ type: 'checkbox',fixed: true,selectedRowKeys: tableSelectedRowKeys, onSelect: onSelectChange ,getCheckboxProps: onCheckChange}"
-          :row-key="r=>r.field"
-          :scroll="{ y: 290 }"
-          class="alone-basic-table"
-          size="small"
-          @register="registerTable"
-        >
-          <template #columnType="{ record }">
-            <Tag color="#87d068" v-if="record.columnType == '1'">系统</Tag>
-            <Tag color="#f50" v-else>自定义</Tag>
-          </template>
-          <template #field="{ record }">
-            <template v-if="record?.editOne">
-              <Select v-model:value="record.tempOne" style="width: 85%;"
-                      @change="change(record.tempOne,record)" @focus="filterList">
-                <SelectOption v-for="v in fieldList" :value="v">
-                  {{ v }}
-                </SelectOption>
-              </Select>
-              <CheckOutlined @click="record.editOne = null;record.field=record.tempOne;"/>
-            </template>
-            <template v-else>
-              <span>{{ record.field }}
-              <EditOutlined v-if="record?.readonly != true && record.columnType != '1'"
-                            @click="record.editOne = true;record.tempOne=record.field"/></span>
-            </template>
-          </template>
-          <template #label="{ record }">
-            <template v-if="record?.editTwo">
-              <Input v-model:value="record.tempTwo"
-                     style="width: 82%;"
-                     @keyup.enter="checkNameF(record)"/>
-              <CheckOutlined @click="checkNameF(record)"/>
-            </template>
-            <template v-else>
-              <span class="a-table-font-arial">{{ record.label }}
-              <EditOutlined v-if="record?.readonly != true"
-                            @click="record.editTwo = true;record.tempTwo=record.label"/></span>
-            </template>
-          </template>
-          <template #component="{ record }">
-            <template v-if="record?.editThree">
-              <Select v-model:value="record.tempThree" style="width: 85%;">
-                <SelectOption value="Input">手工录入</SelectOption>
-                <SelectOption value="Select">来源档案</SelectOption>
-                <SelectOption value="DatePicker">日期选择</SelectOption>
-              </Select>
-              <CheckOutlined @click="record.editThree = null;record.component=record.tempThree;"/>
-            </template>
-            <template v-else>
-              <span>{{
-                  record.component == 'Select' ? '下拉选择' : record.component == 'DatePicker' ? '日期选择' : '手工录入'
-                }}
-              <EditOutlined v-if="record?.readonly != true && record.columnType != '1'"
-                            @click="record.editThree = true;record.tempThree=record.component"/></span>
-            </template>
-          </template>
-          <template #required="{ record }">
-            <Checkbox v-model:checked="record.required" :disabled="record.readonly"/>
-          </template>
-          <template #componentProps="{ record }">
-            <template v-if="record?.editFive">
-              <Select v-model:value="record.tempFive" style="width: 85%;"
-                      :options="dataSourceList"/>
-              <CheckOutlined
-                @click="record.editFive = null;record.componentProps=record.tempFive;"/>
-            </template>
-            <template v-else>
-              <span>{{ record.componentProps }}
-              <EditOutlined
-                v-if="!record?.readonly &&  (record.component == 'Select') && record.columnType != '1'"
-                @click="record.editFive = true;record.tempFive=record.componentProps"/></span>
-            </template>
-          </template>
-          <template #isShow="{ record }">
-            <Checkbox v-model:checked="record.isShow" :disabled="record.readonly"/>
-          </template>
-        </BasicTable>
+      <div class="right-btns">
+        <Button style="width: 100px;" shape="round" @click="handleOk"  type="primary">查询</Button>
+        <Button style="width: 100px;margin-top: 10px" shape="round" @click="handleClose">取消</Button>
       </div>
     </div>
+
+
+    <StockCangKuModalPop @register="registerStockCangKuModalPage" @throwData="modalData"/>
+    <DeptModalPop @register="registerSelectDeptPage" @save="modalData"/>
+    <SelectPsn @register="registerSelectPsnPage" @save="modalData"/>
   </BasicModal>
 </template>
-<script setup="props, { content }" lang="ts">
-import {ref} from 'vue';
-import {BasicModal, useModalInner} from '/@/components/Modal';
-import {CheckOutlined, EditOutlined} from '@ant-design/icons-vue';
-import {Button, Checkbox, DatePicker, Input, message, Radio, Select, Tag} from 'ant-design-vue';
-import {useMessage} from "/@/hooks/web/useMessage";
-import {BasicTable, useTable} from '/@/components/Table'
-import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {useUserStoreWidthOut} from "/@/store/modules/user";
-import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
-import {delStockColumnList, saveStockColumnList} from "/@/api/record/stock/stock-caigou";
-import {JsonTool, ObjTool} from "/@/api/task-api/tools/universal-tools";
+
+<script setup="props, {content}" lang="ts">
+/********************************************* 公共参数 ********************************************************/
+import {BasicModal, useModal, useModalInner} from '/@/components/Modal'
 import {
-  GenerateDynamicColumn
-} from "/@/views/boozsoft/stock/stock-cktzd-list/component/DynamicForm";
+  message,
+  Button,
+  Checkbox as ACheckbox,
+  DatePicker as ADatePicker,
+  Input as AInput,
+  Radio as ARadio,
+  Select as ASelect,
+  Tabs as ATabs
+} from "ant-design-vue"
+import {AppstoreOutlined, SearchOutlined,CaretDownOutlined,LinkOutlined} from '@ant-design/icons-vue';
+import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
+import {useUserStore} from "/@/store/modules/user";
+import {useMessage} from "/@/hooks/web/useMessage";
+import {ref} from "vue";
+import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker-STOCK.vue";
+import router from "/@/router";
+import {useTabs} from "/@/hooks/web/useTabs";
+import {hasBlank, pointMessage} from "/@/api/task-api/tast-bus-api";
+import moment, {Moment} from 'moment';
+import dayjs from "dayjs";
+import {psnFindAll, psnFindByFlag} from "/@/api/psn/psn";
+import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
+import {findAll as cangkuAll} from "/@/api/record/stock/stock-cangku";
+import {findDeptList} from "/@/api/record/stock/stock_taking";
 
-const RangePicker = DatePicker.RangePicker;
-const SelectOption = Select.Option;
-const RadioGroup = Radio.Group;
+import StockCangKuModalPop from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
+import DeptModalPop from "/@/views/boozsoft/global/popup/dept/select-dept.vue";
+import SelectPsn from "/@/views/boozsoft/global/popup/dept/select-psn.vue";
 
-const emit = defineEmits(['register', 'query']);
-const formItems: any = ref({});
-const schemaName = ref('')
-
-const dataSourceList = ref([{value: 'customer', label: '客户'}, {value: 'supplier', label: '供应商'}])
-const tableSelectedRowKeys = ref([])
-const onSelectChange = (record, selected, obj, nativeEvent) => {
-  let o = obj.map(it => it.field)
-  tableSelectedRowKeys.value = o.filter(v => v != 'field1' && v != 'field2' && v != 'field3')
-}
-const onCheckChange = (record) => {
-  return {disabled: (record.label === '到货日期' || record.label === '到货单号' || record.label === '供应商' || record.label === '仓库')}
-}
-
-const [registerTable, {getDataSource, setTableData}] = useTable({
-  columns: [
-    {
-      title: '属性类型',
-      dataIndex: 'columnType',
-      width: '75px',
-      slots: {customRender: 'columnType'}
-    },
-    {
-      title: '属性名称',
-      dataIndex: 'field',
-      width: '130px',
-      align: 'left',
-      slots: {customRender: 'field'}
-    }, {
-      title: '标题名称',
-      dataIndex: 'label',
-      width: '120px',
-      align: 'left',
-      slots: {customRender: 'label'}
-    },
-    {
-      title: '输入类型',
-      dataIndex: 'component',
-      width: '140px',
-      align: 'left',
-      slots: {customRender: 'component'}
-    },
-    {
-      title: '参数来源',
-      dataIndex: 'componentProps',
-      width: '140px',
-      slots: {customRender: 'componentProps'}
-    }, {
-      title: '必填',
-      dataIndex: 'required',
-      width: '80px',
-      slots: {customRender: 'required'}
-    }, {
-      title: '显示',
-      dataIndex: 'isShow',
-      width: '80px',
-      slots: {customRender: 'isShow'}
-    }
-  ],
-  bordered: true,
-  showIndexColumn: true,
-  pagination: {
-    pageSize: 50,
-    showSizeChanger: true,
-    pageSizeOptions: ['50'],
-    showTotal: t => `总共${t}条数据`
-  },
-})
-
-
-const dynamicColumnDataCopy = ref([])
-
-
-const [register, {closeModal, setModalProps}] = useModalInner(async (o) => {
-  formItems.value = {}
-  schemaName.value = o.schemaName
-  let list = await GenerateDynamicColumn(schemaName.value)
-  // 加载默认数据
-  dynamicColumnDataCopy.value = JsonTool.parseProxy(list.filter(it => it.label != '到货日期' && it.label != '到货单号' && it.label != '供应商'))
-  setTableData(list)
-  setModalProps({minHeight: 420});
+const { closeCurrent } = useTabs(router);
+const emit = defineEmits(['register', 'save'])
+const ARangePicker = ADatePicker.RangePicker
+const ASelectOption = ASelect.Option
+const AInputSearch = AInput.Search
+const ARadioGroup = ARadio.Group
+const ARadioButton = ARadio.Button
+const ACheckboxGroup = ACheckbox.Group
+const ATabPane = ATabs.TabPane
+const userStore = useUserStore();
+const busDate = useCompanyOperateStoreWidthOut().getLoginDate
+const {createWarningModal} = useMessage();
+const companyOperateStore = useCompanyOperateStoreWidthOut()
+const modelLoadIng = ref(false)
+const openType = ref('')
+const databaseTrue = ref('')
+const dynamicAccId = ref('')
+const formItems: any = ref({
+  dateStart:  dayjs(moment(useCompanyOperateStoreWidthOut().getLoginDate).subtract(1, 'month').format('YYYY-MM-DD')),
+  dateEnd:dayjs(useCompanyOperateStoreWidthOut().getLoginDate),
 });
 
-const change = (v, o) => {
-  /*let list = model.filter(it => it.field == v)
-  if (list.length > 0) {
-    o.label = list[0].label
-    o.component = list[0].component
-    o.componentProps = list[0].componentProps
-    o.required = list[0].required
-  }*/
-}
+//************************************* new ***************************
+let radiovalue = ref('1');
+const riqi: any = ref([]);
+const endDate = ref<String>("")
+const strDate = ref<String>("")
+let endDateList: any = ref([])
+let strDateList: any = ref([])
+let time: any = ref<Moment[]>([]);
+const quarterList: any = ref([])
+//************************************* 查询条件 ***************************
+const strNum: any = ref('')
+const endNum: any = ref('')
+const dataType: any = ref('')
+const dataTypeList: any = ref([{title:'全部',value:''},{title:'已审核',value:'1'},{title:'未审核',value:'0'}])
+const sup: any = ref('')
+const supList: any = ref([])
+const cangku: any = ref('')
+const cangrk: any = ref('')
+const cangck: any = ref('')
+const cangkuList: any = ref([])
+const thisEditType = ref('')
+const ccode: any = ref('')
 
-const {createWarningModal, createConfirm} = useMessage()
-const lanMuData = {
-  'menuName': '出库调整单表头栏目',
-  objects: '',
-  username: useUserStoreWidthOut().getUserInfo.username
-}
-
-function filterModifyData(lanMuList: any, copyList) {
-  let a = lanMuList.filter(item => {
-    try {
-      let arr = copyList.filter(it => it.field == item.field)
-      if (arr.length > 0) { // 存在
-        let item2 = arr[0]
-        if (item.label != item2.label || item.component != item2.component || item.componentProps != item2.componentProps || item.required != item2.required || item.isShow != item2.isShow || item.serial != item2.serial)
-          throw new Error('ok')
-      } else {// 新增的
-        return true;
-      }
-      return false
-    } catch (e) {
-      if (e.message == 'ok') {
-        return true
-      } else {
-        return false
-      }
-    }
-  })
-  if (lanMuList.length < copyList.length){
-    // 找到减少项
-    let keys = lanMuList.map(it=>it.field)
-    let b = copyList.filter(it=>keys.indexOf(it.field) == -1).map(it=>{it['del']=true;return it})
-    a.push(...b)
+const [registerModalPopPage, {openModal: openMoalPopPage}] = useModal();
+const [registerStockCangKuModalPage, {openModal: openStockCangKuModalPage}] = useModal();
+const [registerSelectDeptPage, {openModal: openSelectDeptPage}] = useModal()
+const [registerSelectPsnPage, {openModal: openSelectPsnPage}] = useModal()
+const openHeadSelectContent = (type) => {
+  thisEditType.value = type
+  switch (type) {
+    case 'dept':
+      openSelectDeptPage(true, {
+        currentDynamicTenant: databaseTrue.value
+      })
+      break;
+    case 'cangck':
+      openStockCangKuModalPage(true, {
+        database: databaseTrue.value,
+      })
+      break;
+    case 'cangrk':
+      openStockCangKuModalPage(true, {
+        database: databaseTrue.value,
+      })
+      break;
+    case 'user':
+      openSelectPsnPage(true, {
+        currentDynamicTenant: databaseTrue.value
+      })
+      break;
   }
-  return a;
+}
+const modalData = (o) => {
+  switch (thisEditType.value) {
+    case 'dept':
+      dept.value = o.uniqueCode
+      break;
+    case 'cangck':
+      cangck.value = o[0].id
+      break;
+    case 'cangrk':
+      cangrk.value = o[0].id
+      break;
+    case 'user':
+      console.log(o)
+      user.value = o.id
+      break;
+  }
 }
 
-async function handleOk() {
-  let list = getDataSource().filter(it => !hasBlank(it.field) && !hasBlank(it.label) && !hasBlank(it.component)).filter(it => it.label != '入库日期' && it.label != '入库单号' && it.label != '供应商')
-  list = filterModifyData(list, dynamicColumnDataCopy.value).map(it => ObjTool.dels(it, ['editOne', 'editTwo', 'editThree', 'editFive', 'tempOne', 'tempTwo', 'tempThree', 'tempFive']))
-  let lastList = list.filter(it=>it['del'] == null)
-  let delList = list.filter(it=>it['del'] == true)
-  if (lastList.length == 0 && delList.length == 0) {
-    createWarningModal({title: '温馨提示', content: '暂未发现数据任何变化！'})
-  } else {
-    createConfirm({
-      iconType: 'warning',
-      title: '标题栏目同步',
-      content: '是否将刚才设置同步数据库!',
-      onOk: async () => {
-        // 调整数据库 列参数
-        if (delList.length > 0) {
-          useRouteApi(delStockColumnList, {schemaName: schemaName.value})({
-            menuName: '出库调整单表头栏目',
-            fieldFame: JsonTool.json(delList.filter(it => it.columnType == '2').map(it => it.field))
-          })
-        }
-        if (lastList.length > 0) {
-          lanMuData.objects = JSON.stringify(lastList)
-          let res = await useRouteApi(saveStockColumnList, {schemaName: schemaName.value})(lanMuData)
-          if (null == res) message.success('后台同步成功！')
-          emit('query', {})
-        }
-        closeModal();
-        return true;
-      }
-    });
+const [register, {closeModal, setModalProps}] = useModalInner((data) => {
+  formItems.value.openOne = data.data.openOne;
+  openType.value=data.openType
+  setModalProps({ minHeight: 475 });
+})
+const dynamicAdReload = async (obj) =>{
+  databaseTrue.value=obj.accountMode
+  dynamicAccId.value=obj.accId
+  modelLoadIng.value=true
+  iyear.value=obj.year
+  coCode.value =obj.coCode
+  companyName.value =obj.companyName
+
+  await getSup(obj.accountMode)
+  await getCangku(obj.accountMode)
+  await getDept(obj.accountMode)
+  modelLoadIng.value=false
+}
+
+const dept:any = ref('')
+const deptList:any = ref([])
+const user:any = ref('')
+const psnList:any = ref([])
+async function getDept(accountMode) {
+  //部门 deptList
+  deptList.value = await useRouteApi(findDeptList,{schemaName: accountMode})({})
+}
+async function getSup(accountMode) {
+  let res = await useRouteApi(psnFindByFlag,{schemaName: accountMode})({})
+  psnList.value = res
+  console.log(res)
+}
+
+async function getCangku(accountMode) {
+  let temp=await useRouteApi(cangkuAll,{schemaName: accountMode})({searchConditon:{requirement:'stockNum', value:''}})
+  cangkuList.value=temp.items
+  console.log(cangkuList.value)
+}
+
+
+const coCode = ref('')
+const companyName = ref('')
+const iyear = ref('2022')
+function handleOk() {
+  if(!formItems.value.dateStart){
+    message.error("请输入开始日期")
+    return
   }
+
+  if(!formItems.value.dateEnd){
+    message.error("请输入开始日期")
+    return
+  }
+  let map={
+    strDate:timeformat(formItems.value.dateStart),
+    endDate:timeformat(formItems.value.dateEnd),
+    ccode:ccode.value,
+    dataType:dataType.value,
+    user:user.value,
+    dept:dept.value,
+    strNum:'',
+    endNum:'',
+    sup:'',
+    jssup:'',
+    cangku:'',
+    iyear: iyear.value,
+    database:databaseTrue.value,
+    coCode:coCode.value,
+    companyName:companyName.value,
+    type:'RKTZD'
+  }
+  emit('save', map);
+  closeModal();
 }
 
 async function handleClose() {
-}
-
-const filterOption = (input: string, option: any) => {
-  return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-}
-
-const addRow = () => {
-  let list = getDataSource()
-  if (list.length < 27) {
-    list.push({readonly: false, required: false, component: 'Input', columnType: 2, isShow: true,serial: list.length+1})
-    setTableData(list)
-  } else {
-    createWarningModal({title: '温馨提示', content: '自定义项不可超过16行!'})
+  if (null != formItems.value.openOne && formItems.value.openOne == 1) {
+    await closeCurrent();
+    router.push('/zhongZhang/home/welcome');
+  }else{
+    closeModal();
   }
+  return true;
 }
-const delRow = () => {
-  if (tableSelectedRowKeys.value.length == 0) {
-    createWarningModal({title: '温馨提示', content: '删行时请至少选择一下项!'})
-  } else {
-    let list = getDataSource()
-    let a = (list.filter(it => tableSelectedRowKeys.value.indexOf(it.field) != -1 && it.columnType == '1')).length
-    if (a > 0) {
-      createWarningModal({title: '温馨提示', content: '所选行存在系统字段,不能进行删除操作!'})
-      return false;
-    }
-    list = list.filter(it => tableSelectedRowKeys.value.indexOf(it.field) == -1)
-    setTableData(list)
-    tableSelectedRowKeys.value.length = []
-  }
-}
-let swapItems = (arr, index1, index2) => {
-  arr[index1] = arr.splice(index2, 1, arr[index1])[0];
-  arr.forEach((v,i)=> v['serial'] = (i+1)) // 整理后台序号
-  return arr;
-};
-const exec = (t) => {
-  if (tableSelectedRowKeys.value.length != 1) {
-    createWarningModal({title: '温馨提示', content: '上下移动行时,只能选择一行进行移动!'})
-  } else {
-    let arr = getDataSource()
-    let $index = arr.findIndex(it => it.field == tableSelectedRowKeys.value[0])
-    if (t == 'up') {
-      if ($index < 5) return;
-      arr = swapItems(arr, $index, $index - 1);
-    } else {
-      if ($index == arr.length - 1) return;
-      arr = swapItems(arr, $index, $index + 1);
-    }
-    setTableData(arr)
-  }
-}
-const fieldList = ref([])
-const filterList = () => {
-  let list = getDataSource().filter(it => it.field && '' != it.field).map(it => it.field)
-  let arr = []
-  for (let i = 1; i <= 12; i++) {
-    let v = 'cfree' + i
-    if (list.indexOf(v) == -1) arr.push(v)
-  }
-  fieldList.value = arr
-}
-
-function checkNameF(record) {
-  let list = getDataSource().filter(it => it.field != null && '' != it.field).map(it => it.label)
-  if (list.length > 0 && list.indexOf(record.tempTwo) != -1) {
-    createWarningModal({title: '温馨提示', content: '标题名称已重复!'})
-    record.tempTwo = ''
-  } else {
-    record.editTwo = null;
-    record.label = record.tempTwo;
-  }
+// 日期格式化
+function timeformat(dateData) {
+  let date = new Date(dateData);
+  let y = date.getFullYear();
+  let m = date.getMonth() + 1;
+  m = m < 10 ? '0' + m : m;
+  let d = date.getDate();
+  d = d < 10 ? '0' + d : d;
+  return y + '-' + m + '-' + d;
 }
 </script>
-<style lang="less" scoped="scoped">
-@import '/@/assets/styles/part-open.less';
-@import '/@/assets/styles/alone-basic-table.less';
-
-.nc-query-open-content {
-  text-align: center;
-  padding: 1%;
-  height: 100%;
-
-  .content-head {
-    text-align: right;
-    margin-bottom: 1em;
+<style lang="less" scoped>
+:deep(.ant-checkbox){
+  margin-top: -8px;
+}
+.nc-open-content {
+  background-image: url(/@/assets/images/homes/bg-pattern.png);
+  background-repeat: no-repeat;
+  background-position: 66% 8%;
+  background-size: contain;
+  position: relative;
+  :deep(.ant-select-selector),:deep(.ant-input),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
+    border: none !important;
+    border-bottom: 1px solid #bdb9b9 !important;
+    background: none;
   }
+  .border-div {
+    position: relative;
+    border: 1px #a29f9f solid;
+    margin: 20px 10px;
+    padding: 2.5%;
+
+    > span {
+      display: block;
+      text-align: center;
+      background-color: white;
+      position: absolute;
+      left: 50px;
+      top: -10px;
+      color: #888888;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    :deep(.account-picker){
+      >div{
+        text-align: left;
+      }
+    }
+  }
+
+}
+
+.right-btns{
+  width: 150px;background-color: #f1f1f1;padding: 10% 4%;height: 475px;
+  :deep(.ant-btn-primary:hover){
+    border: 1px solid #5f375c;
+  }
+}
+:global(.ant-modal-header) {
+  padding: 10px 0 !important;
+}
+:global(.ant-modal-close-x){
+  height: 30px !important;
+  color: white;
+}
+
+:deep(.ant-radio-button-wrapper){
+  color: #0096c7;
 }
 </style>

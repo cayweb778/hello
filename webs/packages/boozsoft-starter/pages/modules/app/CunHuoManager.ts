@@ -56,6 +56,7 @@ export const menus = [
   createPlatformMenu({ id: useId(308), path: '/stock_balance_zg_rk', component: '/boozsoft/stock/stock_balance_zg_rk/index', parentId: useId(201),componentName: 'StockBalanceZGRKD', name: '期初暂估入库单' }),
   createPlatformMenu({ id: useId(306), path: '/stock_balance_fp', component: '/boozsoft/stock/stock_balance_fp/index', parentId: useId(201),componentName: 'StockBalanceCGFP', name: '期初采购发票' }),
   createPlatformMenu({ id: useId(299), path: '/stock_balance_xsfp', component: '/boozsoft/stock/stock_balance_xsfp/index', parentId: useId(201),componentName: 'StockBalanceXSFP', name: '期初销售发票' }),
+  createPlatformMenu({id: useId(670),path: 'StockBalanceJZ',componentName: 'StockBalanceJZ',component: '/boozsoft/stock/stock_balance_jz/layouts/RouteCache',parentId: useId(999),name: '结转上年'}),
 
   createPlatformMenu({ id: useId(305), path: '/stock_balance_dh_list', component: '/boozsoft/stock/stock_balance_dh_list/index', parentId: useId(202),componentName: 'StockBalanceDHList', name: '期初到货单列表' }),
   createPlatformMenu({ id: useId(304), path: '/stock_sales_balance_list', component: '/boozsoft/stock/stock_sales_balance_list/index', parentId: useId(202),componentName: 'QiChuXiaoHuoDanList', name: '期初销货单列表' }),
@@ -203,12 +204,12 @@ export const menus = [
   createPlatformMenu({ id: useId(273), path: '/cb-list', component: '', parentId: useId(108), name: '列表' }),
 
   createPlatformMenu({ id: useId(372), path: '/cb-accounting', component: '/boozsoft/stock/stock-ckcbhs-list/index', componentName:'CkcbhsList', parentId: useId(271), name: '自动成本核算' }),
-  createPlatformMenu({ id: useId(373), path: '/cb-depot', component: '/boozsoft/stock/stock-rktzd-add/index', componentName:'RktzdList', parentId: useId(271), name: '入库调整单' }),
-  createPlatformMenu({ id: useId(374), path: '/cb-out-depot', component: '/boozsoft/stock/stock-cktzd-add/index', componentName:'CktzdList', parentId: useId(271), name: '出库调整单' }),
+  createPlatformMenu({ id: useId(373), path: '/cb-depot', component: '/boozsoft/stock/stock-rktzd-add/index', componentName:'Rktzd', parentId: useId(271), name: '入库调整单' }),
+  createPlatformMenu({ id: useId(374), path: '/cb-out-depot', component: '/boozsoft/stock/stock-cktzd-add/index', componentName:'Cktzd', parentId: useId(271), name: '出库调整单' }),
 
   createPlatformMenu({ id: useId(375), path: '/cb-sfhz', component: '/boozsoft/system/blocktable/index', parentId: useId(273), name: '金额收发存汇总表' }),
-  createPlatformMenu({ id: useId(376), path: '/cb-rktz', component: '/boozsoft/stock/stock-rktzd-list/index', parentId: useId(273), name: '入库调整单列表' }),
-  createPlatformMenu({ id: useId(377), path: '/cb-cktz', component: '/boozsoft/stock/stock-rktzd-list/index', parentId: useId(273), name: '出库调整单列表' }),
+  createPlatformMenu({ id: useId(376), path: '/cb-rktz', component: '/boozsoft/stock/stock-rktzd-list/index', componentName:'RktzdList', parentId: useId(273), name: '入库调整单列表' }),
+  createPlatformMenu({ id: useId(377), path: '/cb-cktz', component: '/boozsoft/stock/stock-cktzd-list/index', componentName:'CktzdList', parentId: useId(273), name: '出库调整单列表' }),
 
 
   createPlatformMenu({ id: useId(281), path: '/pz-invoice', component: '', parentId: useId(109), name: '制单' }),

@@ -1,10 +1,6 @@
 <template>
-  <div style="width:100vw;height:100vh"   v-show="showGdzc">
-    <HelloMicro></HelloMicro>
-  </div>
-  <div style="width:100vw;height:100vh" v-show="!showGdzc">
-    <ServerError v-if="showServerError"></ServerError>
-    <App2 v-else></App2>
+  <div style="width:100vw;height:100vh">
+    <App2 ></App2>
   </div>
 </template>
 <script setup>
@@ -20,7 +16,7 @@ const showServerError=ref(true)
 const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 
 
-window?.$wujie.bus.$on("goPlatform", function (id) {
+window?.$wujie.bus.$on("goZongzhang", function (id) {
   setCacheShowGdzc(false)
   const layoutsStore = usePlatformsStoreWidthOut();
 
@@ -28,18 +24,6 @@ window?.$wujie.bus.$on("goPlatform", function (id) {
   layoutsStore.switchPlatform({ id})
 });
 
-// 跳转平台监听
-window?.$wujie.bus.$on("goGuDingZiChan", function (id) {
-  setCacheShowGdzc(true)
-  // /** 设定延时请求( 比如router.ready() )，防止首次加载,组件还未渲染 start **/
-  window?.$wujie.bus.$emit('goGuDingZiChanxxxx',id)
-  /** 非该模块的平台，抛出异常，弹出错误 start **/
-
-  /**  end **/
-
-
-  /** end **/
-});
 
 const aaa=new WebSocket(import.meta.env.VITE_WEBSOCKET+"/pingServer")
 import ServerError from './ServerError.vue'
