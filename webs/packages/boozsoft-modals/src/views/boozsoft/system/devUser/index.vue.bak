@@ -1,0 +1,86 @@
+<template>
+ <div style="margin:0 auto;height:1000px;overflow: scroll">
+
+<!--    <h1 style="font-size: 30px">开发账号如下</h1>-->
+    <BasicTable  @register="registerTable"
+
+
+    >
+      <template #action="{ record, column }">
+        <TableAction :actions="[
+            {
+              label: '切到此账号',
+              onClick: handleEdit.bind(null, record),
+            },
+          ]" />
+      </template>
+    </BasicTable>
+
+ </div>
+</template>
+
+<script setup lang="ts">
+import {demoListApi} from '/@/api/demo/table';
+import {BasicTable, useTable} from '/@/components/Table';
+import {usePermissionStore} from '/@/store/modules/permission';
+import {useUserStore} from '/@/store/modules/user';
+import {Form} from 'ant-design-vue'
+import {computed, ref} from 'vue';
+import {data} from './data'
+import TableAction from '/@/components/Table/src/components/TableAction.vue';
+const FormItem=Form.Item
+const columns=ref([
+  {
+    title: '姓名',
+    dataIndex: 'name',
+    fixed: 'left',
+    width: 200,
+  },
+  {
+    title: '角色',
+    dataIndex: 'roleList',
+    fixed: 'left',
+    width: 200,
+  },
+  {
+    title: '该用户拥有的角色含',
+    dataIndex: 'feat',
+    fixed: 'left',
+    width: 600,
+  },
+
+  {
+    title: '账号密码',
+    dataIndex: 'pwd',
+    fixed: 'left',
+    width: 200,
+  }
+])
+
+
+const infoData={
+  logindate:'2020-01-02',
+  info:{
+    id:1005
+  },
+  roles:{
+
+  }
+}
+const [registerTable] = useTable({
+  title: '开发账号',
+  dataSource: data,
+  columns,
+  showIndexColumn: false,
+  pagination:{pageSize:20},
+  actionColumn: {
+    width: 160,
+    title: '操作',
+    dataIndex: 'action',
+    slots: { customRender: 'action' },
+  },
+});
+function handleEdit(){
+
+}
+</script>

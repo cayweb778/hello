@@ -1,0 +1,18 @@
+<template>
+  <LayoutViewContent v-if="reloadPageState" v-bind="$attrs">
+    <slot v-for="(name) in Object.keys($slots)"  :name="name" :slot="name"></slot>
+  </LayoutViewContent>
+</template>
+<script setup>
+import LayoutViewContent from './LayoutViewContent.vue'
+import {ref,provide, nextTick} from "vue";
+
+const reloadPageState = ref(true)
+
+function reloadPage() {
+  reloadPageState.value = false
+  nextTick(() => reloadPageState.value = true)
+}
+
+provide('reloadPage', reloadPage)
+</script>

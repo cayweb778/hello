@@ -1,0 +1,310 @@
+import { toRoleMenuList } from '../../utils/_sys_role_menu_util';
+import { createMenu, createModel} from '/@/../pages/rbac/utils/mockMenuUtil';
+import {PLATFORM_DevComponents, PLATFORM_SYSTEM, usePlatform} from '../platforms/platformMenus';
+const platformId=1003
+let i=1
+function createPlatformMenu(params){
+  return createMenu({...params,platformId})
+}
+export const menus = [
+  createModel({
+    id: platformId,
+    isCloud: false,
+    isTargetBlank: false,
+    isOutLink: false,
+    name: '集团管理',
+    category: 101,
+    sortNo: 6,
+  }),
+  createPlatformMenu({
+    id: 9906,
+    path: '/',
+    redirect:'/system/home/welcome',
+    component: 'LAYOUT',
+    parentId: 0,
+    hidden:true,
+    name: '根目录'
+  }),
+  createPlatformMenu({
+    id: 10000,
+    path: 'welcome',
+    component: '/dashboard/analysis/index',
+    parentId: 10001,
+    name: '首页',
+  }),
+  createPlatformMenu({ id: 10001, path: '/system/home', component: 'LAYOUT', parentId: 0, name: '工作台' }),
+
+
+
+  createPlatformMenu({ id: 50000, path: '/system/institution-management', component: 'Layout', parentId: 0, name: '机构' }),
+  createPlatformMenu({ id: 50001, path: '/system/create-account', component: 'Layout', parentId: 0, name: '建账' }),
+  createPlatformMenu({ id: 50002, path: '/system/auth-management', component: 'Layout', parentId: 0, name: '权限' }),
+  createPlatformMenu({ id: 50003, path: '/system/deploy-management', component: 'Layout', parentId: 0, name: '配置' }),
+  createPlatformMenu({ id: 50011, path: '/system/deploy-public', component: 'Layout', parentId: 0, name: '公共数据' }),
+  createPlatformMenu({ id: 50004, path: '/system/focus-data', component: 'Layout', parentId: 0, name: '主数据' }),
+  createPlatformMenu({ id: 50005, path: '/system/accountancy', component: 'Layout', parentId: 0, name: '财务会计' }),
+  createPlatformMenu({ id: 50009, path: '/origin/budget-accountancy', component: 'Layout', parentId: 0, name: '预算会计' }),
+  createPlatformMenu({id:  50010, path: '/system/report', component: 'Layout', parentId: 0 , name: '报表模板' }),
+  createPlatformMenu({ id: 50006, path: '/system/fixed-aassets', component: 'Layout', parentId: 0, name: '固定资产' }),
+  createPlatformMenu({ id: 50007, path: '/system/merge-data', component: 'Layout', parentId: 0, name: '合并数据' }),
+
+  createPlatformMenu({id:5010+i++,path:'ca-account',component:'/boozsoft/management/im-unit-two/index',parentId:50001,name:'财务会计账套'}),
+  createPlatformMenu({id:5010+i++,path:'ca-fixed-assets',component:'/boozsoft/management/im-unit-three/index',parentId:50001,name:'固定资产账套'}),
+  createPlatformMenu({id:5010+i++,path:'ca-stock',component:'/boozsoft/management/im-unit-four/index',parentId:50001,name:'存货管理账套'}),
+  createPlatformMenu({
+    id: 50401,
+    path: 'im-group',
+    component: '/boozsoft/management/im-group/index',
+    parentId: 50000,
+    name: '集团',
+  }),
+  createPlatformMenu({
+    id: 50402,
+    path: 'im-organize',
+    component: '/boozsoft/management/im-organize/index',
+    parentId: 50000,
+    name: '组织',
+  }),
+  createPlatformMenu({
+    id: 50403,
+    path: 'im-unit',
+    component: '/boozsoft/management/im-unit/index',
+    parentId: 50000,
+    name: '公司',
+  }),
+  createPlatformMenu({
+    id: 50404,
+    path: 'im-factory',
+    component: '/boozsoft/management/im-factory/index',
+    parentId: 50000,
+    name: '工厂',
+  }),
+  /*createPlatformMenu({
+    id: 50405,
+    path: 'im-sale',
+    component: '/boozsoft/management/im-sale/index',
+    parentId: 50000,
+    name: '业务组',
+  }),
+  createPlatformMenu({
+    id: 50406,
+    path: 'im-group-test-aa',
+    component: '/boozsoft/system/account/index',
+    parentId: 50000,
+    name: '测试账套',
+  }),*/
+/*  createPlatformMenu({
+    id: 50407,
+    path: 'common-help',
+    component: '/boozsoft/management/common-help/index',
+    parentId: 50000,
+    name: '测试账套',
+  }),*/
+
+  createPlatformMenu({id: 5010+i++, path: 'opearManager', component: '/boozsoft/system/user/index', parentId: 50002, name: '操作员',}),
+  createPlatformMenu({id: 5010+i++, path: 'sys-role',  component: '/boozsoft/system/sys-role/index', parentId: 50002, name: '角色' }),
+  createPlatformMenu({id: 5010+i++, path: 'operation-author',  component: '/boozsoft/system/operation-author/index', parentId: 50002, name: '操作员权限设置' }),
+  createPlatformMenu({id: 5010+i++, path: 'role-author',  component: '/boozsoft/system/role-author/index', parentId: 50002, name: '角色权限设置' }),
+  createPlatformMenu({id: 5010+i++, path: 'archives-author',  component: '/boozsoft/system/archives-author/index', parentId: 50002, name: '档案审批授权' }),
+  createPlatformMenu({id: 5010+i++, path: 'data-author',  component: '/boozsoft/system/data-author-control/index', parentId: 50002, name: '数据权限控制' }),
+  createPlatformMenu({id: 5010+i++, path: 'data',  component: '/boozsoft/system/data-author/index', parentId: 50002, name: '数据权限分配' }),
+  // createPlatformMenu({id: 5010+i++, path: 'menu',  component: '/boozsoft/system/system/menu/index', parentId: 50002, name: '菜单权限' }),
+  createPlatformMenu({id:5010+i++,path:'pwd-rule',component:'/boozsoft/system/pwd-rule/index',parentId:50002,componentName: 'PwdRule',name:'密码策略'}),
+
+/*
+  createPlatformMenu({id: 5010+i++, path: 'im-sale1', component: '/boozsoft/system/blocktable/index', parentId: 50003, name: '集团参数',}),
+  createPlatformMenu({id: 5010+i++, path: 'im-sale2', component: '/boozsoft/system/blocktable/index', parentId: 50003, name: '组织参数',}),
+  createPlatformMenu({id: 5010+i++, path: 'im-sale', component: '/boozsoft/system/blocktable/index', parentId: 50003, name: '公司参数',}),
+*/
+
+  createPlatformMenu({id: 5010+i++, path: 'im-sale1', component: '/boozsoft/system/blocktable/index', parentId: 50003, name: '邮件发送接口参数',}),
+  createPlatformMenu({id: 5010+i++, path: 'im-sale2', component: '/boozsoft/system/blocktable/index', parentId: 50003, name: '短信平台接口参数',}),
+  createPlatformMenu({id: 5010+i++, path: 'im-sale3', component: '/boozsoft/management/ocr-setting/index', parentId: 50003, name: '票据识别接口参数',}),
+  createPlatformMenu({id: 5010+i++, path: 'im-sale4', component: '/boozsoft/management/verification-setting/index', parentId: 50003, name: '发票验真接口参数',}),
+  // createPlatformMenu({id:5010+i++,   path: 'UsedForeignCurrency', component: '/boozsoft/group/UsedForeignCurrency/index',parentId:50003,name:'常用外币'}),
+
+  // createPlatformMenu({id:50541, path: '/system/common', component: '', parentId: 50004, name: '常用数据' }),
+  // createPlatformMenu({id: 5010+i++, path:'industry-classification',component:'/boozsoft/system/blocktable/index',parentId:50011,name:'行业分类'}),
+  // createPlatformMenu({id: 5010+i++, path: 'administrative-divisions', component: '/boozsoft/system/testrecord/index', parentId: 50011, name: '行政区划',}),
+  createPlatformMenu({id: 5010+i++, path:'currencyinfo',component:'/boozsoft/system/currencyinfo/index',parentId:50011,name:'国际货币'}),
+  createPlatformMenu({id: 5010+i++, path:'country',component:'/boozsoft/system/blocktable/index',parentId:50011,name:'国家(地区)'}),
+  createPlatformMenu({id:5010+i++,path:'894213',component:'/boozsoft/management/exchange-rate/index',parentId:50011,name:'外币汇率'}),
+
+
+  createPlatformMenu({id:50542, path: '/system/user', component: '', parentId: 50004, name: '人员' }),
+  createPlatformMenu({id: 5010+i++, path: 'groupPsn', component: '/boozsoft/management/psn/index',componentName: 'GroupPsn', parentId: 50542, name: '人员信息',}),
+  createPlatformMenu({id: 5010+i++, path: 'groupPsnType', component: '/boozsoft/management/psntype/index',componentName: 'GroupPsnType', parentId: 50542, name: '人员分类',}),
+  /*createPlatformMenu({id: 5010+i++, path: 'psntype-assign', component: '/boozsoft/system/psntype/index', parentId: 50542, name: '员工分配',}),*/
+  createPlatformMenu({id: 5010+i++, path: 'jonfile', component: '/boozsoft/management/job-file/index',componentName: 'JonFile', parentId: 50542, name: '职务档案',}),
+
+  createPlatformMenu({id:50543, path: '/system/customer', component: '', parentId: 50004, name: '客户' }),
+  createPlatformMenu({id: 5010+i++, path: 'cus-info-group', component: '/boozsoft/system/customer_info_group/index', parentId: 50543,componentName: 'CustomerInfoGroup', name: '客户信息',}),
+  createPlatformMenu({id: 5010+i++, path: 'customer_class_group', component: '/boozsoft/system/customer_class_group/index', parentId: 50543,componentName: 'CustomerClassGroup', name: '客户分类'}),
+  // createPlatformMenu({id: 5010+i++, path: 'customer-assign', component: '/boozsoft/system/customer_class_group/index', parentId: 50543, name: '客户分配'}),
+
+  createPlatformMenu({id:50544, path: '/system/sup', component: '', parentId: 50004, name: '供应商' }),
+  createPlatformMenu({id: 5010+i++, path: 'sup-info-group', component: '/boozsoft/system/supplier_group/index', parentId: 50544,componentName: 'SupplierInfoGroup', name: '供应商信息',}),
+  createPlatformMenu({id: 5010+i++, path: 'sup_class_group', component: '/boozsoft/system/sup_class_group/index', parentId: 50544,componentName: 'SupClassGroup', name: '供应商分类'}),
+  // createPlatformMenu({id: 5010+i++, path: 'sup-assign', component: '/boozsoft/system/sup_class_group/index', parentId: 50544, name: '供应商分配'}),
+
+  createPlatformMenu({id:50545, path: '/system/project', component: '', parentId: 50004, name: '项目' }),
+  createPlatformMenu({id: 5010+i++, path: 'sys-project-item', component: '/boozsoft/management/project-item/index',componentName: 'GroupProjectItem', parentId: 50545, name: '项目大类'}),
+  createPlatformMenu({id: 5010+i++, path: 'sys-project-category', component: '/boozsoft/management/project-category/index',componentName: 'GroupProjectCate', parentId: 50545, name: '项目样式'}),
+  createPlatformMenu({id: 5010+i++, path: 'sys-project', component: '/boozsoft/management/project/index',componentName: 'GroupProject', parentId: 50545, name: '项目目录'}),
+  createPlatformMenu({id: 5010+i++, path: 'project-class', component: '/boozsoft/management/project-class/index',componentName: 'GroupProjectClass', parentId: 50545, name: '项目分类'}),
+  createPlatformMenu({id: 5010+i++, path: 'project-assign', component: '/boozsoft/system/project-class/index', parentId: 50545, name: '项目分配'}),
+
+  createPlatformMenu({id:50546, path: '/system/defined', component: '', parentId: 50004, name: '自定义项' }),
+  // createPlatformMenu({id: 5010+i++, path: 'group-defined-file',component:'/boozsoft/management/defined-file/index',componentName: 'GroupDefinedFile',parentId:50546,name:'自定义项设置'}),
+  createPlatformMenu({id: 5010+i++, path: 'group-defined-record',component:'/boozsoft/management/defined-record/index',componentName: 'GroupDefinedRecord',parentId:50546,name:'自定义项'}),
+  // createPlatformMenu({id: 5010+i++, path: 'group-defined-assign',component:'/boozsoft/management/defined-record/index',parentId:50546,name:'自定义项分配'}),
+  // createPlatformMenu({id: 5010+i++, path: 'group-fuzhu-hesuan',component:'/boozsoft/management/fuzhu-hesuan/index',componentName: 'GroupFuzhuHesuan',parentId:50546,name:'辅助核算定义'}),
+
+  createPlatformMenu({id:50547, path: 'unit-mea', component: '/boozsoft/management/unit-mea/index', parentId: 50004, name: '计量单位' }),
+  createPlatformMenu({id:50548,path:'encoding_rules',component:'/boozsoft/management/encoding_rules/index',parentId:50004,name:'编码规则'}),
+  createPlatformMenu({id:5010+i++,path:'sett-modes',component:'/boozsoft/management/sett-modes/index',parentId:50004,name:'结算方式'}),
+  createPlatformMenu({id: 50549, path: 'groupApprove', component: '/boozsoft/management/psn/index2', parentId: 50004, name: '档案生效审批表',}),
+
+  createPlatformMenu({id:5010+i++, path: 'gj-accstandard', component: '/boozsoft/system/accstandard/index', parentId: 50005, name: '国家（地区）会计制度',}),
+  createPlatformMenu({id:5010+i++, path: 'findcode', component: '/boozsoft/system/acccode/index', parentId: 50005, name: '国家（地区）会计科目',hidden:true,}),
+  createPlatformMenu({id:5010+i++, path: 'acctemplate', component: '/boozsoft/system/acctemplate/index', parentId: 50005, name: '集团会计制度',}),
+  createPlatformMenu({id:5010+i++, path: 'findcode2', component: '/boozsoft/system/acccode/index2', parentId: 50005, name: '集团会计科目',hidden:true,}),
+
+  createPlatformMenu({id:5010+i++,path:'group-voucher-type',component:'/boozsoft/management/voucher-type/index',parentId:50005,name:'凭证类别'}),
+
+  createPlatformMenu({id:5010+i++, path: 'group-project-cash', component: '/boozsoft/management/project-cash/index',componentName: 'GroupProjectCash', parentId: 50005, name: '现金流量项目'}),
+  createPlatformMenu({id:5010+i++,path:'8941',component:'/boozsoft/system/blocktable/index',parentId:50005,name:'功能分类'}),
+  createPlatformMenu({id:5010+i++,path:'8942',component:'/boozsoft/system/blocktable/index',parentId:50005,name:'部门经济分类'}),
+  createPlatformMenu({id:5010+i++,path:'8943',component:'/boozsoft/system/blocktable/index',parentId:50005,name:'政府经济分类'}),
+
+  createPlatformMenu({id:5010+i++, path: 'organization-budget', component: '/boozsoft/management/budget-source/index', parentId: 50009, name: '预算来源',}),
+  createPlatformMenu({id:5010+i++, path: 'organization-exclass', component: '/boozsoft/management/expenditure-class/index', parentId: 50009, name: '支出功能分类',}),
+  createPlatformMenu({id:5010+i++, path: 'organization-zfclass', component: '/boozsoft/management/zf-class/index', parentId: 50009, name: '政府支出经济分类',}),
+  createPlatformMenu({id:5010+i++, path: 'organization-deptclass', component: '/boozsoft/management/dept-class/index', parentId: 50009, name: '部门支出经济分类',}),
+
+  /*createPlatformMenu({id:5010+i++,path:'credential-parm',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'协同中心管理'}),
+  createPlatformMenu({id:5010+i++,path:'credential-record',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'协同科目'}),
+  createPlatformMenu({id:5010+i++,path:'credential-record',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'协同单位'}),
+  createPlatformMenu({id:5010+i++,path:'assets-type32',component:'/boozsoft/system/faClass/index',parentId:50006,name:'资产分类'}),
+  createPlatformMenu({id:5010+i++,path:'assets-property3212',component:'/boozsoft/management/faProperty/index',parentId:50006,name:'资产属性'}),
+  createPlatformMenu({id:5010+i++,path:'assets-depreciation',component:'/boozsoft/management/fa-zj-method/index',parentId:50006,name:'折旧方法'}),
+  createPlatformMenu({id:5010+i++,path:'assets-increase-decrease',component:'/boozsoft/management/fa-add-cut-mode/index',parentId:50006,name:'增减方式'}),
+  createPlatformMenu({id:5010+i++,path:'assets-situation',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'使用状况'}),
+  createPlatformMenu({id:5010+i++,path:'assets-use',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'经济用途'}),
+  createPlatformMenu({id:5010+i++,path:'assets-column-setting',component:'/boozsoft/system/blocktable/index',parentId:50006,name:'栏目设置'}),  */
+
+  createPlatformMenu({id:5010+i++,path:'assets-type',component:'/boozsoft/management/fa-asset-type/index',parentId:50006,name:'资产类别'}),
+  createPlatformMenu({id:5010+i++,path:'assets-property',component:'/boozsoft/management/faProperty/index',parentId:50006,name:'资产属性'}),
+  createPlatformMenu({id:5010+i++,path:'assets-depreciation',component:'/boozsoft/management/fa-zj-method/index',parentId:50006,name:'折旧方法'}),
+  createPlatformMenu({id:5010+i++,path:'assets-increase-decrease',component:'/boozsoft/management/fa-add-cut-mode/index',parentId:50006,name:'增减方式'}),
+  createPlatformMenu({id:5010+i++,path:'assets-situation',component:'/boozsoft/management/fa-usage-status/index',parentId:50006,name:'使用状况'}),
+  createPlatformMenu({id:5010+i++,path:'assets-use',component:'/boozsoft/management/fa-economy-use/index',parentId:50006,name:'经济用途'}),
+  createPlatformMenu({id:5010+i++,path:'assets-column-setting',component:'/boozsoft/management/fa-location/index',parentId:50006,name:'存放设置'}),
+  createPlatformMenu({id:5010+i++,path:'assets-group',component:'/boozsoft/management/fa-asset-group/index',parentId:50006,name:'资产组'}),
+
+
+  createPlatformMenu({id:5010+i++,path:'transaction-parm',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并报表单位设置'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-setting',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'抵消分录设置'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-zctable',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并资产负债表'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-sytable',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并损益表'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-xjtable',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并现金流量表'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-qytable',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并所有权益变动表'}),
+  createPlatformMenu({id:5010+i++,path:'transaction-cwtable',component:'/boozsoft/system/blocktable/index',parentId:50007,name:'合并财务状况变动表'}),
+
+  /*  createPlatformMenu({ id: 50010, path: '/system/report', component: 'Layout', parentId: 0, name: '报表模板' }),*/
+  createPlatformMenu({ id: 50501, path: 'report-zcfzb', component: '/boozsoft/management/report/report-zcfzb/index',componentName: 'GroupZCFZB', parentId: 50010, name: '资产负债表' }),
+  createPlatformMenu({ id: 50502, path: 'report-lrb', component: '/boozsoft/management/report/report-lrb/index',componentName: 'GroupLRB', parentId: 50010, name: '利润表' }),
+  createPlatformMenu({ id: 50503, path: 'report-xjllb', component: '/boozsoft/management/report/report-xjllb/index',componentName: 'GroupXJLLB', parentId: 50010, name: '现金流量表' }),
+  createPlatformMenu({ id: 50504, path: 'report-srfyb', component: '/boozsoft/management/report/report-srfyb/index',componentName: 'GroupSRFYB', parentId: 50010, name: '收入费用表' }),
+  createPlatformMenu({ id: 50505, path: 'report-yssrzcb', component: '/boozsoft/management/report/report-yssrzcb/index',componentName: 'GroupYSSRZCB', parentId: 50010, name: '预算收入支出表' }),
+  createPlatformMenu({ id: 50506, path: 'report-ysjzjybdb', component: '/boozsoft/management/report/report-ysjzjybdb/index',componentName: 'GroupYSJZJYBDB', parentId: 50010, name: '预算结转结余变动表' }),
+  createPlatformMenu({ id: 50507, path: 'report-czbkyssrzcb', component: '/boozsoft/management/report/report-czbkyssrzcb/index',componentName: 'GroupCZBKYSSRZCB', parentId: 50010, name: '财政拨款预算收入支出表' }),
+  createPlatformMenu({ id: 50508, path: 'report-jzcbdb', component: '/boozsoft/management/report/report-jzcbdb/index',componentName: 'GroupJZCBDB', parentId: 50010, name: '净资产变动表' }),
+
+  /*createPlatformMenu({
+    id: 50200+i++,
+    path: 'user',
+    component: '/boozsoft/system/user/index',
+    parentId: 50200,
+    name: 'SSO用户管理',
+  }),
+  createPlatformMenu({
+    id: 5010+i++,
+    path: 'platforms',
+    component: '/boozsoft/system/user/index',
+    parentId: 0,
+    name: '平台管理',
+  }),
+
+
+
+  createPlatformMenu({
+    id: 50307,
+    path: 'accvoucher-template',
+    component: '/boozsoft/system/accvoucher-template/index',
+    parentId: 50004,
+    name: '凭证导入模板',
+  }),
+  createPlatformMenu({
+    id: 50308,
+    path: 'project-cash',
+    component: '/boozsoft/management/project-cash/index',
+    parentId: 50004,
+    name: '现金流量项目',
+  }),
+
+  createPlatformMenu({ id: 5010+i++, path: 'platform',  component: '/boozsoft/system/system/platform/index', parentId: 50100, name: '平台管理' }),
+
+  createPlatformMenu({ id: 5010+i++, path: 'account',  component: '/boozsoft/system/account/index', parentId: 50100, name: '账套管理' }),
+  createPlatformMenu({ id: 5010+i++, path: 'aaaaa1',  component: '/boozsoft/system/caozuoyuan/index', parentId: 50100, name: '日志管理' }),
+  createPlatformMenu({ id: 5010+i++, path: 'aaaaa2', component: '/boozsoft/system/caozuoyuan/index', parentId: 50100, name: '回滚管理' }),
+  createPlatformMenu({ id: 5010+i++, path: 'aaaaa3', component: '/boozsoft/system/caozuoyuan/index', parentId: 50100, name: '回顾表管理' }),
+
+*/
+
+
+ createPlatformMenu({ id: 50600, path: '/system/data-manager', component: 'Layout', parentId: 0, name: '数据管理' }),
+  createPlatformMenu({
+    id: 50601,
+    path: 'data2',
+    component: '/boozsoft/system/dataManager/index',
+    parentId: 50600,
+    name: '覆盖数据',
+  }),
+  createPlatformMenu({
+    id: 50602,
+    path: 'SysLogger',
+    component: '/boozsoft/group/SysLogger/index',
+    parentId: 50600,
+    name: '日志档案',
+  }),
+  createPlatformMenu({
+    id: 50603,
+    path: 'groptask',
+    component: '/boozsoft/system/task/sys-index',
+    parentId: 50600,
+    name: '操作锁定管理',
+  }),
+  createPlatformMenu({
+    id: 50604,
+    path: 'orgmessage',
+    component: '/boozsoft/system/message/org-index',
+    parentId: 50600,
+    name: '消息公告',
+  }),
+  createPlatformMenu({
+    id: 50605,
+    path: 'orgtask',
+    component: '/boozsoft/system/sys-task/org-index',
+    parentId: 50600,
+    name: '任务协作',
+  }),
+];
+
+export const platformMenuIds = {
+  key:'system',
+  id:platformId,
+  sort:7,
+  menuIds:menus.map(item=>item.id)
+};
+
