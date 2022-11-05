@@ -39,8 +39,8 @@ import {useNcModalWidthOut} from "/@/boozsoft/nc-modal";
 // }
 
 function registerNcModal(){
-  const ncModal=useNcModalWidthOut().NcProvider
-  ncModal.dept=()=>import('./views/boozsoft/global/dept/index.vue')
+  // const ncModal=useNcModalWidthOut().NcProvider
+  // ncModal.dept=()=>import('./views/boozsoft/global/dept/index.vue')
 }
 
 
