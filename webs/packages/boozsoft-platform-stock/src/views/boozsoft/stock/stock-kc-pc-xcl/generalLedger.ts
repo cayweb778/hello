@@ -7,13 +7,6 @@ export const kcPcXCLStore = defineStore({
   state: (): any => ({
     J:[
       {
-        title: '状态',
-        dataIndex: 'state',
-        key: 'state',
-        align: 'left',ellipsis: true,
-        width: 100,fixed: 'left',slots: { customRender: 'state' }
-      },
-      {
         title: '仓储位置',
         dataIndex: 'cwhcodeName',
         key: 'cwhcodeName',

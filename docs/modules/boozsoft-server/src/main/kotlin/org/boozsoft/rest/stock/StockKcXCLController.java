@@ -177,13 +177,13 @@ public class StockKcXCLController {
                     list=list.stream().filter(a->!a.getXcl().equals(BigDecimal.ZERO)||!a.getKeyong().equals(BigDecimal.ZERO)||!a.getMidWayDh().equals(BigDecimal.ZERO)||!a.getMidWayRk().equals(BigDecimal.ZERO)||!a.getMidWayXh().equals(BigDecimal.ZERO)||!a.getMidWayCk().equals(BigDecimal.ZERO)).collect(Collectors.toList());
                     list.stream().filter(tx->StrUtil.isNotBlank(tx.getDvdate())).forEach(tx->{
                         long days = differentDaysByString(tx.getDvdate());
-                        if(days>15){
-                            tx.setState("正常");
-                        }else if(days==0||days<=15){
-                            tx.setState("临近");
-                        }else if(days<0){
-                            tx.setState("失效");
-                        }
+                       if(days<0){
+                           tx.setState("失效");
+                       }else if(days<=15){
+                           tx.setState("临近");
+                       }else if(days>15){
+                           tx.setState("正常");
+                       }
                     });
                     if (queryType.equals("pcxcl")) {
                         list=list.stream().filter(xcl -> StrUtil.isNotBlank(xcl.getCinvode())&&StrUtil.isNotBlank(xcl.getBatchId())).sorted(Comparator.comparing(StockCurrentLackVo::getCinvode).thenComparing(StockCurrentLackVo::getBatchId)).distinct().collect(Collectors.toList());
@@ -220,6 +220,6 @@ public class StockKcXCLController {
         String newDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         long startDay= Long.parseLong(startDate.replaceAll("-",""));
         long endDay= Long.parseLong(newDate);
-        return endDay-startDay;
+        return startDay-endDay;
     }
 }

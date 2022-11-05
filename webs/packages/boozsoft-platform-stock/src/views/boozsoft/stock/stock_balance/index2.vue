@@ -200,9 +200,8 @@ import {BasicTable, useTable} from '/@/components/Table';
 import {
   CaretDownOutlined,
   CheckOutlined,
-  CloudUploadOutlined,
   CloudDownloadOutlined,
-  EditOutlined,
+  CloudUploadOutlined,
   SettingFilled,
   ShoppingCartOutlined,
   SortAscendingOutlined,
@@ -210,11 +209,7 @@ import {
   SyncOutlined
 } from '@ant-design/icons-vue';
 import {
-  Checkbox as ACheckbox,
   Input as AInput,
-  message,
-  Modal as AModal,
-  Popconfirm as APopconfirm,
   Popover as APopover,
   Radio as ARadio,
   Select as ASelect,
@@ -223,7 +218,7 @@ import {
   Tabs as ATabs,
   Tag as ATag,
 } from 'ant-design-vue';
-import {computed, reactive, ref, watch} from 'vue';
+import {computed, reactive, ref} from 'vue';
 import {getCurrentAccountName, hasBlank} from "/@/api/task-api/tast-bus-api";
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker-STOCK.vue";
 import {useTabs} from "/@/hooks/web/useTabs";
@@ -233,14 +228,8 @@ import {PageWrapper} from '/@/components/Page';
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {
   auditStockBalance,
-  auditStockBalanceFindByLock,
-  auditStockBalanceToStockCurrentstock_Count,
-  auditStockBalanceToStockCurrentstock_Decre,
-  auditStockBalanceToStockCurrentstock_Increase,
   delStockBalance,
   findAllStockBalance,
-  findByStock_CKAndTH,
-  findByStockWarehousingsCount,
   getByStockBalanceTask,
   stockBalanceTaskDelByUserName,
   stockBalanceTaskEditNewTime,
@@ -255,19 +244,16 @@ import Lack from '/@/views/boozsoft/stock/stock_balance/popup/lack.vue';
 import ImprotExcel from '/@/views/boozsoft/stock/stock_balance/popup/improtExcel.vue';
 import SaveFirstModal from '/@/views/boozsoft/stock/stock_balance/popup/saveFirstModal.vue';
 import {findAll as stockCangkuAll} from "/@/api/record/stock/stock-cangku";
-import {findDbLanMuList, saveLanMuList} from "/@/api/record/system/accvoucher";
 import {findPeriodIyearByUniqueCode} from "/@/api/record/system/account";
 import {assemblyDynamicColumn, initDynamics} from "/@/views/boozsoft/stock/stock_balance/data";
-import {cloneDeep} from "lodash-es";
 import StockPeriod from "/@/views/boozsoft/stock/stock-xiaohuo-list/popup/StockPeriod.vue";
 import {exportExcel3} from "/@/api/record/generalLedger/excelExport";
-import {findUnitAssociationList} from "/@/api/record/system/unit-mea";
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {verifyStockXCLList} from "/@/api/record/stock/stock-currents";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {JsonTool} from "/@/api/task-api/tools/universal-tools";
-import stock_out_add from "/@/views/boozsoft/stock/stock_out_add/index.vue";
+import {onBeforeRouteLeave} from 'vue-router'
 
 // 全局常量
 const summaryTotals = ref({})
@@ -642,7 +628,7 @@ function toThousandFilter(num:any) {
 
 // 批量审核
 async function auditAll(type) {
-  let list=getDataSource().filter(a=>!hasBlank(a.id));
+  let list=getDataSource().filter(a=>!hasBlank(a.id)&&(type=='1'?a.bcheck=='0':a.bcheck=='1'));
   if(list.length==0){
     return createWarningModal({ content: '没有要批审的数据！' });
   }
@@ -665,20 +651,25 @@ async function auditAll(type) {
     temp2.unitName=tx.stockUnitName
     verifylist.push(temp2)
   }
-  // 现存量 不足 弹出框提示
-  let currData=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'xcl',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
-  // 如果是负数强制转换成正数比较
-  currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
-  if(currData.length>0){
-    return  openLackPage(true,{data:currData,queryType:'xcl'})
+
+  //  弃审
+  if(type=='0'){
+    // 现存量 不足 弹出框提示
+    let currData=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'xcl',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
+    // 如果是负数强制转换成正数比较
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    if(currData.length>0){
+      return  openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:database.value})
+    }
+    // 可用量
+    let currData2=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
+    // 如果是负数强制转换成正数比较
+    currData2=currData2.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    if(currData2.length>0){
+      return  openLackPage(true,{data:currData2,queryType:'keyong',dynamicTenantId:database.value})
+    }
   }
-  // 可用量
-  let currData2=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
-  // 如果是负数强制转换成正数比较
-  currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
-  if(currData2.length>0){
-    return  openLackPage(true,{data:currData2,queryType:'keyong'})
-  }
+
   createConfirm({
     iconType: 'warning',
     title: '警告',
@@ -728,16 +719,16 @@ async function audit(type) {
     // 现存量 不足 弹出框提示
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'xcl',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))!=0)
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
-      return  openLackPage(true,{data:currData,queryType:'xcl'})
+      return  openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:database.value})
     }
     // 可用量
     let currData2=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
     // 如果是负数强制转换成正数比较
-    currData2=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))!=0)
+    currData2=currData2.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData2.length>0){
-      return  openLackPage(true,{data:currData2,queryType:'keyong'})
+      return  openLackPage(true,{data:currData2,queryType:'keyong',dynamicTenantId:database.value})
     }
   }
 
@@ -967,7 +958,6 @@ function saveFirstModalFun(data) {
   addFun()
 }
 
-import { onBeforeRouteLeave } from 'vue-router'
 // 监听路由离开
 onBeforeRouteLeave(goRouter)
 

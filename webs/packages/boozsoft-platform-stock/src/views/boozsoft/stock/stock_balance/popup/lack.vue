@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-    width="700px"
+    width="900px"
     v-bind="$attrs"
     :closable="false"
     @register="register"
@@ -36,6 +36,8 @@ import {
 } from 'ant-design-vue';
 import {getCurrentAccountName} from "/@/api/task-api/tast-bus-api";
 import {BasicTable, useTable} from '/@/components/Table';
+import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
+import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record";
 
   const ASelectOption = ASelect.Option;
   const AInputSearch = AInput.Search;
@@ -49,6 +51,12 @@ import {BasicTable, useTable} from '/@/components/Table';
 
   const CrudApi:any = {
     columns: [
+      {
+        title: '仓储位置',
+        dataIndex: 'cangkuName',
+        ellipsis: true,
+        align: 'left',width:60
+      },
       {
         title: '存货编码',
         dataIndex: 'stockNum',
@@ -84,7 +92,7 @@ import {BasicTable, useTable} from '/@/components/Table';
         title: '批号',
         dataIndex: 'batchId',
         ellipsis: true,
-        align: 'center',width:80
+        align: 'left',width:80
       }
     ]
   }
@@ -95,10 +103,24 @@ import {BasicTable, useTable} from '/@/components/Table';
   });
 
   // 数据库模式名称
+  const dynamicTenantId = ref('')
   const [register, { closeModal }] = useModalInner( async (data) => {
+    dynamicTenantId.value=data.dynamicTenantId
+    for (let i = 0; i < data.data.length; i++) {
+      data.data[i].cangkuName=await getCKName(data.data[i].cwhcode)
+    }
     tableData.value=data.data
     queryType.value=data.queryType
   });
+
+async function getCKName(id) {
+  let str=''
+  let cangkuJoinName=await useRouteApi(findCangkuJoinName,{schemaName: dynamicTenantId})(  {id:id})
+  if(cangkuJoinName.length>0){
+    str=cangkuJoinName[0].cangkuRecordJoinName
+  }
+  return str
+}
 //金额格式化
 function toThousandFilter(num:any) {
   if (num=='' || num==null){

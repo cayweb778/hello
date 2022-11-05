@@ -1,6 +1,7 @@
 <template>
   <BasicModal
     width="700px"
+    :height="300"
     class="spaceLogo"
     v-bind="$attrs"
     @ok="handleOk()"
@@ -48,8 +49,8 @@
 
                   <li  style="    margin: 2% 0px;">
                     <label style="text-align: left">存货名称：</label>
-                    <Select mode="tags" v-model:value="stockId" style="width: 70%;">
-                      <SelectOption :value="data.id" v-for="data in stockList">{{ data.stockNum }}-{{ data.stockName }} </SelectOption>
+                    <Select mode="tags" v-model:value="stockId" style="width: 70%;" :filter-option="filterOption">
+                      <SelectOption :value="data.stockNum" :key="data.stockNum+data.stockName" v-for="data in stockList">{{ data.stockNum }}-{{ data.stockName }} </SelectOption>
                       <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
                     </Select>
                     &ensp;
@@ -166,7 +167,9 @@ const dynamicAdReload = async (obj) =>{
   findByStockClass()
   modelLoadIng.value=false
 }
-
+const filterOption = (input: string, option: any) => {
+  return option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+}
 async function stockCangku() {
   let temp=await useRouteApi(sotckCangKuAll,{schemaName: databaseTrue})({searchConditon: {
       requirement: 'ckNum',
@@ -252,8 +255,8 @@ function handleOk() {
     ckList:ckList.value,
     databaseTrue:databaseTrue.value,
     stockCclassName:stockClassList.value.filter(a=>JSON.parse(JSON.stringify(stockClassId.value)).indexOf(a.uniqueStockclass)!=-1).map(a=>a.stockCclassName),
-    stockNum:stockList.value.filter(a=>JSON.parse(JSON.stringify(stockId.value)).indexOf(a.id)!=-1).map(a=>a.stockNum),
-    stockName:stockList.value.filter(a=>JSON.parse(JSON.stringify(stockId.value)).indexOf(a.id)!=-1).map(a=>a.stockName)
+    stockNum:stockList.value.filter(a=>JSON.parse(JSON.stringify(stockId.value)).indexOf(a.stockNum)!=-1).map(a=>a.stockNum),
+    stockName:stockList.value.filter(a=>JSON.parse(JSON.stringify(stockId.value)).indexOf(a.stockNum)!=-1).map(a=>a.stockName)
   }
   emit('throwData', map);
   closeModal();
