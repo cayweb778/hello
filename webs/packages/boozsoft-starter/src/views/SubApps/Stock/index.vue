@@ -28,7 +28,7 @@ import {modules} from "../../../../pages/menuData";
 // const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
 
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncgdzc' : '//localhost:3500',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncstock' : '//localhost:3500',
   props: {
     menuModules:modules,
     NcModals:{

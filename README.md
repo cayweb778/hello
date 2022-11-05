@@ -1,20 +1,23 @@
 {
-  zongzhang：
-    总账
-    现金银行
-    报表中心
-  stock：
-    应收
-    应付
-    存货管理
-  system:
+  boozsoft-platform-system:
     集团管理
     组织管理
     操作日志
     清除锁定
     主数据
-  gdzc:
-  
+
+  boozsoft-platform-zongzhang：
+    总账
+    现金银行
+    报表中心
+
+  boozsoft-platform-stock：
+    应收
+    应付
+    存货管理
+
+  boozsoft-platform-gdzc:
+    固定资产
 }
 
 
