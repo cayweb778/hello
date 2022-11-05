@@ -2260,13 +2260,12 @@ const focusNext =  (r, c) => {
   tableDataChange(r, c)
   // 查找下一个
   let list = getDataSource();
-  let filters = [ 'bcheck', 'cinvodeType','cunitid',  'baseQuantity','cinvodeName','cinvodeBarcode','dvdate','dpdate','itaxprice','itaxrate','price','icost']
+  let filters = [ 'bcheck', 'cinvodeType','cunitid','cinvodeName','cinvodeBarcode','baseQuantity','itaxprice','itaxrate','price','icost']
   // 要求填批号才填写
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
   let cols:any = getColumns().filter(it=>it?.title!='序号' &&  filters.indexOf(it?.dataIndex) == -1 && it.ifShow)
   let index = list.findIndex(it => it.key == r.key)
-  console.log(getColumns())
   let nextC = cols[0].dataIndex // 获取下一个列位置
   if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
     list.push({editOne: true})
@@ -2289,7 +2288,7 @@ const focusNext =  (r, c) => {
     }
   }
   nextTick(() => {
-    let doms:any = nextC == 'batchId' || nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
+    let doms = nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
     if (null != doms) doms.focus()
   })
 }
@@ -2298,7 +2297,7 @@ const getNextMark = (c,b) => {
     cnumber:'Cnumber',
     cgUnitId:'CgUnitId',
     cwhcode:'One',
-    cinvode:'Two',
+    'cinvode': 'Two',
     price:'Nine',
     icost:'Ten',
     batchId:'Twelve',

@@ -1211,6 +1211,10 @@ const billStyleFilter = (a) => {
     str = '材料领用出库单'
   }else if(a == '期初结存'){
       str="期初结存"
+  }else if(a == 'RKTZD'){
+    str="入库调整单"
+  }else if(a == 'CKTZD'){
+    str="出库调整单"
   }
   return str
 }

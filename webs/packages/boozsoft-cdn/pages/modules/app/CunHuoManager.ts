@@ -298,10 +298,10 @@ export const menus = [
   createPlatformMenu({ id: useId(411), path: '/sz-cx-price', component: '/boozsoft/stock/stock_price_promote/index', parentId: useId(298), name: '客户促销价格表' }),
   createPlatformMenu({ id: useId(413), path: '/sz-gys-price', component: '/boozsoft/stock/stock_price_sup/index', parentId: useId(298), name: '供应商采购价格表' }),
 
-  /*  createPlatformMenu({ id: useId(414), path: '/sz-gys-mx', component: '/boozsoft/stock/stock_price_promote/index3', parentId: useId(298), name: '客户促销价格明细表' }),
-    createPlatformMenu({ id: useId(415), path: '/kc-inventory-mx', component: '/boozsoft/stock/stock_taking/index3', parentId: useId(298), name: '盘点单明细' }),
-    createPlatformMenu({ id: useId(416), path: '/kc-transfer', component: '/boozsoft/stock/stock_transfer/index', componentName:'DbdMx', parentId: useId(298), name: '调拨单明细' }),
-    createPlatformMenu({ id: useId(417), path: '/kc-shape', component: '/boozsoft/stock/stock_conversion_add/index', parentId: useId(298), name: '形态转换单明细' }),*/
+  createPlatformMenu({ id: useId(414), path: '/sz-gys-mx', component: '/boozsoft/stock/stock_price_promote/index3', hidden:true, parentId: useId(298), name: '客户促销价格明细表' }),
+  createPlatformMenu({ id: useId(415), path: '/kc-inventory-mx', component: '/boozsoft/stock/stock_taking/index3', hidden:true, parentId: useId(298), name: '盘点单明细' }),
+  createPlatformMenu({ id: useId(416), path: '/kc-transfer', component: '/boozsoft/stock/stock_transfer/index', hidden:true, componentName:'DbdMx', parentId: useId(298), name: '调拨单明细' }),
+  createPlatformMenu({ id: useId(417), path: '/kc-shape', component: '/boozsoft/stock/stock_conversion_add/index', hidden:true, parentId: useId(298), name: '形态转换单明细' }),
 
   /* createPlatformMenu({ id: useId(416), path: '/kc-py-mx', component: '/boozsoft/stock/stock-taking-py/index3',  parentId: useId(232), name: '盘盈明细列表' }),
    createPlatformMenu({ id: useId(417), path: '/kc-pk-mx', component: '/boozsoft/stock/stock-taking-pk/index3',  parentId: useId(232), name: '盘亏明细列表' }),*/

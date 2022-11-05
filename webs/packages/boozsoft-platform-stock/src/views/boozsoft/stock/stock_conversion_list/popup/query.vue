@@ -34,9 +34,9 @@
                 <div class="sbd-left" style="padding-left: 5%;">
                   <p>
                     <span><font style="color: red">*</font>制单日期：</span>
-                    <a-date-picker style="width: 180px;" v-model:value="formItems.dateStart" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
+                    <a-date-picker style="width: 160px;" v-model:value="formItems.dateStart" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
                     -
-                    <a-date-picker style="width: 180px;" v-model:value="formItems.dateEnd" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
+                    <a-date-picker style="width: 160px;" v-model:value="formItems.dateEnd" format="YYYY-MM-DD" value-format="YYYY-MM-DD"/>
                   </p>
                 </div>
               </div>

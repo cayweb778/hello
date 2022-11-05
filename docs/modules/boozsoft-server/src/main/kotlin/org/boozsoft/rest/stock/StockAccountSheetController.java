@@ -276,34 +276,48 @@ public class StockAccountSheetController {
                         //收入
                         if(Objects.nonNull(v.getBq()) && index.get() != 0){
 
-                            v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
-                            v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
+                            if(!v.getBillStyle().equals("RKTZD")&&!v.getBillStyle().equals("CKTZD")){
+                                v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
+                                v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
 
-                            StockKctzVo stockKctzVo = resList.get(index.get()-1);
-                            String bq2 = new BigDecimal(v.getBq()).add(new BigDecimal(stockKctzVo.getBq2())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-                            String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
-                            v.setBq2(bq2);
-                            v.setIcost2(it2);
-                            if("0.00".equals(it2)){
-                                v.setPrice2("0.00");
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String bq2 = new BigDecimal(v.getBq()).add(new BigDecimal(stockKctzVo.getBq2())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setBq2(bq2);
+                                v.setIcost2(it2);
+                                if("0.00".equals(it2)){
+                                    v.setPrice2("0.00");
+                                }else{
+                                    v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                }
                             }else{
-                                v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setIcost2(it2);
+                                v.setBq2("0");
                             }
                         }
                         //发出
                         if(Objects.nonNull(v.getBq1()) && index.get() != 0){
-                            v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
-                            v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
+                            if(!v.getBillStyle().equals("RKTZD")&&!v.getBillStyle().equals("CKTZD")){
+                                v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
+                                v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
 
-                            StockKctzVo stockKctzVo = resList.get(index.get()-1);
-                            String bq2 = new BigDecimal(stockKctzVo.getBq2()).subtract(new BigDecimal(v.getBq1())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-                            String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
-                            v.setBq2(bq2);
-                            v.setIcost2(it2);
-                            if("0.00".equals(it2)){
-                                v.setPrice2("0.00");
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String bq2 = new BigDecimal(stockKctzVo.getBq2()).subtract(new BigDecimal(v.getBq1())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+                                String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setBq2(bq2);
+                                v.setIcost2(it2);
+                                if("0.00".equals(it2)){
+                                    v.setPrice2("0.00");
+                                }else{
+                                    v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                }
                             }else{
-                                v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setIcost2(it2);
+                                v.setBq2("0");
                             }
                         }
                         //判断往来单位  采购 其他
@@ -534,35 +548,51 @@ public class StockAccountSheetController {
                         }
                         //收入
                         if(Objects.nonNull(v.getBq()) && index.get() != 0){
-                            v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
-                            v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
-
-                            StockKctzVo stockKctzVo = resList.get(index.get()-1);
-                            String bq2 = new BigDecimal(v.getBq()).add(new BigDecimal(stockKctzVo.getBq2())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-                            String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
-                            v.setBq2(bq2);
-                            v.setIcost2(it2);
-                            if("0.00".equals(it2)){
-                                v.setPrice2("0.00");
+                            if(!v.getBillStyle().equals("RKTZD")&&!v.getBillStyle().equals("CKTZD")){
+                                v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
+                                v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String bq2 = new BigDecimal(v.getBq()).add(new BigDecimal(stockKctzVo.getBq2())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setBq2(bq2);
+                                v.setIcost2(it2);
+                                if("0.00".equals(it2)){
+                                    v.setPrice2("0.00");
+                                }else{
+                                    v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                }
                             }else{
-                                v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setIcost2(it2);
+                                v.setBq2("0");
                             }
+
+
                         }
                         //发出
                         if(Objects.nonNull(v.getBq1()) && index.get() != 0){
-                            v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
-                            v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
+                            if(!v.getBillStyle().equals("RKTZD")&&!v.getBillStyle().equals("CKTZD")) {
+                                v.setPrice(Objects.nonNull(v.getIcost()) ? new BigDecimal(v.getIcost()).divide(new BigDecimal(v.getBq()),BigDecimal.ROUND_HALF_UP).toString() : null);
+                                v.setPrice1(Objects.nonNull(v.getIcost1()) ? new BigDecimal(v.getIcost1()).divide(new BigDecimal(v.getBq1()),BigDecimal.ROUND_HALF_UP).toString(): null);
 
-                            StockKctzVo stockKctzVo = resList.get(index.get()-1);
-                            String bq2 = new BigDecimal(stockKctzVo.getBq2()).subtract(new BigDecimal(v.getBq1())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-                            String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
-                            v.setBq2(bq2);
-                            v.setIcost2(it2);
-                            if("0.00".equals(it2)){
-                                v.setPrice2("0.00");
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String bq2 = new BigDecimal(stockKctzVo.getBq2()).subtract(new BigDecimal(v.getBq1())).setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+                                String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setBq2(bq2);
+                                v.setIcost2(it2);
+                                if("0.00".equals(it2)){
+                                    v.setPrice2("0.00");
+                                }else{
+                                    v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                }
                             }else{
-                                v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
+                                StockKctzVo stockKctzVo = resList.get(index.get()-1);
+                                String it2 = new BigDecimal(Objects.isNull(v.getIcost())?"0.00":v.getIcost()).add(new BigDecimal(stockKctzVo.getIcost2())).setScale(2,BigDecimal.ROUND_UP).toString();
+                                v.setIcost2(it2);
+                                v.setBq2("0");
                             }
+
                         }
                         index.getAndSet(index.get() + 1);
                     });

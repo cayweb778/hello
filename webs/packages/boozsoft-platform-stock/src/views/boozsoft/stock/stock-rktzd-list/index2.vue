@@ -23,6 +23,8 @@
             <Button class="actod-btn" @click="saveData">保存</Button>
             <Button class="actod-btn" @click="giveUp">放弃</Button>
             <Button class="actod-btn" @click="tableDel">删行</Button>
+            <Button class="actod-btn" @click="tableAdd" v-if="status == 1 || status == 2">插行</Button>
+
           </span>
             <span v-else>
               <Button :disabled="ymPeriod" class="actod-btn" @click="startEdit('add')">新增</Button>
@@ -217,53 +219,9 @@
               </div>
             </template>
           </template>
-          <template #cgUnitId="{ record }" >
-            <template v-if="record.editCgUnitId">
-              <Select
-                v-model:value="record.tempCgUnitId"
-                :default-active-first-option="false"
-                :filter-option="false"
-                :not-found-content="null"
-                style="width: 82%;"
-                class="cgUnitId"
-                @keyup.enter="focusNext(record,'cgUnitId')"
-                @change="cgUnitIdChange(record)"
-              >
-                <SelectOption v-for="tem in record.cgUnitIdList" :value="tem.value">
-                  {{ tem.title }}
-                </SelectOption>
-              </Select>
-              <CheckOutlined @click="record.editCgUnitId = null;record.cgUnitId=record.tempCgUnitId;tableDataChange(record,'cgUnitId')"/>
-            </template>
-            <template v-else>
-              <div @click="record.tempCgUnitId=record.cgUnitId,record.editCgUnitId = true;" :class="status == 1 || status == 2?'suspended-div':'status-look'">
-                <span>{{ hasBlank(record.cgUnitIdList)?null:record.cgUnitIdList.filter(it => it.value == record.cgUnitId)[0]?.title}}</span>
-              </div>
-            </template>
-          </template>
-          <template #cnumber="{ record }">
-            <template v-if="record?.editCnumber">
-              <InputNumber v-model:value="record.tempCnumber"
-                           class="cnumber"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @keyup.enter="focusNext(record,'cnumber');"/>
-              <CheckOutlined
-                @click="record.editCnumber = null;record.cnumber=record.tempCnumber;tableDataChange(record,'cnumber')"/>
-            </template>
-            <template v-else>
-              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
-                   @click="record.tempCnumber=record.cnumber,record.editCnumber = true;">
-                    <span class="a-table-font-arial">{{
-                        (record.cnumber == null ? '' : parseFloat(record.cnumber).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }}</span>
-              </div>
-            </template>
-          </template>
           <template #cunitid="{ record }">
             <div>
-              <span>{{cunitFormat(record.cgUnitIdList,record.cunitid)}}</span>
+              <span>{{cunitFormat(record.unitList,record.cunitid)}}</span>
             </div>
           </template>
           <template #cunitidF1="{ record }">
@@ -276,9 +234,9 @@
               <span>{{cunitFormat(record.cgUnitIdList,record.cunitidF2)}}</span>
             </div>
           </template>
-          <template #baseQuantity="{ record }">
+          <template #cfree1="{ record }">
             <span class="a-table-font-arial">{{
-                (record.baseQuantity == null || record.baseQuantity == 0 ? '' : parseFloat(record.baseQuantity).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                (record.cfree1 == null || record.cfree1 == 0 ? '' : parseFloat(record.cfree1).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }}
              </span>
           </template>
@@ -294,110 +252,12 @@
               }}
              </span>
           </template>
-<!--          <template #price="{ record }" >
-            <template v-if="!canzhao&&record?.editNine">
-              <InputNumber v-model:value="record.tempNine" class="price"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @click="findBySupPrice(record)"
-                           @keyup.enter="focusNext(record,'price')"/>
-              <CheckOutlined
-                @click="record.editNine = null;record.price=record.tempNine;tableDataChange(record,'price')"/>
-            </template>
-            <template v-else>
-              <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
-                   @click="record.tempNine=record.price,record.editNine = true;">
-         <span class="a-table-font-arial">{{
-             (record.price == null ? '' : parseFloat(record.price).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-           }}</span>
-              </div>
-            </template>
-          </template>
-          <template #icost="{ record }">
-            <template v-if="!canzhao&&record?.editTen">
-              <InputNumber v-model:value="record.tempTen" class="icost"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @keyup.enter="focusNext(record,'icost')"/>
-              <CheckOutlined
-                @click="record.editTen = null;record.icost=record.tempTen;tableDataChange(record,'icost')"/>
-            </template>
-            <template v-else>
-              <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
-                   @click="record.tempTen=record.icost,record.editTen = true;">
-          <span class="a-table-font-arial">{{
-              (record.icost == null ? '' : parseFloat(record.icost).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }}</span>
-              </div>
-            </template>
-          </template>-->
 
-          <template #isum="{ record }">
-            <template v-if="!canzhao&&record?.editIsum">
-              <InputNumber v-model:value="record.tempIsum" class="isum"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @keyup.enter="focusNext(record,'isum')"/>
-              <CheckOutlined
-                @click="record.editIsum = null;record.isum=record.tempIsum;tableDataChange(record,'isum')"/>
-            </template>
-            <template v-else>
-              <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
-                   @click="record.tempIsum=record.isum,record.editIsum = true;">
-          <span class="a-table-font-arial">{{
-              (record.isum == null ? '' : parseFloat(record.isum).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }}</span>
-              </div>
-            </template>
-          </template>
-          <template #isGive="{ record }">
-            <Switch v-model:checked="record.isGive" :disabled="status == 3||!canzhao" size="small"
-                    @change="isGiveChange(record)"/>
-          </template>
-          <template #batchId="{ record }">
-            <template v-if="!canzhao&&record?.editTwelve/* && record.isBatch*/">
-              <Input v-model:value="record.tempTwelve"
-                     style="width: 82%;" class="batchId"
-                     @keyup.enter="focusNext(record,'batchId')"/>
-              <CheckOutlined @click="record.editTwelve = null;record.batchId=record.tempTwelve;"/>
-            </template>
-            <template v-else>
-              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
-                   @click="record.tempTwelve=record.batchId,record.editTwelve = true;">
-                <span class="a-table-font-arial">{{ record.batchId }}</span>
-              </div>
-            </template>
-          </template>
-          <template #cfree1="{ record }">
-            <template v-if="!canzhao&&record?.editThirteen">
-              <Input v-model:value="record.tempThirteen"
-                     style="width: 82%;" class="cfree1"
-                     @keyup.enter="focusNext(record,'cfree1')"/>
-              <CheckOutlined @click="record.editThirteen = null;record.cfree1=record.tempThirteen;"/>
-            </template>
-            <template v-else>
-              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
-                   @click="record.tempThirteen=record.cfree1,record.editThirteen = true;">
-                <span class="a-table-font-arial">{{ record.cfree1 }}</span>
-              </div>
-            </template>
-          </template>
-          <template #cfree2="{ record }">
-            <template v-if="!canzhao&&record?.editThirteen">
-              <Input v-model:value="record.tempThirteen"
-                     style="width: 82%;" class="cfree2"
-                     @keyup.enter="focusNext(record,'cfree2')"/>
-              <CheckOutlined @click="record.editThirteen = null;record.cfree2=record.tempThirteen;"/>
-            </template>
-            <template v-else>
-              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
-                   @click="record.tempThirteen=record.cfree2,record.editThirteen = true;">
-                <span class="a-table-font-arial">{{ record.cfree2 }}</span>
-              </div>
-            </template>
+          <template #icost2="{ record }">
+            <span class="a-table-font-arial">{{
+                icostFormat(record)
+              }}
+             </span>
           </template>
 
           <template #thprice="{ record }">
@@ -442,30 +302,23 @@
             </template>
           </template>
 
-<!--          <template #thmoney="{ record }">
-            <template v-if="!canzhao&&record?.editNine">
-              <InputNumber v-model:value="record.tempNine" class="thmoney"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @click="findBySupPrice(record)"
-                           @keyup.enter="focusNext(record,'thmoney')"/>
-              <CheckOutlined
-                @click="record.editNine = null;record.thmoney=record.tempNine;tableDataChange(record,'thmoney')"/>
+          <template #batchId="{ record }">
+            <template v-if="!canzhao&&record?.editTwelve/* && record.isBatch*/">
+              <Input v-model:value="record.tempTwelve"
+                     style="width: 82%;" class="batchId"
+                     @keyup.enter="focusNext(record,'batchId')"/>
+              <CheckOutlined @click="record.editTwelve = null;record.batchId=record.tempTwelve;"/>
             </template>
             <template v-else>
-              <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
-                   @click="record.tempNine=record.thmoney,record.editNine = true;">
-               <span class="a-table-font-arial">{{
-                   (record.price == null ? '' : parseFloat(record.price).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                 }}</span>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempTwelve=record.batchId,record.editTwelve = true;">
+                <span class="a-table-font-arial">{{ record.batchId }}</span>
               </div>
             </template>
-          </template>-->
-
+          </template>
 
           <template #dpdate="{ record }">
-            <template v-if="!canzhao&&record?.editDpdate">
+            <template v-if="titleValue==0&&record?.editDpdate">
               <DatePicker v-model:value="record.tempDpdate" value-format="YYYY-MM-DD"
                           class="dpdate"
                           format="YYYY-MM-DD" style="width: 82%;"
@@ -480,7 +333,7 @@
             </template>
           </template>
           <template #dvdate="{ record }">
-            <template v-if="!canzhao&&record?.editFifteen">
+            <template v-if="titleValue==0&&record?.editFifteen">
               <DatePicker v-model:value="record.tempFifteen" value-format="YYYY-MM-DD"
                           class="dvdate"
                           format="YYYY-MM-DD" style="width: 82%;"
@@ -497,12 +350,26 @@
           <template #bcheck="{ record }">
             {{ formatUniqueOperator(record.bcheckUser)}}
           </template>
+          <template #cmemo="{ record }">
+            <template v-if="!canzhao&&record?.editThirteen">
+              <Input v-model:value="record.tempThirteen"
+                     style="width: 82%;" class="cmemo"
+                     @keyup.enter="focusNext(record,'cmemo')"/>
+              <CheckOutlined @click="record.editThirteen = null;record.cmemo=record.tempThirteen;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempThirteen=record.cmemo,record.editThirteen = true;">
+                <span class="a-table-font-arial">{{ record.cmemo }}</span>
+              </div>
+            </template>
+          </template>
           <template #summary>
             <TableSummary fixed>
               <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">
                 <TableSummaryCell class="nc-summary" :index="0" :align="'center'">合</TableSummaryCell>
                 <TableSummaryCell class="nc-summary" :index="1" :align="'center'">计</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summary[cell.dataIndex]?'':summary[cell.dataIndex].toFixed(2)}}</span></TableSummaryCell>
+                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summary[cell.dataIndex]?'':summary[cell.dataIndex]}}</span></TableSummaryCell>
               </TableSummaryRow>
             </TableSummary>
           </template>
@@ -593,9 +460,7 @@ import {assemblyDynamicColumn, initDynamics} from "./data";
 import {hasBlank, trim} from "/@/api/task-api/tast-bus-api";
 import {usePlatformsStore} from "/@/store/modules/platforms";
 import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock-rktzd-list/component/DynamicForm";
-/*import SupperModalPop from "/@/views/boozsoft/system/supplier/popup/modalPop.vue";
-import DeptModalPop from "/@/views/boozsoft/system/department/popup/select-dept.vue";
-import SelectPsn from "/@/views/boozsoft/system/department/popup/select-psn.vue";*/
+
 
 import StockCangKuModalPop from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
 // import StockInfiModalPop from "/@/views/boozsoft/stock/stock-rktzd-list/popup/stockInfoModalPop.vue";
@@ -643,7 +508,7 @@ import {
   findStockCurr,
   saveZTRK_XCL,
   shenheZTRK_XCL,
-  subtractZTRKSum,
+  subtractZTRKSum, verifyStockRowXCL,
 } from "/@/api/record/stock/stock-currents";
 import {
   findByStockWarehLinecode,
@@ -665,6 +530,8 @@ import {dataModelBuildingTwoData} from "/@/views/boozsoft/stock/stock-caigou-rk/
 import {
   getPrintStencilParameter
 } from "/@/views/boozsoft/stock/stock_sales_add/popup/ts/printTemplate";
+import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerReferences";
+import {getCkPrice} from "/@/api/record/stock/stock_cost";
 
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
@@ -750,12 +617,7 @@ let num = 0
 const visible3:any = ref(false)
 const dynamicAdReload = async (obj) => {
   num+=1
-  console.log('当前时间：'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
-  // 获取账套是否允许零出库
-  let stockAccount= await useRouteApi(findByStockAccountId, {schemaName: obj.accountMode})(obj.target.id)
-  if(stockAccount!==''){
-    stockAccountObj.value = stockAccount
-  }
+  dynamicTenant.value = obj
   dynamicTenantId.value = obj.accountMode
   dynamicAccId.value = obj.accId
   dynamicYear.value = obj.stockYear
@@ -787,6 +649,7 @@ const columnReload = async () => {
 
 const pageReload = async () => {
   stockWareData.value=''
+  await reloadList()
   // 列表跳转过来
   if(routeData.ccode!==undefined){
     titleValue.value=hasBlank(routeData.bdocumStyle)?0:1
@@ -801,7 +664,12 @@ async function reloadList() {
   manyJiList.value = await useRouteApi(findUnitInfoList, {schemaName: dynamicTenantId})({})
   duoJlMxList.value = await useRouteApi(findUnitAssociationList, {schemaName: dynamicTenantId})({})
   assetsCardList.value = (await useRouteApi(findCunHuoAllList, {schemaName: dynamicTenantId})({date: useCompanyOperateStoreWidthOut().getLoginDate}))
-}
+  nextTick(()=>{
+    ckListOptions.value = formFuns.value.getSelectMap()['warehouse']
+    operatorList.value = formFuns.value.getSelectMap()['operator']
+    custList.value = formFuns.value.getSelectMap()['supplier']
+    userList.value = formFuns.value.getSelectMap()['user']
+  })}
 
 async function contentSwitch(action,ccode) {
   status.value=3
@@ -892,11 +760,13 @@ const CrudApi = {
       dataIndex: 'cwhcode',
       ellipsis: true,
       slots: {customRender: 'cwhcode'},
+      fixed:'left',
       width: 120
     },
     {
       title: '条形码',
       dataIndex: 'bcheck1',
+      fixed:'left',
       ellipsis: true,
       width: 120,slots: {customRender: 'bcheck1'},
     },
@@ -904,6 +774,7 @@ const CrudApi = {
       title: '存货编码',
       dataIndex: 'cinvode',
       ellipsis: true,
+      fixed:'left',
       slots: {customRender: 'cinvode'},
       width: 120
     },
@@ -911,6 +782,7 @@ const CrudApi = {
       title: '存货名称',
       dataIndex: 'cinvodeName',
       ellipsis: true,
+      fixed:'left',
       slots: {customRender: 'cinvodeName'},
       width: 200
     },
@@ -918,68 +790,35 @@ const CrudApi = {
       title: '规格型号',
       dataIndex: 'cinvodeType',
       ellipsis: true,
+      fixed:'left',
       slots: {customRender: 'cinvodeType'},
       width: 120
     },{
       title: '主计量',
       dataIndex: 'cunitid',
       ellipsis: true,
+      fixed:'left',
       slots: {customRender: 'cunitid'},
       width: 120
     },
     {
-      title: '批号',
-      dataIndex: 'batchId',
-      ellipsis: true,
-      slots: {customRender: 'batchId'},
-      width: 150,
-    },
-    {
-      title: '生产日期',
-      dataIndex: 'dpdate',
-      slots: {customRender: 'dpdate'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: '失效日期',
-      dataIndex: 'dvdate',
-      slots: {customRender: 'dvdate'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: '关联单号',
+      title: '结存数量',
       dataIndex: 'cfree1',
       slots: {customRender: 'cfree1'},
       ellipsis: true,
       width: 150,
     },
     {
-      title: '关联单据',
+      title: '调前单价',
       dataIndex: 'cfree2',
       slots: {customRender: 'cfree2'},
       ellipsis: true,
       width: 150,
     },
     {
-      title: '结存数量',
-      dataIndex: 'quantityPd',
-      slots: {customRender: 'quantityPd'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: '调前单价',
-      dataIndex: 'price',
-      slots: {customRender: 'price'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
       title: '调前金额',
-      dataIndex: 'icost',
-      slots: {customRender: 'icost'},
+      dataIndex: 'icost2',
+      slots: {customRender: 'icost2'},
       ellipsis: true,
       width: 150,
     },
@@ -1004,7 +843,48 @@ const CrudApi = {
       ellipsis: true,
       width: 150,
     },
-
+    {
+      title: '批号',
+      dataIndex: 'batchId',
+      ellipsis: true,
+      slots: {customRender: 'batchId'},
+      width: 150,
+    },
+    {
+      title: '生产日期',
+      dataIndex: 'dpdate',
+      slots: {customRender: 'dpdate'},
+      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: '失效日期',
+      dataIndex: 'dvdate',
+      slots: {customRender: 'dvdate'},
+      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: '关联单号',
+      dataIndex: 'cfree3',
+      slots: {customRender: 'cfree3'},
+      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: '关联单据',
+      dataIndex: 'cfree4',
+      slots: {customRender: 'cfree4'},
+      ellipsis: true,
+      width: 150,
+    },
+    {
+      title: '备注',
+      dataIndex: 'cmemo',
+      ellipsis: true,
+      width: 120,
+      slots: {customRender: 'cmemo'},
+    },
   ]
 }
 // 这是示例组件
@@ -1049,21 +929,6 @@ const openQpage = async () => {
   }
 }
 
-const tableAdd = () => {
-  if (tableSelectedRowKeys.value.length == 1) {
-    let list = getDataSource()
-    let selectIndex = list.findIndex(it => it.key === tableSelectedRowKeys.value[0])
-    list.splice(selectIndex, 0, {cwhcode: formFuns.value.getFormValue().cwhcode})
-    setTableData(list)
-    tableSelectedRowKeys.value = []
-  } else {
-    createErrorModal({
-      iconType: 'warning',
-      title: '温馨提示',
-      content: '请选择插入行次！'
-    })
-  }
-}
 const rowDelData:any=ref([])
 const tableDel = async () => {
   if (tableSelectedRowKeys.value.length == 1) {
@@ -1078,7 +943,7 @@ const tableDel = async () => {
       if(stockcurr.length>0){
         let temp2=stockcurr.filter(a=>a.cwhcode==rowDelData.value[0][0].cwhcode&& a.invCode==rowDelData.value[0][0].cinvode && a.batchId==rowDelData.value[0][0].batchId && a.dpdate==rowDelData.value[0][0].dpdate && a.dvdate==rowDelData.value[0][0].dpdate)
         for (let j = 0; j < temp2.length; j++) {
-          if(parseFloat(rowDelData.value[0][0].baseQuantity)<parseFloat(temp2[j].ztrkQuantityCgrk)){
+          if(parseFloat(rowDelData.value[0][0].cfree1)<parseFloat(temp2[j].ztrkQuantityCgrk)){
             message.error('存货编码【'+rowDelData.value[0][0].cinvode+'】在途入库数量不足,不能修改')
             return false
           }
@@ -1227,7 +1092,7 @@ const startDel = async () => {
       temp.batchId=dataList[i].batchId
       temp.dpdate=dataList[i].dpdate
       temp.dvdate=dataList[i].dvdate
-      temp.baseQuantity=dataList[i].baseQuantity
+      temp.cfree1=dataList[i].cfree1
       verifylist.push(temp)
     }
     // 可用量不足 弹出框提示
@@ -1300,7 +1165,7 @@ const startReview = async (b) => {
 
   }
   // 判断盘点单
-  let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
+  let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.cfree1) && !hasBlank(it.icost2 + '') && !hasBlank(it.cfree2 + ''))
   let verifylist:any=[]
   for (let i = 0; i < list.length; i++) {
     let t=list[i]
@@ -1317,7 +1182,7 @@ const startReview = async (b) => {
     temp2.batchId=list[i].batchId
     temp2.dpdate=list[i].dpdate
     temp2.dvdate=list[i].dvdate
-    temp2.baseQuantity=list[i].baseQuantity
+    temp2.cfree1=list[i].cfree1
     verifylist.push(temp2)
   }
 
@@ -1333,7 +1198,6 @@ const startReview = async (b) => {
     res.bcheckUser=bcheckUser
     await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(res)
     let listdata = getDataSource().filter(it => !hasBlank(it.cwhcode))
-    //let listdata = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
     listdata.forEach(tx=>{
       tx.bcheck=bcheck
       tx.bcheckTime=bcheckTime
@@ -1399,21 +1263,21 @@ function saveCheck(list) {
     return false
   }
   else{
-    let price= list.filter(it =>it.tempNine==null&&it.price==null)
-    if(price.length>0){
+    let cfree2= list.filter(it =>it.tempNine==null&&it.cfree2==null)
+    if(cfree2.length>0){
       createErrorModal({
         iconType: 'warning',
         title: '温馨提示',
-        content: '存货编码【'+price.map(a=>a.cinvode)+'】无税单价不能为空！'
+        content: '存货编码【'+cfree2.map(a=>a.cinvode)+'】无税单价不能为空！'
       })
       return false
     }
-    let icost= list.filter(it =>it.tempTen==null&&it.icost==null)
-    if(icost.length>0){
+    let icost2= list.filter(it =>it.tempTen==null&&it.icost2==null)
+    if(icost2.length>0){
       createErrorModal({
         iconType: 'warning',
         title: '温馨提示',
-        content: '存货编码【'+icost.map(a=>a.cinvode)+'】无税金额不能为空！'
+        content: '存货编码【'+icost2.map(a=>a.cinvode)+'】无税金额不能为空！'
       })
       return false
     }
@@ -1468,7 +1332,6 @@ async function saveData() {
 
   // 新的明细
   let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode))
-  //let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   for (let i = 0; i < list.length; i++) {
     // 此存货是否存在未审核的盘点单
     let temp= await useRouteApi(getPYRKDAndNoBcheck1, {schemaName: dynamicTenantId})({iyear:dynamicYear.value,stockNum:list[i].cinvode})
@@ -1505,7 +1368,7 @@ async function saveData() {
       temp2.batchId=list[i].batchId
       temp2.dpdate=list[i].dpdate
       temp2.dvdate=list[i].dvdate
-      temp2.baseQuantity=list[i].baseQuantity
+      temp2.cfree1=list[i].cfree1
       verifylist.push(temp2)
     }
 
@@ -1527,18 +1390,17 @@ async function saveData() {
       }
     }
 
-    await useRouteApi(saveRuKu, {schemaName: dynamicTenantId})(formItems.value)
+   await useRouteApi(saveRuKu, {schemaName: dynamicTenantId})(formItems.value)
     .then(async (data)=>{
-
-      })
+      tempTaskDel(taskInfo.value?.id)
+      /************** 记录操作日志 ****************/
+      saveLogData(status.value==1?'新增':'修改')
+      /************** 记录操作日志 ****************/
+      message.success('保存成功！')
+      await contentSwitch('curr','')
+      status.value = 3
+    })
     //await useRouteApi(stockWarehListSave, {schemaName: dynamicTenantId})(symxList)
-    tempTaskDel(taskInfo.value?.id)
-    /************** 记录操作日志 ****************/
-    saveLogData(status.value==1?'新增':'修改')
-    /************** 记录操作日志 ****************/
-    message.success('保存成功！')
-    await contentSwitch('curr','')
-    status.value = 3
   }
 }
 
@@ -1777,6 +1639,13 @@ const openSelectContent = (o, type) => {
       break;
   }
 }
+
+const {openDeptModal,openPsnModal} =  useNcModals()
+const [registerModalPopPage, {openModal: openMoalPopPage}] = useModal();
+const [registerSelectDeptPage, {openModal: openSelectDeptPage}] = useModal()
+const [registerSelectPsnPage, {openModal: openSelectPsnPage}] = useModal()
+const [registerBatchSelectorPage, {openModal: opneBatchSelectorPage}] = useModal();
+
 const openHeadSelectContent = (type) => {
   thisEditType.value = type
   switch (type) {
@@ -1793,9 +1662,7 @@ const openHeadSelectContent = (type) => {
       });
       break;
     case 'cdepcode':
-      openSelectDeptPage(true, {
-        dynamicTenantId: dynamicTenantId.value
-      })
+      openDeptModal(dynamicTenantId.value).then(res=>modalData(res))
       break;
     case 'cwhcode':
       openStockCangKuModalPage(true, {
@@ -1803,14 +1670,10 @@ const openHeadSelectContent = (type) => {
       })
       break;
     case 'cpersoncode':
-      openSelectPsnPage(true, {
-        dynamicTenantId: dynamicTenantId.value
-      })
+      openPsnModal(dynamicTenantId.value).then(res=>modalData(res))
       break;
     case 'cwhcodeUser':
-      openSelectPsnPage(true, {
-        dynamicTenantId: dynamicTenantId.value
-      })
+      openPsnModal(dynamicTenantId.value).then(res=>modalData(res))
       break;
   }
 }
@@ -1914,16 +1777,12 @@ const tableDataChange =  async (r,c) => {
   if(titleValue.value != 0 && c=='cnumber' ){
     r.tempCnumber=parseFloat(r.tempCnumber) > 0?0 - (Math.abs(parseFloat(r.tempCnumber))):r.tempCnumber
     r.cnumber=r.tempCnumber
-  }else if(titleValue.value != 0 && c=='icost' ){
+  }else if(titleValue.value != 0 && c=='icost2' ){
     r.tempTen=parseFloat(r.tempTen) > 0?0 - (Math.abs(parseFloat(r.tempTen))):r.tempTen
-    r.icost=r.tempNine
+    r.icost2=r.tempNine
   }else if(titleValue.value != 0 && c=='isum' ){
     r.tempIsum=parseFloat(r.tempIsum) > 0?0 - (Math.abs(parseFloat(r.tempIsum))):r.tempIsum
     r.isum=r.tempIsum
-  }
-
-  if(canzhao.value){
-    verifyTableBaseQuantity()
   }
 
   let h = formFuns.value.getFormValue();
@@ -1943,8 +1802,8 @@ const tableDataChange =  async (r,c) => {
       let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == r.cinvode) :tempType.value=='three'? (it.stockBarcode == r.bcheck1) : (it.stockName == r.cinvodeName))[0]
       r.cinvodeInfo = o
       if(r.cinvodeInfo.stockMeasurementType=='单计量'){
-        r.baseQuantity=r.cnumber
-        tableDataChange(r,'price')
+        r.cfree1=r.cnumber
+        tableDataChange(r,'cfree2')
       }
       else{
         slChange0(r)
@@ -1976,60 +1835,30 @@ const tableDataChange =  async (r,c) => {
       if (r.bcheck1 == null ) r.bcheck1 = r.tempThree
       chChange(r)
       break;
-    case 'price':
-      if (!hasBlank(r.cnumber) && !hasBlank(r.price)) {
-        let n:any = parseFloat(r.cnumber).toFixed(10)
+    case 'cfree2':
+      if (!hasBlank(r.cfree1) && !hasBlank(r.cfree2)) {
+        let n:any = parseFloat(r.cfree1).toFixed(10)
         if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
-        let d:any = parseFloat(r.price).toFixed(10)
-        r.icost = parseFloat(String(n * d)).toFixed(4) + ''
-        r.tempTen = r.icost
-        r.price = Math.abs(d)
-
-        // 含税单价
-        let itaxrate=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
-        r.taxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
-        r.tempTaxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
-        // 价税合计
-        r.isum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
-        r.tempIsum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
-        // 税额=价税合计-无税金额
-        r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):null
+        let d:any = parseFloat(r.cfree2).toFixed(10)
+        r.icost2 = parseFloat(String(n * d)).toFixed(4) + ''
+        r.tempTen = r.icost2
+        r.cfree2 = Math.abs(d)
       }
       break;
-    case 'icost':
-      if (!hasBlank(r.cnumber) && !hasBlank(r.tempTen)) { //反算 单价
-        let n:any = parseFloat(r.cnumber).toFixed(10)
-        if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
-        let d:any = parseFloat(r.tempTen).toFixed(4)
-        r.icost = d
-        r.tempTen =r.icost
-        r.price = parseFloat(String(d / parseFloat(n))).toFixed(10)
-
-        // 含税单价
-        let itaxrate=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
-        r.taxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
-        r.tempTaxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
-        // 价税合计
-        r.isum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
-        r.tempIsum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
-        // 税额=价税合计-无税金额
-        r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):null
-      }
-      break;// 无税金额
     case 'thprice':// 调整单价
-      if (!hasBlank(r.thprice) && !hasBlank(r.baseQuantity)) {
+      if (!hasBlank(r.thprice) && !hasBlank(r.cfree1)) {
         // 调后金额=主数量x调后单价
-        r.thicost= parseFloat(String(r.baseQuantity*r.thprice)).toFixed(4)
+        r.thicost= parseFloat(String(r.cfree1*r.thprice)).toFixed(4)
         //调整金额 = 调前金额-跳后金额
-        r.thmoney= parseFloat(String(r.icost - r.thicost)).toFixed(4)
+        r.thmoney= parseFloat(String(r.icost2 - r.thicost)).toFixed(4)
       }
       break;
     case 'thicost':// 调后金额
-      if (!hasBlank(r.thmoney) && !hasBlank(r.baseQuantity)) { //反算 单价
+      if (!hasBlank(r.thmoney) && !hasBlank(r.cfree1)) { //反算 单价
         // 调后单价=主数量x调后单价
-        r.thprice= parseFloat(String(r.thmoney/r.baseQuantity)).toFixed(4)
+        r.thprice= parseFloat(String(r.thmoney/r.cfree1)).toFixed(4)
         // 调整金额 = 调前金额-跳后金额
-        r.thmoney= parseFloat(String(r.icost - r.thicost)).toFixed(4)
+        r.thmoney= parseFloat(String(r.icost2 - r.thicost)).toFixed(4)
       }
       break;
   }
@@ -2041,10 +1870,10 @@ const slChange0 = (r) => {
     list=list.filter(jl=>!hasBlank(jl.unitName))
     if (list.length > 0){
       let conversionRate=list.filter(a=>a.id==r.cgUnitId)[0]?.conversionRate
-      r.baseQuantity=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
-      r.tempSix=r.baseQuantity
+      r.cfree1=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
+      r.tempSix=r.cfree1
 
-      let n:any = parseFloat(r.baseQuantity).toFixed(10)
+      let n:any = parseFloat(r.cfree1).toFixed(10)
       let isnum  = (r.unitInfo.unitType == '2')
       let conversionRate1:any=0
       let conversionRate2:any=0
@@ -2057,7 +1886,7 @@ const slChange0 = (r) => {
       let one:any =  parseFloat(String(n/parseFloat(conversionRate1))).toFixed(10)
       let two:any =  list.length==3?parseFloat(String(n/parseFloat(conversionRate2))).toFixed(10):null
       if (isnum){ //取整数}
-        r.baseQuantity = isNaN(n)?null:NumberTool.toCeil(n,2)+''
+        r.cfree1 = isNaN(n)?null:NumberTool.toCeil(n,2)+''
         r.subQuantity1 = isNaN(one)?null:NumberTool.toCeil(one,2)+''
         r.subQuantity2 = isNaN(two)?null:NumberTool.toCeil(two,2)+''
         r.tempSubQuantity1 = r.subQuantity1
@@ -2070,19 +1899,32 @@ const slChange0 = (r) => {
       }
     }
     else{
-      r.baseQuantity = "0.0000000000"
+      r.cfree1 = "0.0000000000"
       r.subQuantity1 = "0.0000000000"
       r.subQuantity2 = "0.0000000000"
       r.tempSix = r.subQuantity1
       r.tempSubQuantity2 = r.subQuantity2
-      r.tempSubQuantity2 = r.baseQuantity
+      r.tempSubQuantity2 = r.cfree1
     }
     tableDataChange(r,'taxprice')
   }
 }
 const chChange = async (record) => {
+  if(hasBlank(record.cwhcode)){
+    message.error('请先选择仓库!')
+    return
+  }
+  if(hasBlank(record.cinvode)){
+    message.error('请先选择存货!')
+    return
+  }
+  findByUnitList(record)
+}
+
+const findByUnitList = async (record) => {
   let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
-  record.cgUnitIdList=[]
+  console.log(o)
+  record.unitList=[]
   record.cinvodeInfo = o
   record.cinvodeName = o?.stockName
   record.cinvode = o?.stockNum
@@ -2090,36 +1932,34 @@ const chChange = async (record) => {
   record.bcheck1 = o?.stockBarcode // 条形码
   // 计量类型
   record.cunitType = o?.stockMeasurementType == '单计量'?'1':'0'
-  record.cunitid = o?.stockMeasurementUnit // 计量类型
+  record.cunitid = o?.stockUnitId // 主计量
   record.isBatch = o?.stockPropertyBatch == '1' // 批号必须输入
   record.isIndate = o?.stockIndateManage == '1' // 有效期必须输入
-  record.baseQuantity=null
-  record.subQuantity1=null
-
-  if (o?.stockMeasurementType == '多计量' && !hasBlank(record.cunitid)){
-    let res:any =  manyJiList.value.filter(it=>it.id == record.cunitid)[0]
+  if (o?.stockMeasurementType == '多计量' && !hasBlank(o?.stockMeasurementUnit)){
+    let res:any =  manyJiList.value.filter(it=>it.id == o?.stockMeasurementUnit)[0]
     if (res != null){
       record.unitInfo = res
       let list = JsonTool.parseObj(res.detail) || []
       list=list.filter(jl=>!hasBlank(jl.unitName))
       if (list.length > 0){
         if(!hasBlank(o?.stockUnitName)){
-          record.cgUnitIdList=[{title:o?.stockUnitName,value:o?.stockUnitId,ggxh:o?.stockGgxh,txm:o?.stockBarcode}]
+          let conversionRate= list.filter(j=>j.unitName==o?.stockUnitName)[0]?.conversionRate
+          record.unitList=[{title:o?.stockUnitName,value:o?.stockUnitId,ggxh:o?.stockGgxh,txm:o?.stockBarcode,conversionRate:conversionRate}]
         }
         else{
           // 可能是之前的存货档案,也可能是导入进来的
-          let res:any =  manyJiList.value.filter(it=>it.id == record.cunitid)[0]
+          let res:any =  manyJiList.value.filter(it=>it.id == o?.stockMeasurementUnit)[0]
           if (res != null){
             let list = JsonTool.parseObj(res.detail) || []
             list=list.filter(jl=>!hasBlank(jl.unitName))
             for (let i = 0; i < list.length; i++) {
               if(i==0){
-                record.cgUnitIdList.push({title:list[i].unitName,value:list[i].id,ggxh:o?.stockGgxh,txm:o?.stockBarcode})
+                record.unitList.push({title:list[i].unitName,value:list[i].id,ggxh:o?.stockGgxh,txm:o?.stockBarcode})
               }else{
-                record.cgUnitIdList.push({title:list[i].unitName,value:list[i].id,ggxh:'',txm:''})
+                record.unitList.push({title:list[i].unitName,value:list[i].id,ggxh:'',txm:''})
               }
             }
-            record.cgUnitId=record.cgUnitIdList[0].value
+            record.cgUnitId=record.unitList[0].value
             record.tempCgUnitId=record.cgUnitId
           }
         }
@@ -2127,11 +1967,12 @@ const chChange = async (record) => {
           record.cunitidF1 = list[1].id
           record.rate1 = list[1].conversionRate
           if (!hasBlank(o?.stockUnitName1)) {
-            record.cgUnitIdList.push({
+            record.unitList.push({
               title: o?.stockUnitName1,
               value: o?.stockUnitId1,
               ggxh: o?.stockUnitGgxh1,
-              txm: o?.stockUnitBarcode1
+              txm: o?.stockUnitBarcode1,
+              conversionRate:list[1].conversionRate
             })
           }
         } else if (list.length ==3){
@@ -2140,43 +1981,79 @@ const chChange = async (record) => {
           record.rate1 = list[1]?.conversionRate
           record.rate2 = list[2]?.conversionRate
           if(!hasBlank(o?.stockUnitName2)){
-            record.cgUnitIdList.push({
+            record.unitList.push({
               title: o?.stockUnitName1,
               value: o?.stockUnitId1,
               ggxh: o?.stockUnitGgxh1,
-              txm: o?.stockUnitBarcode1
+              txm: o?.stockUnitBarcode1,
+              conversionRate:list[1].conversionRate
             })
-            record.cgUnitIdList.push({title:o?.stockUnitName2,value:o?.stockUnitId2,ggxh:o?.stockUnitGgxh2,txm:o?.stockUnitBarcode2})
+            record.unitList.push({title:o?.stockUnitName2,value:o?.stockUnitId2,ggxh:o?.stockUnitGgxh2,txm:o?.stockUnitBarcode2,conversionRate:list[2].conversionRate})
           }
         }
       }
     }
-  }
-  else{
+  }else{
     let djl= await useRouteApi(singleUnitOfMea, {schemaName: dynamicTenantId})('')
     if(djl.length>0){
       let djlData=djl.filter(a=>a.id==o?.stockMeasurementUnit)[0]
-      record.cgUnitIdList.push({title:djlData?.unitName,value:djlData?.id,ggxh:o?.stockGgxh,txm:o?.stockBarcode})
+      record.unitList.push({title:djlData?.unitName,value:djlData?.id,ggxh:o?.stockGgxh,txm:o?.stockBarcode})
       record.tempCgUnitId=djlData?.id
       record.cgUnitId=record.tempCgUnitId
     }
   }
 
-  if(record.cgUnitIdList.length>0){
+  if(record.unitList.length>0){
     // 存货档案中采购单位
-    if(hasBlank(record.cinvodeInfo?.stockPurchaseUnit)){
-      record.cgUnitId=record.cgUnitIdList[0].value
+    if(hasBlank(record.cinvodeInfo.stockPurchaseUnit)){
+      record.cgUnitId=record.unitList[0].value
     } else{
-      let data=record.cgUnitIdList.filter(a=>a.value==record.cinvodeInfo?.stockPurchaseUnit)[0]
+      let data=record.unitList.filter(a=>a.value==record.cinvodeInfo.stockPurchaseUnit)[0]
       record.cinvodeType = data?.ggxh // 规格型号
       record.bcheck1 = data?.txm // 条形码
-      record.cgUnitId=record.cinvodeInfo?.stockPurchaseUnit
+      record.cgUnitId=record.cinvodeInfo.stockPurchaseUnit
     }
     record.tempCgUnitId=record.cgUnitId
   }
-  await findByPrice(record)
+  // 现存量
+  findByStockXCL(record)
+  // 成本单价
+  findByStockPrice(record)
 }
 
+const dynamicTenant = ref(null)
+
+// 存货成本单价
+async function findByStockPrice(data) {
+  let cfree2=await useRouteApi(getCkPrice, {schemaName: dynamicTenantId})({
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+    stockNum:data.cinvode,
+    stockCangku:data.cwhcode,
+    batchId:!hasBlank(data.batchId)?data.batchId:"",
+    ddate:formItems.value.ddate,
+    year:dynamicYear.value
+  })
+  data.tempNine=!isNaN(cfree2)?parseFloat(cfree2).toFixed(2):null
+  data.cfree2=data.tempNine
+
+  data.icost2 = parseFloat(String(data.cfree1 * data.cfree2)).toFixed(4) + ''
+  data.tempTen =data.icost2
+}
+//现存量
+async function findByStockXCL(data) {
+  let xcl = await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'xcl',
+    cinvode:data.cinvode,
+    cwhcode:data.cwhcode,
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck
+  })
+  data.cfree1=!isNaN(xcl)?parseFloat(xcl).toFixed(2):0
+  data.icost2 = parseFloat(String(data.cfree1 * data.cfree2)).toFixed(4) + ''
+  data.tempTen = data.icost2
+}
 const outBefore = () => {
   if (status.value != 3){
     createConfirm({
@@ -2204,43 +2081,25 @@ const {proxy}:any = getCurrentInstance()
  * @param t mark
  */
 const focusNext =  async (r, c) => {
-
-  if(titleValue.value != 0 && c=='cnumber' ){
-    r.tempCnumber=parseFloat(r.tempCnumber) > 0?0 - (Math.abs(parseFloat(r.tempCnumber))):r.tempCnumber
-    r.cnumber=r.tempCnumber
-  }else if(titleValue.value != 0 && c=='icost' ){
-    r.tempTen=parseFloat(r.tempTen) > 0?0 - (Math.abs(parseFloat(r.tempTen))):r.tempTen
-    r.icost=r.tempNine
-  }else if(titleValue.value != 0 && c=='isum' ){
-    r.tempIsum=parseFloat(r.tempIsum) > 0?0 - (Math.abs(parseFloat(r.tempIsum))):r.tempIsum
-    r.isum=r.tempIsum
-  }
-
   // 得到当前临时标记
-  if(c=='bcheck1'){
-    c=r.tempThree==undefined?'bcheck1':'cinvode'
-  }
-  let t = getNextMark(c,false)
-  Object.keys(r).map(i=>{if (i.startsWith('edit')) r[i] = null})
+  let t = getNextMark(c, false)
+  Object.keys(r).map(i => {
+    if (i.startsWith('edit')) r[i] = null
+  })
   r[`${c}`] = r[`temp${t}`];
   // 列表值发生变动 监听调整
   tableDataChange(r,c)
-  // 获取供应商价格表
-  findBySupPrice(r)
   // 查找下一个
   let list = getDataSource();
-  let filters:any = ['bcheck1','isGive','cinvodeType','cinvodeName','cunitid','cunitidF1','cunitidF2','itaxprice','baseQuantity','thprice','thicost','thmoney']
+
+  let filters = [ 'bcheck1', 'cinvodeType','cinvodeName','cunitid','cfree1','cfree2','icost2','thmoney','cfree3','cfree4']
   // 要求填批号才填写
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
-  // 有上游单据
-  if(canzhao.value){
-    filters.push('price'),filters.push('icost'),filters.push('batchId'),filters.push('dpdate'),filters.push('dvdate')
-  }
   let cols:any = getColumns().filter(it=>it?.title!='序号' &&  filters.indexOf(it?.dataIndex) == -1 && it.ifShow)
   let index = list.findIndex(it => it.key == r.key)
-  let nextC:any = cols[0]?.dataIndex // 获取下一个列位置
-  if (index == list.length - 1 && cols[cols.length - 1]?.dataIndex == c) { // 最后一行最后一列回车追加
+  let nextC = cols[0].dataIndex // 获取下一个列位置
+  if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
     list.push({editOne: true})
     setTableData(list)
   } else {
@@ -2251,73 +2110,58 @@ const focusNext =  async (r, c) => {
       let nextMark = getNextMark(nextC, false)
       r[`edit${nextMark}`] = true;
       r[`temp${nextMark}`] = r[`${nextC}`];
-      getColumnRate(r)
     } else { //之后一列时换行
-      nextC = cols[0]?.dataIndex
+      nextC = cols[0].dataIndex
       let nextMark = getNextMark(nextC, false)
       ++index
       list[index][`edit${nextMark}`] = true
-      list[index][`${nextC}`] = list[index][`temp${nextMark}`];
+      list[index][`temp${nextMark}`] = list[index][`${nextC}`];
       setTableData(list)
     }
-    nextTick(() => {
-      let doms:any = nextC == 'batchId' || nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
-      if (null != doms) doms.focus()
-    })
   }
+  nextTick(() => {
+    let doms:any = nextC == 'batchId' || nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
+    if (null != doms) doms.focus()
+  })
 }
 const getNextMark = (c,b) => {
-  let model = {cnumber:'Cnumber',cgUnitId:'CgUnitId',cwhcode:'One',cinvode:'Two',price:'Nine',icost:'Ten',taxprice:'Taxprice',itaxrate:'Itaxrate',isum:'Isum',batchId:'Twelve',dpdate:'Dpdate',dvdate:'Fifteen',cmemo:'Thirteen'}
-  return model[c]
+  let model = {
+    cwhcode:'One',
+    cinvode:'Two',
+    thprice:'Thprice',
+    thicost:'Thicost',
+    batchId:'Twelve',
+    dpdate:'Dpdate',
+    dvdate:'Fifteen',
+    cmemo:'Thirteen'
+  }
+  if (b) {
+    // 获取下一个
+    let keys = Object.keys(model)
+    return model[keys[keys.findIndex(k => k == c) + 1]]
+  } else {
+    return model[c]
+  }
 }
 
-async function findBySupPrice(data) {
-  let cinvode=data.cinvode
-  let cvencodeJs=formFuns.value.getFormValue().cvencodeJs
-  let supPrice=await useRouteApi(stockSupPriceFindBySupIdAndStockNum, {schemaName: dynamicTenantId})({supId:cvencodeJs,stockNum:cinvode})
-  let memberprice=supPrice!==''?supPrice.memberprice:null
-
-  if(supPrice!==''){
-    // 供应商价格表含税（默认值1是，0或空否）
-    if(stockAccountObj.value.cgPriceIsRate=='1'){
-      memberprice=memberprice
-    }
-    else{
-      if(data['tempItaxrate']==0){
-        memberprice=data['tempNine']
-      }else{
-        memberprice=memberprice*(data['tempItaxrate']/100)
-      }
-    }
-  }
-  else{
-    // 若价格表未设置取最近一次进价（默认值1是，0或空否）
-    if(stockAccountObj.value.cgPriceZjyc=='1'){
-      let temp= await useRouteApi(findByStockWareRecentlySupMoney, {schemaName: dynamicTenantId})({supId:formFuns.value.getFormValue().cvencode})
-      memberprice=temp==''?null:temp
-    }
-  }
-  data['tempNine']=hasBlank(data['tempNine'])?memberprice:data['tempNine']
-  data['tempTaxprice']=hasBlank(data['tempTaxprice'])?memberprice:data['tempTaxprice']
-}
 
 // 参照生成的入库单进行累计入库数量校验
 async function verifyTableBaseQuantity() {
-  let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
+  let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.cfree1) && !hasBlank(it.icost2 + '') && !hasBlank(it.cfree2 + ''))
   for (let i = 0; i < list.length; i++) {
     // 上游单据明细
     let sourceData=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
     // 蓝字
     // if(titleValue.value==0){
       if(parseFloat(list[i].cnumber)>parseFloat(list[i].oldCnumber)){
-        list[i].baseQuantity=null
+        list[i].cfree1=null
         list[i].cnumber=null
         return message.error('存货编码【'+list[i].cinvode+'】'+'数量不能大于来源参照单据累计参照数量！！！')
       }
     // }
     // else{
-    //   if(!hasBlank(sourceData.isumRuku)&&Math.abs(parseFloat(sourceData.isumRuku))>0&&parseFloat(list[i].baseQuantity)>parseFloat(sourceData.isumRuku)){
-    //     list[i].baseQuantity=null
+    //   if(!hasBlank(sourceData.isumRuku)&&Math.abs(parseFloat(sourceData.isumRuku))>0&&parseFloat(list[i].cfree1)>parseFloat(sourceData.isumRuku)){
+    //     list[i].cfree1=null
     //     list[i].cnumber=null
     //    return message.error('存货编码【'+list[i].cinvode+'】'+'数量不能大于来源参照单据累计参照数量！！！')
     //   }
@@ -2329,79 +2173,6 @@ async function verifyTableBaseQuantity() {
 async function countStockPeriodYmFlag(year,flags) {
   let temp=await findStockPeriodYmFlag(year,flags)
   ymPeriod.value=temp>0?true:false
-}
-
-// 查看来源数据
-function sySourcePop() {
-  if(formItems.value.ccode==undefined){
-    return message.error(`没有来源数据！`)
-  }
-  openSySourcePage(true, {
-    database: dynamicTenantId.value,
-    ccode:formItems.value.ccode
-  })
-}
-// 查看下游数据
-function xySourcePop() {
-  if(formItems.value.ccode==undefined){
-    return message.error(`没有下游数据！`)
-  }
-  openXySourcePage(true, {
-    database: dynamicTenantId.value,
-    ccode:formItems.value.ccode
-  })
-}
-
-// 参照
-function referData() {
-  if(hasBlank(formFuns.value.getFormValue().cvencode)){
-    return message.error('请选择供应商！')
-  }
-  if(hasBlank(formFuns.value.getFormValue().cwhcode)){
-    return message.error('请选择仓库！')
-  }
-
-  if(titleValue.value==0){
-    openReferPage(true, {
-      dynamicTenantId:dynamicTenantId.value,
-      dynamicAccId:dynamicAccId.value,
-      cwhcode:formFuns.value.getFormValue().cwhcode,
-      cvencode:formFuns.value.getFormValue().cvencode,
-      iyear:formFuns.value.getFormValue().ddate.split('-')[0]
-    })
-  }else{
-    openRedReferModalPage(true, {
-      dynamicTenantId:dynamicTenantId.value,
-      dynamicAccId:dynamicAccId.value,
-      cwhcode:formFuns.value.getFormValue().cwhcode,
-      cvencode:formFuns.value.getFormValue().cvencode,
-      iyear:formFuns.value.getFormValue().ddate.split('-')[0]
-    })
-  }
-}
-
-// 参照回调 明细list
-async function referThrowData(data) {
-  tempType.value='one'
-  canzhao.value=true
-  setTableData(data)
-  setTimeout(()=>{
-    getDataSource().forEach(async (b)=>{
-      chChange(b)
-      // 重新计算金额
-      tableDataChange(b,'price')
-      let o:any = assetsCardList.value.filter(it => (it.stockCode == b.cinvode))[0]
-      b.cinvodeInfo = o
-      b.tempCnumber=b.cnumber
-      b.isumRuku=''
-      slChange0(b)
-    })
-    let list=getDataSource()
-    for (let i = 0; i < 25-list.length; i++) {
-      list.push({})
-    }
-    setTableData(list)
-  },300)
 }
 
 function openPrint() {
@@ -2441,9 +2212,9 @@ const loadPrint = (obj) => {
       item['cgUnitId'] = cunitFormat(item.unitList,item.cgUnitId)
       item['cnumber'] =  parseFloat(item.cnumber).toFixed(2)
       item['cunitid'] = cunitFormat(item.unitList,item.cunitid)
-      item['baseQuantity'] = parseFloat(item.baseQuantity).toFixed(2)
-      item['price'] =  parseFloat(item.price).toFixed(2)
-      item['icost'] = parseFloat(item.icost).toFixed(2)
+      item['cfree1'] = parseFloat(item.cfree1).toFixed(2)
+      item['cfree2'] =  parseFloat(item.cfree2).toFixed(2)
+      item['icost2'] = parseFloat(item.icost2).toFixed(2)
       item['isGive'] = item['isGive']?'是':'否'
     })
   }
@@ -2488,142 +2259,8 @@ async function cgUnitIdChange(record) {
     record.cinvodeType= record.cgUnitIdList.filter(a=>a.value==record.tempCgUnitId)[0].ggxh
     record.bcheck1= record.cgUnitIdList.filter(a=>a.value==record.tempCgUnitId)[0].txm
     record.cgUnitId=record.cgUnitIdList.filter(a=>a.value==record.tempCgUnitId)[0].value
-    await findByPrice(record)
   }else{
     await editUnitType(record)
-  }
-}
-// 算出单价
-async function findByPrice(record) {
-  let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
-  record.cinvodeInfo = o
-  if (record.cinvodeInfo?.stockMeasurementType == '多计量' && !hasBlank(record.cunitid)){
-    let res:any =  manyJiList.value.filter(it=>it.id == record.cunitid)[0]
-    if (res != null){
-      record.unitInfo = res
-      let list = JsonTool.parseObj(res.detail) || []
-      list=list.filter(jl=>!hasBlank(jl.unitName))
-      if (list.length > 0){
-        record.cunitid = list[0].id
-        if (list.length > 1){
-          record.cunitidF1 = list[1].id
-          if (list.length > 2)
-            record.cunitidF2 = list[2].id
-        }
-      }
-      await setByPrice(record)
-    }
-    tableDataChange(record,'cnumber')
-  }
-  else{
-    // 获取对应供应商价格表【采购价格表】
-    if(!hasBlank(record.cinvodeInfo.stockSupplier)){
-      let data=await useRouteApi(findByStockSupplierPrice, {schemaName: dynamicTenantId})(record.cinvodeInfo.stockNum)
-      if(data.length>0){
-        let money:any=0
-        switch (data[0].supPriceLevel) {
-          case '协议价':
-            money=data[0].memberprice
-            break
-          case '零售价':
-            money=data[0].regularPrice
-            break
-          case '最低价':
-            money=data[0].minPrice
-            break
-          case '最高价':
-            money=data[0].maxPrice
-            break
-          case '一级采购价':
-            money=data[0].invscost1
-            break
-          case '二级采购价':
-            money=data[0].invscost2
-            break
-          case '三级采购价':
-            money=data[0].invscost3
-            break
-          case '四级采购价':
-            money=data[0].invscost4
-            break
-          case '五级采购价':
-            money=data[0].invscost5
-            break
-          case '六级采购价':
-            money=data[0].invscost6
-            break
-          case '七级采购价':
-            money=data[0].invscost7
-            break
-          case '八级采购价':
-            money=data[0].invscost8
-            break
-        }
-
-        if(money>0){
-          record.tempNine=parseFloat(money).toFixed(2)
-          record.price=record.tempNine
-
-          record.baseQuantity=record.cnumber
-        }
-      }
-    }
-    tableDataChange(record,'taxprice')
-  }
-}
-async function setByPrice(record){
-  // 获取对应供应商价格表【采购价格表】
-  if(!hasBlank(record.cinvodeInfo.stockSupplier)){
-    let data=await useRouteApi(findByStockSupplierPrice, {schemaName: dynamicTenantId})(record.cinvodeInfo.stockNum)
-    if(data.length>0){
-      let money:any=0
-      switch (data[0].supPriceLevel) {
-        case '协议价':
-          money=data[0].memberprice
-          break
-        case '零售价':
-          money=data[0].regularPrice
-          break
-        case '最低价':
-          money=data[0].minPrice
-          break
-        case '最高价':
-          money=data[0].maxPrice
-          break
-        case '一级采购价':
-          money=data[0].invscost1
-          break
-        case '二级采购价':
-          money=data[0].invscost2
-          break
-        case '三级采购价':
-          money=data[0].invscost3
-          break
-        case '四级采购价':
-          money=data[0].invscost4
-          break
-        case '五级采购价':
-          money=data[0].invscost5
-          break
-        case '六级采购价':
-          money=data[0].invscost6
-          break
-        case '七级采购价':
-          money=data[0].invscost7
-          break
-        case '八级采购价':
-          money=data[0].invscost8
-          break
-      }
-
-      let list:any =  duoJlMxList.value.filter(a=>a.id==record.cgUnitId)
-      let conversionRate:any= list[0].conversionRate
-      let price:any=parseFloat(conversionRate)*parseFloat(money)
-      if(price>0){
-        record.tempNine=parseFloat(price).toFixed(10)
-        record.price=record.tempNine
-      }
-    }
   }
 }
 // 修改状态下 并且 修改 计量单位 触发
@@ -2639,7 +2276,7 @@ async function editUnitType(record) {
       record.cgUnitId=record.cgUnitIdList.filter(a=>a.value==record.tempCgUnitId)[0].value
 
       if(record.cunitid==record.cgUnitId){
-        record.cnumber=record.baseQuantity
+        record.cnumber=record.cfree1
         record.tempCnumber=record.cnumber
       }else if(!hasBlank(record.cunitidF1) && record.cunitidF1==record.cgUnitId){
         record.cnumber=record.subQuantity1
@@ -2651,76 +2288,24 @@ async function editUnitType(record) {
 
       let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
       record.cinvodeInfo = o
-      await findByCgUnitIdSetByPrice(record)
       await assembleTotal(getDataSource())
     },onCancel: () => {
       record.tempCgUnitId=oldCgUnitId
     }
   })
 }
-async function findByCgUnitIdSetByPrice(record){
-  // 获取对应供应商价格表【采购价格表】
-  if(!hasBlank(record.cinvodeInfo.stockSupplier)){
-    let data=await useRouteApi(findByStockSupplierPrice, {schemaName: dynamicTenantId})(record.cinvodeInfo.stockNum)
-    let money:any=0
-    if(data.length>0){
-      switch (data[0].supPriceLevel) {
-        case '协议价':
-          money=data[0].memberprice
-          break
-        case '零售价':
-          money=data[0].regularPrice
-          break
-        case '最低价':
-          money=data[0].minPrice
-          break
-        case '最高价':
-          money=data[0].maxPrice
-          break
-        case '一级采购价':
-          money=data[0].invscost1
-          break
-        case '二级采购价':
-          money=data[0].invscost2
-          break
-        case '三级采购价':
-          money=data[0].invscost3
-          break
-        case '四级采购价':
-          money=data[0].invscost4
-          break
-        case '五级采购价':
-          money=data[0].invscost5
-          break
-        case '六级采购价':
-          money=data[0].invscost6
-          break
-        case '七级采购价':
-          money=data[0].invscost7
-          break
-        case '八级采购价':
-          money=data[0].invscost8
-          break
-      }
-    }
-    let price:any=parseFloat(record.isum)/parseFloat(record.cnumber)
-    if(price>0){
-      record.tempNine=parseFloat(price).toFixed(10)
-      record.price=record.tempNine
-    }
-  }
-}
+
 const assembleTotal = (list) => {
-  let icost = 0
+  let icost2 = 0
   let cnumber = 0
   for (let o of list) {
     cnumber += parseFloat(o.cnumber || '0')
-    icost += parseFloat(o.icost || '0')
+    icost2 += parseFloat(o.icost2 || '0')
   }
   summary.value=
     {
       cnumber: toThousandFilter(cnumber),
-      icost: toThousandFilter(icost),
+      icost2: toThousandFilter(icost2),
     }
 }
 /*变更专区*/
@@ -2729,12 +2314,23 @@ const cunitFormat = (list,id) => {
   let it = list.filter(it=>it.value == id)[0]
   return  null == it?id:it.title
 }
+const icostFormat = (r) => {
+  if (!hasBlank(r.cfree1) && !hasBlank(r.cfree2)) {
+    let n:any = parseFloat(r.cfree1).toFixed(10)
+    if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
+    let d:any = parseFloat(r.cfree2).toFixed(10)
+    r.icost2 = parseFloat(String(n * d)).toFixed(4) + ''
+    return  r.icost2
+  }else{
+    return  ''
+  }
+}
 
 const isGiveChange = (r) => {
   if (r.isGive){
-    r.price=0;
+    r.cfree2=0;
     r.taxprice=0;
-    tableDataChange(r,'price')
+    tableDataChange(r,'cfree2')
   }else {
     message.info('请完善单价！')
   }
@@ -2770,16 +2366,32 @@ const calculateTotal = () => {
     summary.value = {}
     return false;
   }
-  let cnumber = 0
-  let icost = 0
+  let cfree1 = 0
+  let icost2 = 0
   for (let i = 0; i < list.length; i++) {
     const e = list[i];
-    cnumber+=parseFloat(e['quantityPd'] || 0)
-    icost+=parseFloat(e['icost'] || 0)
+    cfree1+=parseFloat(e['cfree1'] || 0)
+    icost2+=parseFloat(e['icost2'] || 0)
   }
   summary.value={
-    cnumber: cnumber,
-    icost: icost,
+    cfree1: cfree1,
+    icost2: icost2,
+  }
+}
+
+const tableAdd = () => {
+  if (tableSelectedRowKeys.value.length == 1) {
+    let list = getDataSource()
+    let selectIndex = list.findIndex(it => it.key === tableSelectedRowKeys.value[0])
+    list.splice(selectIndex, 0, {cwhcode: formFuns.value.getFormValue().cwhcode})
+    setTableData(list)
+    tableSelectedRowKeys.value = []
+  } else {
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '请选择插入行次！'
+    })
   }
 }
 </script>

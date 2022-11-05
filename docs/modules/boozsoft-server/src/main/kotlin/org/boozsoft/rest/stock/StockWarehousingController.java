@@ -1555,7 +1555,7 @@ public class StockWarehousingController {
                 resut.put("master", warehousing);
                 resut.put("sub", entrys);
                 break;
-            case ("CKTZD"):
+            case ("RKTZD"):
                 warehousing = new StockWarehousing();
                 sgspperson = map.containsKey("sgspperson") ? map.get("sgspperson").toString() : null; // 质检人
                 bcheckUser = map.containsKey("bcheckUser") ? map.get("bcheckUser").toString() : null; // 审核人
@@ -1598,6 +1598,9 @@ public class StockWarehousingController {
                             .setDdate(warehousing.getDdate())
                             .setCcode(warehousing.getCcode())
                             .setCvencode(warehousing.getCvencode())
+                            .setBaseQuantity("0.00")
+                            .setIcost(entry.getThicost().toString())
+                            .setCvencode(warehousing.getCvencode())
                             .setCmaker(warehousing.getCmaker()).setCdepcode(warehousing.getCdepcode())
                             .setBstyle(warehousing.getBstyle()).setCordercode(warehousing.getCcode())
                             .setBatchId(StrUtil.isNotBlank(entry.getBatchId())?entry.getBatchId().trim():"")
@@ -1622,7 +1625,7 @@ public class StockWarehousingController {
                     isumSum = isumSum.add(new BigDecimal(entry.getIsum() == null ? "0" : entry.getIsum()));
                     taxAmountSum = taxAmountSum.add(new BigDecimal(entry.getItaxprice() == null ? "0" : entry.getItaxprice()));
                 }
-                warehousing.setSquantity(keepDecimals(squantitySum, 10)).setSquantity1(keepDecimals(squantity1Sum, 10)).setSquantity2(keepDecimals(squantity2Sum, 10)).setIcost(keepDecimals(icostSum, 4)).setIsum(keepDecimals(isumSum, 4)).setTaxAmount(keepDecimals(taxAmountSum, 6));
+                warehousing.setSquantity(keepDecimals(BigDecimal.ZERO, 10)).setSquantity1(keepDecimals(BigDecimal.ZERO, 10)).setSquantity2(keepDecimals(BigDecimal.ZERO, 10)).setIcost(keepDecimals(BigDecimal.ZERO, 4)).setIsum(keepDecimals(BigDecimal.ZERO, 4)).setTaxAmount(keepDecimals(BigDecimal.ZERO, 6));
                 resut.put("master", warehousing);
                 resut.put("sub", entrys);
                 break;

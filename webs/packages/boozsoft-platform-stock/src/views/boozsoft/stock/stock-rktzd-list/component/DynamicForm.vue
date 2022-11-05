@@ -28,7 +28,7 @@
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
           <template #suffixIcon>
-<!--            <SearchOutlined @click="exec(field)"/>-->
+               <SearchOutlined @click="exec(field)"/>
           </template>
         </Select>
       </template>
