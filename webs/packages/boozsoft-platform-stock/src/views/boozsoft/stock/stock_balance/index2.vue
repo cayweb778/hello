@@ -37,8 +37,9 @@
             </a-popover>
             <a-popover placement="bottom" trigger="click">
                <template #content>
-                 <a type="button" class="ant-btn ant-btn-me"><span>结转上年</span></a><br>
-                  <a type="button" class="ant-btn ant-btn-me"><span>校验</span></a>
+                 <button type="button" class="ant-btn ant-btn-me" @click="jieZhuanView" style="width: 100px;">结转现存量</button><br>
+                 <button type="button" class="ant-btn ant-btn-me" @click="openJiezhuan" style="width: 100px;">结转单据</button><br>
+                <button type="button" class="ant-btn ant-btn-me" style="width: 100px;"><span>校验</span></button>
                </template>
               <button type="button" class="ant-btn ant-btn-me"><span>更多</span></button>
             </a-popover>
@@ -192,6 +193,7 @@
     <ImprotExcel @save="pageReload" @closeOk="pageReload" @register="registerImprotExcelPage" />
     <SaveFirstModal @save="saveFirstModalFun" @register="registerSaveFirstModalPage" />
     <StockPeriod  @register="registerModalPopPage"/>
+    <JieZhuan @save="jieZhuanFun" @register="registerJieZhuanPopPage"/>
   </div>
 </template>
 <script setup lang="ts">
@@ -241,6 +243,7 @@ import {useModal} from "/@/components/Modal";
 import Add from '/@/views/boozsoft/stock/stock_balance/popup/save.vue';
 import Edit from '/@/views/boozsoft/stock/stock_balance/popup/edit.vue';
 import Lack from '/@/views/boozsoft/stock/stock_balance/popup/lack.vue';
+import JieZhuan from '/@/views/boozsoft/stock/stock_balance/popup/jieZhuan.vue';
 import ImprotExcel from '/@/views/boozsoft/stock/stock_balance/popup/improtExcel.vue';
 import SaveFirstModal from '/@/views/boozsoft/stock/stock_balance/popup/saveFirstModal.vue';
 import {findAll as stockCangkuAll} from "/@/api/record/stock/stock-cangku";
@@ -440,6 +443,7 @@ const [registerSavePage, { openModal: openSavePage }] = useModal();
 const [registerEditPage, { openModal: openEditPage }] = useModal();
 const [registerLackPage, { openModal: openLackPage }] = useModal();
 const [registerImprotExcelPage, { openModal: openImprotExcelPage }] = useModal();
+const [registerJieZhuanPopPage, { openModal: openJieZhuanPage }] = useModal();
 const [registerSaveFirstModalPage, { openModal: openImprotSaveFirstModalPage }] = useModal();
 
 const rowSelection = {
@@ -965,6 +969,32 @@ function goRouter() {
   balanceTaskDel()
   edittext.value='编辑'
   btnShow.value=false
+}
+
+//打开上年结转菜单
+function openJiezhuan() {
+  let map:any={
+    dynamicTenantId:database.value,
+    dynamicTenant:dynamicTenant.value,
+    iyear:iyear.value
+  }
+  router.push({
+    path: '/StockBalanceJZ',
+    query:map
+  });
+}
+
+const jieZhuanView= () => {
+  openJieZhuanPage(true, {
+    iyear:iyear.value,
+    iyearList:iyearList.value,
+    rukuState:false
+  });
+}
+
+// 结转回调
+const jieZhuanFun = (data) => {
+  console.log(data)
 }
 </script>
 <style src="./global-menu-index.less" lang="less" scoped></style>
