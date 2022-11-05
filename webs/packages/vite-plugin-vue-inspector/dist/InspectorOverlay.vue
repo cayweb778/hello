@@ -91,7 +91,7 @@ export default {
   },
   mounted() {
     if(this.toggleCombo){
-      document.addEventListener("keydown", this.onKeydown)
+      window.addEventListener("keydown", this.onKeydown)
     }
     this.enabled && this.enable()
   },
