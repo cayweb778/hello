@@ -202,13 +202,12 @@ export const menus = [
   createPlatformMenu({ id: useId(273), path: '/cb-list', component: '', parentId: useId(108), name: '列表' }),
 
   createPlatformMenu({ id: useId(372), path: '/cb-accounting', component: '/boozsoft/stock/stock-ckcbhs-list/index', componentName:'CkcbhsList', parentId: useId(271), name: '自动成本核算' }),
-  createPlatformMenu({ id: useId(373), path: '/cb-depot', component: '/boozsoft/stock/stock-rktzd-list/index', componentName:'RktzdList', parentId: useId(271), name: '入库调整单' }),
-  createPlatformMenu({ id: useId(374), path: '/cb-out-depot', component: '/boozsoft/stock/stock-cktzd-list/index', componentName:'CktzdList', parentId: useId(271), name: '出库调整单' }),
+  createPlatformMenu({ id: useId(373), path: '/cb-depot', component: '/boozsoft/stock/stock-rktzd-add/index', componentName:'RktzdList', parentId: useId(271), name: '入库调整单' }),
+  createPlatformMenu({ id: useId(374), path: '/cb-out-depot', component: '/boozsoft/stock/stock-cktzd-add/index', componentName:'CktzdList', parentId: useId(271), name: '出库调整单' }),
 
   createPlatformMenu({ id: useId(375), path: '/cb-sfhz', component: '/boozsoft/system/blocktable/index', parentId: useId(273), name: '金额收发存汇总表' }),
-  createPlatformMenu({ id: useId(376), path: '/cb-rktz', component: '/boozsoft/system/blocktable/index', parentId: useId(273), name: '入库调整单列表' }),
-  createPlatformMenu({ id: useId(377), path: '/cb-cktz', component: '/boozsoft/system/blocktable/index', parentId: useId(273), name: '出库调整单列表' }),
-
+  createPlatformMenu({ id: useId(376), path: '/cb-rktz', component: '/boozsoft/stock/stock-rktzd-list/index', parentId: useId(273), name: '入库调整单列表' }),
+  createPlatformMenu({ id: useId(377), path: '/cb-cktz', component: '/boozsoft/stock/stock-rktzd-list/index', parentId: useId(273), name: '出库调整单列表' }),
 
   createPlatformMenu({ id: useId(281), path: '/pz-invoice', component: '', parentId: useId(109), name: '制单' }),
   // createPlatformMenu({ id: useId(282), path: '/pz-invoice-xs', component: '', parentId: useId(109), name: '销售制单' }),

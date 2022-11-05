@@ -686,7 +686,53 @@ const jsonData = reactive({
               name: '自定义',
             }
           ]
-    },
+       },
+        {
+          key: '3-25',
+          value: '入库调整单',
+          lenght: 3,
+          tableName: 'xx',
+          qz:[
+            {
+              key: '3-0',
+              code: 'TR',
+              name: '系统编码',
+              lenght: 2,
+            },
+            {
+              key: '88',
+              name: '日期(年月)',
+              lenght: 6,
+            },
+            {
+              key: '99',
+              name: '自定义',
+            }
+          ]
+        },
+        {
+          key: '3-26',
+          value: '出库调整单',
+          lenght: 3,
+          tableName: 'xx',
+          qz:[
+            {
+              key: '3-0',
+              code: 'TC',
+              name: '系统编码',
+              lenght: 2,
+            },
+            {
+              key: '88',
+              name: '日期(年月)',
+              lenght: 6,
+            },
+            {
+              key: '99',
+              name: '自定义',
+            }
+          ]
+        },
       ]
     },
     {
