@@ -137,3 +137,17 @@ export const findFkdYueByCvencodeList=defRouteApi( ({bcheck,iyear,cvencode})=>{
     method: 'GET',
   }
 })
+
+export const findWhxByBillStyleList = defRouteApi(({billStyle,iyear}) => {
+  return {
+    url: '/arBeginBalance/findWhxByBillStyleList?billStyle='+billStyle+'&iyear='+iyear,
+    method: 'GET'
+  }
+})
+
+export const findWhxByArStyleList = defRouteApi(({arStyle,iyear}) => {
+  return {
+    url: '/arBeginBalance/findWhxByArStyleList?arStyle='+arStyle+'&iyear='+iyear,
+    method: 'GET'
+  }
+})

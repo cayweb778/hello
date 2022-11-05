@@ -32,21 +32,24 @@
           <div>
             <ul>
               <li class="li-title">应付业务</li>
-              <li>应付单</li>
-              <li>费用单</li>
-              <li>采购发票</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/DanJu/YingShouDan')">应付单</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/DanJu/FeiYongDan')">费用单</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/DanJu/XiaoShouFaPiao')">采购发票</li>
             </ul>
             <ul>
               <li class="li-title">付款</li>
-              <li>选择付款</li>
-              <li>付款单</li>
-              <li>退款单</li>
+              <!--              <li>选择付款</li>-->
+              <li @click="goRouter('/YingFuZhang/ShouKuan/CaoZuo/YingShouShouKuanDan')">付款单</li>
+              <li @click="goRouter('/YingFuZhang/ShouKuan/CaoZuo/YingShouTuiKuanDan')">退款单</li>
+              <li @click="goRouter('/YingFuZhang/HeXiao/CaoZuo/ShouGongHeXiao')">手动核销</li>
+              <li @click="goRouter('/YingFuZhang/HeXiao/CaoZuo/ZiDongHeXiao')">自动核销</li>
             </ul>
             <ul>
               <li class="li-title">往来转账</li>
-              <li>预付冲应付</li>
-              <li>应付冲应付</li>
-              <li>应付冲应收</li>
+              <li @click="goRouter('/YingFuZhang/ChongXiao/CaoZuo/YuShouChongYingShou')">预付冲应付</li>
+              <li @click="goRouter('/YingFuZhang/ChongXiao/CaoZuo/YingShouChongYingShou')">应付冲应付</li>
+              <li @click="goRouter('/YingFuZhang/ChongXiao/CaoZuo/YingShouChongShouFu')">应付冲应收</li>
+              <li @click="goRouter('/YingFuZhang/ChongXiao/CaoZuo/CxHongZiHuiChong')">红字回冲单</li>
             </ul>
           </div>
         </a-col>
@@ -60,23 +63,24 @@
           <div>
             <ul>
               <li class="li-title">应付报表</li>
-              <li>应付余额表</li>
-              <li>应付明细表</li>
-              <li>应付总账</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoTongJi/YingShouTongJiBiao')">应付款统计表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoTongJi/ShouTongJiBiao')">付款统计表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoTongJi/XiaoShouFaPTongJiBiao')">采购发票统计表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoTongJi/FeiYongTongJiBiao')">费用统计表</li>
             </ul>
             <ul>
               <li class="li-title">综合报表</li>
-              <li>付款执行表</li>
-              <li>应付核销明细表</li>
-              <li>应付账龄分析表</li>
-              <li>资金预测分析</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoChaXun/ShouKuanZhiXingBiao')">付款执行表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoChaXun/YingShouHeXiMingXiZhang')">应付核销明细表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoChaXun/YingShouZhangLingFenXi')">应付账龄分析表</li>
+              <li @click="goRouter('/YingFuZhang/ZhangBiao/ZhangBiaoChaXun/ZiJinYuCeFenXi')">资金预测分析</li>
             </ul>
             <ul>
               <li class="li-title">单据列表</li>
-              <li>应付单列表</li>
-              <li>付款单列表</li>
-              <li>采购发票列表</li>
-              <li>费用单表</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/ChaXun/YingShouDanLieBiao')">应付单列表</li>
+              <li @click="goRouter('/YingFuZhang/ShouKuan/ChaXun/ShouKuanDanLieBiao')">付款单列表</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/ChaXun/XiaoShouFaPiaoLieBiao')">采购发票列表</li>
+              <li @click="goRouter('/YingFuZhang/YingShou/ChaXun/FeiYongDanLieBiao')">费用单表</li>
             </ul>
           </div>
         </a-col>

@@ -108,6 +108,14 @@ public interface ArBeginBalanceRepository extends ReactiveCrudRepository<ArBegin
             "from ar_begin_balance where iyear=:iyear and (bcheck !='1' or bcheck is null) and bus_style='FKD' and cvencode_js=:cvencode group by cvencode_js")
     Flux<ArBeginBalance> findWshFkdYueByCvencodeList(String iyear,String cvencode);
 
+    @Query("select * from ar_begin_balance where (hx_flag!='1' or hx_flag is null) " +
+            "and bill_style=:billStyle and iyear=:iyear order by ccode ")
+    Flux<ArBeginBalance> findWhxByBillStyleList(@Param("billStyle") String billStyle,@Param("iyear") String iyear);
+
+    @Query("select * from ar_begin_balance where (hx_flag!='1' or hx_flag is null) " +
+            "and ar_style=:arStyle and iyear=:iyear order by ccode ")
+    Flux<ArBeginBalance> findWhxByArStyleList(@Param("arStyle") String arStyle,@Param("iyear") String iyear);
+
 }
 
 

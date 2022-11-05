@@ -28,7 +28,7 @@
     </div>
     <div class="nc-hr-middle">
       <div>
-        <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
+        <AccountPicker theme="three" readonly/>
       </div>
       <div>
 
@@ -237,6 +237,7 @@ import {useUserStore} from "/@/store/modules/user";
 import {useAccvoucherStoreWidthOut} from "/@/store/modules/accvoucher";
 import {BasicTable, useTable} from "/@/components/Table";
 import {useRoute} from "vue-router";
+import {findWhxByArStyleList, findWhxByBillStyleList} from "/@/api/record/system/arBeginBalance";
 
 const Step = Steps.Step
 const InputSearch = Input.Search
@@ -498,31 +499,43 @@ const columns2 = [
   },{
     title: '单据编号',
     dataIndex: 'ccode',
-    width: 100,
+    width: 120,
     align: 'left',
     ellipsis: true,
   },{
-    title: '金额',
-    dataIndex: 'isum',
+    title: '收款金额',
+    dataIndex: 'ysIsumBenbi',
     width: 150,
-    align: 'left',
+    align: 'right',
+    ellipsis: true,
+  },{
+    title: '应收金额',
+    dataIndex: 'arIsumBenbi',
+    width: 150,
+    align: 'right',
     ellipsis: true,
   },{
     title: '部门名称',
-    dataIndex: 'deptName',
+    dataIndex: 'cdepcode',
     width: 200,
     align: 'left',
     ellipsis: true,
   },{
     title: '人员名称',
-    dataIndex: 'psnName',
+    dataIndex: 'cmakerId',
     width: 150,
     align: 'left',
     ellipsis: true,
   },{
-    title: '往来单位',
-    dataIndex: 'wldw',
-    // width: 200,
+    title: '客户名称',
+    dataIndex: 'cvencodeXs',
+    width: 200,
+    align: 'left',
+    ellipsis: true,
+  },{
+    title: '结算客户名称',
+    dataIndex: 'cvencodeJs',
+    width: 200,
     align: 'left',
     ellipsis: true,
   }
@@ -583,13 +596,47 @@ const startBill = async () => {
     if (stepValue.value==3){
       //查询上一年的数据
       //应收单
-      if (YSD.value) {}
+      if (YSD.value) {
+        const qcysdList = await useRouteApi(findWhxByArStyleList,{schemaName: dynamicTenantId})({arStyle:'YSD',iyear:dynamicYear.value-1})
+        let ysdList = []
+        if (WSHYSD.value) {
+          ysdList = qcysdList
+        } else {
+          ysdList = qcysdList.filter(item => item.bcheck =='1')
+        }
+        if (SJHZYSD.value) {}
+        tableData2.value = ysdList
+      }
       //收款单
-      if (SKD.value) {}
+      if (SKD.value) {
+        const qcskdList = await useRouteApi(findWhxByBillStyleList,{schemaName: dynamicTenantId})({billStyle:'SKD',iyear:dynamicYear.value-1})
+        let skdList = []
+        if (WSHSKD.value) {
+          skdList = qcskdList
+        } else {
+          skdList = qcskdList.filter(item => item.bcheck =='1')
+        }
+        if (SJHZSKD.value) {}
+        tableData2.value.push(...skdList)
+      }
       //销货单
-      if (XHD.value && arCheckFlag.value!='1') {}
+      if (XHD.value && arCheckFlag.value!='1') {
+        const qcxhdList = await useRouteApi(findWhxByArStyleList,{schemaName: dynamicTenantId})({arStyle:'XHD',iyear:dynamicYear.value-1})
+        let xhdList = []
+        if (WSHXHD.value) {
+          xhdList = qcxhdList
+        } else {
+          xhdList = qcxhdList.filter(item => item.bcheck =='1')
+        }
+        if (SJHZXHD.value) {}
+        tableData2.value.push(...xhdList)
+      }
       //销售发票
-      if (XSFP.value && arCheckFlag.value=='1') {}
+      if (XSFP.value && arCheckFlag.value=='1') {
+        if (WSHXSFP.value) {}
+        if (SJHZXSFP.value) {}
+      }
+      setTableData2(tableData2.value)
       isClose.value = true
     } else {
       isClose.value = false

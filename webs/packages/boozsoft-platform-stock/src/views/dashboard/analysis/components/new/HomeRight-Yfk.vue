@@ -13,7 +13,7 @@
       </div>
       <div class="nc-hrt-two">
         <div class="nc-hrtt-one">
-          <AccountPicker theme="one" @reloadTable="dynamicAdReload"/>
+          <AccountPicker theme="three" @reloadTable="dynamicAdReload"/>
         </div>
 <!--        <div>
           <span style="font-size: 18px;font-weight: bold;color: #1c6ca1;margin-top: .5%">凭证最新日期：2021-12-12</span>

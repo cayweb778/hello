@@ -215,4 +215,18 @@ public class ArBeginBalanceController {
         }
     }
 
+    @GetMapping("findWhxByBillStyleList")
+    public Mono<R> findWhxByBillStyleList(String billStyle,String iyear){
+        return arBeginBalanceRepository.findWhxByBillStyleList(billStyle, iyear)
+                .collectList()
+                .map(o -> R.ok().setResult(o));
+    }
+
+    @GetMapping("findWhxByArStyleList")
+    public Mono<R> findWhxByArStyleList(String arStyle,String iyear){
+        return arBeginBalanceRepository.findWhxByArStyleList(arStyle, iyear)
+                .collectList()
+                .map(o -> R.ok().setResult(o));
+    }
+
 }
