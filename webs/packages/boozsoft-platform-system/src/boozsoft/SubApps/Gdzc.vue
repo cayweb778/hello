@@ -1,21 +1,5 @@
 <template>
-  <div >
-    <WujieVue
-      ref="wujieVueRef"
-      width="100%"
-      height="100%"
-      name="gdzc"
-      :url="wujieAttrs.url"
-      :sync="true"
-      :props="wujieAttrs.props"
-    ></WujieVue>
-    <div id="ncModalMount">
-<!--      11-->
-<!--      {{ncModals.componentData.componentRef}}-->
-<!--      22-->
-      <component v-if="ncModals.componentData.componentRef!=null" @ok="handleOk" @cancel="handelCancel" :is="ncModals.componentData.componentRef" :params="ncModals.componentData.componentParams" :result="ncModals.componentData.componentResult"></component>
-    </div>
-  </div>
+
 </template>
 <script setup lang="ts">
 import {ref, inject} from 'vue'

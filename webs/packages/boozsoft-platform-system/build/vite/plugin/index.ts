@@ -12,8 +12,8 @@ import { configCompressPlugin } from './compress';
 import { configStyleImportPlugin } from './styleImport';
 import { configVisualizerConfig } from './visualizer';
 import { configThemePlugin } from './theme';
-import { configImageminPlugin } from './imagemin';
 import { configSvgIconsPlugin } from './svgSprite';
+import Inspector from "vite-plugin-vue-inspector"
 
 export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const {
@@ -29,8 +29,13 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     vue(),
     // have to
     vueJsx(),
-    // support name
+   // support name
     vueSetupExtend(),
+    Inspector({
+      enabled: true,
+      toggleButtonVisibility: "always",
+    })
+
   ];
 
   // vite-plugin-windicss
