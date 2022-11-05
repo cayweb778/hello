@@ -8,6 +8,7 @@
     "initial:home": "cd packages/boozsoft-platform-home && pnpm install",
     "initial:system": "cd packages/boozsoft-platform-system && pnpm install",
     "initial:stock": "cd packages/boozsoft-platform-stock && pnpm install",
+    "initial:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm install",
     "initial:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm install",
     "initial:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm install",
     "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",

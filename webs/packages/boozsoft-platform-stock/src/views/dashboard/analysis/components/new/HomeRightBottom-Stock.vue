@@ -49,6 +49,7 @@
               <li @click="goWeb('/cg-dingdan')">采购订单</li>
               <li @click="goWeb('/cg-arrive')">采购到货单</li>
               <li @click="goWeb('/cg-bill')">采购发票</li>
+              <li @click="goWeb('/cg-jiesuan')">采购结算单</li>
             </ul>
             <ul>
               <li class="li-title">销售业务</li>
@@ -62,7 +63,7 @@
               <li @click="goWeb('/kc-box')">拣货装箱单</li>
               <li @click="goWeb('/kc-transfer')">调拨单</li>
               <li @click="goWeb('/kc-inventory')">盘点单</li>
-              <li @click="goWeb('/wl-cgLogistics')">物流发货单</li>
+              <li @click="goWeb('/wl-cgLogistics')">物流送货单</li>
             </ul>
             <ul>
               <li class="li-title">成本核算</li>
@@ -83,9 +84,10 @@
             <ul>
               <li class="li-title">常用账簿</li>
               <li @click="goWeb('/kc-xclQuery')">现存量查询</li>
+              <li @click="goWeb('/kc-pcxclQuery')">批次现存量查询</li>
               <li @click="goWeb('/kc-ledger')">库存台账</li>
               <li @click="goWeb('/kc-bLedger')">库存批次台账</li>
-              <li @click="goWeb('/kc-pcxclQuery')">批量现存量查询</li>
+<!--              <li @click="goWeb('/kc-pcxclQuery')">批量现存量查询</li>-->
 <!--              <li @click="goRouter('/zhongZhang/account-book/ab-kemuzhang/abk-rjtable')">科目日记账</li>-->
             </ul>
             <ul>
@@ -98,7 +100,9 @@
             <ul>
               <li class="li-title">综合报表</li>
               <li @click="goWeb('/zb-phbStock')">销售排行榜</li>
-              <li @click="goWeb('')">客户应收余额表</li>
+              <li @click="goWeb('/zb-ysye')">客户应收余额表</li>
+              <li @click="goWeb('/cg-gysyf')">供应商应付余额表</li>
+              <li @click="goWeb('/zb-ch-warning')">存货有效期预警表</li>
 
             </ul>
           </div>

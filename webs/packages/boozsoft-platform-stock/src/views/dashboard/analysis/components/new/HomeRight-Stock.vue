@@ -4,11 +4,11 @@
       <div class="nc-hrt-one">
         <span style="font-size: 30px;font-weight: bold;color: #1c6ca1">{{showTitle(ncHrMark)}}</span>
         <div>
-          <a-select v-model:value="panelFlag" placeholder="" style="justify-content: space-between;width: 120px;border:none;border-bottom: 1px solid black;" v-if="ncHrMark == ''">
+<!--          <a-select v-model:value="panelFlag" placeholder="" style="justify-content: space-between;width: 120px;border:none;border-bottom: 1px solid black;" v-if="ncHrMark == ''">
             <a-select-option key="1" value="1">系统方案</a-select-option>
             <a-select-option key="2" value="2">个人方案</a-select-option>
-          </a-select>
-          <Button v-else @click="toggleRight('')">返回主页</Button>
+          </a-select>-->
+<!--          <Button v-else @click="toggleRight('')">返回主页</Button>-->
         </div>
       </div>
       <div class="nc-hrt-two">
@@ -51,9 +51,10 @@
           </template>
           <Step title="期初余额">
             <template #description>
-<!--              <span>手动设置或自动结转上年</span><br/>-->
-              <br/>
-              <span class="derlined-span-white">开始</span>
+              <span>存货期初余额</span><br/>
+              <span>期初到货单</span><br/>
+              <span>期初销货单</span><br/>
+              <span>期初暂估入库单</span>
             </template>
           </Step>
 
@@ -75,17 +76,17 @@
           </Step>
           <Step title="库存业务">
             <template #description>
-              <span>采购入库单</span><br/>
-              <span>销售出库单</span>
-              <span>盘点单</span><br/>
+              <span>拣货装箱</span><br/>
+              <span>盘点单</span>
+              <span>调拨单</span><br/>
               <span>形态转换单</span>
             </template>
           </Step>
           <Step title="成本核算">
             <template #description>
-              <span>入库成本核算</span><br/>
-              <span>出库成本核算</span><br/>
-              <span>重新计价</span>
+              <span>自动成本核算</span><br/>
+              <span>入库调整单</span><br/>
+              <span>出库调整单</span>
             </template>
           </Step>
           <Step title="凭证制单">
@@ -97,10 +98,9 @@
           </Step>
           <Step title="月末结账">
             <template #description>
-              <span>工作检查</span><br/>
               <span>月末结账</span><br/>
               <span>取消结账</span><br/>
-              <span class="derlined-span-white">结束</span>
+<!--              <span class="derlined-span-white">结束</span>-->
             </template>
           </Step>
         </Steps>

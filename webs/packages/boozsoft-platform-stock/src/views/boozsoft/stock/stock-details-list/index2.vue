@@ -490,12 +490,6 @@ function onSearch() {
 const defaultPage = ref(false)
 const route = useRoute();
 onMounted(async() => {
-  let path = router.currentRoute?.value?.fullPath
-  if (null != path){
-    if (path == '/xs-mxList')val.value.mark = '2'
-    if (path == '/xs-mxgList')val.value.mark = '1'
-  }
-  reloadJiCiList()
   if (Object.keys(route.query).length !== 0) {
     pageParameter.queryMark = route.query.mark
     pageParameter.query = route.query
@@ -506,9 +500,9 @@ onMounted(async() => {
     }
     pageParameter.selectClass = hasBlank(route.query.cinvode)?route.query.cvencode:route.query.cinvode
     let q = ['user', 'cust', 'dept', 'operator', 'warehouse', 'stock', 'whClass','custClass','zone']
+    reloadJiCiList()
     reloadList((await useRouteApi(findStockCaiGouList, {schemaName: dynamicTenantId})([...new Set(q)].join(','))))
-    reloadTable()
-
+    initTable()
   } else {
     val.value.openOne = 1
     openQueryPage(true, {

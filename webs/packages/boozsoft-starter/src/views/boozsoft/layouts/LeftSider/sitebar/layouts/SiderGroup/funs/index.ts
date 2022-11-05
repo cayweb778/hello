@@ -16,7 +16,7 @@ export function goPlatformById(id : any){
 
 export function goZongZhang(id : any){
     router.push("/zongzhang")
-    bus.$emit("goGuDingZiChan",id);
+    bus.$emit("goZongzhang",id);
 }
 
 
