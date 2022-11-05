@@ -1,0 +1,4 @@
+
+> vben-admin@2.8.0 build /Users/cayweb/IdeaProjects/boozsoft-nc/webs/packages/boozsoft-platform-system
+>  cross-env NODE_ENV=production vite build --debug  && esno ./build/script/postBuild.ts
+
