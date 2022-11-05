@@ -1512,7 +1512,7 @@ public class StockSaleousingController {
                 resut.put("master", warehousing4);
                 resut.put("sub", entrys4);
                 break;
-            case ("RKTZD"):
+            case ("CKTZD"):
                 StockSaleousing warehousing5 = new StockSaleousing();
                 String sgspperson5 = map.containsKey("sgspperson") ? map.get("sgspperson").toString() : null; // 质检人
                 String bcheckUser5 = map.containsKey("bcheckUser") ? map.get("bcheckUser").toString() : null; // 审核人
@@ -1545,7 +1545,9 @@ public class StockSaleousingController {
                 BigDecimal taxAmountSum5 = new BigDecimal(0);
                 String markerTime5 = null;
                 for (StockSaleousings entry : entrys5) {
-                    entry.setIyear(warehousing5.getIyear()).setCvencodeJs(warehousing5.getCvencodeJs()).setBillStyle(warehousing5.getBillStyle()).setBstyle(warehousing5.getBstyle()).setDdate(warehousing5.getDdate()).setCcode(warehousing5.getCcode()).setCvencode(warehousing5.getCvencode()).setCmaker(warehousing5.getCmaker()).setCdepcode(warehousing5.getCdepcode()).setBstyle(warehousing5.getBstyle());
+                    entry.setIyear(warehousing5.getIyear()).setCvencodeJs(warehousing5.getCvencodeJs()).setBillStyle(warehousing5.getBillStyle()).setBstyle(warehousing5.getBstyle()).setDdate(warehousing5.getDdate()).setCcode(warehousing5.getCcode()).setCvencode(warehousing5.getCvencode()).setCmaker(warehousing5.getCmaker())
+                            .setBaseQuantity("0.00").setIcost(entry.getThicost().toString())
+                            .setCdepcode(warehousing5.getCdepcode()).setBstyle(warehousing5.getBstyle());
                     if (null != sgspperson5) {
                         entry.setCgspstate("1");
                         entry.setSgspdate(DateUtil.today());
@@ -1564,7 +1566,7 @@ public class StockSaleousingController {
                     isumSum5 = isumSum5.add(new BigDecimal(entry.getIsum() == null ? "0" : entry.getIsum()));
                     taxAmountSum5 = taxAmountSum5.add(new BigDecimal(entry.getItaxprice() == null ? "0" : entry.getItaxprice()));
                 }
-                warehousing5.setCmakerTime(markerTime5).setSquantity(keepDecimals(squantitySum5, 10)).setSquantity1(keepDecimals(squantity1Sum5, 10)).setSquantity2(keepDecimals(squantity2Sum5, 10)).setIcost(keepDecimals(icostSum5, 4)).setIsum(keepDecimals(isumSum5, 4)).setTaxAmount(keepDecimals(taxAmountSum5, 6));
+                warehousing5.setSquantity(keepDecimals(BigDecimal.ZERO, 10)).setSquantity1(keepDecimals(BigDecimal.ZERO, 10)).setSquantity2(keepDecimals(BigDecimal.ZERO, 10)).setIcost(keepDecimals(BigDecimal.ZERO, 4)).setIsum(keepDecimals(BigDecimal.ZERO, 4)).setTaxAmount(keepDecimals(BigDecimal.ZERO, 6));
                 resut.put("master", warehousing5);
                 resut.put("sub", entrys5);
                 break;
