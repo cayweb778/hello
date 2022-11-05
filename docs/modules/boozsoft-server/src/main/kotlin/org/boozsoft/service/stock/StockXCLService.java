@@ -173,18 +173,23 @@ public class StockXCLService {
                            BigDecimal lackBaseQuantity = BigDecimal.ZERO;
                            if(StrUtil.isNotBlank(queryType)&&queryType.equals("xcl")){
                                if(bdocumStyle.equals("1")){
-                                   lackBaseQuantity=t.getBaseQuantity().add(xcl);
+                                   lackBaseQuantity=t1.getBaseQuantity().add(xcl);
                                }else{
-                                   lackBaseQuantity=xcl.subtract(t.getBaseQuantity());
+                                   BigDecimal subtract = xcl.subtract(t1.getBaseQuantity());
+                                   // 大于等于0 （不赋，强制为0）
+                                   lackBaseQuantity=subtract.compareTo(BigDecimal.ZERO)>-1?BigDecimal.ZERO:subtract;
                                }
                            }else if(StrUtil.isNotBlank(queryType)&&queryType.equals("keyong")){
                                if(bdocumStyle.equals("1")){
-                                   lackBaseQuantity=t.getBaseQuantity().add(t1.getKeyong());
+                                   lackBaseQuantity=t1.getBaseQuantity().add(t1.getKeyong());
                                }else{
-                                   lackBaseQuantity=t.getBaseQuantity().subtract(t1.getKeyong());
+//                                   lackBaseQuantity=t1.getBaseQuantity().subtract(t1.getKeyong());
+                                   BigDecimal subtract = t1.getKeyong().subtract(t1.getBaseQuantity());
+                                   // 大于等于0 （不赋，强制为0）
+                                   lackBaseQuantity=subtract.compareTo(BigDecimal.ZERO)>-1?BigDecimal.ZERO:subtract;
                                }
                            }
-                           t.setLackBaseQuantity(lackBaseQuantity);
+                           t1.setLackBaseQuantity(lackBaseQuantity);
                            return t1;
                        });
                    })

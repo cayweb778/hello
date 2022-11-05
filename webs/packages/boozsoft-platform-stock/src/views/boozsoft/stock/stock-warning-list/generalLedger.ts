@@ -2,12 +2,19 @@ import {defineStore} from 'pinia';
 // @ts-ignore
 import {store} from '/@/store';
 
-export const kcPcXCLStore = defineStore({
-  id: 'kcPcXCLStore',
+export const kcWarningStore = defineStore({
+  id: 'kcWarningStore',
   state: (): any => ({
     J:[
       {
-        title: '存储位置',
+        title: '状态',
+        dataIndex: 'state',
+        key: 'state',
+        align: 'left',ellipsis: true,
+        width: 100,fixed: 'left',slots: { customRender: 'state' }
+      },
+      {
+        title: '仓储位置',
         dataIndex: 'cwhcodeName',
         key: 'cwhcodeName',
         align: 'left',ellipsis: true,
@@ -100,126 +107,6 @@ export const kcPcXCLStore = defineStore({
           }
         ],
       },
-      {
-        title: '可用量',
-        dataIndex: 'keyong',
-        children: [
-          {
-            title: '主数量',
-            dataIndex: 'keyong',
-            key: '11-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong' }
-          },
-          {
-            title: '数量1',
-            dataIndex: 'keyong1',
-            key: '11-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong1' }
-          },
-          {
-            title: '数量2',
-            dataIndex: 'keyong2',
-            key: '11-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong2' }
-          }
-        ],
-      },
-      {
-        title: '在途采购到货',
-        dataIndex: 'ztrkQuantityCgdh',
-        children: [
-          {
-            title: '主数量',
-            dataIndex: 'ztrkQuantityCgdh',
-            key: '12-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityCgdh' }
-          },
-          {
-            title: '数量1',
-            dataIndex: 'cgdh1',
-            key: '12-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgdh1' }
-          },
-          {
-            title: '数量2',
-            dataIndex: 'cgdh2',
-            key: '12-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgdh2' }
-          }
-        ],
-      },
-      {
-        title: '在途采购(其他)入库',
-        dataIndex: 'ztrkQuantityCgrk',
-        children: [
-          {
-            title: '主数量',
-            dataIndex: 'ztrkQuantityCgrk',
-            key: '13-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityCgrk' }
-          },
-          {
-            title: '数量1',
-            dataIndex: 'cgrk1',
-            key: '13-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgrk1' }
-          },
-          {
-            title: '数量2',
-            dataIndex: 'cgrk2',
-            key: '13-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgrk2' }
-          }
-        ],
-      },
-      {
-        title: '在途销货',
-        dataIndex: 'ztckQuantityXhd',
-        children: [
-          {
-            title: '主数量',
-            dataIndex: 'ztckQuantityXhd',
-            key: '14-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztckQuantityXhd' }
-          },
-          {
-            title: '数量1',
-            dataIndex: 'xhd1',
-            key: '14-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'xhd1' }
-          },
-          {
-            title: '数量2',
-            dataIndex: 'xhd2',
-            key: '14-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'xhd2' }
-          }
-        ],
-      },
-      {
-        title: '在途出库',
-        dataIndex: 'ztrkQuantityQtck',
-        children: [
-          {
-            title: '主数量',
-            dataIndex: 'ztrkQuantityQtck',
-            key: '15-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityQtck' }
-          },
-          {
-            title: '数量1',
-            dataIndex: 'qtck1',
-            key: '15-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'qtck1' }
-          },
-          {
-            title: '数量2',
-            dataIndex: 'qtck2',
-            key: '15-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'qtck2' }
-          }
-        ],
-      },
     ],
   }),
   getters: {
@@ -237,6 +124,6 @@ export const kcPcXCLStore = defineStore({
 
 // Need to be used outside the setup
 export function useGlStoreWidthOut() {
-  return kcPcXCLStore(store);
+  return kcWarningStore(store);
 }
 

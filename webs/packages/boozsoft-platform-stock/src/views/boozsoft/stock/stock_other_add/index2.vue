@@ -1363,7 +1363,7 @@ const startDel = async () => {
       // 如果是负数强制转换成正数比较
       currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
       if(currData.length>0){
-        return  openLackPage(true,{data:currData,queryType:'xcl'})
+        return  openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:dynamicTenantId.value})
       }
     }
 
@@ -1453,18 +1453,18 @@ const startReview = async (b) => {
     // 现存量不足 弹出框提示
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'xcl',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
-      return openLackPage(true,{data:currData,queryType:'xcl'})
+      return openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:dynamicTenantId.value})
     }
   }
   else if(formItems.value.bstyle=='其他入库单' && !b){
     // 现存量不足 弹出框提示
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'xcl',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
-      return openLackPage(true,{data:currData,queryType:'xcl'})
+      return openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:dynamicTenantId.value})
     }
   }
 

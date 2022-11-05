@@ -1,6 +1,6 @@
 <template>
   <BasicModal
-    width="710px"
+    width="750px"
     v-bind="$attrs"
     :closable="false"
     :maskClosable="false"
@@ -78,7 +78,6 @@
                 <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">主数量:</label>
                 &nbsp;
                 <a-input-number
-                  style="width: 100px;"
                   v-model:value="formItems.primaryNumber"
                   @keyup="multiUnitNumber('1')"
                   @step="multiUnitNumber('1')"
@@ -88,7 +87,6 @@
                     <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">数量1:</label>
                     &nbsp;
                     <a-input-number
-                      style="width: 80px;"
                       v-model:value="formItems.primaryNumber1"
                       @keyup="multiUnitNumber('2')"
                       @step="multiUnitNumber('2')"
@@ -98,9 +96,8 @@
                 <span v-if="!hasBlank(formItems.secondaryUnit2)">
                    &emsp;
                   <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">数量2:</label>&nbsp;
-                  &nbsp;
                   <a-input-number
-                    style="width: 80px;"
+                    style="margin-left: 3px;"
                     v-model:value="formItems.primaryNumber2"
                     @keyup="multiUnitNumber('3')"
                     @step="multiUnitNumber('3')"
@@ -653,6 +650,7 @@ async function saveLogData(optAction) {
   border: none !important;
   border-bottom: 1px solid #bdb9b9 !important;
   background: none;
+  min-width: 100px;
 }
 .nc-open-content {
   background-image: url(/@/assets/images/homes/bg-pattern.png);
@@ -667,7 +665,6 @@ async function saveLogData(optAction) {
     margin: 20px 10px;
     padding: 2.5%;
     text-align: left;
-
     > span {
       display: block;
       width: 80px;

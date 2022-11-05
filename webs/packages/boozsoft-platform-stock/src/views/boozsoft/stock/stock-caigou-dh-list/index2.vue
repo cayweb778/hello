@@ -1579,9 +1579,9 @@ async function delFun() {
   // 可用量不足 不足 弹出框提示
   let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:pageParameter.thisAdInfo.target?.kcCgrkCheck,ckBcheck:pageParameter.thisAdInfo.target?.kcXsckCheck,bdocumStyle:'0',iyear:pageParameter.year})
   // 如果是负数强制转换成正数比较
-  currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
+  currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
   if(currData.length>0){
-    return openLackPage(true,{data:currData,queryType:'keyong'})
+    return openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
   }
 
   createConfirm({
