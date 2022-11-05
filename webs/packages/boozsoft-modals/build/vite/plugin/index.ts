@@ -31,10 +31,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     vueJsx(),
    // support name
     vueSetupExtend(),
-    Inspector({
-      enabled: true,
-      toggleButtonVisibility: "always",
-    })
+    Inspector()
   ];
 
   // vite-plugin-windicss
