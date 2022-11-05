@@ -96,7 +96,7 @@
   },
   "devDependencies": {
 
-    "vite-plugin-vue-inspector": "^1.1.3",
+    "vite-plugin-vue-inspector": "file:../vite-plugin-vue-inspector",
     "vite-plugin-imagemin": "^0.4.6",
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",

@@ -25,7 +25,7 @@ export function createPermissionGuard(router: Router) {
 
 
         if(window.localStorage.getItem('loginDate')!=null && to.fullPath=='/' && router.currentRoute.value.path=='/'){
-            nextTick(()=>next('/system'))
+            nextTick(()=>next('/home'))
             return
             // userStore.setToken(await useSsoStoreWidthOut().goGetToken());
             // await userStore.loadUserState()

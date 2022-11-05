@@ -4,7 +4,7 @@
       ref="wujieVueRef"
       width="100%"
       height="100%"
-      name="gdzc"
+      name="stock"
       :url="wujieAttrs.url"
       :sync="true"
       :props="wujieAttrs.props"

@@ -95,7 +95,7 @@
     "xlsx-js-style": "^1.0.0"
   },
   "devDependencies": {
-     "vite-plugin-vue-inspector": "^1.1.3",
+     "vite-plugin-vue-inspector": "file:../vite-plugin-vue-inspector",
     "vite-plugin-cdn-import": "^0.3.5",
     "vite-plugin-imagemin": "^0.4.6",
     "@commitlint/cli": "^15.0.0",
