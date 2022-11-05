@@ -56,6 +56,7 @@ public class StockKcXCLController {
         String queryType = map.get("queryType").toString();   // xcl \ pcxcl
         String cwhcode = map.get("ckId").toString();
         String iyear = map.get("iyear").toString();
+        String state = map.get("state") == null ? "" : map.get("state").toString();
         Map<String, String> searchMap = ((HashMap<String,  String>) map.get("searchMap"));
         // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
         String rkBcheck = map.get("rkBcheck") == null ? "0" : map.get("rkBcheck").toString();
@@ -176,7 +177,13 @@ public class StockKcXCLController {
                 .flatMap(list -> {
                     list=list.stream().filter(a->!a.getXcl().equals(BigDecimal.ZERO)||!a.getKeyong().equals(BigDecimal.ZERO)||!a.getMidWayDh().equals(BigDecimal.ZERO)||!a.getMidWayRk().equals(BigDecimal.ZERO)||!a.getMidWayXh().equals(BigDecimal.ZERO)||!a.getMidWayCk().equals(BigDecimal.ZERO)).collect(Collectors.toList());
                     list.stream().filter(tx->StrUtil.isNotBlank(tx.getDvdate())).forEach(tx->{
-                        long days = differentDaysByString(tx.getDvdate());
+                        long days = 0;
+                        try {
+                            days = differentDaysByString(tx.getDvdate());
+                        } catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        tx.setDays(days);
                        if(days<0){
                            tx.setState("失效");
                        }else if(days<=15){
@@ -191,7 +198,20 @@ public class StockKcXCLController {
                         list=list.stream().filter(xcl -> StrUtil.isNotBlank(xcl.getCinvode())).sorted(Comparator.comparing(StockCurrentLackVo::getCinvode)).distinct().collect(Collectors.toList());
                     }
                     if(StrUtil.isNotBlank(searchMap.get("selectVal"))){
-                        list=list.stream().filter(a->searchMap.get("selectType").equals("stockNum")?a.getStockNum().contains(searchMap.get("selectVal")):a.getStockName().contains(searchMap.get("selectVal"))).collect(Collectors.toList());
+                        switch (searchMap.get("selectType")){
+                            case "stockNum":
+                                list=list.stream().filter(a->a.getStockNum().contains(searchMap.get("selectVal"))).collect(Collectors.toList());
+                                break;
+                            case "stockName":
+                                list=list.stream().filter(a->a.getStockName().contains(searchMap.get("selectVal"))).collect(Collectors.toList());
+                                break;
+                            case "stateVal":
+                                list=list.stream().filter(a->a.getState().contains(searchMap.get("selectVal").trim())).collect(Collectors.toList());
+                                break;
+                        }
+                    }
+                    if(StrUtil.isNotBlank(state)){
+                        list=list.stream().filter(a->a.getState().contains(state.trim())).collect(Collectors.toList());
                     }
                     return Mono.just(list);
                 })
@@ -216,10 +236,15 @@ public class StockKcXCLController {
      * @param startDate  开始日期
      * @return 返回相差的天数
      */
-    public static long differentDaysByString(String startDate) {
-        String newDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        long startDay= Long.parseLong(startDate.replaceAll("-",""));
-        long endDay= Long.parseLong(newDate);
-        return startDay-endDay;
+    public static long differentDaysByString(String startDate) throws ParseException {
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(sdf.parse(startDate.replaceAll("-","")));
+        long start = calendar.getTimeInMillis();
+        calendar.setTime(sdf.parse(sdf.format(new Date())));
+        long end = calendar.getTimeInMillis();
+        long betweendays=(start-end)/(1000*3600*24);
+        long days = Integer.parseInt(String.valueOf(betweendays));
+        return days;
     }
 }

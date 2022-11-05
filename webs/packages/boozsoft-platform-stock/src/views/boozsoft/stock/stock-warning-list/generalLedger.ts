@@ -12,6 +12,12 @@ export const kcWarningStore = defineStore({
         key: 'state',
         align: 'left',ellipsis: true,
         width: 100,fixed: 'left',slots: { customRender: 'state' }
+      },{
+        title: '临近天数',
+        dataIndex: 'days',
+        key: 'days',
+        align: 'left',ellipsis: true,
+        width: 100,fixed: 'left'
       },
       {
         title: '仓储位置',

@@ -66,6 +66,7 @@
           <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
             <SelectOption style="font-size: 12px;" value="stockNum">存货编码</SelectOption>
             <SelectOption style="font-size: 12px;" value="stockName">存货名称</SelectOption>
+            <SelectOption style="font-size: 12px;" value="stateVal">状态</SelectOption>
           </Select>
           <!-- 搜索 -->
           <InputSearch
@@ -195,6 +196,7 @@ const batchId:any = ref('');
 const cgNumWs:any = ref('');
 const dpdate:any = ref('');
 const dvdate:any = ref('');
+const state:any = ref('');
 const stockId:any = ref([]);
 const stockClassId:any = ref([]);
 const ckList:any = ref([]);
@@ -249,6 +251,7 @@ const openQuery = async () => {
 async function loadPage(data) {
   formItems.value.ckId=data.ckId
   stockId.value=data.stockNum
+  state.value=data.state
   dynamicTenantId.value=data.databaseTrue
   getStockXCL()
 
@@ -282,7 +285,7 @@ const paginationNumber = ref(0)
 const showPaginationText = ref(false)
 async function getStockXCL() {
   loadMark.value=true
-  let map = {searchMap:formItems.value,queryType:'pcxcl',iyear:pageParameter.year,rkBcheck:'1',ckBcheck:'1',ckId: formItems.value.ckId,stockId: stockId.value}
+  let map = {searchMap:formItems.value,queryType:'pcxcl',iyear:pageParameter.year,rkBcheck:'1',ckBcheck:'1',ckId: formItems.value.ckId,stockId: stockId.value,state:state.value}
   let temp= await useRouteApi(findByStockXCL, {schemaName: dynamicTenantId})(map)
   temp.filter(tx=>!hasBlank(tx.dvdate)).forEach(async (a)=>{
     // 默认为空，如勾选仓库显示具体仓库名称
@@ -351,14 +354,7 @@ const [registerTable, {
   },
 })
 
-//选中内容
-const state = reactive<{
-  selectedRowKeys: [];
-  loading: boolean;
-}>({
-  selectedRowKeys: [], // Check here to configure the default column
-  loading: false,
-});
+
 const checkRow: any = ref([])
 
 const pageParameter: any = reactive({
@@ -400,114 +396,8 @@ const lanMuData = ref({
   changeNumber:0
 })
 
-const ccc=ref(
-  [
-    {
-      title: '状态',
-      dataIndex: 'state',
-      key: 'state',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left',slots: { customRender: 'state' }
-    },
-    {
-      title: '仓储位置',
-      dataIndex: 'cwhcodeName',
-      key: 'cwhcodeName',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left'
-    },
-    {
-      title: '存货编码',
-      dataIndex: 'stockNum',
-      key: 'stockNum',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left'
-    },
-    {
-      title: '存货名称',
-      dataIndex: 'stockName',
-      key: 'stockName',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left'
-    },
-    {
-      title: '规格型号',
-      dataIndex: 'stockGgxh',
-      key: 'stockGgxh',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left'
-    },
-    {
-      title: '主计量',
-      dataIndex: 'stockUnitName',
-      key: 'stockUnitName',
-      align: 'center',
-      width: 60,fixed: 'left'
-    },
-    {
-      title: '计量1',
-      dataIndex: 'stockUnitName1',
-      key: 'stockUnitName1',
-      align: 'center',
-      width: 60,fixed: 'left'
-    },
-    {
-      title: '计量2',
-      dataIndex: 'stockUnitName2',
-      key: 'stockUnitName2',
-      align: 'center',
-      width: 60,fixed: 'left'
-    },
-    {
-      title: '批次',
-      dataIndex: 'batchId',
-      key: 'batchId',
-      align: 'left',ellipsis: true,
-      width: 100,fixed: 'left'
-    },
-    {
-      title: '生产日期',
-      dataIndex: 'dpdate',
-      key: 'dpdate',
-      align: 'left',
-      width: 100,
-    },
-    {
-      title: '失效日期',
-      dataIndex: 'dvdate',
-      key: 'dvdate',
-      align: 'left',
-      width: 100,
-    },
-    {
-      title: '现存量',
-      dataIndex: 'baseQuantity',
-      width: 400,
-      children: [
-        {
-          title: '主数量',
-          dataIndex: 'baseQuantity',
-          key: '10-1',
-          align: 'right',width: 130,ellipsis: true,slots: { customRender: 'baseQuantity' }
-        },
-        {
-          title: '数量1',
-          dataIndex: 'subQuantity1',
-          key: '10-2',
-          align: 'right',width: 130,ellipsis: true,slots: { customRender: 'subQuantity1' }
-        },
-        {
-          title: '数量2',
-          dataIndex: 'subQuantity2',
-          key: '10-3',
-          align: 'right',width: 140,ellipsis: true,slots: { customRender: 'subQuantity2' }
-        }
-      ],
-    },
-  ]
-)
 const reloadColumns = () => {
-  let newA = JSON.parse(JSON.stringify(ccc.value))
+  let newA = CrudApi.columns
   newA = assemblyDynamicColumn(dynamicColumnModel.value.value,newA)
   setColumns(newA)
   initTableWidth(newA)

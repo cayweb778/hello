@@ -53,6 +53,16 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
+      key: '12',
+      name: '临近天数',
+      nameNew: '临近天数',
+      check: true,
+      width: 60,
+      max: 120,
+      min: 60,
+      align: 'center'
+    },
+    {
       key: '1',
       name: '仓储位置',
       nameNew: '仓储位置',

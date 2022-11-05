@@ -1,7 +1,7 @@
 <template>
   <BasicModal
     width="700px"
-    :height="300"
+    :height="330"
     class="spaceLogo"
     v-bind="$attrs"
     @ok="handleOk()"
@@ -39,7 +39,7 @@
                 <ul>
                   <li style="margin: 2% 0px;">
                     <label style="text-align: left">仓库：</label>
-                    <Select :allowClear="true" v-model:value="ckId" style="width: 70%;margin-left: 28px;text-align: center;">
+                    <Select :allowClear="true" v-model:value="ckId" style="width: 70%;margin-left: 58px;text-align: center;">
                       <SelectOption :value="data.cangkuId" v-for="data in ckList">{{data.cangkuName}}</SelectOption>
                       <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
                     </Select>
@@ -49,12 +49,23 @@
 
                   <li  style="    margin: 2% 0px;">
                     <label style="text-align: left">存货名称：</label>
-                    <Select mode="tags" v-model:value="stockId" style="width: 70%;" :filter-option="filterOption">
-                      <SelectOption :value="data.stockNum" :key="data.stockNum+data.stockName" v-for="data in stockList">{{ data.stockNum }}-{{ data.stockName }} </SelectOption>
+                    <Select :allowClear="true" v-model:value="stockId" style="width: 70%;margin-left: 28px;text-align: center;">
+                      <SelectOption :value="data.cangkuId" v-for="data in ckList">{{data.cangkuName}}</SelectOption>
                       <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
                     </Select>
                     &ensp;
                     <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="cangkuPopShow('stock')" /></a>
+                  </li>
+
+                  <li style="margin: 2% 0px;">
+                    <label style="text-align: left">有效状态：</label>
+                    <Select v-model:value="state" style="width: 70%;margin-left: 28px;" >
+                      <SelectOption value="" key="">全部</SelectOption>
+                      <SelectOption value="正常" key="正常">正常</SelectOption>
+                      <SelectOption value="临近" key="临近">临近</SelectOption>
+                      <SelectOption value="失效" key="失效">失效</SelectOption>
+                      <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
+                    </Select>
                   </li>
                 </ul>
               </div>
@@ -131,6 +142,7 @@ const ckId: any = ref('');
 const ckList: any = ref([]);
 const stockClassId: any = ref([]);
 const stockClassList: any = ref([]);
+const state: any = ref('');
 const stockId: any = ref([]);
 const stockList: any = ref([]);
 const batchId: any = ref('');
@@ -147,7 +159,7 @@ const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   console.log(data.data.openOne)
   formItems.value.openOne = data.data.openOne;
   openType.value=data.openType
-  setModalProps({ minHeight: 300 });
+  setModalProps({ minHeight: 330 });
 })
 const dynamicAdReload = async (obj) =>{
   ckId.value=''
@@ -251,6 +263,7 @@ function timeformat(dateData) {
 function handleOk() {
   let map={
     ckId:hasBlank(ckId.value)?'':ckId.value,
+    state:state.value,
     stockId:stockId.value,
     ckList:ckList.value,
     databaseTrue:databaseTrue.value,

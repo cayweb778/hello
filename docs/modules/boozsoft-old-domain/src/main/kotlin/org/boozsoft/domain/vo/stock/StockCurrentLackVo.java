@@ -49,4 +49,5 @@ public class StockCurrentLackVo implements Serializable {
 
 	// 存货有效期预警表
 	private String state;
+	private Long days;
 }
