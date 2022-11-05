@@ -59,19 +59,19 @@
         <div>
 
           <div class="acttd-right-d-search">
-            <Select v-model:value="formItems.selectType"
+            <Select v-model:value="searchParameter.condition"
                     class="acttdrd-search-select">
-              <SelectOption style="font-size: 12px;" value="1">单据编号</SelectOption>
-              <SelectOption style="font-size: 12px;" value="2">客户编码</SelectOption>
-              <SelectOption style="font-size: 12px;" value="3">客户名称</SelectOption>
-              <SelectOption style="font-size: 12px;" value="4">业务部门</SelectOption>
-              <SelectOption style="font-size: 12px;" value="5">业务员</SelectOption>
-              <SelectOption style="font-size: 12px;" value="6">制单人</SelectOption>
-              <SelectOption style="font-size: 12px;" value="7" v-if="typeFlag=='0'">存货编码</SelectOption>
-              <SelectOption style="font-size: 12px;" value="8" v-if="typeFlag=='0'">存货名称</SelectOption>
-              <SelectOption style="font-size: 12px;" value="9" v-if="typeFlag=='0'">批号</SelectOption>
+              <SelectOption style="font-size: 12px;" value="ccode">单据编号</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cvencode">客户编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cvencodeName">客户名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cdepcode">业务部门</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cpersoncode">业务员</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cmaker">制单人</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cinvode" v-if="typeFlag=='0'">存货编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="cinvodeName" v-if="typeFlag=='0'">存货名称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="batchId" v-if="typeFlag=='0'">批号</SelectOption>
             </Select>
-            <InputSearch
+            <InputSearch v-model:value="searchParameter.value"
               class="acttdrd-search-input"
               @search="onSearch"
             />
@@ -469,11 +469,7 @@ const {
 } = useMessage()
 
 const {closeCurrent,closeToFullPaths} = useTabs(router);
-
-const formItems = ref({
-  selectType: '1'
-})
-
+const searchParameter = reactive({condition: 'ccode',value: ''})
 const [registerQueryPage, {openModal: openQueryPage}] = useModal()
 //文件导入
 const val = ref({
@@ -544,6 +540,8 @@ const showChange = (v) => {
   let old = typeFlag.value
   if (v != old){
     pageParameter.queryMark =(v == '0')?'1':'2'
+    searchParameter.condition = 'ccode'
+    searchParameter.value = ''
     reloadTable()
   }
 }
@@ -574,7 +572,7 @@ async function reloadTable(){
       total: tableData1.value.length,
       showTotal: t => `总共${t}条数据`,
     })
-    for (let it of tableDataAll.value) {
+    for (let it of tableDataAll1.value) {
       num += parseFloat(it.baseQuantity)/*.toFixed(10)*/
       sum += parseFloat(it.isum)/*.toFixed(4)*/
     }
@@ -1086,7 +1084,18 @@ const pageParameter: any = reactive({
     query: {}
 })
 
-function onSearch() {
+function onSearch(v) {
+  if (typeFlag.value == '0'){
+    let list = JsonTool.parseProxy( hasBlank(v)?tableDataAll.value:tableDataAll.value.filter(item => item[searchParameter.condition]?.indexOf(v) != -1))
+    setTableData([])
+    tableData.value = replenishTrs(list)
+    setPagination({total: list.length})
+  }else {
+    let list = JsonTool.parseProxy( hasBlank(v)?tableDataAll1.value:tableDataAll1.value.filter(item => item[searchParameter.condition]?.indexOf(v) != -1))
+    setTableData1([])
+    tableData1.value = replenishTrs(list)
+    setPagination1({total: list.length})
+  }
 }
 
 const defaultPage = ref(false)
