@@ -1,6 +1,6 @@
-const jspdf = window.jspdf
-const jsPDF = jspdf.jsPDF
-
+const jspdf = null
+// const jsPDF = jspdf.jsPDF
+const jsPDF=null
 
 export function addFont(jsPDF, {fontBase64, name}) {
 
