@@ -170,7 +170,8 @@ import {cloneDeep} from "lodash-es";
 const aoaToSheetXlsx=null
 import {DateTool} from "/@/api/task-api/tools/universal-tools";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
-import {tableStyle} from "/@/store/modules/abc-print";
+// import {tableStyle} from "/@/store/modules/abc-print";
+const tableStyle=null
 const loadMark = ref(false)
 const rateValue = ref(4)
 const showRulesSize = ref('MIN')

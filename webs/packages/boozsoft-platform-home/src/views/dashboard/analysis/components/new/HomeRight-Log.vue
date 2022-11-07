@@ -184,7 +184,8 @@ import {cloneDeep} from "lodash-es";
 const aoaToSheetXlsx=null
 import {DateTool} from "/@/api/task-api/tools/universal-tools";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
-import {tableStyle} from "/@/store/modules/abc-print";
+// import {tableStyle} from "/@/store/modules/abc-print";
+const tableStyle=null
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker-DATA.vue";
 import {getGlobalFinanceSettingInfo} from "/@/api/record/system/financial-settings";
 import {useAccountPickerCache} from "/@/store/modules/boozsoft/components/AccountPicker/cache";

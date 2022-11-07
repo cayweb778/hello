@@ -5,7 +5,8 @@
 </template>
 <script setup>
 import PdfViewer from '/@/components/BoozsoftPdf/HelloPdf.vue'
-import {tableStyle} from "../../../store/modules/abc-print";
+// import {tableStyle} from "../../../store/modules/abc-print";
+const tableStyle=null
 import {usePrint} from "./print";
 import {ref} from 'vue'
 const pdfViewerRef=ref()
