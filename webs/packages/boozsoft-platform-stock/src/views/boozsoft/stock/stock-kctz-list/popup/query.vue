@@ -99,6 +99,10 @@
         <Button style="width: 100px;" shape="round" @click="handleOk"  type="primary">确定</Button>
         <Button style="width: 100px;margin-top: 10px" shape="round" @click="handleClose">放弃</Button>
       </div>
+
+      <StockCangKuModalPop @register="registerStockCangKuModalPage" @throwData="throwStockCangKuData"/>
+      <StockInfiModalPop @register="registerStockInfoModalPage" @throwData="stockAdd"/>
+
     </div>
 
   </BasicModal>
@@ -124,33 +128,19 @@ import {
 } from '@ant-design/icons-vue';
 import {useTabs} from '/@/hooks/web/useTabs';
 import router from "/@/router";
-import moment, {Moment} from 'moment';
-import {
-  findCodeKmByPeriod,
-  findMaxPingZhengQiJian, findAllAuthPeriodListByUserAndCode
-} from '/@/api/record/generalLedger/data';
+
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
-import {
-  currentAccountTypes,
-  currentCyDatas,
-  filterAccListByAuth, findVoucherTypeAuthorList
-} from "/@/api/record/system/financial-settings";
+
 import {useUserStore} from "/@/store/modules/user";
-import {
-  hasBlank,
-  pointMessage
-} from "/@/api/task-api/tast-bus-api";
+
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useMessage} from "/@/hooks/web/useMessage";
-import {psnFindByFlag} from "/@/api/psn/psn";
-import Assist from "/@/views/boozsoft/global/popup/accvoucher/HelloAbc.vue";
-import ModalAllPop from './modalAllPop.vue';
+
 import {findParameterValue, modifyParameterValue} from "/@/api/task-api/query-bus-api";
 import {ObjTool, StrTool} from "/@/api/task-api/tools/universal-tools";
-import {findAllFuzhuHesuanList} from "/@/api/record/system/fuzhu-hesuan";
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker-STOCK.vue";
 import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInfoModalPop.vue";
-import StockCangKuModalPop from '/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue';
+import StockCangKuModalPop from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
 
 //红字（无现金科目，请设置现金科目后再进行查询）
 const {closeCurrent} = useTabs(router);
@@ -329,7 +319,6 @@ const tabsChange = (value) => {
 }
 
 
-
 /*********Mr·Ye*********/
 let isChanged: boolean = false
 
@@ -459,14 +448,9 @@ const stockAdd = (o) => {
   console.log(o)
   formItems.value.stockNum = o[0].stockNum
 }
-function throwStockCangKuData(data,ckFlag) {
+function throwStockCangKuData(data) {
   console.log(data)
-  // 独立仓库
-  if (ckFlag === '1') {
-    formItems.value.cwhcode = data[0].num
-  }else{
-// 级别仓库
-  }
+  formItems.value.cwhcode = data[0].id
 }
 
 const chList:any = ref([]);

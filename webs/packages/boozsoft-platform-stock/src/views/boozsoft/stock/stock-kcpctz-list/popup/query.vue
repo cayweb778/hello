@@ -103,6 +103,8 @@
         <Button style="width: 100px;" shape="round" @click="handleOk"  type="primary">确定</Button>
         <Button style="width: 100px;margin-top: 10px" shape="round" @click="handleClose">放弃</Button>
       </div>
+      <StockCangKuModalPop @register="registerStockCangKuModalPage" @throwData="throwStockCangKuData"/>
+      <StockInfiModalPop @register="registerStockInfoModalPage" @throwData="stockAdd"/>
     </div>
 
   </BasicModal>
@@ -697,12 +699,7 @@ const stockAdd = (o) => {
 }
 function throwStockCangKuData(data,ckFlag) {
   console.log(data)
-  // 独立仓库
-  if (ckFlag === '1') {
-    formItems.value.cwhcode = data[0].num
-  }else{
-// 级别仓库
-  }
+  formItems.value.cwhcode = data[0].id
 }
 
 const chList:any = ref([]);
