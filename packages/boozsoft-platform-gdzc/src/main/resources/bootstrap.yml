@@ -1,11 +1,12 @@
 server:
-  port: 8081
-
+  port: 8090
 spring:
+  webflux:
+    base-path: /newgdzc
   main:
     allow-bean-definition-overriding: true
   application:
-    name: boozsoft-nc-app-service
+    name: boozsoft-nc-gdzc-service
   cloud:
     nacos:
       discovery:

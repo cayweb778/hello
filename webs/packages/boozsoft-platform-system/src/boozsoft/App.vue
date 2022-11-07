@@ -3,8 +3,7 @@
 <!--    <HelloMicro></HelloMicro>-->
 <!--  </div>-->
   <div style="width:100vw;height:100vh">
-    <ServerError v-if="showServerError"></ServerError>
-    <App2 v-else></App2>
+    <App2 ></App2>
   </div>
 </template>
 <script setup>
@@ -41,15 +40,5 @@ window?.$wujie.bus.$on("goGuDingZiChan", function (id) {
   /** end **/
 });
 
-const aaa=new WebSocket(import.meta.env.VITE_WEBSOCKET+"/pingServer")
-import ServerError from './ServerError.vue'
-aaa.onerror=()=>{
-  window.closeLoading()
-  showServerError.value=true
-}
-aaa.onopen=()=>{
-  showServerError.value=false
-
-}
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>

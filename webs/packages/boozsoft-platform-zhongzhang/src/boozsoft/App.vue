@@ -25,15 +25,5 @@ window?.$wujie.bus.$on("goZongzhang", function (id) {
 });
 
 
-const aaa=new WebSocket(import.meta.env.VITE_WEBSOCKET+"/pingServer")
-import ServerError from './ServerError.vue'
-aaa.onerror=()=>{
-  window.closeLoading()
-  showServerError.value=true
-}
-aaa.onopen=()=>{
-  showServerError.value=false
-
-}
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>

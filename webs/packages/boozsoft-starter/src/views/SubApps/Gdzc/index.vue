@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <Layout :socketAddr="wujieAttrs.socketAddr">
     <WujieVue
       ref="wujieVueRef"
       width="100%"
@@ -9,18 +9,19 @@
       :sync="true"
       :props="wujieAttrs.props"
     ></WujieVue>
-    <div id="ncModalMount">
+  </Layout>
+<!--    <div id="ncModalMount">-->
 <!--      11-->
 <!--      {{ncModals.componentData.componentRef}}-->
 <!--      22-->
 <!--      <component v-if="ncModals.componentData.componentRef!=null" @ok="handleOk" @cancel="handelCancel" :is="ncModals.componentData.componentRef" :params="ncModals.componentData.componentParams" :result="ncModals.componentData.componentResult"></component>-->
-    </div>
-  </div>
+<!--    </div>-->
 </template>
 <script setup lang="ts">
 import {ref, inject} from 'vue'
 // import {defineNcModals} from "@/views/boozsoft/global/funs";
 import {isProdMode} from "@/utils/env";
+import Layout from '../components/Layout.vue'
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
@@ -29,6 +30,8 @@ import {modules} from "../../../../pages/menuData";
 const wujieAttrs = ref({
 
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncgdzc' : '//localhost:4100',
+  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newgdzc':"ws://localhost:8085/newgdzc",
+
   props: {
     menuModules:modules,
     NcModals:{

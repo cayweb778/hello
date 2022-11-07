@@ -1,5 +1,5 @@
 <template>
-  <div style="position:fixed;left:0;top:0;">
+  <Layout :socketAddr="wujieAttrs.socketAddr">
     <WujieVue
         ref="wujieVueRef"
         width="100%"
@@ -9,10 +9,12 @@
         :sync="true"
         :props="wujieAttrs.props"
     ></WujieVue>
-  </div>
+  </Layout>
+
 </template>
 <script setup lang="ts">
-import {ref, getCurrentInstance, inject} from 'vue'
+import {ref, inject} from 'vue'
+import Layout from '../components/Layout.vue'
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";
@@ -22,6 +24,7 @@ const NcProvider = inject('NcProvider')
 
 const wujieAttrs = ref({
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncbak' : '//localhost:3103',
+  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newsystem':"ws://localhost:8087",
   props: {
     menuModules: modules,
     NcProvider,

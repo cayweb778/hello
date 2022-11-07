@@ -1,16 +1,50 @@
 server:
   port: 8083
-
 spring:
+  webflux:
+    base-path: /api/nc
   cloud:
     gateway:
       routes:
+        # 登陆
         - id: auth
           uri: http://81.70.47.206:8082
           predicates:
             - Path=/auth/**
           filters:
             - RewritePath=/auth(?<segment>/?.*), $\{segment}
+
+        # 系统
+        - id: system
+          uri: http://81.70.47.206:8087/newsystem
+          predicates:
+            - Path=/newsystem/**
+          filters:
+            - RewritePath=/newsystem(?<segment>/?.*), $\{segment}
+
+        # 总账
+        - id: zongzhang
+          uri: http://81.70.47.206:8086/zongzhang
+          predicates:
+            - Path=/zongzhang/**
+          filters:
+            - RewritePath=/zongzhang(?<segment>/?.*), $\{segment}
+
+        # 存货
+        - id: stock
+          uri: http://81.70.47.206:8085/newstock
+          predicates:
+            - Path=/newstock/**
+          filters:
+            - RewritePath=/newstock(?<segment>/?.*), $\{segment}
+
+        # 固定资产
+        - id: gdzc
+          uri: http://81.70.47.206:8085/newgdzc
+          predicates:
+            - Path=/newgdzc/**
+          filters:
+            - RewritePath=/newgdzc(?<segment>/?.*), $\{segment}
       globalcors:
         cors-configurations:
           '[/**]':
