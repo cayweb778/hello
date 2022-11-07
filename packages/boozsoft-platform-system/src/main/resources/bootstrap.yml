@@ -1,13 +1,13 @@
 server:
-  port: 8081
+  port: 8087
 
 spring:
   webflux:
-    base-path: /newstock
+    base-path: /newsystem
   main:
     allow-bean-definition-overriding: true
   application:
-    name: boozsoft-nc-newstock-service
+    name: boozsoft-nc-system-service
   cloud:
     nacos:
       discovery:
