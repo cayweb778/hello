@@ -43,6 +43,8 @@ enum Api {
   findAllAccvoucherTreeXianjin = '/accvoucher/dateTreeXianJin',
   findAllByIfrag = '/accvoucher/findAllByIfrag',
   accvoucherSavesApi = '/accvoucher/save',
+  findBillByConditionApi = '/accvoucher/findBillByCondition',
+  findLastPingZhengInoidApi = '/accvoucher/findLastPingZhengInoid',
 
 }
 
@@ -438,4 +440,19 @@ export const accvoucherSaves = defRouteApi(async (params: any) => {
     params
   }
 })
-
+export const findBillByCondition = defRouteApi(async (params: any) => {
+  return {
+    url: Api.findBillByConditionApi,
+    timeout: 5000000000,
+    method: 'POST',
+    params
+  }
+})
+export const findLastPingZhengInoid = defRouteApi(async (params: any) => {
+  return {
+    url: Api.findLastPingZhengInoidApi,
+    timeout: 5000000000,
+    method: 'POST',
+    params
+  }
+})

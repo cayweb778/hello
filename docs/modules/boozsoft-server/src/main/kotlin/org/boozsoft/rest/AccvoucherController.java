@@ -18,6 +18,7 @@ import org.boozsoft.domain.entity.account.SysDepartment;
 import org.boozsoft.domain.entity.account.SysPsn;
 import org.boozsoft.domain.entity.codekemu.CodeKemu;
 import org.boozsoft.domain.entity.share.project.base.Project;
+import org.boozsoft.domain.entity.stock.StockSaleousing;
 import org.boozsoft.domain.vo.SubjectInitialBalanceVo;
 import org.boozsoft.domain.vo.VoucherBusCheckVo;
 import org.boozsoft.repo.*;
@@ -4568,5 +4569,56 @@ public class AccvoucherController {
         String code = IdUtil.objectId();
         return null == list.get(0).getId()?accvoucherRepository.saveAll(list.stream().map(it->{it.setUniqueCode(code);return it;}).collect(Collectors.toList())).collectList().thenReturn(R.ok()):Mono.just(R.ok());
     }
+
+    @PostMapping("findBillByCondition")
+    public Mono<R> findBillByCondition(@RequestBody Map map) {
+        if (map.keySet().size() == 0) return Mono.just(R.error());
+        String type = map.get("type").toString();
+        String iyear = map.get("iyear").toString();
+        String action = map.get("action").toString();
+        String currPdId = map.containsKey("curr") ? map.get("curr").toString() : "";
+        return accvoucherRepository.findAllByIyearOrderByIyperiodAscInoIdAsc(iyear)
+                .filter(it->true)
+                .collectList().cache()
+                .flatMap(list -> {
+                    if (list.size() == 0) {
+                        return Mono.just(R.ok());
+                    } else {
+                        Accvoucher master = null;
+                        switch (action) {
+                            case "curr":
+                                master = list.get((list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId));
+                                break;
+                            case "tail":
+                                master = list.get(list.size() - 1);
+                                break;
+                            case "prev":
+                                if (StrUtil.isBlank(currPdId)) {
+                                    master = list.get(0);
+                                } else {
+                                    int index = (list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId);
+                                    index = index == 0 ? 0 : index - 1;
+                                    master = list.get(index);
+                                }
+                                break;
+                            case "next":
+                                if (StrUtil.isBlank(currPdId)) {
+                                    master = list.get(0);
+                                } else {
+                                    int index = (list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId);
+                                    index = index >= list.size() - 1 ? list.size() - 1 : index + 1;
+                                    master = list.get(index);
+                                }
+                                break;
+                            default:
+                                master = list.get(0);
+                                break;
+                        }
+                        Accvoucher finalMaster = master;
+                        return Mono.just(R.ok(list.stream().filter(it->it.getUniqueCode().equals(finalMaster.getUniqueCode())).collect(Collectors.toList())));
+                    }
+                });
+    }
+
 
 }

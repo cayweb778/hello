@@ -224,7 +224,8 @@ export function DateTool() {
       let date = new Date(year, month, 1);
       let lastday = new Date(date.getTime() - 1000 * 60 * 60 * 24).getDate();
       return lastday;
-    }
+    },
+
   }
 }
 
@@ -365,5 +366,12 @@ export const NumberTool =  {
       }
     }
     return val;
-  }
+  },/**
+     * 数字前缀补零
+     * @param str 原值
+     * @param n 补零长度
+     */
+    zeroFill(str,n){
+      return (Array(n).join(0) + str).slice(-n)
+    }
 }
