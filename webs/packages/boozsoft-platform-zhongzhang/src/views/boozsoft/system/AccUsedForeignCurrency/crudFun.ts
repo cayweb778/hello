@@ -1,7 +1,10 @@
 import {message} from "ant-design-vue";
-import {exportExcel} from "/@/views/boozsoft/group/SysLogger/popup/excel";
-import {useThisPrint} from "/@/views/boozsoft/group/SysLogger/popup/print";
-import {saveApi} from "/@/api/group/SysLogger";
+//import {exportExcel} from "/@/views/boozsoft/group/SysLogger/popup/excel";
+const exportExcel=null
+//import {useThisPrint} from "/@/views/boozsoft/group/SysLogger/popup/print";
+const useThisPrint=null
+//import {saveApi} from "/@/api/group/SysLogger";
+const saveApi=null
 import {saveTableAuditApi} from "/@/api/group/TableAudit";
 
 export function openEditPageByAddFun(params,recordData) {

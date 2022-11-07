@@ -244,7 +244,9 @@
   import {useTabs} from "/@/hooks/web/useTabs";
   import {findAll as permissionAll} from "/@/api/record/system/group-permission";
   import {saveLog} from "/@/api/record/system/group-sys-login-log";
-  import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+   //import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
+
 
 
   const { createConfirm,createWarningModal,createMessage } = useMessage();

@@ -2176,7 +2176,9 @@ function handleSelect(obj) {
   }
 }
 /*start栏目设置*/
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+ //import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
+
 import {assemblyDynamicColumn, initDynamics} from "./data";
 const dynamicColumnData:any = ref({value: []})
 const dynamicColumns = initDynamics().DEFAULT

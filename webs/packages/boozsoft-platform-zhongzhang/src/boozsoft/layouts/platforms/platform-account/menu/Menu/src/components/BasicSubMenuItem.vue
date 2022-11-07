@@ -10,9 +10,9 @@
       @reloadProjects="()=>{}"
       @register="registerImportPage"
     />
-    <ZcAuthorize
-      @register="registerAuthorizePage"
-    />
+<!--    <ZcAuthorize-->
+<!--      @register="registerAuthorizePage"-->
+<!--    />-->
     <CancelClose
       @register="registerCancelPage"
     />
@@ -44,7 +44,7 @@ import MenuItemContent from './MenuItemContent.vue';
 import {RouteLocationRaw} from 'vue-router';
 import router from '/@/router';
 import Import from "/@/views/boozsoft/system/accvoucher/popup/import.vue";
-import ZcAuthorize from "/@/views/boozsoft/management/im-unit-three/popup/Authorization.vue";
+// import ZcAuthorize from "/@/views/boozsoft/management/im-unit-three/popup/Authorization.vue";
 import CancelClose from "/@/views/boozsoft/system/qi-mo-jie-zhang/popup/CancelClose.vue";
 import {useModal} from "/@/components/Modal";
 import {getCurrentAccountName, getCurrentAccountYear} from "/@/api/task-api/tast-bus-api";
@@ -57,7 +57,7 @@ export default defineComponent({
     SubMenu: Menu.SubMenu,
     MenuItemGroup: Menu.ItemGroup,
     MenuItem: Menu.Item,
-    MenuItemContent, Import,ZcAuthorize,CancelClose
+    MenuItemContent, Import,CancelClose
   },
   props: itemProps,
   setup(props) {

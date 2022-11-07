@@ -1,6 +1,7 @@
 import {useModal} from "/@/components/Modal";
 import {ref} from "vue";
-import {saveApi} from "/@/api/group/SysLogger";
+//import {saveApi} from "/@/api/group/SysLogger";
+const saveApi=null
 import {saveTaskApi} from "/@/api/record/system/task";
 import {saveTableAuditApi} from "/@/api/group/TableAudit";
 import {savePlatforms} from "/@/api/group/platform";

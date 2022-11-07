@@ -211,10 +211,11 @@
   import { findAllAccvoucher } from '/@/api/record/system/accvoucher';
   import { findAll } from '/@/api/record/system/currency';
   import { useUserStoreWidthOut } from '/@/store/modules/user';
-  import {
-    sys_findByFunctionModule,
-    sys_delFunctionModule,
-  } from '/@/api/subjectInitialBalance/subjectInitialBalance';
+  // import {
+  //   sys_findByFunctionModule,
+  //   sys_delFunctionModule,
+  // } from '/@/api/subjectInitialBalance/subjectInitialBalance';
+  const sys_findByFunctionModule=null
   import { savelog } from '/@/api/record/log';
   import { useCompanyOperateStoreWidthOut } from '/@/store/modules/operate-company';
   import {aoaToSheetXlsx, jsonToSheetXlsx} from '/@/components/Excel';

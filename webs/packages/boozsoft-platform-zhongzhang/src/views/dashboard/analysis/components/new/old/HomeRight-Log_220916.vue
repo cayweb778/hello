@@ -164,10 +164,11 @@ import {assemblyDynamicColumn, initDynamics} from "../ts/data";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {findDbLanMuList, saveLanMuList} from "/@/api/record/system/accvoucher";
 import {cloneDeep} from "lodash-es";
-import {
-  aoaToSheetXlsx
-} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
-import {DateTool} from "/@/api/task-api/tools/universal-tools";
+// import {
+//   aoaToSheetXlsx
+// } from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
+import{DateTool} from "/@/api/task-api/tools/universal-tools";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 const loadMark = ref(false)

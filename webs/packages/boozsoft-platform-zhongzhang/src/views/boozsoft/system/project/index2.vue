@@ -292,7 +292,9 @@ import { useProjectStoreWidthOut } from '/@/store/modules/project'
 import {getDeptListById} from "/@/api/record/system/dept";
 import {psnFindAll} from "/@/api/psn/psn";
 import {GetProClassTree, projectClassFindAll} from "/@/api/record/system/project_class";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+ //import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
+
 import {Select as ASelect,Input as AInput,Popover as APopover,Tag as ATag,   Radio as ARadio,
   Table as ATable,  Checkbox as ACheckbox,
   Popconfirm as APopconfirm,
@@ -927,7 +929,8 @@ import {
 } from "/@/api/task-api/tast-bus-api";
 import {cloneDeep} from "lodash-es";
 import {getThisAdInfoData} from "/@/api/record/system/financial-settings";
-import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+// import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
 // import {getFromEdit} from "/@/api/record/system/sys_project_category";
 import {useUserStore, useUserStoreWidthOut} from "/@/store/modules/user";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";

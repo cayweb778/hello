@@ -109,7 +109,8 @@ import {
 } from "ant-design-vue";
 import {onMounted, reactive} from "vue";
 import {useModal} from "/@/components/Modal";
-import Bottom from "/@/views/boozsoft/group/SysLogger/layout/header/components/Bottom.vue";
+// import Bottom from "/@/views/boozsoft/group/SysLogger/layout/header/components/Bottom.vue";
+const Bottom=null
 import HomeRightBottom
   from "/@/views/dashboard/analysis/components/new/HomeRightBottom-Org.vue";
 import router from "/@/router";
