@@ -205,7 +205,6 @@ public class SysAccountController {
         map2.put("bookDate", StringUtils.isBlank(eneity.getBookDate()) ? "1" : eneity.getBookDate());
         map2.put("wotDate", StringUtils.isBlank(eneity.getWotDate()) ? "1" : eneity.getWotDate());
 
-        if (Objects.equals(eneity.getIchronological(), "1")) list1.add("ichronological");
         if (Objects.equals(eneity.getIdeficit(), "1")) list1.add("ideficit");
         if (Objects.equals(eneity.getIcashFlow(), "1")) list1.add("icashFlow");
         if (Objects.equals(eneity.getIsettlement(), "1")) list1.add("isettlement");
@@ -218,6 +217,7 @@ public class SysAccountController {
         if (Objects.equals(eneity.getIexchange(), "1")) list1.add("iexchange");
         if (Objects.equals(eneity.getIfreecorp(), "1")) list1.add("ifreecorp");
 
+        if (Objects.equals(eneity.getIchronological(), "1")) list2.add("ichronological");
         if (Objects.equals(eneity.getIautoCode(), "1")) list2.add("iautoCode");
         if (Objects.equals(eneity.getIbreakCode(), "1")) list2.add("ibreakCode");
         if (Objects.equals(eneity.getIyearCode(), "1")) list2.add("iyearCode");
@@ -282,11 +282,7 @@ public class SysAccountController {
         eneity.setBankStatementSort(statementMap.get("bankStatementSort"));
 
         List<String> zhiDanList = jsonObject.get("zhiDanList", ArrayList.class);
-        if (zhiDanList.contains("ichronological")) {
-            eneity.setIchronological("1");
-        } else {
-            eneity.setIchronological("");
-        }
+
         if (zhiDanList.contains("ideficit")) {
             eneity.setIdeficit("1");
         } else {
@@ -343,7 +339,11 @@ public class SysAccountController {
             eneity.setIfreecorp("0");
         }
         List<String> pingZhenNumberList = jsonObject.get("pingZhenNumberList", ArrayList.class);
-
+        if (pingZhenNumberList.contains("ichronological")) {
+            eneity.setIchronological("1");
+        } else {
+            eneity.setIchronological("");
+        }
         if (pingZhenNumberList.contains("iautoCode")) {
             eneity.setIautoCode("1");
         } else {

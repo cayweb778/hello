@@ -287,7 +287,13 @@ import {findByLastCodeHierarchyNames} from "/@/api/codekemu/codekemu";
 import { useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {findAllByOrderByCcodeApi as findAllSummary} from "/@/api/boozsoft/account/AccvoucherCdigest";
-import {findAllVoucherSummary,accvoucherSaves,findBillByCondition} from "/@/api/record/system/accvoucher";
+import {
+  findAllVoucherSummary,
+  accvoucherSaves,
+  findBillByCondition,
+  findLastPingZhengInoid,
+  checkLastZhengInoid
+} from "/@/api/record/system/accvoucher";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
 import {JsonTool, NumberTool, ObjTool, StrTool} from "/@/api/task-api/tools/universal-tools";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
@@ -870,6 +876,21 @@ const checkTheAssembly = async (action) => {
     })
     return null
   }
+  if (dynamicTenant.value?.target?.iautoCode == '1'){ // 自动
+    let parm = {
+      date: busDate,
+      csign: saveModel['csign'] || '记',
+      code: saveModel['inoId'],
+      sort: dynamicTenant.value?.target?.iyearCode == '1'?'1':'0'
+    }
+    if (await useRouteApi(findLastPingZhengInoid, {schemaName: dynamicTenant.value?.accountMode})(parm) == '1'){
+      createWarningModal({
+        title: '温馨提示',
+        content: `表头：凭证号在当前${parm.sort == '1'?'年度':'业务期间月'}凭证类别内不允许重复！`
+      })
+      return null
+    }
+  }
   let list = JsonTool.parseProxy(getDataSource().filter(it=> !hasBlank(it['cdigest'] && !hasBlank(it['ccode']) && (!hasBlank(it['colum5']) || !hasBlank(it['colum6'])))))
   if (list.length < 2 || (list.length > 2 && totalModel.mc != totalModel.md)){
     createWarningModal({
@@ -935,8 +956,17 @@ async function dbInteraction(action) {
       saveModel['idoc'] = null
       saveModel['dbillDate'] = busDate
       saveModel['cbill'] = useUserStoreWidthOut().getUserInfo.id
-
-      saveModel['inoId'] = NumberTool.zeroFill(1,4)//  await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: saveModel['dbillDate']})
+      if (dynamicTenant.value?.target?.iautoCode != '1'){ // 自动
+        let parm = {
+          date: busDate,
+          csign: saveModel['csign'] || '记',
+          broken: dynamicTenant.value?.target?.ibreakCode == '1'?'1':'0',
+          sort: dynamicTenant.value?.target?.iyearCode == '1'?'1':'0'
+        }
+        saveModel['inoId'] = NumberTool.zeroFill((await useRouteApi(findLastPingZhengInoid, {schemaName: dynamicTenant.value?.accountMode})(parm) || 1),4)
+      }else {
+        saveModel['inoId'] = ''
+      }
       let list =[]
       for (let i = 0; i < (12); i++)
         list.push({sopen:false,searchVal:null})

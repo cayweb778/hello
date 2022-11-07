@@ -4621,4 +4621,43 @@ public class AccvoucherController {
     }
 
 
+    @PostMapping("findLastPingZhengInoid")
+    public Mono<R> findLastPingZhengInoid(@RequestBody Map map) {
+        if (map.keySet().size() == 0) return Mono.just(R.error());
+        String[] dates= map.get("date").toString().split("-");
+        String  csign= map.get("csign").toString();
+        String  broken= map.get("broken").toString();
+        String  sort= map.get("sort").toString();
+        return  accvoucherRepository.findAllByCsignAndIyperiodLike(csign,("%"+(sort.equals("1")?dates[0]:dates[0]+dates[1])+"%")).collectList().flatMap(sourList->{
+            if (sourList.size() == 0)return Mono.just(R.ok(1));
+            String id = "";
+            List<Integer> list = sourList.stream().map(it -> Integer.parseInt(it.getInoId())).distinct().collect(Collectors.toList());
+            int max = list.get(list.size()-1);
+            if (broken.equals("1")){
+                for (int i = 1; i <= max; i++) {
+                    if (!list.contains(i)){
+                        id = i+"";
+                        break;
+                    }
+                }
+            }else {
+                id = (max+1)+"";
+            }
+            return Mono.just(R.ok(id));
+        });
+    }
+
+    @PostMapping("checkLastZhengInoid")
+    public Mono<R> checkLastZhengInoid(@RequestBody Map map) {
+        if (map.keySet().size() == 0) return Mono.just(R.error());
+        String[] dates= map.get("date").toString().split("-");
+        String  csign= map.get("csign").toString();
+        String  code= map.get("code").toString();
+        String  sort= map.get("sort").toString();
+        return  accvoucherRepository.findAllByCsignAndIyperiodLike(csign,("%"+(sort.equals("1")?dates[0]:dates[0]+dates[1])+"%")).collectList().flatMap(sourList->{
+            if (sourList.size() == 0)return Mono.just(R.ok(1));
+            List<Integer> list = sourList.stream().map(it -> Integer.parseInt(it.getInoId())).distinct().collect(Collectors.toList());
+            return Mono.just(R.ok(list.contains(code)?"1":"0"));
+        });
+    }
 }
