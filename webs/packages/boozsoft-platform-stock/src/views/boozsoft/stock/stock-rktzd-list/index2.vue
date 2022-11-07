@@ -685,7 +685,7 @@ const CrudApi1 = {
 
 function toRouter(data,type) {
   if(type=='list'){
-    router.push({path: '/kc-shape',query: {ccode:data.ccode}});
+    router.push({path: '/cb-depot',query: {ccode:data.ccode}});
   }
 }
 
@@ -1063,7 +1063,7 @@ const toAuditBack = async () => {
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
     let a = useUserStoreWidthOut().getUserInfo.id
-    if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
+    if (!hasBlank(a) && !hasBlank(checkRow.value[0].id)) {
       // 审核
       let b = false
       let bcheck=b?'1':'0'
