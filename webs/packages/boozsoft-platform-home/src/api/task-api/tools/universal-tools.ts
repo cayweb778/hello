@@ -224,7 +224,8 @@ export function DateTool() {
       let date = new Date(year, month, 1);
       let lastday = new Date(date.getTime() - 1000 * 60 * 60 * 24).getDate();
       return lastday;
-    }
+    },
+    
   }
 }
 
@@ -352,18 +353,12 @@ export const NumberTool =  {
     return Number.parseFloat(text.replace(/[^\d\.\-]/g, '')).toFixed(2).replace(/(-?\d+)(\d{3})/, "$1,$2")
   },
   /*** 向上取整 保留位数 ***/
-  toCeil(v,num = 0) {
-    if (!(num >= 0 && num <= 100)) {
-      throw new RangeError('toCeil() digits argument must be between 0 and 100.');
+  /**
+     * 数字前缀补零
+     * @param str 原值
+     * @param n 补零长度
+     */
+    zeroFill(str,n){
+      return (Array(n).join(0) + str).slice(-n)
     }
-    let val = Math.ceil(v * Math.pow(10, num)) / Math.pow(10, num) + '';
-    if (num > 0) {
-      const intp = val.split('.')[0],
-        decp = val.split('.')[1] || '';
-      if (decp.length < num) {
-        val = intp + '.' + decp.padEnd(num, '0');
-      }
-    }
-    return val;
-  }
 }

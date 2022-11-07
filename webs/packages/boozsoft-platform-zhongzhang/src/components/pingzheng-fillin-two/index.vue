@@ -10,15 +10,17 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('sts')">保存并新增</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('save')">保存</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('givp')">放弃</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('tsave')">暂存</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('rowa')">增行</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('rowd')">删行</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('flow')">流量</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('route')">列表</Button>
-          <Button class="actod-btn actod-btn-last" @click="pageEventWatch('out')">退出</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('toa')" @click="pageEventWatch('toa')">新增</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('toe')" @click="pageEventWatch('toe')">修改</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('sts')" @click="pageEventWatch('sts')">保存并新增</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('save')" @click="pageEventWatch('save')">保存</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('givp')" @click="pageEventWatch('givp')">放弃</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('tsave')" @click="pageEventWatch('tsave')">暂存</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('rowa')" @click="pageEventWatch('rowa')">增行</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('rowd')" @click="pageEventWatch('rowd')">删行</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('flow')" @click="pageEventWatch('flow')">流量</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('route')" @click="pageEventWatch('route')">列表</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('out')" @click="pageEventWatch('out')">退出</Button>
         </div>
         <div :class="status != 3?'status-look':''">
           <div class="acttd-right-d-search">
@@ -277,16 +279,18 @@ import {
 } from '@ant-design/icons-vue';
 import {BasicTable, useTable} from '/@/components/Table'
 import {SearchOutlined} from '@ant-design/icons-vue';
+import { useRoute } from 'vue-router';
 /************* 系统块 ***************/
 /*********** 业务块 *************/
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker.vue";
 import {findByLastCodeHierarchyNames} from "/@/api/codekemu/codekemu";
-import {defRouteApi, useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
+import { useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {findAllByOrderByCcodeApi as findAllSummary} from "/@/api/boozsoft/account/AccvoucherCdigest";
-import {findAllVoucherSummary,accvoucherSaves} from "/@/api/record/system/accvoucher";
+import {findAllVoucherSummary,accvoucherSaves,findBillByCondition} from "/@/api/record/system/accvoucher";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {JsonTool, NumberTool, ObjTool} from "/@/api/task-api/tools/universal-tools";
+import {JsonTool, NumberTool, ObjTool, StrTool} from "/@/api/task-api/tools/universal-tools";
+import {useUserStoreWidthOut} from "/@/store/modules/user";
 /*********** 业务块 *************/
 /**************** 引用块 *****************/
 
@@ -302,7 +306,7 @@ import Assist from "/@/components/pingzheng-fillin-two/components/Assist.vue";
 const {createWarningModal, createConfirm} = useMessage()
 const windowHeight = (window.innerHeight - 300)
 const busDate = useCompanyOperateStoreWidthOut().getLoginDate
-const status = ref(1)
+const status = ref(3)
 const InputSearch = Input.Search
 let num = 0
 const visible = ref(false)
@@ -380,7 +384,9 @@ const state = reactive<{
 const rowDelData:any=ref([])
 
 const saveModel = reactive({})
-
+const queryList = ref([])
+const route = useRoute();
+const routeData:any = route.query;
 /**************** 变量块 *****************/
 
 /**************** 方法块 *****************/
@@ -421,10 +427,27 @@ async function initData() {
 /******************* top工具栏 ********************/
 const pageEventWatch = async(action) => {
   switch (action) {
+    case 'toa':
+      status.value = 1
+      await loadBasicsData()
+      await dbInteraction('toa')
+      break;
+    case 'toe':
+      status.value = 2
+      break;
     case 'sts':
+      await dbInteraction('save')
+      status.value = 1
+      await pageEventWatch('toa')
       break;
     case 'save':
       await dbInteraction('save')
+      status.value = 3
+      await pageReload()
+      break;
+    case 'givp':
+      status.value = 3
+      await pageReload()
       break;
     case 'rowa':
       rowEventWatch('add')
@@ -434,6 +457,35 @@ const pageEventWatch = async(action) => {
       break;
   }
 }
+
+const hideControl = (action) => {
+  let b = true;
+  switch (action) {
+    case 'sts':
+    case 'tsave':
+    case 'flow':
+      b = status.value == 1
+      break;
+    case 'save':
+    case 'givp':
+    case 'rowa':
+    case 'rowd':
+      b = status.value != 3
+      break;
+    case 'route':
+    case 'out':
+    case 'toa':
+      b = status.value == 3
+      break;
+    case 'toe':
+      b = status.value == 3 && !hasBlank(saveModel['inoId'])
+      break;
+
+  }
+  return b;
+}
+
+
 
 const outBefore = () => {
 
@@ -475,8 +527,64 @@ const rowEventWatch = (type) => {
 
 
 /******************* table 表头业务 ********************/
-const contentSwitch = (type) => {
+const pageReload = async () => {
+  if(routeData.type!==undefined){
+    /*if (!hasBlank(routeData.co) && dynamicTenant.value?.coCode !=routeData.co){
+      accountPickerFuns.value.resetCoCode(routeData.co)
+      return false
+    }*/
+    if(routeData.type=='add'){
+      await pageEventWatch('toa')
+    }else if(routeData.type=='edit'){
+      status.value=2
+      await contentSwitch('curr')
+    }else{
+      await contentSwitch('curr')
+    }
+  }else{
+    await contentSwitch('tail')
+  }
+}
+const contentSwitch = async (action) => {
+  tableLoad.value = true
+  let res = await useRouteApi(findBillByCondition, {schemaName: dynamicTenant.value?.accountMode})({
+    type: 'all',
+    iyear: busDate.substring(0,4),
+    action: action,
+    curr: '',
+  })
+  if (null != res) {
+    queryList.value = JsonTool.parseProxy(res)
+    if (queryList.value.length > 0) {
+      let list = queryList.value.map(it => conversionRow(it))
+      saveModel['csign'] = list[0]?.csign
+      saveModel['inoId'] = NumberTool.zeroFill(list[0]?.inoId,4)
+      saveModel['idoc'] = list[0]?.idoc
+      saveModel['dbillDate'] = list[0]?.dbillDate
+      saveModel['cbill'] = list[0]?.cbill
+      let len = list.length
+      for (let i = 0; i < (12 - len); i++)
+        list.push({sopen:false,searchVal:null})
+      setTableData(list)
+      // 找到 对应行tr[data-row-key='']
+      list.filter(it=>it.csign != null).forEach(r=>
+        {
+          splitNumber(r,r.colum5!=0?'colum5':'colum6',document.getElementsByClassName(r.colum5!=0?'colum5':'colum6')[0])
+          r.editColum5 = null
+          r.editColum6 = null
+        }
+      )
+    }
+  } else {
+    message.success('暂未发现新的数据！')
+    queryList.value = []
+    let list = []
+    for (let i = 0; i < (12); i++)
+      list.push({editCdigest: true,sopen:false,searchVal:null})
 
+    setTableData(list)
+  }
+  tableLoad.value = false
 }
 /******************* table 表头业务 ********************/
 
@@ -559,6 +667,7 @@ function indexToUpper(str,index) {
 }
 
 const amountToggle = (r,c,b) => {
+  if (status.value == 3) return false;
   const ckey = indexToUpper(c,0)
   if (b){
     r[`temp${ckey}`] = r[`${c}`];
@@ -731,6 +840,16 @@ const rowSelection = {
   }),
 };
 
+const conversionRow = (r) =>{
+  r.key = r.vouchUnCode
+  r.sopen = false
+  r.searchVal = null
+  r.colum5 = parseFloat(r.mc || 0)
+  r.colum6 = parseFloat(r.md || 0)
+  r.editColum5 = r.colum5 != 0?true:false
+  r.editColum6 = r.colum6 != 0?true:false
+  return r
+}
 
 /******************* table 表体业务 ********************/
 
@@ -798,16 +917,31 @@ const checkTheAssembly = async (action) => {
 /******************* 检测 业务 ********************/
 
 /******************* DB 业务 ********************/
+async function loadBasicsData() {
 
+}
 async function dbInteraction(action) {
   switch (action) {
     case 'save':
       let json = await checkTheAssembly(action);
       if (null != json) {
-        console.log(json)
         await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: json})
         message.success('保存成功!')
       }
+      break;
+    case 'toa':
+      // 获取最新凭证字号
+      saveModel['csign'] = null
+      saveModel['idoc'] = null
+      saveModel['dbillDate'] = busDate
+      saveModel['cbill'] = useUserStoreWidthOut().getUserInfo.id
+
+      saveModel['inoId'] = NumberTool.zeroFill(1,4)//  await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: saveModel['dbillDate']})
+      let list =[]
+      for (let i = 0; i < (12); i++)
+        list.push({sopen:false,searchVal:null})
+      totalCalculate(list)
+      setTableData(list)
       break;
   }
 }
