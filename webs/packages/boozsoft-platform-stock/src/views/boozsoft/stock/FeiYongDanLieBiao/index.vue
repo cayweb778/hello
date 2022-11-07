@@ -307,7 +307,7 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {add, sub, toThousandFilter} from "../YingShouKuanQiChuYuE/calculation";
+import {add, sub, toThousandFilter} from "./calculation";
 import Query from './popup/query.vue'
 import {findAll as findCustAll} from "/@/api/record/costomer_data/customer";
 import {getPsnList} from "/@/api/record/system/psn";

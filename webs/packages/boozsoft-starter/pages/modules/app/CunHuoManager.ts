@@ -33,11 +33,17 @@ export const menus = [
   createPlatformMenu({ id: useId(104), path: '/stock-kc', component: 'LAYOUT', parentId: 0, name: '库存' }),
   createPlatformMenu({ id: useId(105), path: '/stock-wl', component: 'LAYOUT', parentId: 0, name: '物流' }),
   createPlatformMenu({ id: useId(106), path: '/stock-jy', component: 'LAYOUT', parentId: 0, name: '借用' }),
+  createPlatformMenu({ id: useId(107), path: '/stock-fy', component: 'LAYOUT', parentId: 0, name: '费用' }),
   createPlatformMenu({ id: useId(108), path: '/stock-cb', component: 'LAYOUT', parentId: 0, name: '成本' }),
   createPlatformMenu({ id: useId(109), path: '/stock-pz', component: 'LAYOUT', parentId: 0, name: '凭证' }),
   createPlatformMenu({ id: useId(111), path: '/stock-zb', component: 'LAYOUT', parentId: 0, name: '账表' }),
   createPlatformMenu({ id: useId(112), path: '/stock-jz', component: 'LAYOUT', parentId: 0, name: '结账' }),
   createPlatformMenu({ id: useId(113), path: '/stock-sz', component: 'LAYOUT', parentId: 0, name: '设置' }),
+
+  createPlatformMenu({ id: useId(1071), path: '/fy-invoice', component: '', parentId: useId(107), name: '业务单据' }),
+  createPlatformMenu({ id: useId(1072), path: '/fy-list', component: '', parentId: useId(107), name: '单据列表' }),
+  createPlatformMenu({ id: useId(10711), path: '/fyadd', component: '/boozsoft/stock/FeiYongDan/layouts/RouteCache',componentName:'FeiYongAdd', parentId: useId(1071), name: '费用单' }),
+  createPlatformMenu({ id: useId(10721), path: '/fylist', component: '/boozsoft/stock/FeiYongDanLieBiao/layouts/RouteCache',componentName:'FeiYongList', parentId: useId(1072), name: '费用单列表' }),
 
   /*
     createPlatformMenu({ id: useId(601), path: '/cg-invoice', component: '', parentId: useId(114), name: '设置' }),

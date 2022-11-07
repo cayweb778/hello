@@ -43,7 +43,7 @@
         <br/><br/>
 
         <label>税率:</label>
-        <a-input v-model:value="formItems.itax" />
+        <a-input-number v-model:value="formItems.itax" min="0" style="width: 50%;" />
         <span class="red_span"></span>
         <br/><br/>
 
@@ -85,7 +85,7 @@
 <script setup="props, {content}" lang="ts">
 import { ref, unref } from 'vue'
 import { BasicModal, useModalInner } from '/@/components/Modal'
-import {Select as ASelect,Input as AInput} from "ant-design-vue"
+import {Select as ASelect,Input as AInput,InputNumber as AInputNumber} from "ant-design-vue"
 import {useMessage} from "/@/hooks/web/useMessage";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {
@@ -346,6 +346,21 @@ async function checkName(){
   border-left: none;
   border-right: none;
   border-top: none !important;
+}
+
+:deep(.ant-input-number){
+  border: none;
+  border-bottom: solid 1px rgb(191, 191, 191) !important;
+  width: 100%;
+
+  .ant-input-number-handler-wrap{
+    display:none;
+  }
+  input{
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Arial !important;
+  }
 }
 
 .red_span {

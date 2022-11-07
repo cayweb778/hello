@@ -423,7 +423,7 @@ import {
  pad,
  sub,
  toThousandFilter
-} from "../YingShouKuanQiChuYuE/calculation";
+} from "./calculation";
 import {getSysBankAccountByStatus} from "/@/api/record/system/sys-bank-account";
 import {
   findBukongCcode,
