@@ -3,12 +3,9 @@ const prompts = require('prompts');
 
 const process = require("child_process");
 ~async function () {
-    await process.spawn('clear', {
-        stdio:'inherit',
-        shell:true
-    });
     const createChoice = (title, disable) => ({ title:"⭐️ "+title, value: title, disable: !!disable });
     const arr=[
+
         ["登陆","start:auth"],
         ["弹出框组件","start:modals"],
         ["主页","start:home"],
@@ -25,7 +22,7 @@ const process = require("child_process");
             message: '🚀🚀🚀 选择开启的模块 🚀🚀🚀',
             instructions:'',
             hint: '-  ️ 空格选择. 回车确认️ ',
-            choices: arr.map(it=> createChoice(it[0],null))
+            choices: [createChoice('所有',null),...arr.map(it=> createChoice(it[0],null))]
         }
     ]);
 
@@ -40,6 +37,17 @@ const process = require("child_process");
         stdio:'inherit',
         shell:true
     });
+
+
+    if(res.weapons.indexOf("所有")!=-1){
+        arr.forEach(it=>{
+            process.spawn('pnpm '+it[1], {
+                stdio:'inherit',
+                shell:true
+            });
+        })
+        return
+    }
 
     res.weapons.forEach(it=>{
         process.spawn('pnpm '+findA(it), {
