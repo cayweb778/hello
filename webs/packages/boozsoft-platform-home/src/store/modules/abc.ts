@@ -3,14 +3,12 @@ import { store } from '/@/store'
 import 'jspdf-autotable';
 // import '../../../../lib/useFont'
 import {jsPDF} from "jspdf";
-import {
-  hangPrintDefault,
-  hangPrintDefaultPDF,
-  printDefault,
-  printDefaultPDF,
-  tableStyle
-} from './abc-print'
-
+// import {
+//   hangPrintDefault,
+//   printDefault,
+// } from './abc-print'
+const hangPrintDefault=null
+const printDefault=null
 
 
 export const useAbcTemplateStore = defineStore({

@@ -1,5 +1,5 @@
-import { printDefault } from './abc-print';
-
+// import { printDefault } from './abc-print';
+const printDefault=null
 export function usePrint() {
   const pdfmodel = {
     data: null,
