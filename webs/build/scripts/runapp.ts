@@ -3,7 +3,7 @@ const prompts = require('prompts');
 
 const process = require("child_process");
 ~async function () {
-    const createChoice = (title, disable) => ({ title, value: title, disable: !!disable });
+    const createChoice = (title, disable) => ({ title:"⭐️ "+title, value: title, disable: !!disable });
     const arr=[
         ["登陆","start:auth"],
         ["弹出框组件","start:modals"],
@@ -18,15 +18,19 @@ const process = require("child_process");
         {
             type: 'multiselect', // 多选
             name: 'weapons',
-            message: '选择开启的模块',
+            message: '🚀🚀🚀 选择开启的模块 🚀🚀🚀',
             instructions:'',
-            hint: '- 空格选择. 回车确认',
-            choices: arr.map(it=> createChoice(it[0]))
+            hint: '-  ️ 空格选择. 回车确认️ ',
+            choices: arr.map(it=> createChoice(it[0],null))
         }
     ]);
 
     function findA(str){
         return arr.filter(it=>it[0]==str)[0][1]
+    }
+    if(res.weapons==null){
+        console.log("！👏！👏！👏 已结束运行 ！👏！👏！👏")
+        return
     }
     process.spawn('pnpm start:main', {
         stdio:'inherit',
