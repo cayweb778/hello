@@ -47,8 +47,8 @@ function registerNcModal(){
 (async () => {
   registerNcModal()
   if(isUseMock()){
-    // const aa=sysMenuQueryAll()
-    // await putMenu(aa)new WebSocket("ws://localhost:8081/pingServer")
+    const aa=sysMenuQueryAll()
+    await putMenu(aa)new WebSocket("ws://localhost:8081/pingServer")
   }
 
   createWindowDebuggerInfo()
