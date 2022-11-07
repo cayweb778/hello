@@ -1,5 +1,5 @@
 <template>
-  <div style="position:fixed;left:0;top:0;">
+  <Layout :wujieAttrs="wujieAttrs">
     <WujieVue
         ref="wujieVueRef"
         width="100%"
@@ -10,10 +10,12 @@
         :props="wujieAttrs.props"
         :plugins="wujieAttrs.plugins"
     ></WujieVue>
-  </div>
+  </Layout>
 </template>
 <script setup lang="ts">
 import {ref, getCurrentInstance} from 'vue'
+import Layout from '../components/Layout.vue'
+
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";

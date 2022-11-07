@@ -1,5 +1,5 @@
 <template>
-  <Layout :socketAddr="wujieAttrs.socketAddr">
+  <Layout :wujieAttrs="wujieAttrs">
     <WujieVue
       ref="wujieVueRef"
       width="100%"
