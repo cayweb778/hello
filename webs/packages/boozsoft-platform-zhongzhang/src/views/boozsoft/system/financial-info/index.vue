@@ -10,7 +10,7 @@
       </div>
       <div class="a-c-head-btns">
         <div class="ant-btn-group a-c-h-btns-group" style="min-width: 600px">
-          <AccountPicker theme="one" @reloadTable="dynamicAdReload" style="width: 100%"/>
+          <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="isEdit" style="width: 100%"/>
         </div>
       </div>
     </div>
@@ -93,8 +93,8 @@
                 <a-checkbox-group v-model:value="dataModel.zhiDanList" :disabled="isEdit" style="width: 100%;">
                   <a-row>
                     <a-col :span="5">
-                      <a-checkbox value="ichronological">
-                        制单序时控制
+                      <a-checkbox value="isettlement">
+                        银行科目结算方式必录
                       </a-checkbox>
                     </a-col>
                     <a-col :span="5">
@@ -112,11 +112,7 @@
                         可以使用业务受控科目
                       </a-checkbox>
                     </a-col>
-<!--                    <a-col :span="5">
-                      <a-checkbox value="isettlement">
-                        结算方式必录
-                      </a-checkbox>
-                    </a-col>
+<!--
                     <a-col :span="5">
                       <a-checkbox value="ibill">
                         往来单位票据号必录
@@ -167,24 +163,29 @@
                 <a-checkbox-group v-model:value="dataModel.pingZhenNumberList" :disabled="isEdit" style="width: 100%;">
                   <a-row>
                     <a-col :span="5">
+                      <a-checkbox value="ichronological">
+                        制单序时控制
+                      </a-checkbox>
+                    </a-col>
+                    <a-col :span="5">
                       <a-checkbox value="ibreakCode">
                         凭证自动补断号
                       </a-checkbox>
                     </a-col>
 
-                    <a-col :span="5">
+                    <a-col :span="4">
                       <a-checkbox value="iautoCode">
                         手工编码
                       </a-checkbox>
                     </a-col>
-                    <a-col :span="5">
+<!--                    <a-col :span="5">
                       <a-checkbox value="monthCode">
                         凭证号按月份统一编号排序
                       </a-checkbox>
-                    </a-col>
-                    <a-col :span="5">
+                    </a-col>-->
+                    <a-col :span="6">
                       <a-checkbox value="iyearCode">
-                        凭证号按年度统一编号排序
+                        凭证号按年度统一编号(默认期间)
                       </a-checkbox>
                     </a-col>
                   </a-row>
@@ -2793,8 +2794,8 @@ const modifyData = (data)=>{
 const dynamicAdReload = async (obj) => {
   database.value = obj.accountMode
   databaseCn.value = obj.accId
-  databaseYear.value = obj.year
   databaseCode.value = obj.coCode
+  databaseYear.value = useCompanyOperateStoreWidthOut().getLoginDate.substring(0,4)
   if (activeKey.value === '1') {
     pageReload()
   }else if(activeKey.value === '2'){

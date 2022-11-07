@@ -9,14 +9,14 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left',
       width: 150,
     },
- /*   {
+ {
       key: '1',
       title: '显示',
       dataIndex: 'check',
       align: 'center',
       width: 80,
       slots: {customRender: 'checkBox'},
-    },*/
+    },
     {
       key: '3',
       title: '显示名称',
@@ -41,6 +41,248 @@ const dynamicColumnAndDataModel = reactive({
       width: 140,
       slots: {customRender: 'alignRadio'},
     }
+  ],
+  J: [
+    {
+      key: '0',
+      name: '操作',
+      nameNew: '操作',
+      check: true,isFixed: true,
+      width: 60,
+      max: 80,
+      min: 50,
+      align: 'center'
+    },
+    {
+      key: '1',
+      name: '科目编码',
+      nameNew: '科目编码',
+      check: true,isFixed: true,
+      width: 150,
+      max: 200,
+      min: 60,
+      align: 'left'
+    }, {
+      key: '2',
+      name: '科目名称',
+      nameNew: '科目名称',
+      check: true,isFixed: true,
+      width: 250,
+      max: 300,
+      min: 100,
+      align: 'left'
+    },{
+      key: '3',
+      name: '方向',
+      nameNew: '方向',
+      check: true,
+      width: 60,
+      max: 80,
+      min: 60,
+      align: 'center'
+    },{
+      key: '4',
+      name: '辅助项',
+      nameNew: '辅助项',
+      check: true,
+      width: 200,
+      max: 350,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '5',
+      name: '本币借方金额',
+      nameNew: '本币借方金额',
+      check: true,
+      width: 100,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },{
+      key: '6',
+      name: '本币贷方金额',
+      nameNew: '本币贷方金额',
+      check: true,
+      width: 100,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },
+  ],
+  SJ: [
+    {
+      key: '0',
+      name: '操作',
+      nameNew: '操作',
+      check: true,isFixed: true,
+      width: 60,
+      max: 80,
+      min: 50,
+      align: 'center'
+    },
+    {
+      key: '1',
+      name: '科目编码',
+      nameNew: '科目编码',
+      check: true,isFixed: true,
+      width: 150,
+      max: 200,
+      min: 60,
+      align: 'left'
+    }, {
+      key: '2',
+      name: '科目名称',
+      nameNew: '科目名称',
+      check: true,isFixed: true,
+      width: 250,
+      max: 300,
+      min: 100,
+      align: 'left'
+    },{
+      key: '3',
+      name: '方向',
+      nameNew: '方向',
+      check: true,
+      width: 60,
+      max: 80,
+      min: 60,
+      align: 'center'
+    },{
+      key: '4',
+      name: '辅助项',
+      nameNew: '辅助项',
+      check: true,
+      width: 200,
+      max: 350,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '5',
+      name: '计量单位',
+      nameNew: '计量单位',
+      check: true,
+      width: 100,
+      max: 150,
+      min: 60,
+      align: 'center'
+    },{
+      key: '6',
+      name: '数量',
+      nameNew: '数量',
+      check: true,
+      width: 120,
+      max: 150,
+      min: 60,
+      align: 'center'
+    },
+    {
+      key: '7',
+      name: '本币借方金额',
+      nameNew: '本币借方金额',
+      check: true,
+      width: 200,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },{
+      key: '8',
+      name: '本币贷方金额',
+      nameNew: '本币贷方金额',
+      check: true,
+      width: 200,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },
+  ],
+  WJ: [
+    {
+      key: '0',
+      name: '操作',
+      nameNew: '操作',
+      check: true,isFixed: true,
+      width: 60,
+      max: 80,
+      min: 50,
+      align: 'center'
+    },
+    {
+      key: '1',
+      name: '科目编码',
+      nameNew: '科目编码',
+      check: true,isFixed: true,
+      width: 150,
+      max: 200,
+      min: 60,
+      align: 'left'
+    }, {
+      key: '2',
+      name: '科目名称',
+      nameNew: '科目名称',
+      check: true,isFixed: true,
+      width: 250,
+      max: 300,
+      min: 100,
+      align: 'left'
+    },{
+      key: '3',
+      name: '方向',
+      nameNew: '方向',
+      check: true,
+      width: 60,
+      max: 80,
+      min: 60,
+      align: 'center'
+    },{
+      key: '4',
+      name: '辅助项',
+      nameNew: '辅助项',
+      check: true,
+      width: 200,
+      max: 350,
+      min: 100,
+      align: 'left'
+    },
+   {
+      key: '5',
+      name: '外币币种',
+      nameNew: '外币币种',
+      check: true,
+      width: 100,
+      max: 300,
+      min: 60,
+      align: 'center'
+    },{
+      key: '6',
+      name: '外币金额',
+      nameNew: '外币金额',
+      check: true,
+      width: 100,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },
+    {
+      key: '7',
+      name: '本币借方金额',
+      nameNew: '本币借方金额',
+      check: true,
+      width: 200,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },{
+      key: '8',
+      name: '本币贷方金额',
+      nameNew: '本币贷方金额',
+      check: true,
+      width: 200,
+      max: 300,
+      min: 80,
+      align: 'right'
+    },
   ],
   DATA1: [
     {
@@ -89,7 +331,8 @@ const dynamicColumnAndDataModel = reactive({
       max: 350,
       min: 100,
       align: 'left'
-    },{
+    },
+    {
       key: '5',
       name: '计量单位',
       nameNew: '计量单位',
@@ -125,7 +368,8 @@ const dynamicColumnAndDataModel = reactive({
       max: 300,
       min: 80,
       align: 'right'
-    },{
+    },
+    {
       key: '9',
       name: '本币借方金额',
       nameNew: '本币借方金额',

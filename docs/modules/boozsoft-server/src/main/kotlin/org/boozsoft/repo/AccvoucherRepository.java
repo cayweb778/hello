@@ -162,16 +162,19 @@ public interface AccvoucherRepository extends ReactiveCrudRepository<Accvoucher,
             "       km.currency_type,\n" +
             "        (select coalesce(sum(cast(acv.md as decimal)),'0') from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod) md,\n" +
             "        (select coalesce(sum(cast(acv.mc as decimal)),'0') from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod) mc," +
-            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nd_s as decimal)),'0') else coalesce(sum(cast(acv.nc_s as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod='202200') cnum,\n" +
-            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nfrat_md as decimal)),'0') else coalesce(sum(cast(acv.nfrat_mc as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod='202200') nfrat " +
+            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nd_s as decimal)),'0') else coalesce(sum(cast(acv.nc_s as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod ) cnum,\n" +
+            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nfrat_md as decimal)),'0') else coalesce(sum(cast(acv.nfrat_mc as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod ) nfrat " +
             "FROM code_kemu km\n" +
             "WHERE km.iyear =:iyear order by km.ccode")
-    Flux<SsphVo> findBySsph(String iyperiod, String iyear);
+    Flux<SsphVo> findBySsph(@Param("iyperiod") String iyperiod,@Param("iyear") String iyear);
 
     Flux<Accvoucher> findAllByIyperiod(String iyperiod);
 
     @Query("SELECT * from accvoucher where 1 = 1 and iyear =:iyper and imonth <> '00' and (ino_id is not null or ino_id <> '') ORDER BY cast(iyperiod as Integer)  Asc,cast(ino_id as Integer) Asc,cast(inid as Integer) Asc")
     Flux<Accvoucher> findAllByIyearOrderByIyperiodAscInoIdAsc(String iyper);
+
+    @Query("SELECT * from accvoucher where 1 = 1 and csign =:csign and iyperiod like :iyperiod and imonth <> '00' and (ino_id is not null or ino_id <> '') ORDER BY cast(iyperiod as Integer)  Asc,cast(ino_id as Integer) Asc,cast(inid as Integer) Asc")
+    Flux<Accvoucher> findAllByCsignAndIyperiodLike(String csign,String iyperiod);
 
     Flux<Accvoucher> findAllByIyperiodAndCcodeOrderById(String iyperiod, String ccode);
     Flux<Accvoucher> findAllByIyperiodAndCcodeInOrderByIdAscCcodeAsc(String iyperiod, List<String> ccode);

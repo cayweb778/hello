@@ -198,7 +198,14 @@ public class SubjectInitialBalanceContorller {
      * @return
      */
     @PostMapping("findAllSubjectInitialBalance")
-    public Mono<R> findAllSubjectInitialBalance(String iyear, String lastCode, String databasenum,String ccode ,String cclass,String bend) {
+    public Mono<R> findAllSubjectInitialBalance(@RequestBody Map map) {
+        String iyear=map.get("iyear").toString();
+        String lastCode=map.get("lastCode").toString();
+        String databasenum=map.get("databasenum").toString();
+        String ccode=map.get("ccode").toString();
+        String cclass=map.get("cclass").toString();
+        String bend=map.get("bend")==null?"":map.get("bend").toString();
+
         iyear = iyear.equals("") ? new SimpleDateFormat("yyyy").format(new Date()) : iyear;
         String iyperiod = iyear + "00";
         return service.findAllSubjectInitialBalance(iyear, lastCode, iyperiod, databasenum,ccode,cclass,bend);
