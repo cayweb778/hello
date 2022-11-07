@@ -3,6 +3,10 @@ const prompts = require('prompts');
 
 const process = require("child_process");
 ~async function () {
+    await process.spawn('clear', {
+        stdio:'inherit',
+        shell:true
+    });
     const createChoice = (title, disable) => ({ title:"⭐️ "+title, value: title, disable: !!disable });
     const arr=[
         ["登陆","start:auth"],
