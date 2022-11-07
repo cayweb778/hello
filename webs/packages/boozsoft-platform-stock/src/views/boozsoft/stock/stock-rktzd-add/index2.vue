@@ -459,9 +459,9 @@ import {useRoute} from "vue-router";
 import {assemblyDynamicColumn, initDynamics} from "./data";
 import {hasBlank, trim} from "/@/api/task-api/tast-bus-api";
 import {usePlatformsStore} from "/@/store/modules/platforms";
-import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock-rktzd-list/component/DynamicForm";
+// import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock-rktzd-list/component/DynamicForm";
 
-
+const GenerateDynamicColumn=null
 import StockCangKuModalPop from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
 // import StockInfiModalPop from "/@/views/boozsoft/stock/stock-rktzd-list/popup/stockInfoModalPop.vue";
 import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInfoModalPop.vue";
