@@ -162,11 +162,11 @@ public interface AccvoucherRepository extends ReactiveCrudRepository<Accvoucher,
             "       km.currency_type,\n" +
             "        (select coalesce(sum(cast(acv.md as decimal)),'0') from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod) md,\n" +
             "        (select coalesce(sum(cast(acv.mc as decimal)),'0') from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod) mc," +
-            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nd_s as decimal)),'0') else coalesce(sum(cast(acv.nc_s as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod='202200') cnum,\n" +
-            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nfrat_md as decimal)),'0') else coalesce(sum(cast(acv.nfrat_mc as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod='202200') nfrat " +
+            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nd_s as decimal)),'0') else coalesce(sum(cast(acv.nc_s as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod ) cnum,\n" +
+            "       (select case when km.bprogerty='1' then coalesce(sum(cast(acv.nfrat_md as decimal)),'0') else coalesce(sum(cast(acv.nfrat_mc as decimal)),'0') end  from accvoucher acv where acv.ccode=km.ccode and acv.iyperiod=:iyperiod ) nfrat " +
             "FROM code_kemu km\n" +
             "WHERE km.iyear =:iyear order by km.ccode")
-    Flux<SsphVo> findBySsph(String iyperiod, String iyear);
+    Flux<SsphVo> findBySsph(@Param("iyperiod") String iyperiod,@Param("iyear") String iyear);
 
     Flux<Accvoucher> findAllByIyperiod(String iyperiod);
 

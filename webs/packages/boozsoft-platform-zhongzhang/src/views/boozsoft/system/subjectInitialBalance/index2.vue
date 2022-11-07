@@ -1,21 +1,28 @@
 <template>
   <div>
     <div class="app-container">
-      <div style="width: 33%">
-        <AccountPicker theme="three" @reloadTable="dynamicAdReload"/>
-        <p/>
-        <a-select v-model:value="queryMark" style="width: 120px;text-align: center;" @change="queryMarkChange">
+      <ProfileOutlined style="color: #0096c7;font-size: 60px;margin-top: 10px;"/>&emsp;
+      <div style="width: 33%;margin-top: 9px;">
+        <AccountPicker theme="three" :readonly="!roweditflg" @reloadTable="dynamicAdReload"/>
+        <span style="color: rgb(102, 102, 102);font-weight: bold;margin-left: 4px;">
+          显示方式：
+        </span>
+        <a-select v-model:value="queryMark" style="width: 120px;text-align: center;" @change="initTable">
           <a-select-option value="J">金额式 </a-select-option>
           <a-select-option value="SJ">数量式 </a-select-option>
           <a-select-option value="WJ">外币式 </a-select-option>
         </a-select>
-        &nbsp;<label style="font-size: 14px">显示末级科目：</label>
+        &emsp;
+        <label style="font-size: 14px;color: rgb(102, 102, 102);font-weight: bold;margin-left: 20px;">显示末级科目：</label>
         <a-checkbox @change="lastCodechecked" v-model:checked="lastCode"/>
-        <label style="font-size: 14px;;margin-left: 1em;">启用期间：</label><span style="font-size: 14px;font-weight: bold;margin-right: 1em;">{{ hasBlank(qujian)?'':qujian.substring(0,4)+'年'+qujian.substring(4)+'月' }}</span>
+<!--        <label style="font-size: 14px;;margin-left: 1em;">启用期间：</label><span style="font-size: 14px;font-weight: bold;margin-right: 1em;">{{ hasBlank(qujian)?'':qujian.substring(0,4)+'年'+qujian.substring(4)+'月' }}</span>-->
       </div>
-      <div style="width: 33%;text-align: center;">
+      <div style="width: 29.5%;text-align: center;">
         <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">科目期初余额</span>
         <p/>
+        <span style="color: rgb(102, 102, 102);font-weight: bold;margin-left: 4px;">
+          年度：
+        </span>
         <a-select v-model:value="iyearselected" style="width: 120px;text-align: center;" @change="findByAccStyleAll">
           <a-select-option :value="item.iyear" v-for="(item, i) in iyearlist">{{ item.iyear+'年' }} </a-select-option>
         </a-select>
@@ -46,7 +53,7 @@
           <a-select-option value="menterage">计量单位</a-select-option>
           <a-select-option value="currencyType">外币币种</a-select-option>
         </a-select>
-        <a-input-search placeholder="" v-model:value="inputsearchtext" style="width: 200px;" class="acttdrd-search-input" @search="selectSearch"/>
+        <a-input-search placeholder="" v-model:value="inputsearchtext" style="width: 150px;" class="acttdrd-search-input" @search="selectSearch"/>
         <Button class="acttdrd-btn" @click="findAllInitialBalance(),findByAccStyleAll()">
           <SyncOutlined :style="{ fontSize: '14px' }"/>
         </Button>
@@ -56,11 +63,10 @@
         <Button class="acttdrd-btn" ant-click-animating-without-extra-node="false">
           <PrinterOutlined/>
         </Button>
-        <a-popover placement="bottom">
+        <a-popover placement="bottom" v-model:visible="visible">
           <template #content>
-            <br/>
-            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
-                  :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
+            <DynamicColumn :defaultData="(queryMark=='J'?initDynamics()['J']:queryMark=='SJ'?initDynamics()['SJ']:initDynamics()['WJ'])" :dynamicData="dynamicColumnData" :lanmuInfo="lanMuData" @reload="reloadColumns"/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'" :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
           <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
               v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
             <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
@@ -75,7 +81,7 @@
       </div>
     </div>
     <div class="app-container">
-      <div class="bg-white" :style="{height: (windowHeight+53)+'px',display: 'inline',width: showCatalog?'300px':'20px',float: 'left',marginTop: '5px',overflow:showCatalog?'auto':'hidden',overflowY:'hidden'}" >
+      <div class="bg-white" :style="{height: (windowHeight+50)+'px',display: 'inline',width: showCatalog?'300px':'20px',float: 'left',marginTop: '5px',overflow:showCatalog?'auto':'hidden',overflowY:'hidden'}" >
         <div v-show="showCatalog" style="width: 100%; height: 26px;text-align: center;background-color: rgb(216 216 216);">
           <label style="font-size: 14px;font-weight: bold;">科目目录</label> <ShrinkOutlined title="收起" class="exit-class" @click="showCatalog=!showCatalog"/>
         </div>
@@ -268,26 +274,29 @@
 
           <template #summary>
             <TableSummary fixed>
-              <TableSummaryRow style="background-color: #cccccc;" v-if="lanMuData.type=='标准'">
-                <TableSummaryCell class="nc-summary" :index="0" :colspan="queryMark=='J'?7:9" :align="'center'" style="border-right: none;">合计</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.md }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.mc }}</TableSummaryCell>
+              <TableSummaryRow style="background-color: #cccccc;" >
+                <TableSummaryCell class="nc-summary" :index="0" :align="'center'">合</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="1" :align="'center'">计</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryTotals[cell.dataIndex]?'':summaryTotals[cell.dataIndex]}}</span></TableSummaryCell>
+<!--                <TableSummaryCell class="nc-summary" :index="0" :colspan="queryMark=='J'?7:9" :align="'center'" style="border-right: none;">合计</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.md }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.mc }}</TableSummaryCell>-->
               </TableSummaryRow>
 
-              <TableSummaryRow style="background-color: #cccccc;" v-if="lanMuData.type=='累计'">
-                <TableSummaryCell class="nc-summary" :index="0" :colspan="queryMark=='J'?7:9" :align="'center'" style="border-right: none;">合计</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ncnum }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.nfrat }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.md }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.mc }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ljMd }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ljMc }}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.nYue }}</TableSummaryCell>
-              </TableSummaryRow>
+<!--              <TableSummaryRow style="background-color: #cccccc;" v-if="lanMuData.type=='累计'">-->
+<!--                <TableSummaryCell class="nc-summary" :index="0" :colspan="queryMark=='J'?7:9" :align="'center'" style="border-right: none;">{{lanMuData.type}}合计</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ncnum }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.nfrat }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.md }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.mc }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ljMd }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.ljMc }}</TableSummaryCell>-->
+<!--                <TableSummaryCell class="nc-summary" :index="1" :align="'right'" style="border-right: none;">{{ summaryTotals.nYue }}</TableSummaryCell>-->
+<!--              </TableSummaryRow>-->
             </TableSummary>
           </template>
         </BasicTable>
-        <div class="pagination-text" :style="{top: (lanMuData.type=='标准'?windowHeight+27:windowHeight+20)+'px'}" v-show="showPageNumber">
+        <div class="pagination-text" :style="{top: (windowHeight+25)+'px',left:(totalColumnWidth-600)+'px'}" v-show="showPageNumber">
           {{`共 ${tableDataAll.length}条记录&emsp;每页 1000 条`}}
         </div>
       </div>
@@ -476,6 +485,7 @@
 </template>
 <script setup="props, {emit}" lang="ts">
 import {
+  ProfileOutlined,
   ArrowsAltOutlined,
   CheckOutlined,
   EditOutlined,
@@ -554,11 +564,6 @@ import {
 import {acctemplateFindByAccId, findTemplateByAccId} from '/@/api/acctemplate/acctemplate';
 import {findPeriod, findYearMinDate} from "/@/api/record/generalLedger/data";
 import {onBeforeRouteLeave} from "vue-router";
-import {
-  assemblyDynamicColumn,
-  combineParameters,
-  initDynamics
-} from "/@/views/boozsoft/system/subjectInitialBalance/data";
 import {findDbLanMuList, saveLanMuList} from "/@/api/record/system/accvoucher";
 import {cloneDeep} from "lodash-es";
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -569,6 +574,7 @@ import {findByAccStyle, findByStandardUnique} from "/@/api/accstandard/accstanda
 import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 import {toThousandFilter} from "/@/utils/calculation";
 
+const {createConfirm, createWarningModal} = useMessage();
 const dataSourceTable:any =ref([]);
 const columns = [
   {
@@ -709,7 +715,45 @@ const pageParameter:any = reactive({
 // 数量/外币 栏目是否显示
 const menterage = ref(true)
 const currencyType = ref(true)
-const tableColumns = ref([
+const tableColumns = ref(
+  {
+    "J":[
+      {
+        title: "操作",
+        dataIndex: "caozuo",
+        slots: {customRender: "caozuo"}
+      },
+      {
+        title: "科目编码",
+        dataIndex: "ccode",
+        align: "left"
+      },
+      {
+        title: "科目名称",
+        dataIndex: "ccodeName",
+        align: "left"
+      },
+      {
+        title: "方向",
+        dataIndex: "bprogerty",
+        slots: {customRender: "bprogerty"},
+      },
+      {
+        title: "辅助项",
+        dataIndex: "fuzhu",
+      },
+      {
+        title: "本币借方金额",
+        dataIndex: "md",
+        slots: {customRender: "md"}
+      },
+      {
+        title: "本币贷方金额",
+        dataIndex: "mc",
+        slots: {customRender: "mc"}
+      },
+    ],
+    "SJ":[
   {
     title: "操作",
     dataIndex: "caozuo",
@@ -737,25 +781,12 @@ const tableColumns = ref([
   {
     title: "计量单位",
     dataIndex: "menterage",
-    defaultHidden: menterage,
   },
 
   {
     title: "数量",
     dataIndex: "ncnum",
-    defaultHidden: menterage,
     slots: {customRender: "ncnum"},
-  },
-  {
-    title: "外币币种",
-    dataIndex: "currencyType",
-    defaultHidden: currencyType,
-  },
-  {
-    title: "外币金额",
-    dataIndex: "nfrat",
-    slots: {customRender: "nfrat"},
-    defaultHidden: currencyType,
   },
   {
     title: "本币借方金额",
@@ -767,7 +798,54 @@ const tableColumns = ref([
     dataIndex: "mc",
     slots: {customRender: "mc"}
   },
-])
+],
+    "WJ":[
+  {
+    title: "操作",
+    dataIndex: "caozuo",
+    slots: {customRender: "caozuo"}
+  },
+  {
+    title: "科目编码",
+    dataIndex: "ccode",
+    align: "left"
+  },
+  {
+    title: "科目名称",
+    dataIndex: "ccodeName",
+    align: "left"
+  },
+  {
+    title: "方向",
+    dataIndex: "bprogerty",
+    slots: {customRender: "bprogerty"},
+  },
+  {
+    title: "辅助项",
+    dataIndex: "fuzhu",
+  },
+  {
+    title: "外币币种",
+    dataIndex: "currencyType",
+  },
+  {
+    title: "外币金额",
+    dataIndex: "nfrat",
+    slots: {customRender: "nfrat"},
+  },
+  {
+    title: "本币借方金额",
+    dataIndex: "md",
+    slots: {customRender: "md"}
+  },
+  {
+    title: "本币贷方金额",
+    dataIndex: "mc",
+    slots: {customRender: "mc"}
+  },
+],
+  }
+  )
 const tableColumns2 = ref([
   {
     title: "操作",
@@ -899,7 +977,6 @@ const [registerTable, {
   getSelectRows,
   getColumns
 }] = useTable({
-  columns: tableColumns,
   showIndexColumn: true,
   indexColumnProps:{ fixed:true },
   pagination: {
@@ -1851,34 +1928,9 @@ const saveData = async (data: any) => {
   findAllInitialBalance();
 };
 
-async function queryMarkChange(val) {
-  menterage.value=false
-  currencyType.value=false
-  loading.value=true
-
-  if(val=='SJ'){
-    menterage.value=true
-  }else if(val=='WJ'){
-    currencyType.value=true
-  }
-  let columList=getColumns()
-  for (let i = 0; i < columList.length; i++) {
-    let tt:any=columList[i]
-      if(tt.dataIndex=='ncnum' || tt.dataIndex=='menterage'){
-        tt.defaultHidden=!menterage.value
-        tt.ifShow=menterage.value
-      }
-      if(tt.dataIndex=='nfrat' || tt.dataIndex=='currencyType'){
-        tt.defaultHidden=!currencyType.value
-        tt.ifShow=currencyType.value
-      }
-  }
-  setTimeout(()=>{
-    setColumns(columList)
-    loading.value=false
-  },800)
+const getCurrSummary  = () => {
+  return (getColumns().filter(it=>it.title != '序号' && it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
 }
-
 const summaryTotals = ref({})
 const calculateTotal = (datalist) => {
   let list = JsonTool.parseProxy(datalist)
@@ -1919,8 +1971,17 @@ const calculateTotal = (datalist) => {
     nYue: toThousandFilter(nYue),
   }
 }
+const initTable = ()=>{
+  visible.value = true
+  setTimeout(()=>{
+      lanMuData.value.changeNumber+=1
+      visible.value = false
+    }
+    ,100)
+}
 // 获取期初余额
 const findAllInitialBalance = async () => {
+  loading.value = true
   // 查询本年是否期初记账
   const qcjzsflg = await useRouteApi(qcjzsum, {schemaName: databaseTrue.value})({
     iyear: iyearselected.value,
@@ -1932,27 +1993,31 @@ const findAllInitialBalance = async () => {
     ibookflg.value = false;
   }
 
-  tableData.value = []
-  tableDataAll.value = []
-  loading.value = true;
-  const a = await useRouteApi(findAllSubjectInitialBalance, {schemaName: databaseTrue.value})({
+  let map={
     iyear: iyearselected.value,
     lastCode: lastCode.value,
     databasenum: databaseTrue.value,
     ccode:pageParameter.ccode,
     cclass:pageParameter.cclass,
     bend:pageParameter.bend,
-  })
+  }
+  const a = await useRouteApi(findAllSubjectInitialBalance, {schemaName: databaseTrue.value})(map)
+  if(a.tablesData.length<50){
+    for (let i =  a.tablesData.length; i < 50; i++) {
+      a.tablesData.push({})
+    }
+  }
   tableDataAll.value = a.tablesData;
   tableData.value = a.tablesData;
   calculateTotal(a.tablesData)
-  loading.value = false;
   showPageNumber.value=true
+  loading.value = false;
+  visible.value = false
 };
 
 // 金额格式化
 function money(val: any) {
-  if (val == null) val = '';
+  if (val==undefined||val == null) {return };
   val = val.toString().replace(/\$|\,\-/g, '');
   if (isNaN(val)) {
     val = '0';
@@ -1978,8 +2043,10 @@ const getAdObjInfoByCoCode = (value, type, accList) => {
 }
 
 const dynamicAdReload = async (obj) => {
+  initTable()
   deltask()
   edittext.value ='开始编辑'
+  visible.value = true
   roweditflg.value=false
   showPageNumber.value=false
   databaseObj.value=obj
@@ -2031,9 +2098,7 @@ const dynamicAdReload = async (obj) => {
   bwb.value = obj.target.currencyName    // 本位币
   independent.value = datainfo.independent > 0 ? true : false;  // 1是独立账套 0是集团账套
   await findAllInitialBalance();
-  loading.value = true
-  lanMuData.type=''
-  resetDynamicColumnData()
+
 }
 
 // 获取科目类型
@@ -2068,6 +2133,7 @@ async function fetch(map) {
     expandedKeys.value=['0']
     treeData.value.push({title: '全部',key:'0',children: deptTree})
   }
+  findAllInitialBalance()
   loading2.value = false;
 }
 //js切割字符串
@@ -2089,6 +2155,7 @@ function setString(str, len) {
 }
 
 function handleSelect(obj) {
+  console.log(obj)
   if(obj.toString()!==''){
     if(!isNaN(obj.toString().split('>>')[0])){
       pageParameter.ccode=obj.toString().split('>>')[0]
@@ -2109,156 +2176,28 @@ function handleSelect(obj) {
   }
 }
 /*start栏目设置*/
-const onChangeSwitch = async (v) => { // 动态列
-  pageParameter.queryMark = v
-  resetDynamicColumnData()
-}
-const {createConfirm, createWarningModal} = useMessage();
+import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+import {assemblyDynamicColumn, initDynamics} from "./data";
+const dynamicColumnData:any = ref({value: []})
 const dynamicColumns = initDynamics().DEFAULT
-const dynamicColumnData:any = ref([])
-let dynamicColumnDataCopy = []
-const editableData = reactive({});
-const lanMuData = {
-  'accId': '',
-  'menuName': '科目期初余额',
-  'type': '',
+const lanMuData = ref({
+  accId: databaseTrue.value,
+  menuName: '科目期初余额信息',
+  type: '列表',
   objects: '',
-  username: useUserStoreWidthOut().getUserInfo.id
-}
-const confirm = (e: MouseEvent) => {
-  // 询问
-  createConfirm({
-    iconType: 'warning',
-    title: '栏目同步',
-    content: '是否将刚才设置同步数据库!',
-    onOk: async () => {
-      // 调整数据库 列参数
-      lanMuData.accId = getCurrentAccountName(false)
-      lanMuData.objects = JSON.stringify(filterModifyData(dynamicColumnData.value, dynamicColumnDataCopy))
-      if (lanMuData.objects == '[]') {
-        createWarningModal({content: '请先做修改后再进行确认同步数据库！'})
-      } else {
-        saveLanMuList(lanMuData).then(res => {
-          message.success("数据库同步成功！")
-        })
-        // 重新赋值
-        dynamicColumnDataCopy = JSON.parse(JSON.stringify(dynamicColumnData.value))
-      }
-    }
-  });
-  // 重新获取数据
-  reloadColumns()
-}
-
-function filterModifyData(lanMuList: any, copyList) {
-  let a = lanMuList.filter(item => {
-    try {
-      copyList.forEach(item2 => {
-        if (item.key === item2.key && item.name == item2.name) {
-          if (item.nameNew != item2.nameNew || item.width != item2.width || item.check != item2.check || item.align != item2.align)
-            throw new Error('ok')
-        }
-      })
-      return false
-    } catch (e:any) {
-      if (e.message == 'ok') {
-        return true
-      } else {
-        return false
-      }
-    }
-  })
-  return a;
-}
-
-const cancel = (e: MouseEvent) => {
-  // 恢复默认
-  dynamicColumnData.value = []
-  dynamicColumnData.value = dynamicColumnDataCopy
-}
-
-
-function resetDynamicColumnData() {
-  // 先从数据查询是否已经设置
-  lanMuData.accId = getCurrentAccountName(false)
-  lanMuData.type = pageParameter.queryMark == '1' ? '标准' : '累计'
-  findDbLanMuList(lanMuData).then(res => {
-    // 栏目列
-    let dbList = res.items
-    let statiList = pageParameter.queryMark == '1' ? initDynamics()['DATA' + pageParameter.queryMark] : currentShowColumns('lanmu')
-    if (dbList.length > 0) {
-      dbList = combineParameters(statiList, dbList)
-      dynamicColumnData.value = dbList
-      dynamicColumnDataCopy = JSON.parse(JSON.stringify(dbList))
-    } else {
-      dynamicColumnData.value = statiList
-      dynamicColumnDataCopy = JSON.parse(JSON.stringify(statiList))
-    }
-    // 表格列
-    reloadColumns()
-    // pageReload()
-  })
-  loading.value = false
-}
-
-
-const edit = (key: string) => {
-  if (key.toString().indexOf('-') != -1) {
-    let arr:any = key.split('-');
-    let one = parseInt(arr[0])
-    if (arr.length == 2) {
-      editableData[key] = cloneDeep(dynamicColumnData.value[one].children.filter(item => key === item.key)[0]);
-    } else {
-      let two = parseInt(arr[1] - 1)
-      editableData[key] = cloneDeep(dynamicColumnData.value[one].children[two].children.filter(item => key === item.key)[0]);
-    }
-  } else {
-    editableData[key] = cloneDeep(dynamicColumnData.value.filter(item => key === item.key)[0]);
-  }
-}
-
-const save = (key: string, min: number, max: number) => {
-  editableData[key].width = editableData[key].width > max ? max : editableData[key].width < min ? min : editableData[key].width
-  if (key.toString().indexOf('-') != -1) {
-    let arr = key.split('-');
-    let one = parseInt(arr[0])
-    if (arr.length == 2) {
-      Object.assign(dynamicColumnData.value[one].children.filter(item => key === item.key)[0], editableData[key]);
-      Object.assign(dynamicColumnData.value[one].children.filter(item => key === item.key)[0], editableData[key]);
-    } else {
-      let two = parseInt(arr[1] - 1)
-      Object.assign(dynamicColumnData.value[one].children[two].children.filter(item => key === item.key)[0], editableData[key]);
-    }
-  } else {
-    Object.assign(dynamicColumnData.value.filter(item => key === item.key)[0], editableData[key]);
-  }
-  delete editableData[key];
-}
-
-const saveName = (key: string) => {
-  if (key.toString().indexOf('-') != -1) {
-    let arr = key.split('-');
-    let one = parseInt(arr[0])
-    if (arr.length == 2) {
-      Object.assign(dynamicColumnData.value[one].children.filter(item => key === item.key)[0], editableData[key]);
-      Object.assign(dynamicColumnData.value[one].children.filter(item => key === item.key)[0], editableData[key]);
-    } else {
-      let two = parseInt(arr[1] - 1)
-      Object.assign(dynamicColumnData.value[one].children[two].children.filter(item => key === item.key)[0], editableData[key]);
-    }
-  } else {
-    Object.assign(dynamicColumnData.value.filter(item => key === item.key)[0], editableData[key]);
-  }
-  delete editableData[key];
-}
+  username: useUserStoreWidthOut().getUserInfo.username,
+  changeNumber: 0
+})
 
 const reloadColumns = () => {
-  let newA = JSON.parse(JSON.stringify(pageParameter.queryMark == '1' ? tableColumns.value : currentShowColumns('')))
-  newA = assemblyDynamicColumn(dynamicColumnData.value, newA)
+  // dynamicColumnData.value.value= initDynamics()[queryMark.value]
+  lanMuData.value.type = pageParameter.queryMark == '1' ? '标准' : '累计'
+  let newA = JSON.parse(JSON.stringify(tableColumns.value[queryMark.value]))
+  newA = assemblyDynamicColumn(dynamicColumnData.value.value, newA)
   setColumns(newA)
   initTableWidth(newA)
+  findAllInitialBalance()
 }
-
 function initTableWidth(thisCs) {
   let total = 60 + 60 // 选择列与序号列
   thisCs.forEach(item => {
@@ -2277,7 +2216,6 @@ function initTableWidth(thisCs) {
     tableRef.value.$el.style.setProperty('width', (total + 62) + 'px')
   }
 }
-
 /*栏目设置end*/
 
 const dbSave = async (o) => {
@@ -2628,6 +2566,35 @@ async function carryDownOk() {
 }
 </script>
 <style scoped lang="less">
+@import '/@/assets/styles/part-open.less';
+@import '/@/assets/styles/global-menu-index1.less';
+:deep(.ant-select){
+  border: none;
+  background-color: #f1f1f1;
+  color: black;
+  border-bottom: 1px solid #d2cfcf;
+}
+:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
+  background-color: #f2f2f2;
+}
+
+// ***************  button样式  ***************
+.actod-btn {
+  color: @Global-Comm-BcOrText-Color;
+  font-size: 14px;
+  border-color: @Global-Border-Color;
+  border-right: none;
+}
+
+.actod-btn-last {
+  border-right: 1px solid @Global-Border-Color;
+}
+
+.actod-btn:hover {
+  background-color: @Global-Comm-BcOrText-Color;
+  color: white;
+}
+// ***************  button样式  ***************
 :deep(.vben-basic-table .ant-pagination) {
   margin-top: 0px;
   background-color: #cccccc;
@@ -2652,7 +2619,6 @@ async function carryDownOk() {
   .pagination-text{
     position: absolute;
     bottom: 9px;
-    right: 14%;
     font-size: 13px;
     color: black;
     z-index: 99999999;
@@ -2692,8 +2658,7 @@ async function carryDownOk() {
   background-color: #cccccc!important;;
   border-right-color: #cccccc!important;
 }
-@import '/@/assets/styles/part-open.less';
-@import '/@/assets/styles/global-menu-index1.less';
+
 .customize-modal {
   padding: 5% 10%;
   font-weight: bold;

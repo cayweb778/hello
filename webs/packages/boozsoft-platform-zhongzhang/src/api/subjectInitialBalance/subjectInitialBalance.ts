@@ -4,7 +4,7 @@ import { defHttp } from '/@/utils/http/axios';
 enum Api {
   findAllIperiodIyear = '/sys/subjectinitialBalance/findAllIperiodIyear',
   findByAccountInfo = '/sys/subjectinitialBalance/findByAccountInfo',
-  findAllSubjectInitialBalance = '/sys/subjectinitialBalance/findAllSubjectInitialBalance',
+  findAllSubjectInitialBalance = '',
   findAllSubjectInitialBalanceNewFuZhu = '/sys/subjectinitialBalance/findAllSubjectInitialBalance2',
   findAllSubjectInitialBalanceFuZhu = '/sys/subjectinitialBalance/findAllSubjectInitialBalanceFuZhu',
   findAllSubjectInitialBalanceFuZhuList = '/sys/subjectinitialBalance/findAllSubjectInitialBalanceFuZhuList',
@@ -47,11 +47,11 @@ export const findByAccountInfo = defRouteApi(async () => {
   };
 });
 
-export const findAllSubjectInitialBalance = defRouteApi(async ({ iyear, lastCode,databasenum,ccode,cclass,bend }) => {
+export const findAllSubjectInitialBalance = defRouteApi(async (params) => {
   return {
-    url: Api.findAllSubjectInitialBalance + '?iyear=' + iyear + '&lastCode=' + lastCode+'&databasenum='+databasenum+'&ccode='+ccode+'&cclass='+cclass+'&bend='+bend,
+    url: '/sys/subjectinitialBalance/findAllSubjectInitialBalance',
     timeout: 100000000000,
-    method: 'POST',
+    method: 'POST',params
   };
 });
 export const findAllSubjectInitialBalanceNewFuZhu = defRouteApi(async (params) => {
@@ -271,13 +271,13 @@ export const importInitalBalanceFz = defRouteApi(async ({params,databasenum,iyea
 });
 
 /************************************ 集团的 **********************************/
-export function sys_findByFunctionModule(iyear: any) {
-  return defHttp.request({
-    url: Api.findByFunctionModule + '?iyear=' + iyear,
-    timeout: 100000000000,
-    method: 'POST',
-  });
-}
+// export function sys_findByFunctionModule(iyear: any) {
+//   return defHttp.request({
+//     url: Api.findByFunctionModule + '?iyear=' + iyear,
+//     timeout: 100000000000,
+//     method: 'POST',
+//   });
+// }
 export function sys_delFunctionModule(id: any) {
   return defHttp.request({
     url: Api.delFunctionModule + '?id=' + id,
