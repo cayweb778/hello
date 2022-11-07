@@ -1,3 +1,12 @@
+虚拟机安装
+https://www.cnblogs.com/lin-wang/p/15748235.html
+https://www.cnblogs.com/tarzen213/p/15851998.html
+kvm无法联网
+UUID=8d27ac77-824f-4d1b-8035-5bd05232dfd2
+https://blog.csdn.net/Latte_plus/article/details/125728697
+github访问慢
+https://zhuanlan.zhihu.com/p/560622268
+
 linux pnpm build错误
 https://www.likecs.com/ask-10329563.html#sc=760
 这是一个与操作系统相关的问题。在linux的虚拟内存映射中有一个最大的内存分配，你可以增加它
@@ -302,3 +311,22 @@ vendor
 隔离性强
 
 为什么不选用micro-app，micro-app跨域的状态也没有很好的控制，wujie隔离性强，同域所以选用wujie
+
+
+
+systemctl stop docker
+ip link set dev docker0 down
+brctl delbr docker0
+iptables -t nat -F POSTROUTING
+brctl addbr docker0
+ip addr add 172.16.10.1/24 dev docker0
+ip link set dev docker0 up
+vi /etc/docker/daemon.json
+
+    {
+        "registry-mirrors": ["http://224ac393.m.daocloud.io"],
+        "bip": "172.16.10.1/24"
+    }
+
+systemctl  restart  docker
+
