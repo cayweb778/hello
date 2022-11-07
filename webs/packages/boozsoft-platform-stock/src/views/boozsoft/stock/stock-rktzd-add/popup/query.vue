@@ -121,10 +121,10 @@ import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {delStockColumnList, saveStockColumnList} from "/@/api/record/stock/stock-caigou";
 import {JsonTool, ObjTool} from "/@/api/task-api/tools/universal-tools";
-import {
-  GenerateDynamicColumn
-} from "/@/views/boozsoft/stock/stock-cktzd-list/component/DynamicForm";
-
+// import {
+//   GenerateDynamicColumn
+// } from "/@/views/boozsoft/stock/stock-cktzd-list/component/DynamicForm";
+const GenerateDynamicColumn=null
 const RangePicker = DatePicker.RangePicker;
 const SelectOption = Select.Option;
 const RadioGroup = Radio.Group;
