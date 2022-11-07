@@ -2917,4 +2917,47 @@ public class StockSaleousingController {
         );
     }
 
+    @PostMapping("findAllMainList")
+    public Mono<R> findAllMainList(@RequestBody Map map){
+        String type=map.get("type").toString();
+
+        String strDate=map.get("strDate").toString();
+        String endDate=map.get("endDate").toString();
+        // true
+        if(map.get("strDate").toString().indexOf("-")>0){
+            // 2022-01
+            if(map.get("strDate").toString().length()==7){
+                strDate=map.get("strDate").toString()+"-01";
+                endDate=map.get("endDate").toString()+"-31";
+            }
+        }
+        // 202201
+        else{
+            strDate=map.get("strDate").toString().substring(0,4)+"-"+map.get("strDate").toString().substring(4)+"-01";
+            endDate=map.get("endDate").toString().substring(0,4)+"-"+map.get("endDate").toString().substring(4)+"-31";
+        }
+        String dataType=map.get("dataType").toString();
+        String cangku=map.get("cangku").toString();
+        Map<String, String> pageSearch = ((HashMap<String,  String>) map.get("pageSearch"));
+        // 按添加日期
+        return saleousingRepository.findMainList2(type,strDate,endDate).collectList()
+                .flatMap(list->{
+
+                    if(pageSearch!=null&&StrUtil.isNotBlank(pageSearch.get("selectValue"))){
+                        if(pageSearch.get("selectType").equals("ccode")){
+                            list=list.stream().filter(a->a.getCcode().contains(pageSearch.get("selectValue"))).collect(Collectors.toList());
+                        }else if(pageSearch.get("selectType").equals("supName")){
+                            list=list.stream().filter(a->a.getCustName().contains(pageSearch.get("selectValue"))).collect(Collectors.toList());
+                        }else if(pageSearch.get("selectType").equals("custName")){
+                            list=list.stream().filter(a->a.getCustName().contains(pageSearch.get("selectValue"))).collect(Collectors.toList());
+                        }else if(pageSearch.get("selectType").equals("deptName")){
+                            list=list.stream().filter(a->a.getDeptName().contains(pageSearch.get("selectValue"))).collect(Collectors.toList());
+                        }else if(pageSearch.get("selectType").equals("cmakerName")){
+                            list=list.stream().filter(a->a.getCmakerName().contains(pageSearch.get("selectValue"))).collect(Collectors.toList());
+                        }
+                    }
+                    return Mono.just(list);
+                }).map(a->R.ok().setResult(a));
+    }
+
 }

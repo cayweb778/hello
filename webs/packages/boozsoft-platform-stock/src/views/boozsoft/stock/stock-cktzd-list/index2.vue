@@ -234,9 +234,6 @@ import {
   findCangkuAllList,
   findStockAllList, getPYRKDAndNoBcheck1
 } from "/@/api/record/system/stock-wareh";
-import {getPsnList} from "/@/api/record/system/psn";
-import {findAllByFlag} from "/@/api/record/supplier_data/supplier";
-import {findAll} from "/@/api/caozuoyuan/caozuoyuan";
 import Query from './popup/query.vue'
 import Print from './popup/print.vue'
 //导入
@@ -244,19 +241,10 @@ import Excel from './popup/excel.vue'
 //导出
 /**********************汇总栏目设置**********************/
 import {
-  delRuKu,
-  findBillByCondition,
-  findBillCode, findByStockPeriodIsClose,
-  reviewSetCGRKG,
-  reviewSetCGRKGMx,
-  saveStockCurrentstockZTRK_Edit_XCL,
-  saveStockCurrentstockZTRK_Increase,
-  verifyXyCsourceByXyCode,
-  xyCsourceSave
-} from "/@/api/record/stock/stock-ruku";
-
-import {
   findAllMainList,
+  delRuKu,
+  findByStockPeriodIsClose,
+  reviewSetCGRKG,
 } from "/@/api/record/stock/stock-cktzd";
 import {
   delCGDHDverifyZTRKSum,
@@ -685,7 +673,7 @@ const CrudApi1 = {
 
 function toRouter(data,type) {
   if(type=='list'){
-    router.push({path: '/kc-shape',query: {ccode:data.ccode}});
+    router.push({path: '/cb-out-depot',query: {ccode:data.ccode}});
   }
 }
 
@@ -1001,11 +989,12 @@ const toAudit = async () => {
     let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(iyear.value)
     console.log('入库单操作：3--->盘点处理-->'+pd)
     if(pd>0){
+      compState.loading = false
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
 
     let a = useUserStoreWidthOut().getUserInfo.id
-    if (!hasBlank(a) && !hasBlank(checkRow.value[0].id))  {
+    if (!hasBlank(a) && !hasBlank(checkRow.value[0].ccode))  {
       // 审核
       let b = true
       let bcheck=b?'1':'0'
@@ -1062,8 +1051,9 @@ const toAuditBack = async () => {
       compState.loading = false
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
+
     let a = useUserStoreWidthOut().getUserInfo.id
-    if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
+    if (!hasBlank(a) && !hasBlank(checkRow.value[0].ccode)) {
       // 审核
       let b = false
       let bcheck=b?'1':'0'

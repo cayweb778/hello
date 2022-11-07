@@ -323,6 +323,25 @@ public interface StockSaleousingRepository extends ReactiveCrudRepository<StockS
     @Query("select * from stock_saleousing where bill_style='XSFP' and (ddate between :ddate1 and :ddate2) order by ccode ")
     Flux<StockSaleousing> findXsfpByIyear(@Param("ddate1") String ddate1,@Param("ddate2") String ddate2);
 
+
+    @Query("select " +
+            "       (select psn_name from sys_psn where id = sw.cwhcode_user)                                       as cwhcode_user_name,\n" +
+            "       (select real_name from _app_group_sys_user where id = sw.bcheck_user)                           as buname,\n" +
+            "       (select real_name from _app_group_sys_user where id = sw.cmaker)                                as cmaker_name,\n" +
+            "       sup.cust_name,\n" +
+            "       sup.cust_code,\n" +
+            "       (select dept_name from sys_department where unique_code = sw.cdepcode)                          as dept_name,\n" +
+            "       sup2.cust_name  as jscust_name,\n" +
+            "       sup2.cust_code  as jscust_code,\n" +
+            "       sw.*,\n" +
+            "       (select psn_name from sys_psn where id = sw.bworkable_user)                                     as bworkable_user_name " +
+            " from stock_saleousing sw\n" +
+            "         left join supplier sup on sup.id = sw.cvencode\n" +
+            "         left join supplier sup2 on sup2.id = sw.cvencode_js\n" +
+            " where sw.bill_style =:type and sw.ddate between :startDate and :endDate \n" +
+            " order by sw.ccode asc")
+    Flux<StockSaleousingVo> findMainList2(String type,String startDate,String endDate);
+
 }
 
 
