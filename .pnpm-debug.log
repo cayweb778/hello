@@ -1,0 +1,21 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "shortMessage": "Command was killed with SIGINT (User interruption with CTRL-C): /private/var/folders/m3/2t52qlvs1t71_33401nhm3rw0000gn/T/dlx-8159/bin/create-tauri-app",
+    "command": "/private/var/folders/m3/2t52qlvs1t71_33401nhm3rw0000gn/T/dlx-8159/bin/create-tauri-app",
+    "escapedCommand": "\"/private/var/folders/m3/2t52qlvs1t71_33401nhm3rw0000gn/T/dlx-8159/bin/create-tauri-app\"",
+    "signal": "SIGINT",
+    "signalDescription": "User interruption with CTRL-C",
+    "failed": true,
+    "timedOut": false,
+    "isCanceled": false,
+    "killed": false,
+    "err": {
+      "name": "pnpm",
+      "message": "Command was killed with SIGINT (User interruption with CTRL-C): /private/var/folders/m3/2t52qlvs1t71_33401nhm3rw0000gn/T/dlx-8159/bin/create-tauri-app",
+      "stack": "pnpm: Command was killed with SIGINT (User interruption with CTRL-C): /private/var/folders/m3/2t52qlvs1t71_33401nhm3rw0000gn/T/dlx-8159/bin/create-tauri-app\n    at makeError (/usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:42502:17)\n    at handlePromise (/usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:43073:33)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\n    at async Object.handler (/usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:177506:7)\n    at async /usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:182194:21\n    at async run (/usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:182168:34)\n    at async runPnpm (/usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:182387:5)\n    at async /usr/local/lib/node_modules/pnpm/dist/pnpm.cjs:182379:7"
+    }
+  }
+}
