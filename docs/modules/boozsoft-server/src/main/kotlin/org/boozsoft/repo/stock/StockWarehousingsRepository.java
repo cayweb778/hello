@@ -196,18 +196,18 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
     Flux<StockWarehousings> findAllByIyearAndCinvodeAndBatchIdAndDpdateAndDvdateAndBillStyleOrderByDvdateDesc(String year,  String stockId, String batchId, String start, String end,String bill);
 
 
-    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('CGRKD', 'DBRKD', 'XTZHRKD', 'QTRKD', 'PYRKD','RKTZD')")
+    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD','RKTZD')")
     Flux<StockWarehousings> findAllByCwhcodeAndCinvodeAndDdate(String ck,String ch, String year, String date);
 
-    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.batch_id=:batchId and sbb.iyear=:year and sbb.ddate <=:date  and sbb.bcheck = '1' and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD','RKTZD')")
+    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.batch_id=:batchId and sbb.iyear=:year and sbb.ddate <=:date  and sbb.bcheck = '1' and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD')")
     Flux<StockWarehousings> findAllByCwhcodeAndCinvodeAndDdateAndBatchId(String ck,String ch, String year, String date, String batchId);
 
-    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode in (:chs) and sbb.iyear=:year and sbb.ddate <=:date   and sbb.bill_style in ('CGRKD', 'DBRKD', 'XTZHRKD', 'QTRKD', 'PYRKD','RKTZD')")
+    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode in (:chs) and sbb.iyear=:year and sbb.ddate <=:date   and sbb.bill_style in ('CGRKD', 'QTRKD','RKTZD')")
     Flux<StockWarehousings> findAllByCinvodesAndDdate(List<String> chs, String year, String date);
 
     Mono<StockWarehousings> findByCcodeAndLineCode(String ccode,String lineCode);
 
-    @Query(" select sc.* from stock_warehousings sc where  sc.iyear=:year and sc.ddate <=:date and sc.bill_style in ('CGRKD', 'DBRKD', 'XTZHRKD', 'QTRKD', 'PYRKD','RKTZD')")
+    @Query(" select sc.* from stock_warehousings sc where  sc.iyear=:year and sc.ddate <=:date and sc.bill_style in ('CGRKD','QTRKD','RKTZD')")
     Flux<StockWarehousings> findAllByYearAndDate(String year, String date);
 
 

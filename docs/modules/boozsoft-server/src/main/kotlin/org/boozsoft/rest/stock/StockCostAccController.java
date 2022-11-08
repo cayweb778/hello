@@ -1142,6 +1142,7 @@ public class StockCostAccController {
         // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
         String rkBcheck=maps.get("rkBcheck")==null?"0":maps.get("rkBcheck").toString();
         String ckBcheck=maps.get("ckBcheck")==null?"0":maps.get("ckBcheck").toString();
+        //获取仓库设置
         return stockRepository.findByStockNum(stockNum)
                 .flatMap(obj->{
                     //获取存货的信息
@@ -1150,9 +1151,10 @@ public class StockCostAccController {
                     if(type.equals("移动平均")){
                         AtomicReference<BigDecimal> n = new AtomicReference<>(BigDecimal.ZERO);
                         AtomicReference<BigDecimal> m = new AtomicReference<>(BigDecimal.ZERO);
-                        //入库
+                        //入库 采购蓝字入库+其他蓝字入库+入库调整单
                         Mono<AtomicReference<BigDecimal>> map1 = warehousingsRepository.findAllByCwhcodeAndCinvodeAndDdate(stockCangku, stockNum, year, ddate)
                                 .filter(o-> "0".equals(rkBcheck)? "1".equals(o.getBcheck()) : true)
+                                .filter(o-> new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0)
                                 .collectList()
                                 .map(list->{
                                     //汇总主数量 无税金额
@@ -1169,12 +1171,12 @@ public class StockCostAccController {
                                     m.set(m.get().add(BigDecimal.valueOf(moeny)));
                                     return n;
                                 });
-                        //出库调整单
+                        //-出库调整单
                         Mono<AtomicReference<BigDecimal>> map3 = saleousingsRepository.findAllByCwhcodeAndCinvodeAndDdate(stockCangku, stockNum, year, ddate)
                                 .filter(o-> "0".equals(ckBcheck)? "1".equals(o.getBcheck()) : true)
                                 .collectList()
                                 .map(list->{
-                                    //汇总主数量 无税金额
+                                    //汇总主数量 无税金额 出库调整单
                                     double num = list.stream().mapToDouble(v -> {
                                         if (Objects.isNull(v.getBaseQuantity())) return 0.00d;
                                         return Double.parseDouble(v.getBaseQuantity().toString());
@@ -1188,7 +1190,7 @@ public class StockCostAccController {
                                     m.set(m.get().subtract(BigDecimal.valueOf(moeny)));
                                     return n;
                                 });
-                        //期初
+                        //+期初
                         Mono<AtomicReference<BigDecimal>> map2 = beginBalanceRepository.findAllByCwhcodeAndCinvode(stockCangku, stockNum, year)
                                 .collectList()
                                 .map(list -> {
@@ -1207,7 +1209,7 @@ public class StockCostAccController {
                                     return m;
                                 });
 
-                        //红字出库( 材料领用 销售出库 其他出)
+                        //+红字出库(材料领用 销售出库 其他出库)绝对值
                         Mono<AtomicReference<BigDecimal>> map4 = saleousingsRepository.findAllByBillStyleAndYearAndDdate(year,ddate)
                                 .filter(v-> {
                                     if(ckBcheck.equals("0")){
@@ -1228,8 +1230,8 @@ public class StockCostAccController {
                                         if (Objects.isNull(v.getIcost())) return 0.00d;
                                         return Double.parseDouble(v.getIcost().toString());
                                     }).sum();
-                                    n.set(n.get().add(BigDecimal.valueOf(num)));
-                                    m.set(m.get().add(BigDecimal.valueOf(moeny)));
+                                    n.set(n.get().add(BigDecimal.valueOf(Math.abs(num))));
+                                    m.set(m.get().add(BigDecimal.valueOf(Math.abs(moeny))));
                                     return m;
                                 });
 
@@ -1260,98 +1262,75 @@ public class StockCostAccController {
                         if(Objects.isNull(batchId)){
                             return  Mono.just(BigDecimal.ZERO);
                         }
-                        //入库
-                        Mono<AtomicReference<BigDecimal>> map1 = warehousingsRepository.findAllByCwhcodeAndCinvodeAndDdateAndBatchId(stockCangku, stockNum, year, ddate, batchId)
+                        //入库 蓝字采购+其他
+                        Mono<List<StockWarehousings>> map1 = warehousingsRepository.findAllByCwhcodeAndCinvodeAndDdateAndBatchId(stockCangku, stockNum, year, ddate, batchId)
                                 .filter(list -> {
-                                    //过滤采购入库单数量小于1
-                                    /*if("CGRKD".equals(list.getBillStyle()) ){
-                                        if(new BigDecimal(list.getBaseQuantity()).compareTo(BigDecimal.ZERO) > 1){
-                                            return true;
-                                        }
-                                    }*/
-
-                                    if("0".equals(ckBcheck)){
+                                    if ("0".equals(ckBcheck)) {
                                         return "1".equals(list.getBcheck());
-                                    }else{
+                                    } else {
                                         return true;
                                     }
                                 })
-                                .collectList()
-                                .map(list -> {
-                                    //汇总主数量 无税金额
-                                    double num = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getBaseQuantity())) return 0.00d;
-                                        return Double.parseDouble(v.getBaseQuantity().toString());
-                                    }).sum();
-
-                                    double moeny = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getIcost())) return 0.00d;
-                                        return Double.parseDouble(v.getIcost().toString());
-                                    }).sum();
-                                    n.set(n.get().add(BigDecimal.valueOf(num)));
-                                    m.set(m.get().add(BigDecimal.valueOf(moeny)));
-                                    return n;
-                                });
-
-                        //出库调整单
-                        Mono<AtomicReference<BigDecimal>> map3 = saleousingsRepository.findAllByCwhcodeAndCinvodeAndDdateAndBatchId(stockCangku, stockNum, year, ddate, batchId)
-                                .collectList()
-                                .map(list->{
-                                    //汇总主数量 无税金额
-                                    double num = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getBaseQuantity())) return 0.00d;
-                                        return Double.parseDouble(v.getBaseQuantity().toString());
-                                    }).sum();
-
-                                    double moeny = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getIcost())) return 0.00d;
-                                        return Double.parseDouble(v.getIcost().toString());
-                                    }).sum();
-                                    n.set(n.get().subtract(BigDecimal.valueOf(num)));
-                                    m.set(m.get().subtract(BigDecimal.valueOf(moeny)));
-                                    return n;
-                                });
+                                .filter(o-> new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0)
+                                .collectList();
 
                         //期初
-                        Mono<AtomicReference<BigDecimal>> map2 = beginBalanceRepository.findAllByCwhcodeAndCinvodeAndDdateAndBatchId(stockCangku, stockNum, year, batchId)
-                                .collectList()
-                                .map(list -> {
-                                    //汇总主数量 无税金额
-                                    double num = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getBaseQuantity())) return 0.00d;
-                                        return Double.parseDouble(v.getBaseQuantity().toString());
-                                    }).sum();
-
-                                    double moeny = list.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getIcost())) return 0.00d;
-                                        return Double.parseDouble(v.getIcost().toString());
-                                    }).sum();
-                                    n.set(n.get().add(BigDecimal.valueOf(num)));
-                                    m.set(m.get().add(BigDecimal.valueOf(moeny)));
-                                    return m;
-                                });
+                        Mono<List<StockBeginBalance>> map2 = beginBalanceRepository.findAllByCwhcodeAndCinvodeAndDdateAndBatchId(stockCangku, stockNum, year, batchId)
+                                .collectList();
                         //计算成本单价
-                        return map1.zipWith(map2).zipWith(map3).map(v->{
-                            //数量0 =单价0
-                            if(n.get().compareTo(BigDecimal.ZERO) == 0){
-                                return BigDecimal.ZERO;
+                        return map1.zipWith(map2).map(v->{
+                            //按批号通过“采购入库单》期初余额》、其他入库单”的顺序合计汇总金额找到存货成本单价
+                            List<StockWarehousings> t1 = v.getT1();
+                            List<StockBeginBalance> t2 = v.getT2();
+
+                            List<StockWarehousings> l1 = t1.stream().filter(o -> "CGRKD".equals(o.getBillStyle())).collect(Collectors.toList());
+                            if(l1.size() > 0 ){
+                                //汇总主数量 无税金额
+                                double num = l1.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getBaseQuantity())) return 0.00d;
+                                    return Double.parseDouble(o.getBaseQuantity().toString());
+                                }).sum();
+
+                                double moeny = l1.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getIcost())) return 0.00d;
+                                    return Double.parseDouble(o.getIcost().toString());
+                                }).sum();
+                                return BigDecimal.valueOf(num).divide(BigDecimal.valueOf(moeny),10,BigDecimal.ROUND_HALF_UP);
                             }
-                            //金额0 =单价0
-                            if(m.get().compareTo(BigDecimal.ZERO) == 0){
-                                return BigDecimal.ZERO;
+
+                            if(t2.size() > 0 ){
+                                //汇总主数量 无税金额
+                                double num = t2.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getBaseQuantity())) return 0.00d;
+                                    return Double.parseDouble(o.getBaseQuantity().toString());
+                                }).sum();
+
+                                double moeny = t2.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getIcost())) return 0.00d;
+                                    return Double.parseDouble(o.getIcost().toString());
+                                }).sum();
+                                return BigDecimal.valueOf(num).divide(BigDecimal.valueOf(moeny),10,BigDecimal.ROUND_HALF_UP);
                             }
-                            //数量负数 金额不是负数  =单价0
-                            if(n.get().compareTo(BigDecimal.ZERO) == -1 && m.get().compareTo(BigDecimal.ZERO) == 1){
-                                return BigDecimal.ZERO;
+
+                            List<StockWarehousings> l2 = t1.stream().filter(o -> "QTRKD".equals(o.getBillStyle())).collect(Collectors.toList());
+                            if(l2.size() > 0 ){
+                                //汇总主数量 无税金额
+                                double num = l2.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getBaseQuantity())) return 0.00d;
+                                    return Double.parseDouble(o.getBaseQuantity().toString());
+                                }).sum();
+
+                                double moeny = l2.stream().mapToDouble(o -> {
+                                    if (Objects.isNull(o.getIcost())) return 0.00d;
+                                    return Double.parseDouble(o.getIcost().toString());
+                                }).sum();
+                                return BigDecimal.valueOf(num).divide(BigDecimal.valueOf(moeny),10,BigDecimal.ROUND_HALF_UP);
                             }
-                            //金额负数 数量不是负数 =单价0
-                            if(m.get().compareTo(BigDecimal.ZERO) == -1 && n.get().compareTo(BigDecimal.ZERO) == 1){
-                                return BigDecimal.ZERO;
-                            }
-                            return m.get().divide(n.get(),10,BigDecimal.ROUND_HALF_UP);
+
+                            return BigDecimal.ZERO;
                         });
                     }else if(type.equals("手工计价")){
-                        //无成本单价反馈，需要手工输入成本价格 
+                        //无成本单价反馈，需要手工输入成本价格
                     }else if(type.equals("先进先出")){
 
                     }
@@ -1663,7 +1642,7 @@ public class StockCostAccController {
                             }): Mono.just(list);
                 })
                 .flatMap(list->{
-                    //采购 + 其他 +3个入库 +入库调整
+                    //采购 + 其他
                     return warehousingsRepository.findAllByYearAndDate("2022",riqi)
                             .filter(v-> {
                                 if(rkBcheck.equals("0")){
