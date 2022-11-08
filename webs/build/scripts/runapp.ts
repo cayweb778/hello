@@ -8,6 +8,7 @@ const process = require("child_process");
 
         ["登陆","start:auth"],
         ["弹出框组件","start:modals"],
+        ["打印组件","start:print"],
         ["主页","start:home"],
         ["系统","start:system"],
         ["总账","start:zongzhang"],

@@ -13,6 +13,7 @@
     "initial:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm install",
     "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",
     "start": "esno ./build/scripts/runapp.ts",
+    "start:print": "cd packages/boozsoft-print && pnpm dev",
     "start:main": "cd packages/boozsoft-starter && pnpm dev",
     "start:auth": "cd packages/boozsoft-auth && pnpm dev",
     "start:system": "cd packages/boozsoft-platform-system && pnpm dev",
