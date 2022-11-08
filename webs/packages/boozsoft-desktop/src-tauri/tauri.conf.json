@@ -2,7 +2,7 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:3000",
+    "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": false
   },
@@ -56,10 +56,11 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "height": 800,
         "resizable": true,
         "title": "tauri-app",
-        "width": 800
+        "width": 1000,
+        "maximized": true
       }
     ]
   }
