@@ -16,11 +16,22 @@ fn greet(name: &str) -> String {
 }
 #[tauri::command]
 fn asdsadas(name: &str) -> String {
-   let mut file = std::fs::File::open("data.txt").unwrap();
-     let mut contents = String::new();
-     file.read_to_string(&mut contents).unwrap();
-     print!("{}", contents);
-     format!("{}",contents )
+ let path = env::current_dir().unwrap();
+   let dir = path.as_path().read_dir().unwrap();
+    for x in dir {
+       if let Ok(path) = x {
+           // 是否存在某个文件
+           if path.file_name().eq("data.txt") {
+               let mut file = std::fs::File::open("data.txt").unwrap();
+               let mut contents = String::new();
+               file.read_to_string(&mut contents).unwrap();
+               print!("{}", contents);
+              return  format!("{}",contents );
+           }
+        }
+    }
+    return  "".to_string()
+
 }
 
 fn main() {

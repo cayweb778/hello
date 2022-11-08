@@ -29,23 +29,39 @@ async function getAddr() {
 
 ;(async function(){
   const addr = await getAddr()
-  if (addr != null) {
+  if (addr != '') {
     console.log("http://"+addr)
     window.location.href = "http://"+addr+"/nc"
+
   }
 })();
-
+const showError=ref('')
 async function greet() {
-  await invoke("asdsadas", {name: name.value});
-  window.location.href = name.value
+  const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
+  const abcc=async function (){
+
+    await invoke("greet", {name: name.value});
+    window.location.href = "http://"+name.value+"/nc"
+  }
+  ws.onopen=abcc
+  ws.onerror=function (){
+    showError.value="地址无效，请检查拼写或服务器状态是否正常"
+  }
+
   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 
+}
+
+function abc(){
+  name.value="81.70.47.206:81"
 }
 </script>
 
 <template>
   <div class="card">
+    <div style="color:red">{{showError}}</div>
     <input id="greet-input" v-model="name" placeholder="Enter a name..."/>
+    <button type="button" @click="abc()">🚀</button>
     <button type="button" @click="greet()">开始</button>
   </div>
 
