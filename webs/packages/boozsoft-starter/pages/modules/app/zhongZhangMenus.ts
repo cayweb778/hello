@@ -1567,6 +1567,7 @@ export const menus = [
   createPlatformMenu({
     id: 9014,
     path: 'fuzhu-qichu-list',
+    componentName: 'SubjectInitialBalanceFuZhu',
     component: '/boozsoft/system/subjectInitialBalanceFuZhu/index',
     parentId: 8901,
     name: '辅助核算期初',

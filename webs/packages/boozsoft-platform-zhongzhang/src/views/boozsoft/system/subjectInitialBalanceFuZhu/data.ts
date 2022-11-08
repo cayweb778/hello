@@ -47,7 +47,7 @@ const dynamicColumnAndDataModel = reactive({
       key: '1',
       name: '辅助科目及明细',
       nameNew: '辅助科目及明细',
-      check: true,
+      check: true,isFixed: true,
       width: 900,
       max: 900,
       min: 600,
@@ -56,7 +56,7 @@ const dynamicColumnAndDataModel = reactive({
       key: '2',
       name: '本币借方金额',
       nameNew: '本币借方金额',
-      check: true,
+      check: true,isFixed: true,
       width: 200,
       max: 300,
       min: 80,
@@ -65,7 +65,7 @@ const dynamicColumnAndDataModel = reactive({
       key: '3',
       name: '本币贷方金额',
       nameNew: '本币贷方金额',
-      check: true,
+      check: true,isFixed: true,
       width: 200,
       max: 300,
       min: 80,
@@ -93,7 +93,7 @@ const thisName = (index, thisData) => {
 }
 // 当前宽度
 const thisWidth = (index, thisData) => {
-  let value = 0
+  let value:any = 0
   if (index.toString().indexOf('-') != -1) {
     let arr = index.split('-');
     if (arr.length == 2) {
