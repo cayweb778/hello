@@ -134,20 +134,26 @@
           </Select>
           <br/>
 
-          <label>客户：</label>
-          <Select v-model:value="formItems.cvencode" @change="changeCvencode" style="width: 15%;">
-            <template #suffixIcon>
-              <SearchOutlined v-if="status == 1 || status == 2" @click="openHeadSelectContent('cvencode')"/>
-            </template>
-            <SelectOption v-for="item in customerList" :value="item.id" >
-              {{ item.custName }}
-            </SelectOption>
-          </Select>
           <label>记账方向：</label>
-          <Select v-model:value="formItems.billStyle" :disabled="true" style="width: 15%;">
+          <Select v-model:value="formItems.billStyle" @change="changeBillStyle()" style="width: 15%;">
             <template #suffixIcon></template>
             <SelectOption value="ar">应收</SelectOption>
             <SelectOption value="ap">应付</SelectOption>
+            <SelectOption value="qt">其他</SelectOption>
+          </Select>
+          <label>往来单位：</label>
+          <Select v-model:value="formItems.cvencode" :disabled="formItems.billStyle!='ar' && formItems.billStyle!='ap'" style="width: 15%;">
+            <template #suffixIcon>
+              <span v-if="formItems.billStyle=='ar' || formItems.billStyle=='ap'">
+                <SearchOutlined v-if="status == 1 || status == 2" @click="openHeadSelectContent('cvencode')"/>
+              </span>
+            </template>
+            <SelectOption v-if="formItems.billStyle=='ar'" v-for="item in customerList" :value="item.id" >
+              {{ item.custName }}
+            </SelectOption>
+            <SelectOption v-if="formItems.billStyle=='ap'" v-for="item in supplierList" :value="item.id" >
+              {{ item.custName }}
+            </SelectOption>
           </Select>
           <label>部门：</label>
           <Select v-model:value="formItems.cdepcode" style="width: 15%;">
@@ -194,7 +200,17 @@
           >
             <template #fyname="{ record }">
               <template v-if="record.editOne">
-                <Input v-model:value="record.tempOne" class="fyname" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'fyname')"/>
+<!--                <Input v-model:value="record.tempOne" class="fyname" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'fyname')"/>-->
+                <Select v-model:value="record.tempOne" style="width: 85%;"
+                        class="fyname"
+                        @change="value=>handleChange(value,'one')"
+                        @search="value=>handleSearch(value,'one')"
+                        @keyup.enter="focusNext(record,'fyname')">
+                  <template #suffixIcon><CaretDownOutlined/></template>
+                  <SelectOption v-for="item in expenseList" :value="item.cname" >
+                    {{ item.cname }}
+                  </SelectOption>
+                </Select>
                 <CheckOutlined @click="record.editOne = null;record.fyname=record.tempOne;tableDataChange(record,'fyname')"/>
               </template>
               <template v-else>
@@ -205,7 +221,17 @@
             </template>
             <template #fycode="{ record }">
               <template v-if="record.editTwo">
-                <Input v-model:value="record.tempTwo" class="fycode" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'fycode')"/>
+<!--                <Input v-model:value="record.tempTwo" class="fycode" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'fycode')"/>-->
+                <Select v-model:value="record.tempTwo" style="width: 85%;"
+                        class="fycode"
+                        @change="value=>handleChange(value,'two')"
+                        @search="value=>handleSearch(value,'two')"
+                        @keyup.enter="focusNext(record,'fycode')">
+                  <template #suffixIcon><CaretDownOutlined/></template>
+                  <SelectOption v-for="item in expenseList" :value="item.ccode" >
+                    {{ item.cname }}
+                  </SelectOption>
+                </Select>
                 <CheckOutlined @click="record.editTwo = null;record.fycode=record.tempTwo;tableDataChange(record,'fycode')"/>
               </template>
               <template v-else>
@@ -237,15 +263,7 @@
               </template>
             </template>
             <template #itaxMoney="{ record }">
-              <template v-if="record.editFive">
-                <InputNumber v-model:value="record.tempFive" class="itaxMoney" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'itaxMoney')"/>
-                <CheckOutlined @click="record.editFive = null;record.itaxMoney=record.tempFive;tableDataChange(record,'itaxMoney')"/>
-              </template>
-              <template v-else>
-                <div @click="record.editFive = true;" :class="status == 1 || status == 2?'suspended-div':'status-look'">
-                  <span class="a-table-font-arial">{{toThousandFilter(record.itaxMoney)}}</span>
-                </div>
-              </template>
+              <span class="a-table-font-arial">{{toThousandFilter(record.itaxMoney)}}</span>
             </template>
             <template #isum="{ record }">
               <template v-if="record.editSix">
@@ -260,15 +278,7 @@
               </template>
             </template>
             <template #ljjsIsum="{ record }">
-              <template v-if="record.editSeven">
-                <InputNumber v-model:value="record.tempSeven" class="ljjsIsum" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'ljjsIsum')"/>
-                <CheckOutlined @click="record.editSeven = null;record.ljjsIsum=record.tempSeven;tableDataChange(record,'ljjsIsum')"/>
-              </template>
-              <template v-else>
-                <div @click="record.editSeven = true;" :class="status == 1 || status == 2?'suspended-div':'status-look'">
-                  <span class="a-table-font-arial">{{toThousandFilter(record.ljjsIsum)}}</span>
-                </div>
-              </template>
+              <span class="a-table-font-arial">{{toThousandFilter(record.ljjsIsum)}}</span>
             </template>
             <template #yongtu="{ record }">
               <template v-if="record.editEight">
@@ -282,15 +292,7 @@
               </template>
             </template>
             <template #yifentan="{ record }">
-              <template v-if="record.editNine">
-                <Input v-model:value="record.tempNine" class="yifentan" style="width: 85%;" placeholder="" @keyup.enter="focusNext(record,'yifentan')"/>
-                <CheckOutlined @click="record.editNine = null;record.yifentan=record.tempNine;tableDataChange(record,'yifentan')"/>
-              </template>
-              <template v-else>
-                <div @click="record.editNine = true;" :class="status == 1 || status == 2?'suspended-div':'status-look'">
-                  <span class="a-table-font-arial">{{record.yifentan}}</span>
-                </div>
-              </template>
+              <span class="a-table-font-arial">{{record.yifentan}}</span>
             </template>
 
 <!--            <template #footer>
@@ -344,6 +346,7 @@
       </div>
     </div>
     <SupperModalPop @throwData="modalData" @register="registerModalPopPage"/>
+    <CustomerModalPop @throwData="modalData" @register="registerModalPopCustPage" />
     <DeptModalPop @register="registerSelectDeptPage" @save="modalData"/>
     <SelectPsn @register="registerSelectPsnPage" @save="modalData"/>
     <SelectProject @register="registerSelectProjectPage" @save="modalData"/>
@@ -400,7 +403,8 @@ import {cloneDeep} from "lodash-es";
 // import DeptModalPop from "/@/views/boozsoft/system/department/popup/select-dept.vue";
 // import SelectPsn from "/@/views/boozsoft/system/department/popup/select-psn.vue";
 // import SelectProject from "/@/views/boozsoft/system/project/popup/select-project.vue";
-import SupperModalPop from "/@/views/boozsoft/global/popup/customer_info/modalPop.vue";
+import SupperModalPop from "/@/views/boozsoft/global/popup/supplier/modalPop.vue";
+import CustomerModalPop from "/@/views/boozsoft/global/popup/customer_info/modalPop.vue";
 import DeptModalPop from "/@/views/boozsoft/global/popup/dept/select-dept.vue";
 import SelectPsn from "/@/views/boozsoft/global/popup/dept/select-psn.vue"
 import SelectProject from "/@/views/boozsoft/global/popup/project/select-project.vue";
@@ -415,6 +419,7 @@ import localeCn from 'ant-design-vue/es/date-picker/locale/zh_CN';
 import {findPsnByFlag} from "/@/api/record/system/psn";
 import {findDeptByFlag} from "/@/api/record/system/dept";
 import {findAll} from "/@/api/record/costomer_data/customer";
+import {findAll as findBySupAll} from "/@/api/record/supplier_data/supplier";
 import {buildUUID} from "/@/utils/uuid";
 import {findAllProject} from "/@/api/record/system/project";
 import {findSettModesByFlag} from "/@/api/record/system/sett-modes";
@@ -432,6 +437,7 @@ import {
   saveArApExpensesList,
   deleteArApExpenseById, deleteArApExpensesByCcode, findArApExpensesByCcode, findArApExpenseList
 } from "/@/api/record/system/ArApExpense";
+import {getSysExpenseByFlag} from "/@/api/record/system/sys-expense";
 
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
@@ -450,7 +456,7 @@ const totalColumnWidth = ref(0)
 const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
-const titleContents = ['销售费用单', '销售费用单', '销售费用单']
+const titleContents = ['费用单', '费用单', '费用单']
 const titleValue = ref(0)
 const formRowNum = ref(1)
 
@@ -549,14 +555,18 @@ const parameter = reactive({
 const psnList:any = ref([])
 const deptList:any = ref([])
 const customerList:any = ref([])
+const supplierList:any = ref([])
 const projectList:any = ref([])
 const settModesList:any = ref([])
 const bankAccountList:any = ref([])
+const expenseList:any = ref([])
 async function reloadList() {
   psnList.value = await useRouteApi(findPsnByFlag,{schemaName: dynamicTenantId})({})
   deptList.value = await useRouteApi(findDeptByFlag,{schemaName: dynamicTenantId})({})
   const res = await useRouteApi(findAll,{schemaName: dynamicTenantId})(parameter)
   customerList.value = res.items
+  const supList = await useRouteApi(findBySupAll,{schemaName: dynamicTenantId})(parameter)
+  supplierList.value = supList.items
   projectList.value = await useRouteApi(findAllProject,{schemaName:dynamicTenantId})({})
   const res1 = await useRouteApi(findSettModesByFlag,{schemaName: dynamicTenantId})({})
   settModesList.value = res1.items
@@ -565,6 +575,12 @@ async function reloadList() {
   jiList.value = await useRouteApi(findAllJiLang, {schemaName: dynamicTenantId})({unitName: ''})
   manyJiList.value = await useRouteApi(findUnitInfoList, {schemaName: dynamicTenantId})({})
   assetsCardList.value = (await useRouteApi(findCunHuoAllList, {schemaName: dynamicTenantId})({date: useCompanyOperateStoreWidthOut().getLoginDate}))
+  expenseList.value = await useRouteApi(getSysExpenseByFlag, {schemaName: dynamicTenantId})({})
+}
+
+//修改记账类型
+function changeBillStyle(){
+  formItems.value.cvencode = ''
 }
 
 const num = ref(0)
@@ -1154,30 +1170,6 @@ async function giveUp() {
   status.value = 3
 }
 
-function formatUniqueJiLiang(uniqueCodeUser) {
-  let str = uniqueCodeUser
-  jiList.value.forEach(
-    function (psn: any) {
-      if (psn.id == uniqueCodeUser) {
-        str = psn.unitName
-      }
-    }
-  )
-  return str || ''
-}
-
-function formatUniqueOperator(uniqueCodeUser) {
-  let str = uniqueCodeUser
-  operatorList.value.forEach(
-    function (psn: any) {
-      if (psn.id == uniqueCodeUser) {
-        str = psn.realName
-      }
-    }
-  )
-  return str || ''
-}
-
 const disabledDate = (current) => {
   // 获取区间最小区间
   if (!hasBlank(formItems.value.handleDate)) {
@@ -1187,29 +1179,6 @@ const disabledDate = (current) => {
     return current < min || current > max
   }
 };
-
-
-const rowDataGrab = async (rowObj, type: string) => {
-  let arr = assetsCardList.value.filter(it => (type == 'one' ? (it.sysId == rowObj.sysId) : type == 'two' ? (it.assetsCode == rowObj.assetsCode) : (it.assetsName == rowObj.assetsName)))
-  if (arr.length > 0 && rowObj['assetsUniqueCode'] != arr[0].assetsUniqueCode) {
-    rowObj['assetsUniqueCode'] = arr[0].assetsUniqueCode
-    rowObj['sysId'] = arr[0].sysId
-    rowObj['assetsCode'] = arr[0].assetsCode
-    rowObj['assetsName'] = arr[0].assetsName
-    // 初始化其他参数
-    let res = await useRouteApi(findFaAssetInfoByCode, {schemaName: dynamicTenantId})({code: arr[0].assetsUniqueCode}) || []
-    if (null != res && res.length > 0) {
-      rowObj['speciType'] = res[0].speciType
-      rowObj['bookAmount'] = res[0].bookAmount
-      rowObj['measureUnit'] = res[0].measureUnit
-      rowObj['yuanzhi'] = res[0].yuanzhi
-      rowObj['jtBy'] = res[0].jtBy
-      rowObj['zjLj'] = res[0].zjLj
-      rowObj['jingzhi'] = res[0].jingzhi
-    }
-    cardListOptions.value = []
-  }
-}
 
 const handleSearch = async (val: string, type: string) => {
   if (!hasBlank(val)) {
@@ -1263,6 +1232,7 @@ const formEtcData = ref({
 const thisEditObj:any = ref(null)
 const thisEditType:any = ref('')
 const [registerModalPopPage, {openModal: openMoalPopPage}] = useModal();
+const [registerModalPopCustPage, {openModal: openMoalPopCustPage}] = useModal();
 const [registerSelectDeptPage, {openModal: openSelectDeptPage}] = useModal()
 const [registerSelectPsnPage, {openModal: openSelectPsnPage}] = useModal()
 const [registerSelectProjectPage, {openModal: openSelectProjectPage}] = useModal()
@@ -1271,10 +1241,17 @@ const openHeadSelectContent = (type) => {
   thisEditType.value = type
   switch (type) {
     case 'cvencode':
-      openMoalPopPage(true, {
-        database: dynamicTenantId.value,
-        accId: dynamicAccId.value,
-      });
+      if (formItems.value.billStyle=='ar') {
+        openMoalPopCustPage(true, {
+          database: dynamicTenantId.value,
+          accId: dynamicAccId.value,
+        });
+      } else {
+        openMoalPopPage(true, {
+          database: dynamicTenantId.value,
+          accId: dynamicAccId.value,
+        });
+      }
       break;
     case 'cvencodeJs':
       openMoalPopPage(true, {
@@ -1305,10 +1282,6 @@ const modalData = (o) => {
   console.log(thisEditType.value)
   if (thisEditType.value=='cvencode'){
     formItems.value.cvencode = o[0].id
-    changeCvencode()
-  }
-  if (thisEditType.value=='cvencodeJs'){
-    formItems.value.cvencodeJs = o[0].id
   }
   if (thisEditType.value=='cdepcode'){
     formItems.value.cdepcode = o.id
@@ -1333,40 +1306,6 @@ const modalData = (o) => {
     formFuns.value.setFormValue(e)
   }*/
 }
-const resetRow = (record) => {
-  record['key'] = record.lineCode
-  let o = assetsCardList.value.filter(it => it.stockNum == record.cinvode )[0]
-  record.cinvodeName = o?.stockName || ''
-  record.cinvodeType = o?.stockGgxh // 规格型号
-  record.bcheck1 = o?.stockBarcode // 条形码
-  record.isGive = record.isGive == '1'
-  // 计量类型
-  record.cunitType = o?.stockMeasurementType ==  '单计量'?'1':'0'
-  record.cunitid = o?.stockMeasurementUnit // 计量类型
-  if (record.cunitType == '0'){ //
-    let res =  manyJiList.value.filter(it=>it.id == record.cunitid)[0]
-    if (res != null) {
-      record.unitInfo = res
-      let list = JsonTool.parseObj(res.detail) || []
-      if (list.length > 0)
-        record.cunitidText = list[0].unitName + `[${list[0].conversionRate}]`
-    }
-  }
-  record.isBatch = o?.stockPropertyBatch == '1'
-  return record;
-}
-
-function changeCvencode(){
-  const cusList = customerList.value.filter(item=>formItems.value.cvencode==item.id)
-  if(cusList[0].uniqueCodeCcus!=null && cusList[0].uniqueCodeCcus!=''){
-    const res = customerList.value.filter(item=>item.uniqueCodeCcus==item.uniqueCode)
-    if (res.length!=0) {
-      formItems.value.cvencodeJs = res[0].id
-    }
-  } else {
-    formItems.value.cvencodeJs = formItems.value.cvencode
-  }
-}
 
 const isum:any = ref('0')
 const isum1:any = ref('0')
@@ -1388,55 +1327,49 @@ function countTable(){
   calculateTotal()
 }
 
+//无税金额=价税合计/(1+税率)%
+//无税金额=价税合计/(100+税率)
+//价税合计=无税金额*（100+税率）
 const tableDataChange =  (r,c) => {
+  if(c=='fyname'){
+    const aa = expenseList.filter(item=>item.fyname==r.tempOne)
+    if (aa.length>0) {
+      r.fycode = aa[0].fycode
+      r.tempTwo = r.fycode
+      r.itax = aa[0].itax
+    }
+  }
+  if(c=='fycode'){
+    const aa = expenseList.filter(item=>item.fyname==r.tempTwo)
+    if (aa.length>0) {
+      r.fyname = aa[0].fyname
+      r.tempOne = r.fyname
+      r.itax = aa[0].itax
+    }
+  }
+  //修改税率----根据价税合计无税金额
+  if (c=='itax'){
+    if (r.money==null || r.money==''){}
+  }
+  //无税金额
+  if (c=='money'){
+    if (r.itax==null || r.itax==''){
+      r.itax = '0'
+    }
+    if (r.itax == '0'){
+      r.money = r.isum
+    }
+  }
+  //价税合计
+  if (c=='isum'){
+    if (r.itax==null || r.itax==''){
+      r.itax = '0'
+    }
+    if (r.itax == '0'){
+      r.isum = r.money
+    }
+  }
   countTable()
-}
-
-const slChange = (r,c) => {
-  if (c == 'baseQuantity' && r.cunitType == '0' && r.unitInfo != null){ // 存在多计量的清空
-    // 运算辅助数量
-    let list:any = JsonTool.parseObj(r.unitInfo.detail) || []
-    if (list.length > 0){
-      let n:any = parseFloat(r.baseQuantity).toFixed(10)
-      let isnum:any  = (r.unitInfo.unitType == '2')
-      let one =  parseFloat((n/parseFloat(list[1].conversionRate))).toFixed(10)
-      let two =  null != list[2]?parseFloat((n/parseFloat(list[2].conversionRate))).toFixed(10):0
-      if (isnum){ //取整数}
-        r.baseQuantity = NumberTool.toCeil(n,2)+''
-        r.subQuantity1 = NumberTool.toCeil(one,2)+''
-        r.subQuantity2 = NumberTool.toCeil(two,2)+''
-      }else {
-        r.subQuantity1 = one+''
-        r.subQuantity2 = two+''
-      }
-    }
-  }
-}
-const chChange = (record) => {
-  let o = assetsCardList.value.filter(it => (it.stockNum == record.cinvode) || (it.stockName == record.cinvodeName))[0]
-  record.cinvodeName = o?.stockName
-  record.cinvode = o?.stockNum
-  record.cinvodeType = o?.stockGgxh // 规格型号
-  record.bcheck1 = o?.stockBarcode // 条形码
-  // 计量类型
-  record.cunitType = o.stockMeasurementType == '单计量'?'1':'0'
-  record.cunitid = o?.stockMeasurementUnit // 计量类型
-  record.isBatch = o?.stockPropertyBatch == '1' // 批号必须输入
-  if (o.stockMeasurementType == '多计量' && !hasBlank(record.cunitid) &&  record?.unitInfo == null){
-    let res =  manyJiList.value.filter(it=>it.id == record.cunitid)[0]
-    if (res != null){
-      record.unitInfo = res
-      let list = JsonTool.parseObj(res.detail) || []
-      if (list.length > 0){
-        record.cunitidText = list[0].unitName +`[${list[0].conversionRate}]`
-        if (list.length > 1){
-          record.cunitidF1 = list[1].unitName +`[${list[1].conversionRate}]`
-          if (list.length > 2)
-            record.cunitidF2 = list[2].unitName +`[${list[2].conversionRate}]`
-        }
-      }
-    }
-  }
 }
 
 const outBefore = () => {
@@ -1458,7 +1391,7 @@ const outBefore = () => {
   }
 
 }
-const {proxy} = getCurrentInstance()
+
 /**
  * @param e 回车确定事件
  * @param r rowObj
@@ -1466,6 +1399,20 @@ const {proxy} = getCurrentInstance()
  * @param t mark
  */
 const focusNext =  (r, c) => {
+  if(c=='fyname'){
+    const aa = expenseList.filter(item=>item.fyname==r.tempOne)
+    if (aa.length>0) {
+      r.fycode = aa[0].fycode
+      r.tempTwo = r.fycode
+    }
+  }
+  if(c=='fycode'){
+    const aa = expenseList.filter(item=>item.fyname==r.tempTwo)
+    if (aa.length>0) {
+      r.fyname = aa[0].fyname
+      r.tempOne = r.fyname
+    }
+  }
   // 得到当前临时标记
   let t = getNextMark(c,false)
   Object.keys(r).map(i=>{if (i.startsWith('edit')) r[i] = null})
