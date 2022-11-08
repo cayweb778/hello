@@ -2289,7 +2289,7 @@ const generateText = (s, keys) => {
     }
     console.log(accountingInfoModel)
     console.log(key)
-    let list = accountingInfoModel.details.filter(it=>it.key == key)[0].list
+    let list = accountingInfoModel.details?.filter(it=>it.key == key)[0]?.list
     if (null != list && list.length > 0) text += ((list.filter(it => it.key == arr[i])[0]?.label) + ',')
   }
   return text != ''?text.substring(0,text.length-1):''
