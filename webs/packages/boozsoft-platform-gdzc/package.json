@@ -59,8 +59,6 @@
     "intro.js": "^4.3.0",
     "jquery": "^3.6.0",
     "js-pinyin": "^0.1.9",
-    "jspdf": "^2.4.0",
-    "jspdf-autotable": "^3.5.23",
     "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
