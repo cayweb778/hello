@@ -34,6 +34,6 @@ import {onMounted, ref} from "vue";
 const mark = ref(usePlatformsStore().getCurrentPlatformId)
 onMounted(() => {
 
-  window.closeLoading()
+
 })
 </script>

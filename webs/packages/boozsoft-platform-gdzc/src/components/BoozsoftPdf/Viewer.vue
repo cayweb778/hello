@@ -396,7 +396,7 @@ const {PDFViewerApplication,webViewerLoad}=await import('./core/web/viewer.js')
 
 const instance=getCurrentInstance()
 window.app=instance
-window.closeLoading()
+
 </script>
 <style>
 #app{

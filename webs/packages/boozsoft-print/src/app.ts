@@ -16,7 +16,7 @@ import 'ant-design-vue/dist/antd.less';
 
 
 (async () => {
-  window.closeLoading()
+
   // createWindowDebuggerInfo()
   const app = createApp(App);
   // Configure store

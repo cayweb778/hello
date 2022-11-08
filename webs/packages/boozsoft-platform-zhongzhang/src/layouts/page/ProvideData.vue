@@ -56,6 +56,6 @@ async function waitLoadView() {
 onMounted(async () => {
 
 
-  window.closeLoading()
+
 })
 </script>

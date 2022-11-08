@@ -35,6 +35,6 @@ import {usePlatformsStore} from "/@/store/modules/platforms";
 import {onMounted, ref,computed} from "vue";
 const mark = computed(()=>usePlatformsStore().getCurrentPlatformId)
 onMounted(() => {
-  window.closeLoading()
+
 })
 </script>

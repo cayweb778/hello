@@ -7,5 +7,5 @@ import {ref} from 'vue'
 
 window.platformData = {}
 window.platformData.storeList = ref([])
-window.closeLoading()
+
 </script>
