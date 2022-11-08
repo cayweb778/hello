@@ -62,7 +62,8 @@ const ARadioGroup = ARadio.Group
 import {useMessage} from "/@/hooks/web/useMessage";
 import {cateFindStateFlag} from "/@/api/project_category/project_category";
 import {getFromEdit} from "/@/api/record/system/sys_project_category";
-import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+//import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
 import {findAllList, findProjectByCateCode} from "/@/api/record/system/project";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useProjectStoreWidthOut} from "/@/store/modules/project";
