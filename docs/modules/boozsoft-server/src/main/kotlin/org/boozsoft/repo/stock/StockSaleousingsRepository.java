@@ -142,19 +142,24 @@ public interface StockSaleousingsRepository extends ReactiveCrudRepository<Stock
 
     Flux<StockSaleousings> findAllByIyearAndCinvodeAndBatchIdAndDpdateAndDvdateAndBillStyleOrderByDvdateDesc(String year, String s, String s1, String s2, String s3, String xhd);
 
-    @Query(" select sbb.* from stock_saleousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('XSCKD', 'DBCKD', 'XTZHCKD', 'QTCKD', 'PYCKD','CKTZD')")
+    @Query(" select sbb.* from stock_saleousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('XSCKD','QTCKD','CKTZD')")
     Flux<StockSaleousings> findAllByCwhcodeAndCinvodeAndDdate(String ck,String ch, String year, String date);
 
     @Query(" select sbb.* from stock_saleousings sbb  where  sbb.cinvode=:ch and sbb.batch_id=:batchId and sbb.iyear=:year and sbb.ddate <=:date and sbb.bcheck = '1' and cwhcode = :ck and sbb.bill_style in ('CKTZD')")
     Flux<StockSaleousings> findAllByCwhcodeAndCinvodeAndDdateAndBatchId(String ck,String ch, String year, String date, String batchId);
 
-    @Query(" select sbb.* from stock_saleousings sbb  where  sbb.cinvode in (:chs) and sbb.iyear=:year and sbb.ddate <=:date  and sbb.bill_style in ('CGCKD', 'DBCKD', 'XTZHCKD', 'QTCKD', 'PYCKD','CKTZD')")
+    @Query(" select sbb.* from stock_saleousings sbb  where  sbb.cinvode in (:chs) and sbb.iyear=:year and sbb.ddate <=:date  and sbb.bill_style in ('CGCKD', 'QTCKD','CKTZD')")
     Flux<StockSaleousings> findAllByCinvodesAndDdate(List<String> chs, String year, String date);
 
     @Query("select sw.*, s.stock_valuation_type as buname from stock_saleousings sw " +
             " left join stock s on s.stock_num = sw.cinvode " +
-            " where sw.bill_style = :style  and sw.ddate <= :riqi ")
-    Flux<StockSaleousingsCostVo> findAllByBillStyleAndDdateDist(String riqi, String style);
+            " where sw.bill_style = :style  and sw.ddate BETWEEN :strriqi AND :endriqi ")
+    Flux<StockSaleousingsCostVo> findAllByBillStyleAndDdateDist(String strriqi, String endriqi, String style);
+
+    @Query("select sw.*, s.stock_valuation_type as buname from stock_saleousings sw " +
+            " left join stock s on s.stock_num = sw.cinvode " +
+            " where sw.bill_style = :style  and sw.ddate <= :riqi")
+    Flux<StockSaleousingsCostVo> findAllByBillStyleAndYearAndDdates(String style,String riqi);
 
     @Query("select sw.* from stock_saleousings sw where sw.bill_style in ('CLLYD','QTCKD','XSCKD') and sw.icost <'0' and iyear=:year and sw.ddate <= :riqi ")
     Flux<StockSaleousings> findAllByBillStyleAndYearAndDdate(String year,String riqi);

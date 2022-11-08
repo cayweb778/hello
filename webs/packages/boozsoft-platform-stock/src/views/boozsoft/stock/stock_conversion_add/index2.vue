@@ -2262,6 +2262,7 @@ const focusNext =  (r, c) => {
   let list = getDataSource();
   let filters = [ 'bcheck', 'cinvodeType','cunitid','cinvodeName','cinvodeBarcode','baseQuantity','itaxprice','itaxrate','price','icost']
   // 要求填批号才填写
+  console.log(r.isBatch)
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
   let cols:any = getColumns().filter(it=>it?.title!='序号' &&  filters.indexOf(it?.dataIndex) == -1 && it.ifShow)

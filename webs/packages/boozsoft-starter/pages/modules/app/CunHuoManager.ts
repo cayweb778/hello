@@ -166,13 +166,10 @@ export const menus = [
 
   createPlatformMenu({ id: useId(160), path: '/kc-xclQuery', component: '/boozsoft/stock/stock-kc-xcl/index', componentName:'StockKcXcl', parentId: useId(236), name: '存货现存量查询' }),
   createPlatformMenu({ id: useId(161), path: '/kc-pcxclQuery', component: '/boozsoft/stock/stock-kc-pc-xcl/index', componentName:'StockKcPcXcl', parentId: useId(236), name: '批次现存量查询' }),
-  createPlatformMenu({ id: useId(163), path: '/kc-ledger', component: '/boozsoft/stock/stock-kctz-list/index', componentName:'Xcledger', parentId: useId(236), name: '库存台账' }),
-  createPlatformMenu({ id: useId(164), path: '/kc-bLedger', component: '/boozsoft/stock/stock-kcpctz-list/index', componentName:'Xcbledger', parentId: useId(236), name: '批次库存台账' }),
   createPlatformMenu({ id: useId(168), path: '/kc-output-rk', component: '/boozsoft/stock/stock-outPut-rk-list/index',componentName:'OutPutRk', parentId: useId(236), name: '出入库流水' }),
   createPlatformMenu({ id: useId(165), path: '/kc-numberPool', component: '/boozsoft/stock/stock-number-sfc/index', componentName:'XcNumberPool', parentId: useId(236), name: '数量收发存汇总表' }),
   createPlatformMenu({ id: useId(166), path: '/kc-amountPool', component: '/boozsoft/stock/stock-money-sfc/index', componentName:'XcamountPool', parentId: useId(236), name: '金额收发存汇总表' }),
   createPlatformMenu({ id: useId(167), path: '/kc-stock-warning', component: '/boozsoft/stock/stock-warning-list/index', componentName:'XcStockWarning', parentId: useId(236), name: '存货有效期预警表' }),
-
 
 
   createPlatformMenu({ id: useId(241), path: '/wl-invoice', component: '', parentId: useId(105), name: '单据' }),

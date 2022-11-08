@@ -42,9 +42,9 @@
         <Steps :current="stepValue" status="error">
           <Step title="开始成本核算" description=""/>
           <Step :title="stepValue < 2?'未完成':'已完成'" description="销售出库单成本核算"/>
-          <Step :title="stepValue < 3?'未完成':'已完成'" description="材料领用出库单成本核算"/>
+          <Step :title="stepValue < 3?'未完成':'已完成'" description="领用出库单成本核算"/>
           <Step :title="stepValue < 4?'未完成':'已完成'" description="其他出库单成本核算"/>
-          <Step :title="stepValue < 5?'未完成':'已完成'" description="产成品入库单"/>
+          <Step :title="stepValue < 5?'未完成':'已完成'" description="调拨单成本核算"/>
           <Step :title="stepValue < 6?'结束成本核算':'已核算'" description="成本核算完成"/>
         </Steps>
       </div>
@@ -81,7 +81,7 @@ import {findNewestCloseMonth, closeBill} from "/@/api/record/system/financial-se
 import {useUserStore, useUserStoreWidthOut} from "/@/store/modules/user";
 import {
   compareTime,
-  findByFunctionModule, markAnomaly,
+  findByFunctionModule, hasBlank, markAnomaly,
   offsetToStr
 } from "/@/api/task-api/tast-bus-api";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
@@ -99,6 +99,15 @@ import {
   warehousingThree,
 } from "/@/api/record/stock/stock_cost";
 import {findOption} from "/@/api/record/stock/stock-option";
+import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
+import {findByStockPeriodIsClose} from "/@/api/record/stock/stock-ruku";
+import {
+  findByIyearAndCaozuoModule,
+  getByStockBalanceTask,
+  stockBalanceTaskSave, stockTaskDelById
+} from "/@/api/record/stock/stock_balance";
+import {getPYRKDAndNoBcheck1} from "/@/api/record/system/stock-wareh";
+import {saveLog} from "/@/api/record/system/group-sys-login-log";
 
 const {closeCurrent} = useTabs(router);
 const rateValue = ref(4)
@@ -131,7 +140,7 @@ async function selectChange(v, y) {
       indicator.value = false
       return false;
     }
-    tipText.value = '材料领用出库单成本核算'
+    tipText.value = '领用出库单成本核算'
     indicator.value = true
     setTimeout(async () => {//2
       if (await checkTwo()) {
@@ -148,7 +157,7 @@ async function selectChange(v, y) {
           stepValue.value = 4
           indicator.value = false
         }
-        tipText.value = '产成品入库单'
+        tipText.value = '调拨单成本核算'
         indicator.value = true
         setTimeout(async () => {//4
           if (await checkFour()) {
@@ -176,14 +185,91 @@ async function selectChange(v, y) {
 
 }
 
+const compState = reactive({
+  absolute: false,
+  loading: false,
+  tip: '加载中...',
+});
 async function checkOne() {
   console.log(pageParameter)
+  //校验
+  compState.loading = true
+  let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
+  //  1 日期是否已结账
+  let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
+  console.log('入库单操作：1--->日期是否已结账-->'+temp)
+  if(temp>0){
+    compState.loading = false
+    return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
+  }
+  //  2 结账操作
+  let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
+  console.log('入库单操作：2--->结账操作-->'+jzMethod)
+  if(!hasBlank(jzMethod)){
+    compState.loading = false
+    return message.error('提示：正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
+  }
+
+  //  3 检查当前账套年度是否存在采购入库、其他入库、销售出库、其他出库、领用出库单、出入库调整单据的新增、修改、删除、审核或弃审操作
+  let taskList = await useRouteApi(findByIyearAndCaozuoModule, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoModule:'stock'})
+  let d =  taskList.find(v=>v.functionModule.includes('库'))
+  if(!hasBlank(d)){
+    return message.error('提示：当前存在库字单据正在进行操作，不能进行单据盘点操作，请销后再试！')
+  }
+
+  //  4 盘点单、调拨单和形态转换单的审核或弃审操作
+  let pd =  taskList.find(v=>v.functionModule.includes('盘点'))
+  if(pd>0){
+    return message.error('正在进行盘点处理，不能进行自动成本核销，请销后再试！')
+  }
+  let db =  taskList.find(v=>v.functionModule.includes('调拨'))
+  if(db>0){
+    return message.error('正在进行调拨处理，不能进行自动成本核销，请销后再试！')
+  }
+  let xt =  taskList.find(v=>v.functionModule.includes('形态转换'))
+  if(xt>0){
+    return message.error('正在进行形态转换处理，不能进行自动成本核销，请销后再试！')
+  }
+  //  5 添加任务
+  tempTaskSave('月末结账')
+
   let res = await useRouteApi(warehousingOne, {schemaName: dynamicTenantId.value})(pageParameter)
   console.log(res)
   if (null != res) {
+    /************** 记录操作日志 ****************/
+    saveLogData('自动成本核销')
+    /************** 记录操作日志 ****************/
     return true;
   }
   return false;
+}
+
+const taskInfo:any = ref('')
+async function tempTaskSave(method) {
+  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'月末结账',method:method,recordNum:'',caozuoModule:'stock'})
+    .then((a)=>{
+      taskInfo.value=a
+      console.log('任务='+JSON.stringify(a))
+    })
+}
+
+async function tempTaskDel(id) {
+  await useRouteApi(stockTaskDelById, { schemaName: dynamicTenantId })(id)
+}
+
+async function saveLogData(optAction) {
+  let logmap={
+    loginTime:new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "),
+    userId: useUserStoreWidthOut().getUserInfo.username,
+    userName: useUserStoreWidthOut().getUserInfo.realName,
+    optModule:'stock',
+    optFunction:'自动成本核销',
+    uniqueCode:pageParameter.value.riqi,
+    optAction:optAction,
+    accId:dynamicAccId.value,
+    optContent:'操作内容【自动成本核销】,核销月份【'+pageParameter.value.riqi+'】',
+  }
+  await saveLog(logmap)
 }
 
 const checkTwo = async () => {
@@ -202,6 +288,9 @@ const checkThree = async () => {
   return false;
 }
 const checkFour = async () => {
+
+  //删除任务
+  if(!hasBlank(taskInfo.value)){ tempTaskDel(taskInfo.value?.id) }
   return true;
 }
 const checkEven = async () => {
@@ -280,6 +369,7 @@ async function saveQuery(data) {
   pageParameter.rkBcheck = data.rkBcheck
   pageParameter.ckBcheck = data.ckBcheck
   pageParameter.hsFlg = data.hsFlg
+  pageParameter.year = data.iyear
   dynamicTenantId.value = data.accId
   selectChange(data.accId, data.iyear)
 

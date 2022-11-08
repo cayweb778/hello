@@ -49,82 +49,6 @@
                       <a-select-option v-for="data in rqList" :key="data.id" :value="data.stockYear+'-'+ data.stockMonth">{{ data.stockYear+'-'+ data.stockMonth}}</a-select-option>
                     </a-select>
                   </li>
-                  <!--  <li style="margin: 2% 0px;">
-                                      <label style="text-align: left"><font style="color: red">*</font>核算方式：</label>
-                                      <a-select
-                                        :allowClear="true"
-                                        v-model:value="formItems.type"
-                                        style="width: 60%;margin-left: 28px;"
-                                        ref="select"
-                                      >
-                                        <a-select-option value="1">批次平均</a-select-option>
-                                        <a-select-option value="2">移动平均</a-select-option>
-                                        <a-select-option value="3">全月平均</a-select-option>
-                                        <a-select-option value="4">个别计价</a-select-option>
-                                        <a-select-option value="5">先进先出</a-select-option>
-                                      </a-select>
-                                    </li>
-                                  <li style="margin: 2% 0px;">
-                                      <label style="text-align: left"><font style="color: red">*</font>核算范围：</label>
-                                      <a-select
-                                        :allowClear="true"
-                                        v-model:value="formItems.scope"
-                                        style="width: 60%;margin-left: 28px;"
-                                        ref="select"
-                                      >
-                                        <a-select-option value="1">按存货仓库</a-select-option>
-                                        <a-select-option value="2">按存货编码</a-select-option>
-                                        <a-select-option value="3">按存货批号</a-select-option>
-                                      </a-select>
-                                    </li>
-                                    <li style="margin: 2% 0px;" v-if="formItems.scope == '1'">
-                                      <span style="text-align: left" > <font style="color: red">*</font>存货仓库：</span>
-                                      <a-select
-                                        :allowClear="true"
-                                        v-model:value="formItems.cwhcode"
-                                        style="width: 60%;margin-left: 28px;"
-                                        ref="select"
-                                      >
-                                        <a-select-option v-for="data in ckList" :key="data.key" :value="data.cangkuId">{{ data.cangkuName }}</a-select-option>
-                                      </a-select>
-                                      <a style="font-weight: bold;font-size: 18px;"><PaperClipOutlined @click="openCkSelectContent" /></a>
-                                    </li>
-                                    <li style="margin: 2% 0px;">
-                                      <span style="text-align: left"> 存货分类：</span>
-                                      <a-select
-                                        :allowClear="true"
-                                        v-model:value="formItems.stockClass"
-                                        style="width: 60%;margin-left: 28px;"
-                                        ref="select"
-                                      >
-                                        <a-select-option
-                                          v-for="item in chcList"
-                                          :key="item.uniqueStockclass"
-                                          :value="item.uniqueStockclass"
-                                        >
-                                          {{ item.stockClass+'-'+ item.stockCclassName}}
-                                        </a-select-option>
-                                      </a-select>
-                                      <a style="font-weight: bold;font-size: 18px;"><PaperClipOutlined @click="openChClassSelectContent" /></a>
-                                    </li>
-                                    <li style="margin: 2% 0px;">
-                                      <span style="text-align: left"> 存货档案：</span>
-                                      <a-select
-                                        v-model:value="formItems.stockNum"
-                                        style="width: 60%;margin-left: 28px;"
-                                        :allowClear="true"
-                                        ref="select"
-                                      >
-                                        <a-select-option
-                                          v-for="item in chList"
-                                          :key="item.stockNum"
-                                          :value="item.stockNum"
-                                        >
-                                          {{ item.stockNum+'-'+ item.stockName}}
-                                        </a-select-option>
-                                      </a-select>
-                                      <a style="font-weight: bold;font-size: 18px;"><PaperClipOutlined @click="openChSelectContent" /></a>
-                                    </li>-->
                 </ul>
               </div>
             </div>
@@ -549,7 +473,7 @@ async function initData() {
   chList.value = await useRouteApi(findAllStock,{schemaName: currentDynamicTenant})({})
   //核算日期
   rqList.value = await useRouteApi(findRiqiList,{schemaName: currentDynamicTenant})({
-    iyear: '2022',
+    iyear: iyear.value,
      id: id.value
   })
   //启用日期标记
@@ -564,7 +488,7 @@ const ckBcheck = ref('')
 const hsFlg = ref('')
 const dynamicAdReload = async (obj) =>{
   currentDynamicTenant.value=obj.accountMode
-  iyear.value=obj.iyear
+  iyear.value=obj.year
   formItems.riqi = ''
   console.log(obj)
   id.value = obj.target.id
