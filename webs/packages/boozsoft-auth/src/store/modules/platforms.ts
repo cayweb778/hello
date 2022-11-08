@@ -448,7 +448,7 @@ export const usePlatformsStore = defineStore({
 
       const homeName = getHomeName(platformInfo);
 
-      window.closeLoading();
+      ;
       return homeName;
     },
     goHome() {

@@ -187,7 +187,7 @@ import {getToken} from "/@/utils/auth";
 
 export function loginxxxx(params) {
   return axios.request<string[]>({
-    url: 'http://81.70.47.206:8083/auth/login/auth',
+    url: 'http://81.70.47.206:81/api/nc/auth/login/auth',
     method: 'get',
     params
   })

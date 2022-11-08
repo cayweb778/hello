@@ -144,7 +144,7 @@ export default defineComponent({
     TwitterCircleFilled,
   },
   mounted() {
-    window.closeLoading()
+
   },
   setup() {
     const abc = ref(false)

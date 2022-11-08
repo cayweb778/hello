@@ -25,7 +25,7 @@ function abc(){
   }
 
   socket.onerror=()=>{
-    window.closeLoading()
+
     showServerError.value=true
   }
 }
