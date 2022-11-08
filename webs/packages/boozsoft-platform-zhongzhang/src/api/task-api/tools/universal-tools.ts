@@ -220,12 +220,20 @@ export function DateTool() {
       }
       return null;
     },
-    getLastDay(year, month) {
+      getLastDay(year, month) {
       let date = new Date(year, month, 1);
       let lastday = new Date(date.getTime() - 1000 * 60 * 60 * 24).getDate();
       return lastday;
-    },
-    
+    },/**
+     * 字符串 时间比较大小
+     * @param dateStr1  2022-01-22
+     * @param dateStr2  2022-01-23
+     */
+    compareDate(dateStr1,dateStr2){
+      let date1 = new Date(dateStr1)
+      let date2 = new Date(dateStr2)
+      return date1 === date2?0:(date1>date2?1:-1)
+    }
   }
 }
 

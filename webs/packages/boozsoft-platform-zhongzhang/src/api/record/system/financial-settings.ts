@@ -24,6 +24,7 @@ enum Api {
   initNextPeriodByCodeAndYaerApi = '/iperiod/initNextPeriod',
   modifyAccoutOneApi = '/sys/account/modifyByOne',
   findQjAndJdListApi = '/iperiod/findAllByIyear',
+  findQjByIyearApi = '/iperiod/findQjByIyear',
   saveSystemQuarterly = '/iperiod/saveSystemQuarterly',
   saveQuarterlyApi = '/iperiod/saveQuarterly',
   findVoucherTypeListApi = '/voucherType/findAll',
@@ -184,6 +185,18 @@ export function currentAccountYaerQjAndJdList(params: any) {
     params
   })
 }
+
+export function currentAccountYaerQjList(params: any) {
+  return defHttp.request({
+    url: Api.findQjByIyearApi,
+    method: 'GET',
+    headers: {
+      ignoreCancelToken: true
+    },
+    params
+  })
+}
+
 
 export function saveQjJdQuarterly(params: any) {
   return defHttp.request({
