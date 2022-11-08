@@ -46,6 +46,8 @@ enum Api {
   findBillByConditionApi = '/accvoucher/findBillByCondition',
   findLastPingZhengInoidApi = '/accvoucher/findLastPingZhengInoid',
   checkLastZhengInoidApi = '/accvoucher/checkLastZhengInoid',
+  findPingZhengTypesApi = '/accvoucher/findPingZhengTypesApi',
+  findPingZhengQjLastDateApi = '/accvoucher/findPingZhengQjLastDate',
 
 }
 
@@ -460,6 +462,23 @@ export const findLastPingZhengInoid = defRouteApi(async (params: any) => {
 export const checkLastZhengInoid = defRouteApi(async (params: any) => {
   return {
     url: Api.checkLastZhengInoidApi,
+    timeout: 5000000000,
+    method: 'POST',
+    params
+  }
+})
+
+export const findPingZhengTypes = defRouteApi(async (params: any) => {
+  return {
+    url: Api.findPingZhengTypesApi,
+    timeout: 5000000000,
+    method: 'POST',
+    params
+  }
+})
+export const findPingZhengQjLastDate = defRouteApi(async (params: any) => {
+  return {
+    url: Api.findPingZhengQjLastDateApi,
     timeout: 5000000000,
     method: 'POST',
     params

@@ -4660,4 +4660,14 @@ public class AccvoucherController {
             return Mono.just(R.ok(list.contains(code)?"1":"0"));
         });
     }
+
+    @PostMapping("findPingZhengQjLastDate")
+    public Mono<R> findPingZhengQjLastDate(@RequestBody Map map) {
+        if (map.keySet().size() == 0) return Mono.just(R.error());
+        String[] dates= map.get("date").toString().split("-");
+        return  accvoucherRepository.findAllByIyperiodOrderByDesc(dates[0]+dates[1]).defaultIfEmpty("").flatMap(str->{
+            if (StrUtil.hasBlank(str))return Mono.just(R.ok( map.get("date").toString()));
+            return  Mono.just(R.ok(str));
+        });
+    }
 }

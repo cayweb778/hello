@@ -67,6 +67,12 @@ public class IperiodController {
         return Mono.zip(qjMono, jdMono).map(o -> R.ok().setResult(o));
     }
 
+    @GetMapping("findQjByIyear")
+    @ApiOperation(value = "查询指定年份区间与季度", notes = "传入code")
+    public Mono<R> findQjByIyear(String accId, String iyear) {
+        return sysPeriodRepository.findAllByAccountIdAndIyearAndBeiyong1NullOrderByIyearAscDateStartAsc(accId, iyear).collectList().cache().map(o -> R.ok().setResult(o));
+    }
+
     @PostMapping("saveSystemQuarterly")
     @ApiOperation(value = "添加账套区间", notes = "传入code")
     public Mono<R> saveSystemQuarterly(@RequestBody List<SysPeriod> iperiodFlux) {
