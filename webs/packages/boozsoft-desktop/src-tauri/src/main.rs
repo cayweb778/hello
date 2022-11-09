@@ -45,7 +45,8 @@ fn getCacheIpAddr() -> String {
     let dirpath =pathInfo.get("dirpath").unwrap();
     let filename=pathInfo.get("filename").unwrap();
     let isExist=hasFilenameExist(&dirpath,&filename);
-    println!("{}2","");
+    println!("{}2",dirpath);
+    println!("{}2",filename);
 
     let mut scores = HashMap::new();
     if isExist {
@@ -68,8 +69,9 @@ fn generate(name:String){
     let pathInfo=usepathInfo();
     let dirpath =pathInfo.get("dirpath").unwrap();
     let filename=pathInfo.get("filename").unwrap();
-
-    let mut file = std::fs::File::create(format!("{}/{}",dirpath,filename)).expect("create failed");
+    println!("无敌：{}",dirpath);
+    println!("无敌：{}",filename);
+    let mut file = std::fs::File::create(format!("{}{}",dirpath,filename)).expect("create failed");
     file.write_all(name.as_bytes()).expect("write failed");
 
 }
