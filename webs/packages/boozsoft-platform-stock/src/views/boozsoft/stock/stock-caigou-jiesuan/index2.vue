@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div class="app-container-bottom">
+    <div class="app-container-bottom" :style="{height: (windowHeight+70)+'px'}">
       <div class="acb-head">
         <div class="acbgead-one">
           <div class="acbgead-one-triangle">
