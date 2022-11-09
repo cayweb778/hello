@@ -4,10 +4,9 @@ import Layout from "./views/boozsoft/layouts/index.vue"
 import NcProvider from "./views/boozsoft/provider/index.vue"
 import {useCounterStore} from "@/stores/counter";
 import {computed, ref} from "vue";
-const showHome=computed(()=>useCounterStore().setShowFooter)
-const  showApp=ref(true)
-console.log(window.__TAURI__)
-if(window.__TAURI__!=null){
+const  showApp=ref(false)
+console.log(window.parent)
+if(self!=top){
   showApp.value=true
 }
 </script>

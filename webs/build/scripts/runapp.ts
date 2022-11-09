@@ -6,7 +6,6 @@ const process = require("child_process");
     const createChoice = (title, disable) => ({ title:"⭐️ "+title, value: title, disable: !!disable });
     const arr=[
 
-        ["桌面应用","start:desktop"],
         ["登陆","start:auth"],
         ["弹出框组件","start:modals"],
         ["打印组件","start:print"],
@@ -35,6 +34,10 @@ const process = require("child_process");
         console.log("！👏！👏！👏 已结束运行 ！👏！👏！👏")
         return
     }
+    process.spawn('pnpm start:desktop', {
+        stdio:'inherit',
+        shell:true
+    });
     process.spawn('pnpm start:main', {
         stdio:'inherit',
         shell:true
