@@ -275,7 +275,7 @@ public class StockChangeController {
                             sw.setBstyle("形态转换入库");//入库类别（收发方式中的收方向编码
                             sw.setCmakerTime(LocalDateTime.now().toString());
                             sw.setUnitType("etc");
-                            sw.setUnitValue("调拨入库生成");
+                            sw.setUnitValue("形态转换入库生成");
                             sw.setBillStyle("QTRKD");
                             sw.setSourcetype("XTZHD");//来源单据类型id
                             sw.setCcode(rkCcode.get());
@@ -313,7 +313,7 @@ public class StockChangeController {
                                                 sa.setBstyle("形态转换出库");//入库类别（收发方式中的收方向编码
                                                 sa.setCmakerTime(LocalDateTime.now().toString());
                                                 sa.setUnitType("etc");
-                                                sa.setUnitValue("调拨出库生成");
+                                                sa.setUnitValue("形态转换出库生成");
                                                 sa.setBillStyle("QTCKD");
                                                 sa.setSourcetype("XTZHD");//来源单据类型id
                                                 sa.setCcode(ckCcode.get());
@@ -340,72 +340,72 @@ public class StockChangeController {
                                                         })
                                                         .map(item->{
                                                             List<StockChanges> collect = list.stream().filter(v -> v.getFlgs().equals("0")).collect(Collectors.toList());
-                                                            List<StockWarehousings> swlist = new ArrayList<>();
+                                                            List<StockSaleousings> salist = new ArrayList<>();
                                                             collect.stream().forEach(v->{
-                                                                StockWarehousings stockWarehousings =  new StockWarehousings();
-                                                                BeanUtils.copyProperties(v,stockWarehousings);
-                                                                stockWarehousings.setId(null);
-                                                                stockWarehousings.setCmakerTime(v.getCfree1());
-                                                                stockWarehousings.setCsource("XTZHD");//单据来源
-                                                                stockWarehousings.setBcheck(v.getBcheck());
-                                                                stockWarehousings.setBcheckUser(v.getBcheckUser());
-                                                                stockWarehousings.setSourcetype("XTZHD");//来源单据类型id
-                                                                stockWarehousings.setSourcecode(dbCcode.get());//来源单据编码
-                                                                stockWarehousings.setSourcedetailId(v.getLineCode());
-                                                                stockWarehousings.setSourcedate(v.getDdate());//来源单据日期
-                                                                stockWarehousings.setCangkuDuli("1");
-                                                                stockWarehousings.setLineId("1");
-                                                                stockWarehousings.setIsGive("0");
-                                                                stockWarehousings.setBillStyle("QTRKD");
-                                                                stockWarehousings.setBstyle("形态转换入库");//入库类别（收发方式中的收方向编码）
-                                                                stockWarehousings.setDdate(v.getDdate());
-                                                                stockWarehousings.setCcode(rkCcode.get());
-                                                                stockWarehousings.setCmakerTime(LocalDateTime.now().toString());
-                                                                stockWarehousings.setCgUnitId(v.getCunitid());
-                                                                stockWarehousings.setCnumber(v.getCnumber());
-                                                                stockWarehousings.setBcheck("1");
-                                                                stockWarehousings.setBcheckTime(LocalDate.now().toString());
-                                                                stockWarehousings.setBcheckUser(userId);
-                                                                stockWarehousings.setId(null);
-                                                                swlist.add(stockWarehousings);
+                                                                StockSaleousings sas =  new StockSaleousings();
+                                                                BeanUtils.copyProperties(v,sas);
+                                                                sas.setCmakerTime(v.getCfree1());
+                                                                sas.setCsource("XTZHD");//单据来源
+                                                                sas.setBcheck(v.getBcheck());
+                                                                sas.setBcheckUser(v.getBcheckUser());
+                                                                sas.setSourcetype("XTZHD");//来源单据类型id
+                                                                sas.setSourcecode(dbCcode.get());//来源单据编码
+                                                                sas.setSourcedetailId(v.getLineCode());
+                                                                sas.setSourcedate(v.getDdate());//来源单据日期
+                                                                sas.setCangkuDuli("1");
+                                                                sas.setLineId("1");
+                                                                sas.setIsGive("0");
+                                                                sas.setBillStyle("QTCKD");
+                                                                sas.setBstyle("形态转换出库");//入库类别（收发方式中的收方向编码）
+                                                                sas.setDdate(v.getDdate());
+                                                                sas.setCcode(ckCcode.get());
+                                                                sas.setCmakerTime(LocalDateTime.now().toString());
+                                                                sas.setXsUnitId(v.getCunitid());
+                                                                sas.setQuantity(sas.getBaseQuantity());
+                                                                sas.setBcheck("1");
+                                                                sas.setBcheckTime(LocalDate.now().toString());
+                                                                sas.setBcheckUser(userId);
+                                                                sas.setId(null);
+                                                                salist.add(sas);
                                                             });
-                                                            return swlist;
+                                                            return salist;
                                                         });
                                             })
                                             .flatMap(e -> {
                                                 List<StockChanges> sl = list.stream().filter(v -> v.getFlgs().equals("1")).collect(Collectors.toList());
-                                                List<StockSaleousings> salist = new ArrayList<>();
+                                                List<StockWarehousings> swlist = new ArrayList<>();
                                                 sl.stream().forEach(v->{
-                                                    StockSaleousings sas =  new StockSaleousings();
-                                                    BeanUtils.copyProperties(v,sas);
-                                                    sas.setCmakerTime(v.getCfree1());
-                                                    sas.setCsource("XTZHD");//单据来源
-                                                    sas.setBcheck(v.getBcheck());
-                                                    sas.setBcheckUser(v.getBcheckUser());
-                                                    sas.setSourcetype("XTZHD");//来源单据类型id
-                                                    sas.setSourcecode(dbCcode.get());//来源单据编码
-                                                    sas.setSourcedetailId(v.getLineCode());
-                                                    sas.setSourcedate(v.getDdate());//来源单据日期
-                                                    sas.setCangkuDuli("1");
-                                                    sas.setLineId("1");
-                                                    sas.setIsGive("0");
-                                                    sas.setBillStyle("QTCKD");
-                                                    sas.setBstyle("形态转换出库");//入库类别（收发方式中的收方向编码）
-                                                    sas.setDdate(v.getDdate());
-                                                    sas.setCcode(ckCcode.get());
-                                                    sas.setCmakerTime(LocalDateTime.now().toString());
-                                                    sas.setXsUnitId(v.getCunitid());
-                                                    sas.setQuantity(sas.getBaseQuantity());
-                                                    sas.setBcheck("1");
-                                                    sas.setBcheckTime(LocalDate.now().toString());
-                                                    sas.setBcheckUser(userId);
-                                                    sas.setId(null);
-                                                    sas.setIcost(new BigDecimal(v.getIcost()).add(new BigDecimal(v.getFyprice())).toString());
-                                                    salist.add(sas);
+                                                    StockWarehousings stockWarehousings =  new StockWarehousings();
+                                                    BeanUtils.copyProperties(v,stockWarehousings);
+                                                    stockWarehousings.setId(null);
+                                                    stockWarehousings.setCmakerTime(v.getCfree1());
+                                                    stockWarehousings.setCsource("XTZHD");//单据来源
+                                                    stockWarehousings.setBcheck(v.getBcheck());
+                                                    stockWarehousings.setBcheckUser(v.getBcheckUser());
+                                                    stockWarehousings.setSourcetype("XTZHD");//来源单据类型id
+                                                    stockWarehousings.setSourcecode(dbCcode.get());//来源单据编码
+                                                    stockWarehousings.setSourcedetailId(v.getLineCode());
+                                                    stockWarehousings.setSourcedate(v.getDdate());//来源单据日期
+                                                    stockWarehousings.setCangkuDuli("1");
+                                                    stockWarehousings.setLineId("1");
+                                                    stockWarehousings.setIsGive("0");
+                                                    stockWarehousings.setBillStyle("QTRKD");
+                                                    stockWarehousings.setBstyle("形态转换入库");//入库类别（收发方式中的收方向编码）
+                                                    stockWarehousings.setDdate(v.getDdate());
+                                                    stockWarehousings.setCcode(rkCcode.get());
+                                                    stockWarehousings.setCmakerTime(LocalDateTime.now().toString());
+                                                    stockWarehousings.setCgUnitId(v.getCunitid());
+                                                    stockWarehousings.setCnumber(v.getCnumber());
+                                                    stockWarehousings.setBcheck("1");
+                                                    stockWarehousings.setBcheckTime(LocalDate.now().toString());
+                                                    stockWarehousings.setBcheckUser(userId);
+                                                    stockWarehousings.setId(null);
+                                                    stockWarehousings.setIcost(new BigDecimal(v.getIcost()).add(new BigDecimal(v.getFyprice())).toString());
+                                                    swlist.add(stockWarehousings);
                                                 });
-                                                return stockWarehousingsRepository.saveAll(e).collectList().thenReturn(salist);
+                                                return stockSaleousingsRepository.saveAll(e).collectList().thenReturn(swlist);
                                             })
-                                            .flatMap(e -> stockSaleousingsRepository.saveAll(e).collectList().thenReturn(dbEntry))
+                                            .flatMap(e -> stockWarehousingsRepository.saveAll(e).collectList().thenReturn(dbEntry))
                                             .flatMap(o -> {
                                                 return warehousingRepository.save(dbEntry).flatMap(e -> warehousingsRepository.saveAll(list).collectList().thenReturn(e));
                                             });

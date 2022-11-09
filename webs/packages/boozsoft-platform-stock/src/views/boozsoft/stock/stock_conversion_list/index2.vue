@@ -999,6 +999,7 @@ const toAudit = async () => {
     let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(iyear.value)
     console.log('入库单操作：3--->盘点处理-->'+pd)
     if(pd>0){
+      compState.loading = false
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
 
