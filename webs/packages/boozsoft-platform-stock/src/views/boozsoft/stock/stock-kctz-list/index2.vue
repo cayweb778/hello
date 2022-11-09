@@ -203,46 +203,6 @@
         <template #price2="{ record }"><span>{{toThousandFilter(record.price2)}}</span></template>
         <template #icost2="{ record }"><span>{{toThousandFilter(record.icost2)}}</span></template>
 
-<!--        <template #summary>
-          <TableSummary fixed>
-            <TableSummaryRow v-if="pageParameter.queryMark == 'SJ'">
-              <TableSummaryCell class="nc-summary" :index="0" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="6" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="7" :align="'right'">{{summaryModel.bq}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="8" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="9" :align="'right'" >{{summaryModel.icost}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="10" :align="'right'">{{summaryModel.bq1}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="11" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="12" :align="'right'" >{{summaryModel.icost1}}</TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="13" :align="'right'">{{summaryModel.bq2}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="14" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="15" :align="'right'" >{{summaryModel.icost2}}</TableSummaryCell>
-            </TableSummaryRow>
-
-            <TableSummaryRow v-if="pageParameter.queryMark == 'J'">
-              <TableSummaryCell class="nc-summary" :index="0" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="6" :align="'right'">{{summaryModel.bq}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="7" :align="'right'">{{summaryModel.bq1}}</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="8" :align="'right'">{{summaryModel.bq2}}</TableSummaryCell>
-            </TableSummaryRow>
-          </TableSummary>
-        </template>-->
-
         <template #summary>
           <TableSummary fixed>
             <TableSummaryRow style="background-color: #cccccc;">

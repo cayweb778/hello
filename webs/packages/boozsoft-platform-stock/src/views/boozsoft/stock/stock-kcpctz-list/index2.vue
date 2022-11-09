@@ -2,22 +2,21 @@
   <div>
     <div class="app-container lcr-theme-div">
       <div>
-        <div style="margin-top: 10px;">
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+        <div>
+          <BarChartOutlined style="color: #0096c7;font-size: 60px;"/>
         </div>
         <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
           <div>
-            <div style="margin-top: 1px;margin-left: 10px;">
-              <b><span style="color: #666666;">存货：</span>{{pageParameter.chname}}</b>
-              <b><span style="color: #666666;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
-              <b><span style="color: #666666;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
-              <b><span style="color: #666666;"> 仓库：</span>{{pageParameter.ckname}}</b>
+            <div style="margin-top: 8px;margin-left: 10px;">
+              <b><span style="color: #666666;padding-left:5px;">存货：</span>{{pageParameter.chname}}</b>
+              <b><span style="color: #666666;padding-left:5px;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
+              <b><span style="color: #666666;padding-left:5px;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
             </div>
           </div>
         </div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">批次库存台账</b></div>
+        <div>  <b class="noneSpan" style="font-size: 24px;color: #0096c7;">批次库存台账</b></div>
         <div><span style="font-size: 14px;font-weight: bold;"><span style="  font-weight: bold;color: #666666;">日期：</span>{{ pageParameter.dateStart }} - {{ pageParameter.dateEnd }}</span></div>
       </div>
       <div>
@@ -47,8 +46,11 @@
           ><span>退出</span></button>
         </div>
         <div>
+          <div style="margin-top: 8px;margin-right: 20px;">
+            <b><span style="color: #666666;"> 仓库：</span>{{pageParameter.ckname}}</b>
+          </div>
           <div>
-            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+            <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;text-align: left;border-radius: 4px" class="special_select">
               <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
               <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
@@ -57,7 +59,7 @@
             <!-- 搜索 -->
             <InputSearch
               placeholder=""
-              style="width: 200px; border-radius: 4px"
+              style="width: 150px; border-radius: 4px"
               @search="onSearch"
             />
           </div>
@@ -69,6 +71,7 @@
             <template #content>
               <a-popconfirm
                 ok-text="确定"
+                placement="leftTop"
                 cancel-text="放弃"
                 @confirm="confirm"
                 @cancel="cancel">
@@ -196,52 +199,11 @@
         <template #icost2="{ record }">{{toThousandFilter(record.icost2)}}</template>
         <template #summary>
           <TableSummary fixed>
-            <TableSummaryRow v-if="pageParameter.queryMark == 'SJ'">
-              <TableSummaryCell class="nc-summary" :index="0" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="6" ></TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="7" :align="'right'">
-                {{summaryModel.bq}}
-              </TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="8" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="9" :align="'right'">
-                {{summaryModel.icost}}
-              </TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="10" :align="'right'">
-                {{summaryModel.bq1}}
-              </TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="11" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="12" :align="'right'">
-                {{summaryModel.icost1}}
-              </TableSummaryCell>
-
-              <TableSummaryCell class="nc-summary" :index="13" :align="'right'">
-                {{summaryModel.bq2}}
-              </TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="14" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="15" :align="'right'">
-                {{summaryModel.icost2}}
-              </TableSummaryCell>
+            <TableSummaryRow style="background-color: #cccccc;">
+              <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;"></TableSummaryCell>
+              <TableSummaryCell class="nc-summary" style="border-right: none;" v-for="cell in getCurrSummary()" :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryModel[cell.dataIndex]?'':summaryModel[cell.dataIndex]}}</span></TableSummaryCell>
             </TableSummaryRow>
           </TableSummary>
-
-          <TableSummaryRow v-if="pageParameter.queryMark == 'J'">
-            <TableSummaryCell class="nc-summary" :index="0" :align="'center'"></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="6" :align="'right'">{{summaryModel.bq}}</TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="7" :align="'right'">{{summaryModel.bq1}}</TableSummaryCell>
-            <TableSummaryCell class="nc-summary" :index="8" :align="'right'">{{summaryModel.bq2}}</TableSummaryCell>
-          </TableSummaryRow>
         </template>
       </BasicTable>
 
@@ -277,6 +239,7 @@ import {
   PrinterOutlined,
   EditOutlined,
   BarChartOutlined,
+  ProfileOutlined,
   SearchOutlined
 } from '@ant-design/icons-vue'
 import {
@@ -442,7 +405,10 @@ const sumBq2 = ref('0.00')
 async function reloadTable(){
   loadMark.value = true
   tableData.value = []
+  resetDynamicColumnData()
   let a =  await useRouteApi(pcfindAll,{schemaName: databaseCode})(pageParameter)
+  calculateTotal(a.list)
+  getCurrSummary()
   sumBq.value = a.sumBq
   sumIm.value = a.sumIm
   sumBq1.value =a.sumBq1
@@ -622,9 +588,6 @@ function onSearch() {
 }
 
 const defaultPage = ref(false)
-onMounted(async() => {
-  resetDynamicColumnData()
-})
 
 import {
   defaultV,
@@ -952,6 +915,7 @@ import {assemblyDynamicColumn, initDynamics} from "./data";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {findStockDbLanMuList, saveStockLanMuList} from "/@/api/record/system/stock-column-view-settings";
 import {cloneDeep} from "lodash-es";
+import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 /*start栏目设置*/
 const visible = ref(false);
 const windowWidth = (window.innerWidth)
@@ -1209,7 +1173,48 @@ function toThousandFilter(num: any) {
 /*** 合计 ***/
 const summaryModel = ref({})
 const getCurrSummary  = (t) => {
-  return ((t=='one'?getColumns():getColumns()).filter(it=>it.title != '序号' && it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
+  let arr = []
+  getColumns().filter(it=> it.title != '序号' && it.ifShow)
+    .map((it)=>{
+      //存在children 循环添加
+      if(it.children){
+        it.children.forEach(v=> arr.push(v))
+      }else{
+        arr.push(it)
+      }
+    })
+  return arr
+}
+const calculateTotal = (data) => {
+  let list = JsonTool.parseProxy(data)
+  if (list.length == 0){
+    summaryModel.value = {}
+    return false;
+  }
+  let bq = 0
+  let icost = 0
+  let bq1 = 0
+  let icost1 = 0
+  let bq2 = 0
+  let icost2 = 0
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+    bq+=parseFloat(e['bq'] || 0)
+    icost+=parseFloat(e['icost'] || 0)
+    bq1+=parseFloat(e['bq1'] || 0)
+    icost1+=parseFloat(e['icost1'] || 0)
+    bq2+=parseFloat(e['bq2'] || 0)
+    icost2+=parseFloat(e['icost2'] || 0)
+  }
+  summaryModel.value={
+    ddate:'合计',
+    bq: toThousandFilter(bq),
+    icost: toThousandFilter(icost),
+    bq1: toThousandFilter(bq1),
+    icost1: toThousandFilter(icost1),
+    bq2: toThousandFilter(bq2),
+    icost2: toThousandFilter(icost2),
+  }
 }
 /*** 合计 ***/
 </script>
@@ -1248,7 +1253,7 @@ const getCurrSummary  = (t) => {
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
   padding: 10px 5px;
-  margin: 10px 10px 5px;
+  margin: 10px 10px 3px;
 }
 
 .app-container:nth-of-type(2) {
@@ -1314,19 +1319,19 @@ const getCurrSummary  = (t) => {
     position: relative;
     >div:nth-of-type(1){width: 64px;display: inline-block;
       position: absolute;
-      top: 15px;
+      top: 12px;
       left: 15px;
     }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
       position: absolute;
-      top: 25px;
+      top: 10px;
       left: 75px;
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;padding-top:8px;
+    >div:nth-of-type(2){margin-top: 1px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
