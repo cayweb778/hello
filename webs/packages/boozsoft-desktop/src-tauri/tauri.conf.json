@@ -7,8 +7,8 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "财税达ERP-NC企业管理软件",
-    "version": "2022.0.0"
+    "productName": "财税达",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
