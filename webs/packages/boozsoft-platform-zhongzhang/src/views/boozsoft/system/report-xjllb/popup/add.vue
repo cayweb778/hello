@@ -189,7 +189,6 @@ import {
 } from 'ant-design-vue'
 import {useAbcTemplateStoreWidthOut} from "/@/store/modules/abc";
 import {tableStyle} from "/@/store/modules/abc-print";
-import {jsPDF} from "jspdf";
 import {getThisIndexImg} from "/@/api/task-api/tast-bus-api";
 
 const {

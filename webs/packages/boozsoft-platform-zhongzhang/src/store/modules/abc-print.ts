@@ -1,5 +1,6 @@
-import 'jspdf-autotable';
-import {jsPDF} from "jspdf";
+// import 'jspdf-autotable';
+// 
+const jsPDF=null
 export async function addFont(jsPDF){
   const name='fuhuiR'
   const puhuittf=window.puhuittf
