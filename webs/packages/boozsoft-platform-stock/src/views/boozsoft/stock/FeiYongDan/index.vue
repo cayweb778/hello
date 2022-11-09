@@ -424,10 +424,10 @@ import {buildUUID} from "/@/utils/uuid";
 import {findAllProject} from "/@/api/record/system/project";
 import {findSettModesByFlag} from "/@/api/record/system/sett-modes";
 import {
- add,
- pad,
- sub,
- toThousandFilter
+  add, mul,
+  pad,
+  sub,
+  toThousandFilter
 } from "./calculation";
 import {getSysBankAccountByStatus} from "/@/api/record/system/sys-bank-account";
 import {
@@ -1347,9 +1347,16 @@ const tableDataChange =  (r,c) => {
       r.itax = aa[0].itax
     }
   }
-  //修改税率----根据价税合计无税金额
+  //修改税率----根据价税合计计算无税金额
   if (c=='itax'){
-    if (r.money==null || r.money==''){}
+    if (r.itax==null || r.itax==''){
+      r.itax = '0'
+    }
+    if (r.isum!=null && r.isum!=''){
+      r.money = sub(r.isum,sub(add(100,r.itax==null?'':r.itax),100))
+    } else {
+      r.money = r.isum
+    }
   }
   //无税金额
   if (c=='money'){
@@ -1358,6 +1365,11 @@ const tableDataChange =  (r,c) => {
     }
     if (r.itax == '0'){
       r.money = r.isum
+    }
+    if (r.money!=null && r.money!=''){
+      r.isum = mul(r.money,sub(add(100,r.itax==null?'':r.itax),100))
+    } else {
+      r.isum = r.money
     }
   }
   //价税合计
@@ -1368,7 +1380,13 @@ const tableDataChange =  (r,c) => {
     if (r.itax == '0'){
       r.isum = r.money
     }
+    if (r.isum!=null && r.isum!=''){
+      r.money = sub(r.isum,sub(add(100,r.itax==null?'':r.itax),100))
+    } else {
+      r.money = r.isum
+    }
   }
+  r.itaxMoney = sub(r.isum==null?'':r.isum,r.money==null?'':r.money)
   countTable()
 }
 
