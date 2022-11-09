@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "财税达",
+    "productName": "nc",
     "version": "1.0.0"
   },
   "tauri": {
