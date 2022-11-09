@@ -1,4 +1,4 @@
-import 'jspdf-autotable';
+;
 
 
 export function addFont(jsPDF,{base64,name}){

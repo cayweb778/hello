@@ -1,6 +1,7 @@
-import 'jspdf-autotable';
+;
 // import '../../../../lib/useFont'
-// import {jsPDF} from "jspdf";
+// //import {jsPDF} from "jspdf";
+const jsPDF=null
 const jsPDF=null
 const jsPDF=null
 const doc: any = new jsPDF('p', 'px', 'a4', true);

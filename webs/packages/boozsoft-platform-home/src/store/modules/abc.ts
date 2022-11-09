@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import { store } from '/@/store'
-import 'jspdf-autotable';
+;
 // import '../../../../lib/useFont'
-import {jsPDF} from "jspdf";
+//import {jsPDF} from "jspdf";
+const jsPDF=null
 // import {
 //   hangPrintDefault,
 //   printDefault,

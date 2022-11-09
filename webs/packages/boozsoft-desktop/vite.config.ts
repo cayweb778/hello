@@ -1,6 +1,11 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import {resolve} from "path";
 
+
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir);
+}
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
@@ -16,6 +21,14 @@ export default defineConfig({
   // to make use of `TAURI_DEBUG` and other env variables
   // https://tauri.studio/v1/api/config#buildconfig.beforedevcommand
   envPrefix: ["VITE_", "TAURI_"],
+  resolve: {
+    alias: [
+      {
+        find: /\/@\//,
+        replacement: pathResolve('src') + '/',
+      },
+    ],
+  },
   build: {
     // Tauri supports es2021
     target: ["es2021", "chrome100", "safari13"],

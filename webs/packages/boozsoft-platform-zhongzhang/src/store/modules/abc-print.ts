@@ -1,4 +1,4 @@
-// import 'jspdf-autotable';
+// ;
 // 
 const jsPDF=null
 export async function addFont(jsPDF){

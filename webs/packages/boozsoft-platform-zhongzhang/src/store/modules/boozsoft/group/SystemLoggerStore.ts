@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { store } from '/@/store'
-import 'jspdf-autotable';
+;
 ////import {saveApi} from "/@/api/group/SysLogger";
 const saveApi=null
 import {message} from "ant-design-vue";

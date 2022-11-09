@@ -1,5 +1,6 @@
-// import 'jspdf-autotable';
-// import {jsPDF} from "jspdf";
+// ;
+// //import {jsPDF} from "jspdf";
+const jsPDF=null
 const jspdf=null
 const jsPDF=null
 //

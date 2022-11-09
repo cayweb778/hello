@@ -1,46 +1,43 @@
-<script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Greet from "./components/Greet.vue";
-// let abc=window.__TAURI__.window.WebviewWindow
-</script>
-
 <template>
-  <div class="container">
-    <h1>Welcome to 泊舟NC!</h1>
+  <div>
 
-    <div class="row">
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
-    </div>
-
-    <p>点击 NC, 泊舟, 微服务 学习更多.</p>
-
-    <p>
-      初次使用:
-
-      <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank"
-        >指定服务地址</a
-      >
-    </p>
-
-    <Greet />
+    <App2 v-if="config.showFirstPage" @ok="handleOk"></App2>
+    <iframe v-else :src="config.url" style="border:none;position: fixed;left:0;top:0;width:100vw;height:100vh"></iframe>
+    <ConfigModal v-if="config.showConfigModal"></ConfigModal>
   </div>
 </template>
+<script setup>
+import {ref,onMounted} from 'vue';
+import App2 from './App2.vue'
+import ConfigModal from './ConfigModal.vue'
+import {invoke} from "@tauri-apps/api/tauri";
+import {getAddr} from "./funs/index.ts";
 
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
+const config=ref({
+  url:'',
+  showFirstPage:true,
+  showConfigModal:true
+})
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
+
+onMounted(async ()=>{
+  var WebviewWindow = window.__TAURI__.window.WebviewWindow
+  const webview = new WebviewWindow('theUniqueLabel', {
+    url: 'https://tauri.app/v1/guides/features/multiwindow/',
+  })
+
+  const addrObj = await getAddr()
+  if(addrObj.code != '404'){
+    config.value.showFirstPage=false
+    config.value.url="http://"+addrObj.data+"/nc"
+  }else{
+    config.value.showFirstPage=true
+  }
+})
+
+
+
+function handleOk(e){
+  config.value.url=e
 }
-</style>
+</script>

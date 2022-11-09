@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref,defineEmits} from "vue";
 import {invoke} from "@tauri-apps/api/tauri";
 
 import {
@@ -26,34 +26,28 @@ const name = ref("127.0.0.1:3000");
 async function getAddr() {
   return await invoke("getCacheIpAddr", {name: name.value});
 }
+const emit=defineEmits(['ok']);
 
-;(async function(){
-  const addrJSON = await getAddr()
-  const addrObj=JSON.parse(<string>addrJSON)
-  if (addrObj.code != '404') {
-    console.log("http://"+addrObj.data)
-    window.location.href = "http://"+addrObj.data+"/nc"
-
-  }
-})();
 const showError=ref('')
 async function greet() {
-  const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
-  const abcc=async function (){
-
-    console.log(";;;;;;;1")
-    console.log(name.value)
-    console.log(";;;;;;;1")
-    const aaa=await invoke("generate", {name: name.value});
-    console.log(";;;;;;;2")
-    console.log(aaa)
-    console.log(";;;;;;;2")
-    window.location.href = "http://"+name.value+"/nc"
-  }
-  ws.onopen=abcc
-  ws.onerror=function (){
-    showError.value="地址无效，请检查拼写或服务器状态是否正常"
-  }
+  const aaa=await invoke("generate", {name: name.value});
+  emit('ok',name.value)
+  // const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
+  // const abcc=async function (){
+  //
+  //   console.log(";;;;;;;1")
+  //   console.log(name.value)
+  //   console.log(";;;;;;;1")
+  //   const aaa=await invoke("generate", {name: name.value});
+  //   console.log(";;;;;;;2")
+  //   console.log(aaa)
+  //   console.log(";;;;;;;2")
+  //   window.location.href = "http://"+name.value+"/nc"
+  // }
+  // ws.onopen=abcc
+  // ws.onerror=function (){
+  //   showError.value="地址无效，请检查拼写或服务器状态是否正常"
+  // }
 
   // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 

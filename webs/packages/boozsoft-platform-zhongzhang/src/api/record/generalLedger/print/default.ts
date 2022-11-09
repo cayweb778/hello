@@ -1,4 +1,4 @@
-import 'jspdf-autotable';
+;
 // import '../../../../lib/useFont'
 
 

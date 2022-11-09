@@ -3,18 +3,25 @@ import {  RouterView } from 'vue-router'
 import Layout from "./views/boozsoft/layouts/index.vue"
 import NcProvider from "./views/boozsoft/provider/index.vue"
 import {useCounterStore} from "@/stores/counter";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 const showHome=computed(()=>useCounterStore().setShowFooter)
+const  showApp=ref(false)
+console.log(window.__TAURI__)
+if(window.__TAURI__!=null){
+  showApp.value=true
+}
 </script>
 
 <template>
   <div>
-<!--    NC暂不支持网页端，请使用桌面端-->
-    <NcProvider >
+    <NcProvider v-if="showApp" >
       <Layout>
         <RouterView/>
       </Layout>
     </NcProvider>
+    <div v-else>
+          NC暂不支持网页端，请使用桌面端
+    </div>
   </div>
 </template>
 
