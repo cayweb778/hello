@@ -1,22 +1,27 @@
 <template>
-  <div class="app-container">
-    <div class="app-container-top">
-
-      <div class="app-container-head">
-        <div class="container-head-title" style="float: left;">
-          <b class="noneSpan" style="font-size: 60px;"><BarChartOutlined /></b>
+  <div>
+    <div class="app-container lcr-theme-div">
+      <div>
+        <div>
+          <BarChartOutlined style="color: #0096c7;font-size: 60px;"/>
         </div>
-        <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
-          <b class="noneSpan" style="font-size: 26px;">库存台账</b>
-
-         <div style="font-size: 14px;text-align: center;margin-top: 30px;">
-            <span style="font-size: 14px;font-weight: bold;">
-              期间：{{ pageParameter.dateStart }} - {{ pageParameter.dateEnd }}
-
-            </span>
+        <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
+          <div>
+            <div style="margin-top: 8px;margin-left: 10px;">
+              <b><span style="color: #666666;padding-left:5px;">存货：</span>{{pageParameter.chname}}</b>
+              <b><span style="color: #666666;padding-left:5px;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
+              <b><span style="color: #666666;padding-left:5px;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
+            </div>
           </div>
         </div>
-        <div class="ant-btn-group" style="float: right">
+      </div>
+
+      <div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">库存台账</b></div>
+        <div><span style="font-size: 14px;font-weight: bold;"><span style="  font-weight: bold;color: #666666;">日期：</span>{{ pageParameter.dateStart }} - {{ pageParameter.dateEnd }}</span></div>
+      </div>
+      <div>
+        <div>
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -41,29 +46,27 @@
             @click="closeCurrent()"
           ><span>退出</span></button>
         </div>
-      </div>
+        <div>
 
-      <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;">
-        <div style="display: inline-block;float: left;margin-left: 1%;margin-top: -30px;">
-          <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="display: inline-block;float: left;margin-left: 32px;">
-          <b><span style="color: #666666;">存货：</span>{{pageParameter.chname}}</b>
-          &emsp;&emsp;&emsp;&emsp;
-          <b><span style="color: #666666;">规则型号：</span>{{pageParameter.stockGgxh}}</b>
-          <br>
-          <span></span>
-          <span>
-             <b><span style="color: #666666;">主计量：</span>{{pageParameter.stockUnitName}}</b>
-            &emsp;&emsp;&emsp;&emsp;
-            <b><span style="color: #666666;">仓库：</span>{{pageParameter.ckname}}</b>
-          </span>
+          <div style="margin-top: 8px;margin-right: 20px;">
 
-        </div>
+            <b><span style="color: #666666;"> 仓库：</span>{{pageParameter.ckname}}</b>
+          </div>
+          <div>
+            <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;text-align: left;border-radius: 4px" class="special_select">
+              <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
+              <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
+            </Select>
+            <!-- 搜索 -->
+            <InputSearch
+              placeholder=""
+              style="width: 150px; border-radius: 4px"
+              @search="onSearch"
+            />
+          </div>
 
-        <div style="float: right; margin-left: 10px">
           <Button class="ant-btn-me">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -72,6 +75,7 @@
               <a-popconfirm
                 ok-text="确定"
                 cancel-text="放弃"
+                placement="leftTop"
                 @confirm="confirm"
                 @cancel="cancel">
                 <template #icon><b>栏目设置</b><br></template>
@@ -157,37 +161,12 @@
               <PicLeftOutlined :style="{ fontSize: '14px' }"/>
             </Button>
           </Popover>
-<!--          <Button>
-            <UsbOutlined :style="{ fontSize: '14px' }"/>
-          </Button>
-          <Button class="ant-btn-me">
-            <PrinterOutlined :style="{ fontSize: '14px' }"/>
-          </Button>-->
-        </div>
-        <div style="float: right; position: relative">
-          <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
-            <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
-            <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
-            <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
-            <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
-          </Select>
-          <!-- 搜索 -->
-          <InputSearch
-            placeholder=""
-            style="width: 200px; border-radius: 4px"
-            @search="onSearch"
-          />
         </div>
       </div>
-
-      <div style="clear:both"/>
-
     </div>
     <div class="app-container">
-<!--      :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"-->
       <BasicTable
         ref="tableRef"
-        style=""
         :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
         @register="registerTable"
         :dataSource="tableData"
@@ -224,17 +203,18 @@
         <template #price2="{ record }"><span>{{toThousandFilter(record.price2)}}</span></template>
         <template #icost2="{ record }"><span>{{toThousandFilter(record.icost2)}}</span></template>
 
-        <template #summary>
+<!--        <template #summary>
           <TableSummary fixed>
             <TableSummaryRow v-if="pageParameter.queryMark == 'SJ'">
               <TableSummaryCell class="nc-summary" :index="0" :align="'center'"></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
+
               <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="6" ></TableSummaryCell>
 
+              <TableSummaryCell class="nc-summary" :index="6" ></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="7" :align="'right'">{{summaryModel.bq}}</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="8" ></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="9" :align="'right'" >{{summaryModel.icost}}</TableSummaryCell>
@@ -252,11 +232,22 @@
               <TableSummaryCell class="nc-summary" :index="1" :align="'center'"></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="2" :align="'center'">合计</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="3" ></TableSummaryCell>
+
               <TableSummaryCell class="nc-summary" :index="4" ></TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="5" ></TableSummaryCell>
+
               <TableSummaryCell class="nc-summary" :index="6" :align="'right'">{{summaryModel.bq}}</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="7" :align="'right'">{{summaryModel.bq1}}</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="8" :align="'right'">{{summaryModel.bq2}}</TableSummaryCell>
+            </TableSummaryRow>
+          </TableSummary>
+        </template>-->
+
+        <template #summary>
+          <TableSummary fixed>
+            <TableSummaryRow style="background-color: #cccccc;">
+              <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;"></TableSummaryCell>
+              <TableSummaryCell class="nc-summary" style="border-right: none;" v-for="cell in getCurrSummary()" :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryModel[cell.dataIndex]?'':summaryModel[cell.dataIndex]}}</span></TableSummaryCell>
             </TableSummaryRow>
           </TableSummary>
         </template>
@@ -286,12 +277,11 @@ import {
   PicLeftOutlined,
   EditFilled,
   PieChartFilled,
-  FilterFilled,
   SortDescendingOutlined,
   CheckOutlined,
   SortAscendingOutlined,
   UsbOutlined,
-  PrinterOutlined,
+  ProfileOutlined,
   EditOutlined,
   BarChartOutlined,
   SearchOutlined
@@ -306,7 +296,7 @@ import {
   Checkbox as ACheckbox,
   Radio as ARadio,
   Table as ATable,
-  Popconfirm as APopconfirm,
+  Popconfirm as APopconfirm, Table,
 } from 'ant-design-vue'
 import {useMessage} from "/@/hooks/web/useMessage";
 import {getCurrentAccountName, getThisIndexImg, hasBlank} from "/@/api/task-api/tast-bus-api";
@@ -336,10 +326,9 @@ const InputSearch = Input.Search
 const SelectOption = Select.Option
 const ARadioButton = ARadio.Button
 const ARadioGroup = ARadio.Group
-const TableSummary = ATable.Summary
-const TableSummaryRow = TableSummary.Row
-const TableSummaryCell = TableSummary.Cell
-
+const TableSummary = Table.Summary
+const TableSummaryRow = Table.Summary.Row
+const TableSummaryCell = Table.Summary.Cell
 const {
   createSuccessModal,
   createErrorModal,
@@ -450,9 +439,12 @@ const sumBq2 = ref('0.00')
 const sumIm2 = ref('0.00')
 async function reloadTable(){
   loadMark.value = true
+  resetDynamicColumnData()
   showPaginationText.value = false
   tableData.value = []
   let a =  await useRouteApi(findList,{schemaName: databaseCode})(pageParameter)
+  calculateTotal(a.list)
+  getCurrSummary()
   sumBq.value = a.sumBq
   sumIm.value = a.sumIm
   sumBq1.value =a.sumBq1
@@ -460,8 +452,8 @@ async function reloadTable(){
   sumBq2.value =a.sumBq2
   sumIm2.value =a.sumIm2
   paginationNumber.value = a.size
-  if(a.size < 25){
-    let s = 25-a.size
+  if(a.size < 50){
+    let s = 50-a.size
     for (let i = 0; i < s; i++) {
       a.list.push({
         bcheck:'5',
@@ -477,8 +469,7 @@ async function reloadTable(){
     total: tableData.value.length
   })
   loadMark.value = false
-  handleSummary(tableDataAll.value)
-  //calculateTotal('one')
+  //handleSummary(tableDataAll.value)
   showPaginationText.value = true
 }
 
@@ -537,7 +528,6 @@ const [registerTable, {
   getColumns,
   setColumns
 }] = useTable({
-  // api: CrudApi.list,
   columns: CrudApi.columns,
   bordered: true,
   showIndexColumn: true,
@@ -645,12 +635,10 @@ const onSelectChange = (selectedRowKeys,row) => {
 };
 
 function onSearch() {
+
 }
 
 const defaultPage = ref(false)
-onMounted(async() => {
-  resetDynamicColumnData()
-})
 
 import {
   defaultV,
@@ -982,7 +970,7 @@ import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 /*start栏目设置*/
 const visible = ref(false);
 const windowWidth = (window.innerWidth)
-const windowHeight = (window.innerHeight - (320))
+const windowHeight = (window.innerHeight - (340) )
 const totalColumnWidth = ref(0)
 const dynamicColumns = initDynamics().DEFAULT
 const dynamicColumnData: any = ref([])
@@ -1235,14 +1223,25 @@ function toThousandFilter(num: any) {
   return (+num || 0).toFixed(filterlength.value).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')
 }
 /*** 合计 ***/
+const summaryTotals = ref({})
+
 const summaryModel = ref({})
-const getCurrSummary  = (t) => {
-  return ((t=='one'?getColumns():getColumns()).filter(it=>it.title != '序号' && it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
+const getCurrSummary  = () => {
+  let arr = []
+  getColumns().filter(it=> it.title != '序号' && it.ifShow)
+    .map((it)=>{
+      //存在children 循环添加
+      if(it.children){
+        it.children.forEach(v=> arr.push(v))
+      }else{
+        arr.push(it)
+      }
+    })
+  return arr
 }
 
-
-const calculateTotal = (t) => {
-  let list = tableDataAll.value
+const calculateTotal = (data) => {
+  let list = JsonTool.parseProxy(data)
   if (list.length == 0){
     summaryModel.value = {}
     return false;
@@ -1263,63 +1262,65 @@ const calculateTotal = (t) => {
     icost2+=parseFloat(e['icost2'] || 0)
   }
   summaryModel.value={
-    bq: bq,
-    icost: icost,
-    bq1: bq1,
-    icost1: icost1,
-    bq2: bq2,
-    icost2: icost2,
+    ddate:'合计',
+    bq: toThousandFilter(bq),
+    icost: toThousandFilter(icost),
+    bq1: toThousandFilter(bq1),
+    icost1: toThousandFilter(icost1),
+    bq2: toThousandFilter(bq2),
+    icost2: toThousandFilter(icost2),
   }
-  console.log(summaryModel.value)
 }
 /*** 合计 ***/
 </script>
 <style scoped lang="less">
-@import '/@/assets/styles/global-menu-index.less';
+@import "./global-menu-index.less";
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
   box-shadow: rgb(72 113 140) -3px 1px 7px -1px;
+}
+.ant-btn-me {
+  color: #0096c7;
 }
 
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
   font-size: 14px !important;
   padding: 5px 8px !important;
-  border-color: #cccccc !important;
+  border-color: #aaaaaa !important;
+  height: 30px;
+  font-weight: unset;
+  color: black;
 }
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
   font-size: 12px !important;
   padding: 2px 8px !important;
-  border-color: #cccccc !important;
+  border-color: #aaaaaa !important;
+  height: 27px;
+  font-weight: unset;
+  color: black;
 }
-:deep(.nc-summary){
-  font-weight: bold;
-  background-color: #cccccc!important;;
-  border-right-color: #cccccc!important;
-}
-:deep(.ant-table-measure-row){
-  td{
-    padding: 0 !important;
-  }
-}
+
+
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
   padding: 10px 5px;
-  margin: 10px 10px 5px;
+  margin: 10px 10px 3px;
 }
 
 .app-container:nth-of-type(2) {
   padding: 0px;
-  margin: 5px 10px;
+  margin: 0px 10px;
   background: #b4c8e3 !important;
+  margin-top: -6px;
   position: relative;
   .pagination-text{
     position: absolute;
     bottom: 6px;
-    right: 10%;
+    right: 20%;
     font-size: 13px;
     color: black;
     z-index: 99999999;
@@ -1329,7 +1330,6 @@ const calculateTotal = (t) => {
 :deep(.ant-table-thead) th{
   text-align: center !important;
   font-weight: bold;
-  //background-color: #f2f2f2 !important;
   background-color: #cccccc !important;
   border-color: #aaaaaa !important;
 }
@@ -1351,53 +1351,56 @@ const calculateTotal = (t) => {
   padding-right: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
-  margin-top: 0!important;
+  margin: 0!important;
   width: 100%;
-  border-top: 1px solid #aaaaaa;
 }
 
 :deep(.vben-basic-table){
   min-height: 500px;
   height: calc(100% - 160px);
   margin-bottom: 20px;
+  width: 100%!important;
 }
 
-:deep(.ant-input),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
+
 .lcr-theme-div{
+  border-radius: 5px 5px 0 0;
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
     position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    >div:nth-of-type(1){width: 64px;display: inline-block;
+      position: absolute;
+      top: 12px;
+      left: 15px;
     }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
+      position: absolute;
+      top: 10px;
+      left: 75px;
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;padding-top:8px;
+    >div:nth-of-type(2){margin-top: 1px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-    >div:nth-of-type(1){
-      .ant-btn-me {
-        color: #0096c7;
-      }
-    }
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
+
     }
     .acttd-right-d-search {
       .acttdrd-search-select {
         width: 120px;
 
         :deep(.ant-select-selector) {
-          border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;
+          height: 30px;
         }
       }
 
@@ -1416,4 +1419,24 @@ const calculateTotal = (t) => {
     }
   }
 }
+.tableUStyle {
+  color: #0798c8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tableUStyle:hover {
+  color: #b4c8e3;
+}
+:deep(.ant-table-measure-row){
+  td{
+    padding: 0 !important;
+  }
+}
+:deep(.nc-summary){
+  font-weight: bold;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
+}
 </style>
+

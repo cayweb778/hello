@@ -122,6 +122,7 @@ export const chtzStore = defineStore({
         dataIndex: 'bcheck',
         key: '0',
         ellipsis: true,
+        fixed: 'left',
         slots: { customRender: 'bcheck' },
       },
       {

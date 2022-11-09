@@ -1,22 +1,27 @@
 <template>
-  <div class="app-container">
-    <div class="app-container-top">
-
-      <div class="app-container-head">
-        <div class="container-head-title" style="float: left;">
-          <b class="noneSpan" style="font-size: 60px;"><BarChartOutlined /></b>
+  <div>
+    <div class="app-container lcr-theme-div">
+      <div>
+        <div style="margin-top: 10px;">
+          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
         </div>
-        <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
-          <b class="noneSpan" style="font-size: 26px;">库存批次台账</b>
-
-          <div style="font-size: 14px;text-align: center;margin-top: 30px;">
-            <span style="font-size: 14px;font-weight: bold;">
-              期间：{{ pageParameter.dateStart }} - {{ pageParameter.dateEnd }}
-
-            </span>
+        <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
+          <div>
+            <div style="margin-top: 1px;margin-left: 10px;">
+              <b><span style="color: #666666;">存货：</span>{{pageParameter.chname}}</b>
+              <b><span style="color: #666666;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
+              <b><span style="color: #666666;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
+              <b><span style="color: #666666;"> 仓库：</span>{{pageParameter.ckname}}</b>
+            </div>
           </div>
         </div>
-        <div class="ant-btn-group" style="float: right">
+      </div>
+      <div>
+        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">批次库存台账</b></div>
+        <div><span style="font-size: 14px;font-weight: bold;"><span style="  font-weight: bold;color: #666666;">日期：</span>{{ pageParameter.dateStart }} - {{ pageParameter.dateEnd }}</span></div>
+      </div>
+      <div>
+        <div>
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -41,25 +46,22 @@
             @click="closeCurrent()"
           ><span>退出</span></button>
         </div>
-      </div>
+        <div>
+          <div>
+            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+              <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
+              <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
+              <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
+              <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
+            </Select>
+            <!-- 搜索 -->
+            <InputSearch
+              placeholder=""
+              style="width: 200px; border-radius: 4px"
+              @search="onSearch"
+            />
+          </div>
 
-      <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;">
-        <div style="display: inline-block;float: left;margin-left: 1%;margin-top: -30px;">
-          <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
-        </div>
-        <div style="clear: both;"></div>
-        <div style="display: inline-block;float: left;margin-left: 32px;">
-          <b><span style="color: #666666;">存货：</span>{{pageParameter.chname}}</b>
-          &emsp;&emsp;&emsp;&emsp;
-          <b><span style="color: #666666;">规则型号：</span>{{pageParameter.stockGgxh}}</b>
-          <br>
-          <b><span style="color: #666666;">主计量：</span>{{pageParameter.stockUnitName}}</b>
-          &emsp;&emsp;&emsp;&emsp;
-          <b><span style="color: #666666;">仓库：</span>{{pageParameter.ckname}}</b>
-        </div>
-
-        <div style="float: right; margin-left: 10px">
           <Button class="ant-btn-me">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -153,31 +155,8 @@
               <PicLeftOutlined :style="{ fontSize: '14px' }"/>
             </Button>
           </Popover>
-          <!--          <Button>
-                      <UsbOutlined :style="{ fontSize: '14px' }"/>
-                    </Button>
-                    <Button class="ant-btn-me">
-                      <PrinterOutlined :style="{ fontSize: '14px' }"/>
-                    </Button>-->
-        </div>
-        <div style="float: right; position: relative">
-          <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
-            <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
-            <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
-            <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
-            <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
-          </Select>
-          <!-- 搜索 -->
-          <InputSearch
-            placeholder=""
-            style="width: 200px; border-radius: 4px"
-            @search="onSearch"
-          />
         </div>
       </div>
-
-      <div style="clear:both"/>
-
     </div>
     <div class="app-container">
       <!--      :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"-->
@@ -976,7 +955,7 @@ import {cloneDeep} from "lodash-es";
 /*start栏目设置*/
 const visible = ref(false);
 const windowWidth = (window.innerWidth)
-const windowHeight = (window.innerHeight - (320))
+const windowHeight = (window.innerHeight - (340))
 const totalColumnWidth = ref(0)
 const dynamicColumns = initDynamics().DEFAULT
 const dynamicColumnData: any = ref([])
@@ -1235,36 +1214,37 @@ const getCurrSummary  = (t) => {
 /*** 合计 ***/
 </script>
 <style scoped lang="less">
-@import '/@/assets/styles/global-menu-index.less';
+@import "./global-menu-index.less";
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
   box-shadow: rgb(72 113 140) -3px 1px 7px -1px;
+}
+.ant-btn-me {
+  color: #0096c7;
 }
 
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
   font-size: 14px !important;
   padding: 5px 8px !important;
-  border-color: #cccccc !important;
+  border-color: #aaaaaa !important;
+  height: 30px;
+  font-weight: unset;
+  color: black;
 }
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
   font-size: 12px !important;
   padding: 2px 8px !important;
-  border-color: #cccccc !important;
+  border-color: #aaaaaa !important;
+  height: 27px;
+  font-weight: unset;
+  color: black;
 }
-:deep(.nc-summary){
-  font-weight: bold;
-  background-color: #cccccc!important;;
-  border-right-color: #cccccc!important;
-}
-:deep(.ant-table-measure-row){
-  td{
-    padding: 0 !important;
-  }
-}
+
+
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
   padding: 10px 5px;
@@ -1273,13 +1253,14 @@ const getCurrSummary  = (t) => {
 
 .app-container:nth-of-type(2) {
   padding: 0px;
-  margin: 5px 10px;
+  margin: 0px 10px;
   background: #b4c8e3 !important;
+  margin-top: -6px;
   position: relative;
   .pagination-text{
     position: absolute;
     bottom: 6px;
-    right: 10%;
+    right: 20%;
     font-size: 13px;
     color: black;
     z-index: 99999999;
@@ -1289,7 +1270,6 @@ const getCurrSummary  = (t) => {
 :deep(.ant-table-thead) th{
   text-align: center !important;
   font-weight: bold;
-  //background-color: #f2f2f2 !important;
   background-color: #cccccc !important;
   border-color: #aaaaaa !important;
 }
@@ -1311,30 +1291,37 @@ const getCurrSummary  = (t) => {
   padding-right: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
-  margin-top: 0!important;
+  margin: 0!important;
   width: 100%;
-  border-top: 1px solid #aaaaaa;
 }
 
 :deep(.vben-basic-table){
   min-height: 500px;
   height: calc(100% - 160px);
   margin-bottom: 20px;
+  width: 100%!important;
 }
 
-:deep(.ant-input),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
+
 .lcr-theme-div{
+  border-radius: 5px 5px 0 0;
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
     position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    >div:nth-of-type(1){width: 64px;display: inline-block;
+      position: absolute;
+      top: 15px;
+      left: 15px;
     }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
+      position: absolute;
+      top: 25px;
+      left: 75px;
     }
   }
   >div:nth-of-type(2){
@@ -1343,21 +1330,17 @@ const getCurrSummary  = (t) => {
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-    >div:nth-of-type(1){
-      .ant-btn-me {
-        color: #0096c7;
-      }
-    }
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
+
     }
     .acttd-right-d-search {
       .acttdrd-search-select {
         width: 120px;
 
         :deep(.ant-select-selector) {
-          border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;
+          height: 30px;
         }
       }
 
@@ -1375,6 +1358,25 @@ const getCurrSummary  = (t) => {
       }
     }
   }
+}
+.tableUStyle {
+  color: #0798c8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tableUStyle:hover {
+  color: #b4c8e3;
+}
+:deep(.ant-table-measure-row){
+  td{
+    padding: 0 !important;
+  }
+}
+:deep(.nc-summary){
+  font-weight: bold;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
 }
 </style>
 

@@ -4,15 +4,12 @@
     :height="300"
     class="spaceLogo"
     v-bind="$attrs"
-    title="入库单查询"
     :scroll="false"
     @ok="handleOk()"
     @cancel="handleClose()"
     :canFullscreen="false"
     :footer="null"
-    @visible-change="openOrClose"
     @register="register"
-    :loading="modelLoadIng"
     loadingTip="查询参数初始化中"
   >
     <template #title>
@@ -36,9 +33,9 @@
             </div>
             <div class="border-div">
               <span>查询条件</span>
-              <div style="margin-left: 72px;">
+              <div style="margin-left: 52px;">
                 <ul>
-                  <li style="margin: 2% 0px;">
+                  <li style="margin: 1% 0px;">
                     <label style="text-align: left"><font style="color: red">*</font>核算期间：</label>
                     <a-select
                       :allowClear="true"
@@ -146,7 +143,7 @@ const companyOperateStore = useCompanyOperateStoreWidthOut()
 const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   // 方式2
   changeBeforeModel = JSON.parse(JSON.stringify(formItems.value))
-  setModalProps({minHeight: 400});
+  setModalProps({minHeight: 300});
 
 })
 
@@ -159,7 +156,6 @@ async function reLifeKmList(dynamicTenant, sameYear) {
 }
 
 async function reLifeEtcList(dynamicTenant) {
-
 
 }
 
@@ -241,7 +237,6 @@ const dynamicAdReload = async (obj) =>{
 }
 </script>
 <style lang="less" scoped>
-
 :deep(.ant-checkbox){
   margin-top: -8px;
 }
@@ -251,7 +246,7 @@ const dynamicAdReload = async (obj) =>{
   background-position: 66% 8%;
   background-size: contain;
   position: relative;
-  :deep(.ant-select-selector), :deep(.ant-input-affix-wrapper) {
+  :deep(.ant-select-selector),:deep(.ant-input),:deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
     border: none !important;
     border-bottom: 1px solid #bdb9b9 !important;
     background: none;
@@ -264,7 +259,6 @@ const dynamicAdReload = async (obj) =>{
 
     > span {
       display: block;
-      width: 80px;
       text-align: center;
       background-color: white;
       position: absolute;
@@ -274,19 +268,31 @@ const dynamicAdReload = async (obj) =>{
       font-size: 12px;
       font-weight: bold;
     }
+    :deep(.account-picker){
+      >div{
+        text-align: left;
+      }
+    }
+  }
+
+}
+
+.right-btns{
+  width: 150px;background-color: #f1f1f1;padding: 10% 4%;height: 475px;
+  :deep(.ant-btn-primary:hover){
+    border: 1px solid #5f375c;
   }
 }
 :global(.ant-modal-header) {
   padding: 10px 0 !important;
 }
-:global(.ant-modal-content) {
-  height: 300px;
-  scroll: no;
-}
-
 :global(.ant-modal-close-x){
   height: 30px !important;
   color: white;
+}
+
+:deep(.ant-radio-button-wrapper){
+  color: #0096c7;
 }
 
 </style>

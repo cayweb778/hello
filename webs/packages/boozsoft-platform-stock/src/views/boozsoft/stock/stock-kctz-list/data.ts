@@ -137,7 +137,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },*/
     {
-      key: '9',
+      key: '6',
       name: '收入',
       nameNew: '收入',
       check: true,
@@ -147,11 +147,11 @@ const dynamicColumnAndDataModel = reactive({
       isFixed: true,
       children: [
         {
-          key: '9-1',
+          key: '6-1',
           name: '主数量',
           nameNew: '主数量',
           check: true,
-          width: 150,
+          width: 120,
           max: 200,
           min: 100,
           isFixed: true,
@@ -160,7 +160,7 @@ const dynamicColumnAndDataModel = reactive({
       ]
     },
     {
-      key: '10',
+      key: '7',
       name: '发出',
       nameNew: '发出',
       check: true,
@@ -170,11 +170,11 @@ const dynamicColumnAndDataModel = reactive({
       isFixed: true,
       children: [
         {
-          key: '10-1',
+          key: '7-1',
           name: '数量(主单位)',
           nameNew: '数量(主单位)',
           check: true,
-          width: 150,
+          width: 120,
           max: 200,
           min: 100,
           isFixed: true,
@@ -183,7 +183,7 @@ const dynamicColumnAndDataModel = reactive({
       ]
     },
     {
-      key: '11',
+      key: '8',
       name: '结存',
       nameNew: '结存',
       check: true,
@@ -193,11 +193,11 @@ const dynamicColumnAndDataModel = reactive({
       isFixed: true,
       children: [
         {
-          key: '11-1',
+          key: '8-1',
           name: '数量(主单位)',
           nameNew: '数量(主单位)',
           check: true,
-          width: 150,
+          width: 120,
           max: 200,
           min: 100,
           isFixed: true,
@@ -212,9 +212,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据状态',
       nameNew: '单据状态',
       check: true,
-      width: 80,
-      max: 120,
-      min: 80,
+      width: 60,
+      max: 100,
+      min: 60,
       isFixed: true,
       align: 'center'
     },
@@ -223,8 +223,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,
-      width: 100,
-      max: 150,
+      width: 80,
+      max: 120,
       min: 80,
       isFixed: true,
       align: 'center'
@@ -234,19 +234,19 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据类型',
       nameNew: '单据类型',
       check: true,
-      width: 150,
-      max: 200,
+      width: 80,
+      max: 120,
       min: 80,
       isFixed: true,
-      align: 'left'
+      align: 'center'
     },
     {
       key: '3',
       name: '单据编号',
       nameNew: '单据编号',
       check: true,
-      width: 150,
-      max: 200,
+      width: 80,
+      max: 120,
       min: 80,
       isFixed: true,
       align: 'left'
@@ -302,7 +302,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },*/
     {
-      key: '9',
+      key: '6',
       name: '收入',
       nameNew: '收入',
       check: true,
@@ -312,87 +312,87 @@ const dynamicColumnAndDataModel = reactive({
       isFixed: true,
       children: [
         {
-          key: '9-1',
+          key: '6-1',
           name: '主数量',
           nameNew: '主数量',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           isFixed: true,
           align: 'right'
         },
         {
-          key: '9-2',
+          key: '6-2',
           name: '单价',
           nameNew: '单价',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           isFixed: true,
           align: 'right'
         },
         {
-          key: '9-3',
+          key: '6-3',
           name: '金额',
           nameNew: '金额',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
           isFixed: true,
+          width: 80,
+          max: 150,
+          min: 80,
           align: 'right'
         },
       ]
     },
     {
-      key: '10',
+      key: '7',
       name: '发出',
       nameNew: '发出',
       check: true,
-      width: 550,
+      width: 450,
       max: 600,
       min: 100,
       isFixed: true,
       children: [
         {
-          key: '10-1',
+          key: '7-1',
           name: '主数量',
           nameNew: '主数量',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           isFixed: true,
           align: 'right'
         },
         {
-          key: '10-2',
+          key: '7-2',
           name: '单价',
           nameNew: '单价',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           isFixed: true,
           align: 'right'
         },
         {
-          key: '10-3',
+          key: '7-3',
           name: '金额',
           nameNew: '金额',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
           isFixed: true,
+          width: 80,
+          max: 150,
+          min: 80,
           align: 'right'
         },
       ]
     },
     {
-      key: '11',
+      key: '8',
       name: '结存',
       nameNew: '结存',
       check: true,
@@ -402,36 +402,36 @@ const dynamicColumnAndDataModel = reactive({
       isFixed: true,
       children: [
         {
-          key: '11-1',
+          key: '8-1',
           name: '主数量',
           nameNew: '主数量',
           check: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           isFixed: true,
           align: 'right'
         },
         {
-          key: '11-2',
+          key: '8-2',
           name: '平均单价',
           nameNew: '平均单价',
           check: true,
           isFixed: true,
-          width: 150,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           align: 'right'
         },
         {
-          key: '11-3',
+          key: '8-3',
           name: '金额',
           nameNew: '金额',
           check: true,
-          width: 150,
           isFixed: true,
-          max: 200,
-          min: 100,
+          width: 80,
+          max: 150,
+          min: 80,
           align: 'right'
         },
       ]
