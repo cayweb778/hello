@@ -74,7 +74,7 @@
         <a-select v-model:value="formItems.arStyle" @change="generateCode()" style="width: 30%">
           <template #suffixIcon><CaretDownOutlined v-if="isState!='2'" style="color:#666666;" /></template>
           <a-select-option v-if="formItems.busStyle=='YSD'" value="YSD">应收单</a-select-option>
-          <a-select-option v-if="formItems.busStyle=='YSD'" value="XHD">销货单</a-select-option>
+<!--          <a-select-option v-if="formItems.busStyle=='YSD'" value="XHD">销货单</a-select-option>-->
 <!--          <a-select-option v-if="formItems.busStyle=='YSD'" value="XSFP">销售发票</a-select-option>-->
           <a-select-option v-if="formItems.busStyle=='SKD'" value="PTSK">普通收款</a-select-option>
           <a-select-option v-if="formItems.busStyle=='SKD'" value="YSK">预收款</a-select-option>

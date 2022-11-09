@@ -39,7 +39,7 @@
             <template #content>
               <span class="group-btn-span-special2 p_specifics" @click="openEdit('YSD')">应收单</span><br/>
               <span class="group-btn-span-special2 p_specifics" @click="openEdit('SKD')">收款单</span><br/>
-              <span class="group-btn-span-special2 p_specifics" >销售发票</span><br/>
+<!--              <span class="group-btn-span-special2 p_specifics" >销售发票</span><br/>-->
             </template>
           </Popover>
           <button

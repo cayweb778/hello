@@ -36,18 +36,18 @@ public interface StockSaleousingRepository extends ReactiveCrudRepository<StockS
     Mono<Void> deleteByCcodeAndBillType(String ccode, String billStyle);
 
     @Query("select * from stock_saleousing where iyear=:iyear and bcheck = '1' and (bcloser !='1' or bcloser is null) " +
-            "and (bill_style='XHD' or bill_style='YSD') order by ccode ")
+            "and (bill_style='XHD' or bill_style='QCXHD' or bill_style='YSD') order by ccode ")
     Flux<StockSaleousing> findByXhd(String iyear);
 
     @Query("select * from stock_saleousing where iyear=:iyear and bcheck = '1' " +
             "and (bcloser !='1' or bcloser is null) and (hx_flag !='1' or hx_flag is null) " +
-            "and (bill_style='XHD' or bill_style='YSD' or bill_style='XSFP') " +
+            "and (bill_style='XHD' or bill_style='QCXHD' or bill_style='YSD' or bill_style='XSFP' or bill_style='QCXSFP') " +
             "and cvencode_js=:cvencode order by ccode ")
     Flux<StockSaleousing> findBySkWhxXhd(@Param("iyear") String iyear, @Param("cvencode") String cvencode);
 
     @Query("select * from stock_saleousing where iyear=:iyear and bcheck = '1' " +
             "and (bcloser !='1' or bcloser is null) and (hx_flag !='1' or hx_flag is null) " +
-            "and (bill_style='XHD' or bill_style='YSD' or bill_style='XSFP') " +
+            "and (bill_style='XHD' or bill_style='QCXHD' or bill_style='YSD' or bill_style='XSFP' or bill_style='QCXSFP') " +
             "and ddate<=:endDate order by ccode ")
     Flux<StockSaleousing> findWhxskdByEndDate(@Param("iyear") String iyear, @Param("endDate") String endDate);
 
