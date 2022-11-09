@@ -4587,27 +4587,26 @@ public class AccvoucherController {
                         Accvoucher master = null;
                         switch (action) {
                             case "curr":
-                                master = list.get((list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId));
+                                master = list.get((list.stream().map(e -> e.getUniqueCode()).distinct().collect(Collectors.toList())).indexOf(Integer.parseInt(currPdId)));
                                 break;
                             case "tail":
                                 master = list.get(list.size() - 1);
                                 break;
                             case "prev":
-                                if (StrUtil.isBlank(currPdId)) {
-                                    master = list.get(0);
-                                } else {
-                                    int index = (list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId);
-                                    index = index == 0 ? 0 : index - 1;
-                                    master = list.get(index);
-                                }
-                                break;
                             case "next":
                                 if (StrUtil.isBlank(currPdId)) {
-                                    master = list.get(0);
+                                    master = action.equals("prev")?list.get(0):list.get(list.size() - 1);
                                 } else {
-                                    int index = (list.stream().map(e -> e.getInoId()).distinct().collect(Collectors.toList())).indexOf(currPdId);
-                                    index = index >= list.size() - 1 ? list.size() - 1 : index + 1;
-                                    master = list.get(index);
+                                    List<Accvoucher> collect = list.stream().filter(it -> it.getUniqueCode().equals(currPdId)).collect(Collectors.toList());
+                                    List<String> inods = new ArrayList<>();
+                                    for (Accvoucher accvoucher : list) {
+                                        if (inods.contains(accvoucher.getInoId()+"=="+accvoucher.getUniqueCode())) continue;
+                                        inods.add(accvoucher.getInoId()+"=="+accvoucher.getUniqueCode());
+                                    }
+                                    int index = collect.size() ==0 ?0:inods.indexOf(collect.get(0).getInoId()+"=="+collect.get(0).getUniqueCode());
+                                    index = action.equals("prev")?(index == 0 ? 0 : index - 1):(index >= list.size() - 1 ? list.size() - 1 : index + 1);
+                                    int finalIndex = index;
+                                    master = list.stream().filter(it->(it.getInoId()+"=="+it.getUniqueCode()).equals(inods.get(finalIndex))).collect(Collectors.toList()).get(0);
                                 }
                                 break;
                             default:

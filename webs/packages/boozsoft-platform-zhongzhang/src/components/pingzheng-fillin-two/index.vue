@@ -111,13 +111,17 @@
              <div><span class="title-span">制单日期：</span><DatePicker  v-model:value="saveModel['dbillDate']" value-format="YYYY-MM-DD"/></div>
              <div><span class="title-span">本币：</span><span style="font-weight: bold;">人民币</span></div>
              <div>
-               <ControlOutlined />
-               <DollarCircleOutlined />
-               <CalculatorOutlined />
-               <FlagOutlined />
-               <FundViewOutlined />
-               <HddOutlined />
-               <ExpandOutlined />
+               <AppstoreOutlined title="找平" @click="toolEventWatch('zp')"/>
+               <CalculatorOutlined title="重算" @click="toolEventWatch('cs')"/>
+               <PayCircleOutlined  title="余额" @click="toolEventWatch('ye')"/>
+               <TransactionOutlined title="借贷转换" @click="toolEventWatch('jd')"/>
+               <FileAddOutlined  title="正负转换" @click="toolEventWatch('zf')"/>
+<!--               <ControlOutlined />-->
+<!--               <DollarCircleOutlined />-->
+<!--               <FlagOutlined />-->
+<!--               <FundViewOutlined />-->
+<!--               <HddOutlined />-->
+<!--               <ExpandOutlined />-->
              </div>
         </div>
       </div>
@@ -153,7 +157,7 @@
                />
             </template>
             <template v-else>
-              <div @click="record.tempCdigest=record.cdigest,record.editCdigest = true;" style="text-align: left;"
+              <div @click="record.tempCdigest=record.cdigest,record.editCdigest = true,clearFocus(record,'cdigest')" style="text-align: left;"
                    :class="status == 1 || status == 2?'suspended-div':'status-look'">
                 <span>{{ record.cdigest }}</span>
               </div>
@@ -176,7 +180,7 @@
               ></Select>
             </template>
             <template v-else>
-              <div @click="record.tempCcode=record.ccode,record.editCcode = true;"  style="text-align: left;"
+              <div @click="record.tempCcode=record.ccode,record.editCcode = true,clearFocus(record,'ccode')"  style="text-align: left;"
                    :class="status == 1 || status == 2?'suspended-div':'status-look'">
                 <span>{{formatText(record.ccode,'code')}}</span>
               </div>
@@ -196,7 +200,7 @@
                 @click="openAssist(record)"/>
             </template>
             <template v-else>
-              <div @click="record.tempColum3=record.colum3,record.editColum3 = true;"  style="text-align: left;"
+              <div @click="record.tempColum3=record.colum3,record.editColum3 = true,clearFocus(record,'colum3')"  style="text-align: left;"
                    :class="status == 1 || status == 2?'suspended-div':'status-look'">
                 <span v-if="record.isFu && hasBlank(record?.fuzhuStr)" style="color: #e88f09;">待录入!</span>
                 <span v-else>{{record?.fuzhuStr}}</span>
@@ -210,7 +214,7 @@
 
           <template #colum501="{ record }">
             <template v-if="record.editColum5">
-              <InputNumber  class="colum5" :step="0.01"  v-model:value="record.tempColum5" :controls="true"  @keyup="(e)=>amountWatch(e,record,'colum5')"/>
+              <InputNumber  class="colum5" :precision="0" :controls="false" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum5"   @keyup="(e)=>amountWatch(e,record,'colum5')"/>
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -222,7 +226,8 @@
 
           <template #colum601="{ record }">
             <template v-if="record.editColum6">
-              <InputNumber  class="colum6" :step="0.01" :min="-9999999999999.99" :max="9999999999999.99" :controls="true" v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
+<!--            :step="0.01"  -->
+              <InputNumber  class="colum6"  :precision="0" :controls="false" :min="-9999999999999.99" :max="9999999999999.99"  v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -275,7 +280,7 @@ import {
   SyncOutlined,
   VerticalLeftOutlined,
   VerticalRightOutlined,CopyOutlined,
-  ControlOutlined,DollarCircleOutlined,CalculatorOutlined,ExpandOutlined,FundViewOutlined,HddOutlined,FlagOutlined
+  ControlOutlined,DollarCircleOutlined,AppstoreOutlined,CalculatorOutlined,PayCircleOutlined,TransactionOutlined,FileAddOutlined,ExpandOutlined,FundViewOutlined,HddOutlined,FlagOutlined,
 } from '@ant-design/icons-vue';
 import {BasicTable, useTable} from '/@/components/Table'
 import {SearchOutlined} from '@ant-design/icons-vue';
@@ -303,6 +308,7 @@ import {
   StrTool
 } from "/@/api/task-api/tools/universal-tools";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
+import {buildUUID} from "/@/utils/uuid";
 /*********** 业务块 *************/
 /**************** 引用块 *****************/
 
@@ -412,7 +418,7 @@ const isSave = ref(true)
 /**************** 方法块 *****************/
 /************* 实例方法块 **************/
 // 这是示例组件
-const [registerTable, {reload, getDataSource, setTableData, setPagination, getPaginationRef, getColumns, setColumns}] = useTable({
+const [registerTable, {reload, getDataSource, setTableData, setPagination, getPaginationRef, getColumns, setColumns,updateTableDataRecord}] = useTable({
   columns: testColums,
   dataSource: [],
   bordered: true,
@@ -486,8 +492,6 @@ const pageEventWatch = async(action) => {
       break;
     case 'save':
       await dbInteraction('save')
-      status.value = 3
-      await pageReload()
       break;
     case 'givp':
       status.value = 3
@@ -542,7 +546,7 @@ const rowEventWatch = (type) => {
       let selectIndex = list.findIndex(it => it.key === state.selectedRowKeys[0])
       list.splice(selectIndex, 0, {sopen:false,searchVal:null})
     }else {
-      list.push({sopen:false,searchVal:null})
+      list.push({key: buildUUID(),sopen:false,searchVal:null})
     }
     setTableData(list)
   }else if (type == 'del'){
@@ -595,12 +599,13 @@ const contentSwitch = async (action) => {
     type: 'all',
     iyear: busDate.substring(0,4),
     action: action,
-    curr: '',
+    curr: saveModel['uniqueCode'] || '',
   })
   if (null != res) {
     queryList.value = JsonTool.parseProxy(res)
     if (queryList.value.length > 0) {
       let list = queryList.value.map(it => conversionRow(it))
+      saveModel['uniqueCode'] = list[0]?.uniqueCode
       saveModel['csign'] = list[0]?.csign
       saveModel['inoId'] = NumberTool.zeroFill(list[0]?.inoId,4)
       saveModel['idoc'] = list[0]?.idoc
@@ -608,8 +613,9 @@ const contentSwitch = async (action) => {
       saveModel['cbill'] = list[0]?.cbill
       let len = list.length
       for (let i = 0; i < (12 - len); i++)
-        list.push({sopen:false,searchVal:null})
+        list.push({key: buildUUID(),sopen:false,searchVal:null})
       setTableData(list)
+      totalCalculate(list)
       // 找到 对应行tr[data-row-key='']
       list.filter(it=>it.csign != null).forEach(r=>
         {
@@ -624,10 +630,11 @@ const contentSwitch = async (action) => {
     queryList.value = []
     let list = []
     for (let i = 0; i < (12); i++)
-      list.push({editCdigest: true,sopen:false,searchVal:null})
-
+      list.push({key: buildUUID(),editCdigest: true,sopen:false,searchVal:null})
     setTableData(list)
+    totalCalculate(list)
   }
+
   tableLoad.value = false
 }
 const csignChange = async (v) => {
@@ -647,9 +654,11 @@ const csignChange = async (v) => {
 /******************* table 表体业务 ********************/
 const numberClick = (r,i,e) => {
   if (e.target.cellIndex > 6 && e.target.cellIndex < 21){
-    amountToggle(r,'colum5',true)
+    amountToggle(r,'colum5',true,true)
+    clearFocus(r,'colum5')
   }else if ( e.target.cellIndex >= 21){
-    amountToggle(r,'colum6',true)
+    amountToggle(r,'colum6',true,true)
+    clearFocus(r,'colum6')
   }
 }
 
@@ -668,8 +677,7 @@ const focusNext =  (r, c,trN) => {
   let index = list.findIndex(it => it.key == r.key)
   let nextC = cols[0].dataIndex // 获取下一个列位置
   if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
-    list.push({editCdigest: true,sopen:false,searchVal:null,tempCdigest:r.cdigest})
-
+    list.push({key: buildUUID(),editCdigest: true,sopen:false,searchVal:null,tempCdigest:r.cdigest})
   } else {
     let cObj = cols[cols.findIndex(it => it.dataIndex == c) + 1]
     if (cObj != null) {
@@ -678,7 +686,7 @@ const focusNext =  (r, c,trN) => {
       let nextMark = indexToUpper(nextC,0)
       r[`edit${nextMark}`] = true;
       r[`temp${nextMark}`] = r[`${nextC}`];
-      if (nextC  == 'colum5' || nextC == 'colum6') amountToggle(r,nextC,true)
+      if (nextC  == 'colum5' || nextC == 'colum6') amountToggle(r,nextC,true,true)
     } else { //之后一列时换行
       nextC = cols[0].dataIndex
       let nextMark = indexToUpper(nextC,0)
@@ -701,6 +709,7 @@ const focusNext =  (r, c,trN) => {
   setTableData(list)
   totalCalculate(list)
   nextTick(() => {
+    // tr['data-row-key'==r.key]
     let arr = document.getElementsByClassName(nextC)
     let doms = nextC==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
     if (null != doms) doms.focus()
@@ -719,7 +728,7 @@ function indexToUpper(str,index) {
   return str.trim().replace(str[index], str[index].toUpperCase());
 }
 
-const amountToggle = (r,c,b) => {
+const amountToggle = (r,c,b,m) => {
   if (status.value == 3) return false;
   const ckey = indexToUpper(c,0)
   if (b){
@@ -727,28 +736,27 @@ const amountToggle = (r,c,b) => {
     r[`edit${ckey}`] = true
   }
   nextTick(()=>{
-    let tdE = document.getElementsByClassName(c)[0]?.parentNode
     if (b){
+      let tdE = document.getElementsByClassName(c)[0]?.parentNode
       tdE.colSpan = 15
       let te = tdE
       for (let i = 0; i < 14; i++) {
         te.nextElementSibling.style.display = 'none'
         te = te.nextElementSibling
       }
-    } else {
-      tdE.colSpan = 0
-      let te = tdE
-      for (let i = 0; i < 14; i++) {
-        te.nextElementSibling.style.display = ''
-        te = te.nextElementSibling
-      }
     }
   })
   if (!b){
-    r[`edit${ckey}`] = false
     let tdE = document.getElementsByClassName(c)[0]?.parentNode
+    tdE.colSpan = 0
+    let te = tdE
+    for (let i = 0; i < 14; i++) {
+      te.nextElementSibling.style.display = ''
+      te = te.nextElementSibling
+    }
+    r[`edit${ckey}`] = null
     if ( !hasBlank(r['ccode']) && null != r[`temp${ckey}`] && r[`temp${ckey}`] != 0){
-      let trE = document.getElementsByClassName(c)[0]?.parentNode?.parentNode?.nextElementSibling
+      let trE = tdE?.parentNode?.nextElementSibling
       r[`${c}`] = r[`temp${ckey}`];
       splitNumber(r,c,tdE)
       if (c=='colum5'){
@@ -758,12 +766,12 @@ const amountToggle = (r,c,b) => {
         r[`colum5`] = ''
         splitNumber(r,'colum5',trE?.cells[5])
       }
-      focusNext(r,c=='colum5'?'colum6':c,trE)
+     if (m) focusNext(r,c=='colum5'?'colum6':c,trE)
     }else {
       r[`${c}`] = ''
       r[`temp${ckey}`] = ''
       splitNumber(r,c,tdE)
-      focusNext(r,c,null)
+      if (m) focusNext(r,c,null)
     }
   }
 }
@@ -811,7 +819,7 @@ const summaryWatch = (a,r) => {
 const amountWatch = (a,r,c) => {
   if (a.code === 'Equal'){
     if (!hasBlank(r.ccode)){
-      let list = getDataSource().filter(it=>it.key != r.key || null == it.key);
+      let list = getDataSource().filter(it=>it.key != r.key );
       let {ce,fx} = balanceDifference(r,list)
       if (ce != 0){
         let key = indexToUpper(c,0)
@@ -819,7 +827,7 @@ const amountWatch = (a,r,c) => {
       }
     }
   }else if(a.code === 'Enter' || a.code === 'NumpadEnter'){
-    amountToggle(r,c,false)
+    amountToggle(r,c,false,true)
   }
 }
 
@@ -901,6 +909,55 @@ const conversionRow = (r) =>{
   r.editColum5 = r.colum5 != 0?true:false
   r.editColum6 = r.colum6 != 0?true:false
   return r
+}
+
+const clearFocus = (r,c) => {
+  if (status.value == 3) return false
+  let list = getDataSource()
+  // 关闭出当前以外的所有焦点
+  for (let row of list) {
+    Object.keys(row).filter(k=> k.startsWith('edit') && row[k] == true && (row['key'] != r.key ?true: (k != `edit${indexToUpper(c,0)}`))).map(k=>{
+      let hz = k.replace('edit','')
+      if (k=='editCdigest' && !hasBlank(r.searchVal)){
+        let v = r.searchVal.trim()
+        summaryOptions.value.push({value: v,label: v})
+        r['tempCdigest']=v
+        r.searchVal = ''
+      }
+      if (hz == 'Colum5' || hz == 'Colum6'){
+        amountToggle(row,hz=='Colum5'?'colum5':'colum6',false,false)
+      }else {
+        row[k] = null;
+        row[hz.toLowerCase()] = row[`temp${hz}`]
+      }
+    })
+  }
+  // 进入当前焦点
+  nextTick(() => {
+    let arr = document.getElementsByClassName(c)
+    let doms = c==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
+    if (null != doms) doms.focus()
+  })
+}
+
+const toolEventWatch = (action) => {
+      if (status.value == 3) return false
+  switch (action) {
+    case 'zp':
+      let list = getDataSource()
+      // 关闭出当前以外的所有焦点
+      for (let row of list) {
+        Object.keys(row).filter(k=> (k == 'editColum5' || k == 'editColum6' ) && row[k] == true).map(k=>{
+          let {ce,fx} = balanceDifference(row,list.filter(it=>it.key != row.key ))
+          let c = k=='editColum5'?'colum5':'colum6'
+          if (ce != 0){
+            let key = indexToUpper(c,0)
+            row['temp'+key]=(fx != c?(-1*ce):ce)
+          }
+        })
+      }
+      break;
+  }
 }
 
 /******************* table 表体业务 ********************/
@@ -990,18 +1047,21 @@ async function dbInteraction(action) {
     case 'save':
       let json = await checkTheAssembly(action);
       if (null != json) {
-        await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: json})
+        // await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: json})
         message.success('保存成功!')
+        status.value = 3
+        await pageReload()
       }
       break;
     case 'toa':
       // 获取最新凭证字号
       saveModel['csign'] = null
       saveModel['idoc'] = null
+      saveModel['inoId'] = null
       saveModel['cbill'] = useUserStoreWidthOut().getUserInfo.id
       let list = []
       for (let i = 0; i < (2); i++)
-        list.push({sopen:false,searchVal:null})
+        list.push({key: buildUUID(),sopen:false,searchVal:null})
       totalCalculate(list)
       setTableData(list)
       break;
