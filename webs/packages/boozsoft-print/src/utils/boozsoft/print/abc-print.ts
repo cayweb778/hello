@@ -1,20 +1,20 @@
-const jspdf = window.jspdf
-const jsPDF = jspdf.jsPDF
+const jspdf =null
+const jsPDF = null
 
 
 export function addFont(jsPDF, {fontBase64, name}) {
 
 }
 
-jsPDF.API.events.push(['addFonts', function () {
-  this.addFileToVFS('fuhuiR-normal.ttf', window.puhuittf)
-  this.addFont('fuhuiR-normal.ttf', 'fuhuiR', 'normal')
-}])
-
-jsPDF.API.events.push(['addFonts', function () {
-  this.addFileToVFS('fuhuiR-bold.ttf', window.AlibabaRBold)
-  this.addFont('fuhuiR-bold.ttf', 'fuhuiR', 'bold')
-}])
+// jsPDF.API.events.push(['addFonts', function () {
+//   this.addFileToVFS('fuhuiR-normal.ttf', window.puhuittf)
+//   this.addFont('fuhuiR-normal.ttf', 'fuhuiR', 'normal')
+// }])
+//
+// jsPDF.API.events.push(['addFonts', function () {
+//   this.addFileToVFS('fuhuiR-bold.ttf', window.AlibabaRBold)
+//   this.addFont('fuhuiR-bold.ttf', 'fuhuiR', 'bold')
+// }])
 const data = ''
 
 export function tableStyle() {

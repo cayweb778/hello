@@ -2,11 +2,12 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import Greet from "./components/Greet.vue";
+// let abc=window.__TAURI__.window.WebviewWindow
 </script>
 
 <template>
   <div class="container">
-    <h1>Welcome to Tauri!22212312321</h1>
+    <h1>Welcome to 泊舟NC!</h1>
 
     <div class="row">
       <a href="https://vitejs.dev" target="_blank">
@@ -20,20 +21,13 @@ import Greet from "./components/Greet.vue";
       </a>
     </div>
 
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
+    <p>点击 NC, 泊舟, 微服务 学习更多.</p>
 
     <p>
-      Recommended IDE setup:
-      <a href="https://code.visualstudio.com/" target="_blank">VS Code</a>
-      +
-      <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-      +
+      初次使用:
+
       <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank"
-        >Tauri</a
-      >
-      +
-      <a href="https://github.com/rust-lang/rust-analyzer" target="_blank"
-        >rust-analyzer</a
+        >指定服务地址</a
       >
     </p>
 

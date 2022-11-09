@@ -9,6 +9,7 @@ const showHome=computed(()=>useCounterStore().setShowFooter)
 
 <template>
   <div>
+<!--    NC暂不支持网页端，请使用桌面端-->
     <NcProvider >
       <Layout>
         <RouterView/>

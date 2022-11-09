@@ -155,7 +155,8 @@ import {
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {aoaToSheetXlsx} from "/@/components/Excel";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+//import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
 
 const { createConfirm,createWarningModal,createMessage } = useMessage();
   const tableshow = ref(false);

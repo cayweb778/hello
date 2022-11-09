@@ -102,11 +102,11 @@
         </div>
         <div class="acbgead-two" :style="status == 3?{ pointerEvents: 'none'}:{}">
              <div>
-               <Select :options="[{value: '记',label: '记'}]" v-model:value="saveModel['csign']"  style="min-width: 60px;" />
+               <Select :options="pingTypeOptions" v-model:value="saveModel['csign']" @change="csignChange" style="min-width: 60px;" />
                <span class="title-span">字&nbsp;第</span>
                <Input style="width: 100px;" v-model:value="saveModel['inoId']"/>
                <span class="title-span">号&ensp;附单据数：</span>
-               <InputNumber style="width: 60px;"  v-model:value="saveModel['idoc']"/>
+               <InputNumber style="width: 60px;" :min="0" v-model:value="saveModel['idoc']"/>
              </div>
              <div><span class="title-span">制单日期：</span><DatePicker  v-model:value="saveModel['dbillDate']" value-format="YYYY-MM-DD"/></div>
              <div><span class="title-span">本币：</span><span style="font-weight: bold;">人民币</span></div>
@@ -210,7 +210,7 @@
 
           <template #colum501="{ record }">
             <template v-if="record.editColum5">
-              <InputNumber  class="colum5" :step="0.01"  v-model:value="record.tempColum5"  @keyup="(e)=>amountWatch(e,record,'colum5')"/>
+              <InputNumber  class="colum5" :step="0.01"  v-model:value="record.tempColum5" :controls="true"  @keyup="(e)=>amountWatch(e,record,'colum5')"/>
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -222,7 +222,7 @@
 
           <template #colum601="{ record }">
             <template v-if="record.editColum6">
-              <InputNumber  class="colum6" :step="0.01" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
+              <InputNumber  class="colum6" :step="0.01" :min="-9999999999999.99" :max="9999999999999.99" :controls="true" v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -292,10 +292,16 @@ import {
   accvoucherSaves,
   findBillByCondition,
   findLastPingZhengInoid,
-  checkLastZhengInoid
+  checkLastZhengInoid, findPingZhengQjLastDate
 } from "/@/api/record/system/accvoucher";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {JsonTool, NumberTool, ObjTool, StrTool} from "/@/api/task-api/tools/universal-tools";
+import {
+  DateTool,
+  JsonTool,
+  NumberTool,
+  ObjTool,
+  StrTool
+} from "/@/api/task-api/tools/universal-tools";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 /*********** 业务块 *************/
 /**************** 引用块 *****************/
@@ -309,6 +315,11 @@ import {convertCurrency} from "/@/utils/boozsoft/moneyUtil";
 import {useMessage} from "/@/hooks/web/useMessage";
 import {useModal} from "/@/components/Modal";
 import Assist from "/@/components/pingzheng-fillin-two/components/Assist.vue";
+import {
+  currentAccountYaerQjList,
+  findVoucherTypeAuthorList
+} from "/@/api/record/system/financial-settings";
+import {getByStockBalanceTask} from "/@/api/record/stock/stock_balance";
 const {createWarningModal, createConfirm} = useMessage()
 const windowHeight = (window.innerHeight - 300)
 const busDate = useCompanyOperateStoreWidthOut().getLoginDate
@@ -362,6 +373,7 @@ const testColums = [
 
 const summaryOptions = ref([])
 const codeOptions = ref([])
+const pingTypeOptions = ref([])
 
 const totalModel = reactive({
   md: 0,
@@ -393,6 +405,8 @@ const saveModel = reactive({})
 const queryList = ref([])
 const route = useRoute();
 const routeData:any = route.query;
+
+const isSave = ref(true)
 /**************** 变量块 *****************/
 
 /**************** 方法块 *****************/
@@ -400,7 +414,7 @@ const routeData:any = route.query;
 // 这是示例组件
 const [registerTable, {reload, getDataSource, setTableData, setPagination, getPaginationRef, getColumns, setColumns}] = useTable({
   columns: testColums,
-  dataSource: [{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null},{sopen:false,searchVal:null}],
+  dataSource: [],
   bordered: true,
   showIndexColumn: true,
   indexColumnProps: {fixed: true},
@@ -428,6 +442,19 @@ async function initData() {
   codeAllList.value = (await useRouteApi(findByLastCodeHierarchyNames, {schemaName: dynamicTenant.value?.accountMode})({iyear: busDate.substring(0,4)}) || [])
   summaryOptions.value = unref(summaryModel.vouchers).map(s=>({value: s,label: s}))
   codeOptions.value = unref(codeAllList.value).map(o=>({value: o.uniqueCode,label:  o.uniqueCode+' '+o.ccodeName}))
+// 凭证类别
+  await useRouteApi(findVoucherTypeAuthorList, {schemaName: dynamicTenant.value?.accountMode})({
+    userId: useUserStoreWidthOut().getUserInfo.id,
+    tenantId: dynamicTenant.value?.accountMode
+  }).then(res => {
+    if(res == null || res.length == 0){
+      createWarningModal({title: '温馨提示', content: '当前操作员无凭证类别授权，不能进行新增凭证操作，请授权后继续！'});
+      isSave.value = false
+    }else {
+      pingTypeOptions.value = res.map(it=>({value: it.voucherTypeCode,label: it.voucherTypeCode}))
+      isSave.value = true
+    }
+  })
 }
 
 /******************* top工具栏 ********************/
@@ -435,8 +462,19 @@ const pageEventWatch = async(action) => {
   switch (action) {
     case 'toa':
       status.value = 1
-      await loadBasicsData()
-      await dbInteraction('toa')
+      if (!isSave.value && pingTypeOptions.value.length == 0){
+        createWarningModal({
+          title: '温馨提示',
+          content: '当前操作员无凭证类别授权，不能进行新增凭证操作，请授权后继续！'
+        })
+      }else {
+        isSave.value = await checkBusDate(busDate)
+        if (isSave.value){
+          await dbInteraction('toa')
+        }else {
+          status.value = 3
+        }
+      }
       break;
     case 'toe':
       status.value = 2
@@ -592,14 +630,25 @@ const contentSwitch = async (action) => {
   }
   tableLoad.value = false
 }
+const csignChange = async (v) => {
+  if (dynamicTenant.value?.target?.iautoCode != '1'){ // 自动
+    let parm = {
+      date: busDate,
+      csign: saveModel['csign'] || '记',
+      broken: dynamicTenant.value?.target?.ibreakCode == '1'?'1':'0',
+      sort: dynamicTenant.value?.target?.iyearCode == '1'?'1':'0'
+    }
+    saveModel['inoId'] = NumberTool.zeroFill((await useRouteApi(findLastPingZhengInoid, {schemaName: dynamicTenant.value?.accountMode})(parm) || 1),4)
+  }
+}
 /******************* table 表头业务 ********************/
 
 
 /******************* table 表体业务 ********************/
 const numberClick = (r,i,e) => {
-  if (e.target.cellIndex > 5 && e.target.cellIndex < 20){
+  if (e.target.cellIndex > 6 && e.target.cellIndex < 21){
     amountToggle(r,'colum5',true)
-  }else if ( e.target.cellIndex >= 20){
+  }else if ( e.target.cellIndex >= 21){
     amountToggle(r,'colum6',true)
   }
 }
@@ -619,8 +668,8 @@ const focusNext =  (r, c,trN) => {
   let index = list.findIndex(it => it.key == r.key)
   let nextC = cols[0].dataIndex // 获取下一个列位置
   if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
-    list.push({editCdigest: true,sopen:false,searchVal:null})
-    setTableData(list)
+    list.push({editCdigest: true,sopen:false,searchVal:null,tempCdigest:r.cdigest})
+
   } else {
     let cObj = cols[cols.findIndex(it => it.dataIndex == c) + 1]
     if (cObj != null) {
@@ -638,21 +687,19 @@ const focusNext =  (r, c,trN) => {
       list[index][`temp${nextMark}`] = list[index][`${nextC}`];
       if ((!hasBlank(r.colum5) || !hasBlank(r.colum6))){
         let {ce,fx} = balanceDifference(r,list)
+        if (!hasBlank(r.cdigest))list[index][`tempCdigest`] = r.cdigest
         if (ce != 0){
-          // if (hasBlank(r['pmark']))  r['pmark'] = uuid()
-          if (!hasBlank(r.cdigest))list[index][`tempCdigest`] = r.cdigest
           list[index]['colum5']=0
           list[index]['colum6']=0
           list[index][fx] = ce
           if (trN != null)
             splitNumber(list[index],fx,trN.cells[fx=='colum5'?5:20])
-          // list[index][`pmark`] = r['pmark']
         }
       }
-      totalCalculate(list)
-      setTableData(list)
     }
   }
+  setTableData(list)
+  totalCalculate(list)
   nextTick(() => {
     let arr = document.getElementsByClassName(nextC)
     let doms = nextC==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
@@ -764,11 +811,11 @@ const summaryWatch = (a,r) => {
 const amountWatch = (a,r,c) => {
   if (a.code === 'Equal'){
     if (!hasBlank(r.ccode)){
-      let list = getDataSource();
+      let list = getDataSource().filter(it=>it.key != r.key || null == it.key);
       let {ce,fx} = balanceDifference(r,list)
       if (ce != 0){
-        let key = indexToUpper(fx,0)
-        r['temp'+key]=ce
+        let key = indexToUpper(c,0)
+        r['temp'+key]=(fx != c?(-1*ce):ce)
       }
     }
   }else if(a.code === 'Enter' || a.code === 'NumpadEnter'){
@@ -812,7 +859,6 @@ const balanceDifference = (r,list) => {
       mc+= (o['colum5'] || 0)
       md+= (o['colum6'] || 0)
     })
-    console.log('mc:'+mc+'   md:'+md)
     if (mc !== md){
       ce = ( Math.abs(mc)>Math.abs(md))? mc - md:md-mc
       fx = Math.abs(mc)>Math.abs(md)?'colum6':'colum5'
@@ -869,10 +915,10 @@ const openAssist = (r) => {
 }
 /******************* table 弹框业务 ********************/
 const checkTheAssembly = async (action) => {
-  if (hasBlank(saveModel['csign']) || hasBlank(saveModel['inoId']) || hasBlank(saveModel['idoc']) || hasBlank(saveModel['dbillDate'])){
+  if (hasBlank(saveModel['csign']) || hasBlank(saveModel['inoId']) || hasBlank(saveModel['dbillDate'])){
     createWarningModal({
       title: '温馨提示',
-      content: '表头：凭证字号、凭证号与附单据数、制单日期不能为空！'
+      content: '表头：凭证字号、凭证号与制单日期不能为空！'
     })
     return null
   }
@@ -916,7 +962,7 @@ const checkTheAssembly = async (action) => {
       r.inid = (i+1)+''
       r.csign = saveModel['csign']
       r.inoId = saveModel['inoId']
-      r.idoc = saveModel['idoc']
+      r.idoc = saveModel['idoc'] || ''
       r.dbillDate = saveModel['dbillDate']
       r.cbill = saveModel['cbill']
       r.iyear = dates[0]
@@ -938,9 +984,7 @@ const checkTheAssembly = async (action) => {
 /******************* 检测 业务 ********************/
 
 /******************* DB 业务 ********************/
-async function loadBasicsData() {
 
-}
 async function dbInteraction(action) {
   switch (action) {
     case 'save':
@@ -954,27 +998,45 @@ async function dbInteraction(action) {
       // 获取最新凭证字号
       saveModel['csign'] = null
       saveModel['idoc'] = null
-      saveModel['dbillDate'] = busDate
       saveModel['cbill'] = useUserStoreWidthOut().getUserInfo.id
-      if (dynamicTenant.value?.target?.iautoCode != '1'){ // 自动
-        let parm = {
-          date: busDate,
-          csign: saveModel['csign'] || '记',
-          broken: dynamicTenant.value?.target?.ibreakCode == '1'?'1':'0',
-          sort: dynamicTenant.value?.target?.iyearCode == '1'?'1':'0'
-        }
-        saveModel['inoId'] = NumberTool.zeroFill((await useRouteApi(findLastPingZhengInoid, {schemaName: dynamicTenant.value?.accountMode})(parm) || 1),4)
-      }else {
-        saveModel['inoId'] = ''
-      }
-      let list =[]
-      for (let i = 0; i < (12); i++)
+      let list = []
+      for (let i = 0; i < (2); i++)
         list.push({sopen:false,searchVal:null})
       totalCalculate(list)
       setTableData(list)
       break;
   }
 }
+
+async function checkBusDate(date) {
+  let dates = date.split('-')
+  let list = await currentAccountYaerQjList({iyear:dates[0],accId: dynamicTenant.value?.accId})
+  if (list.length == 0){
+    createWarningModal({title: "温馨提示",content: '当年度暂未创建，不能新增销货单，请先创建该年度'})
+    return false;
+  }else {
+    if (list.filter(it=>it.gl == '1').length == list.length){
+      createWarningModal({title: "温馨提示",content: '当年度已经全部结账，不能新增，请切换公司代码或年度'})
+      return false;
+    }else if(list.filter(it=> ((DateTool().compareDate(`${it.iyear}-${it.dateStart}`,date) != 1 && DateTool().compareDate(`${it.iyear}-${it.dateEnd}`,date) != -1))  && it.gl == '1').length > 0){ // 期间已结账
+      createWarningModal({title: "温馨提示",content: '当前业务日期期间已经结账，请重新选择单据日期！'})
+      return false;
+    }else {
+      let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenant.value.accountMode })({iyear:dates[0],name:'月末结账',method:'结账',recordNum:''})
+      if (!hasBlank(taskData)){
+        createWarningModal({title: '温馨提示',content: '操作员'+taskData[0].username+'正在对当前账套进行月末结账处理，不能进行对单据业务操作，请销后再试！'})
+        return  false;
+      }
+      if (dynamicTenant.value?.target?.ichronological == '1'){
+           saveModel['dbillDate'] = await useRouteApi(findPingZhengQjLastDate, { schemaName: dynamicTenant.value.accountMode })({date:date})
+      }else {
+           saveModel['dbillDate'] = date
+      }
+    }
+  }
+  return true;
+}
+
 /******************* DB 业务 ********************/
 
 

@@ -1567,6 +1567,7 @@ export const menus = [
   createPlatformMenu({
     id: 9014,
     path: 'fuzhu-qichu-list',
+    componentName: 'SubjectInitialBalanceFuZhu',
     component: '/boozsoft/system/subjectInitialBalanceFuZhu/index',
     parentId: 8901,
     name: '辅助核算期初',
@@ -1574,6 +1575,7 @@ export const menus = [
   createPlatformMenu({
     id: 9012,
     path: 'xj-qichu-list',
+    componentName: 'XJLLQC',
     component: '/boozsoft/xian_jin_liu_liang/xian_jin_liu_liang_qc/index',
     parentId: 8901,
     name: '现金流量期初',

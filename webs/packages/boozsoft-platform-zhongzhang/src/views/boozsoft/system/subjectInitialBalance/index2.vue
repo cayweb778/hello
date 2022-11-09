@@ -63,7 +63,7 @@
         <Button class="acttdrd-btn" ant-click-animating-without-extra-node="false">
           <PrinterOutlined/>
         </Button>
-        <a-popover placement="bottom" v-model:visible="visible">
+        <a-popover placement="bottom" v-model:visible="visible3">
           <template #content>
             <DynamicColumn :defaultData="(queryMark=='J'?initDynamics()['J']:queryMark=='SJ'?initDynamics()['SJ']:initDynamics()['WJ'])" :dynamicData="dynamicColumnData" :lanmuInfo="lanMuData" @reload="reloadColumns"/>
             <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'" :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
@@ -635,6 +635,7 @@ const ncnumLj2 = ref('');
 const nfratLj = ref('');
 const nfratLj2 = ref('');
 const nfratflgLj = ref(false);
+const visible3 = ref(false);
 
 // 弹框2状态
 const carryDownModal = ref(false);
@@ -1972,12 +1973,12 @@ const calculateTotal = (datalist) => {
   }
 }
 const initTable = ()=>{
-  visible.value = true
+  visible3.value = true
   setTimeout(()=>{
       lanMuData.value.changeNumber+=1
-      visible.value = false
+      visible3.value = false
     }
-    ,100)
+    ,300)
 }
 // 获取期初余额
 const findAllInitialBalance = async () => {
@@ -2012,7 +2013,6 @@ const findAllInitialBalance = async () => {
   calculateTotal(a.tablesData)
   showPageNumber.value=true
   loading.value = false;
-  visible.value = false
 };
 
 // 金额格式化
@@ -2046,7 +2046,6 @@ const dynamicAdReload = async (obj) => {
   initTable()
   deltask()
   edittext.value ='开始编辑'
-  visible.value = true
   roweditflg.value=false
   showPageNumber.value=false
   databaseObj.value=obj
@@ -2098,7 +2097,6 @@ const dynamicAdReload = async (obj) => {
   bwb.value = obj.target.currencyName    // 本位币
   independent.value = datainfo.independent > 0 ? true : false;  // 1是独立账套 0是集团账套
   await findAllInitialBalance();
-
 }
 
 // 获取科目类型
@@ -2176,9 +2174,7 @@ function handleSelect(obj) {
   }
 }
 /*start栏目设置*/
- //import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
-const DynamicColumn=null
-
+ import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {assemblyDynamicColumn, initDynamics} from "./data";
 const dynamicColumnData:any = ref({value: []})
 const dynamicColumns = initDynamics().DEFAULT
@@ -2192,7 +2188,6 @@ const lanMuData = ref({
 })
 
 const reloadColumns = () => {
-  // dynamicColumnData.value.value= initDynamics()[queryMark.value]
   lanMuData.value.type = pageParameter.queryMark == '1' ? '标准' : '累计'
   let newA = JSON.parse(JSON.stringify(tableColumns.value[queryMark.value]))
   newA = assemblyDynamicColumn(dynamicColumnData.value.value, newA)
@@ -2209,11 +2204,11 @@ function initTableWidth(thisCs) {
 
   if (total > windowWidth) {
     let f = 0
-    if (visible.value) f = 380
+    if (visible3.value) f = 380
     totalColumnWidth.value = Number(windowWidth) - f
     tableRef.value.$el.style.setProperty('width', (windowWidth + 62 - f) + 'px')
   } else {
-    if (visible.value && (windowWidth - 380) < total) total -= (total - (windowWidth - 380))
+    if (visible3.value && (windowWidth - 380) < total) total -= (total - (windowWidth - 380))
     totalColumnWidth.value = total
     tableRef.value.$el.style.setProperty('width', (total + 62) + 'px')
   }

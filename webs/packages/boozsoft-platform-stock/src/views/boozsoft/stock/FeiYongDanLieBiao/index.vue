@@ -85,7 +85,7 @@
           <Popover class="ant-btn-default" placement="leftTop">
             <template #content>
               <a-popconfirm
-                ok-text="确定"
+                ok-text="确定" placement="leftTop"
                 cancel-text="放弃"
                 @confirm="confirm"
                 @cancel="cancel">

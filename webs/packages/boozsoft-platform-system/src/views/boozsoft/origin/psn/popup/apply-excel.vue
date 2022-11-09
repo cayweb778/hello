@@ -103,7 +103,8 @@ const SelectOption=Select.Option
 const RadioGroup = Radio.Group
 const TabPane = Tabs.TabPane
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+//import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
 import {
   excelPsn,
   findBukongPsnCode,

@@ -175,6 +175,8 @@ public interface AccvoucherRepository extends ReactiveCrudRepository<Accvoucher,
 
     @Query("SELECT * from accvoucher where 1 = 1 and csign =:csign and iyperiod like :iyperiod and imonth <> '00' and (ino_id is not null or ino_id <> '') ORDER BY cast(iyperiod as Integer)  Asc,cast(ino_id as Integer) Asc,cast(inid as Integer) Asc")
     Flux<Accvoucher> findAllByCsignAndIyperiodLike(String csign,String iyperiod);
+    @Query("select dbill_date from accvoucher where  1=1  and iyperiod =:iyperiod and imonth <> '00' and (ino_id is not null or ino_id <> '') ORDER BY cast(ino_id as Integer) DESC  limit 1")
+    Mono<String> findAllByIyperiodOrderByDesc(String iyperiod);
 
     Flux<Accvoucher> findAllByIyperiodAndCcodeOrderById(String iyperiod, String ccode);
     Flux<Accvoucher> findAllByIyperiodAndCcodeInOrderByIdAscCcodeAsc(String iyperiod, List<String> ccode);
