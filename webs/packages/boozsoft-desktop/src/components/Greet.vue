@@ -24,14 +24,15 @@ const greetMsg = ref("");
 const name = ref("127.0.0.1:3000");
 
 async function getAddr() {
-  return await invoke("asdsadas", {name: name.value});
+  return await invoke("getCacheIpAddr", {name: name.value});
 }
 
 ;(async function(){
-  const addr = await getAddr()
-  if (addr != '') {
-    console.log("http://"+addr)
-    window.location.href = "http://"+addr+"/nc"
+  const addrJSON = await getAddr()
+  const addrObj=JSON.parse(<string>addrJSON)
+  if (addrObj.code != '404') {
+    console.log("http://"+addrObj.data)
+    window.location.href = "http://"+addrObj.data+"/nc"
 
   }
 })();
@@ -40,7 +41,7 @@ async function greet() {
   const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
   const abcc=async function (){
 
-    await invoke("greet", {name: name.value});
+    await invoke("generate", {name: name.value});
     window.location.href = "http://"+name.value+"/nc"
   }
   ws.onopen=abcc
@@ -62,7 +63,7 @@ function abc(){
     <div style="color:red">{{showError}}</div>
     <input id="greet-input" v-model="name" placeholder="Enter a name..."/>
     <button type="button" @click="abc()">🚀</button>
-    <button type="button" @click="greet()">开始</button>
+    <button type="button" @click="greet">开始</button>
   </div>
 
   <p>{{ greetMsg }}</p>
