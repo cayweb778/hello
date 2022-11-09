@@ -129,7 +129,7 @@
         </div>
       </div>
     </div>
-    <div class="app-container-bottom">
+    <div class="app-container-bottom" :style="{height: (windowHeight+70)+'px'}">
       <div class="acb-head">
         <div class="acbgead-one">
           <div class="acbgead-one-triangle">
@@ -621,7 +621,7 @@ const [registerXySourcePage, {openModal: openXySourcePage}] = useModal()
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
 
 
-const windowHeight = (window.innerHeight - 320)
+const windowHeight = (window.innerHeight - 300)
 const taskInfo:any = ref('')
 const dynamicTenant:any = ref('')
 const dynamicTenantId:any = ref('')

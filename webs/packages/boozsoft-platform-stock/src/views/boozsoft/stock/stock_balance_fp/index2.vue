@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <div class="app-container-bottom" >
+    <div class="app-container-bottom" :style="{height: (windowHeight+90)+'px'}">
       <div class="acb-head">
         <div class="acbgead-one">
           <div class="acbgead-one-triangle">
@@ -654,7 +654,7 @@ const [registerPrintPage, {openModal: openPrintPage}] = useModal()
 const [registerLackPage, {openModal: openLackPage}] = useModal()
 const [registerItemsPage, {openModal: openItemsSourcePage}] = useModal()
 
-const windowHeight = (window.innerHeight - 310)
+const windowHeight = (window.innerHeight - 320)
 const newDate=ref(new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
 const summary = ref({})
 const biandong = ref('0')

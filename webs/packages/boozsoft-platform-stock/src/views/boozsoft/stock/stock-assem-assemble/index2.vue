@@ -95,7 +95,7 @@
         </div>
       </div>
     </div>
-    <div class="app-container-bottom">
+    <div class="app-container-bottom" :style="{height: (windowHeight+80)+'px'}">
       <div class="acb-head">
         <div class="acbgead-one">
           <div class="acbgead-one-triangle">
@@ -528,7 +528,7 @@ const [registerImportPage, {openModal: openImportPageM}] = useModal()
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
 
 const route = useRoute();
-const windowHeight = (window.innerHeight - 320)
+const windowHeight = (window.innerHeight - 310)
 const dynamicTenant:any = ref('')
 const dynamicTenantId = ref('')
 const stockAccountObj:any = ref('')
