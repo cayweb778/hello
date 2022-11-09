@@ -6,9 +6,9 @@
     title="明细账查询"
     @ok="handleOk()"
     @cancel="handleClose()"
+    :loading="modelLoadIng"
     @register="register"
   >
-    <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
     <div class="nc-open-content" style="height: 100%">
         <div class="open-content-up">
           <div class="ocup-position"> 系统方案</div>
@@ -487,6 +487,14 @@
           </a-tabs>
         </div>
       </div>
+    <template #footer>
+      <div style="height: 35px">
+        <div style="float: right">
+          <a-button @click="handleClose" shape="round" style="width: 100px">取消</a-button>
+          <a-button @click="handleOk" v-if="!modelLoadIng" type="primary" shape="round"  style="width: 100px">查询</a-button>
+        </div>
+      </div>
+    </template>
   </BasicModal>
 </template>
 
@@ -545,6 +553,7 @@ import {useMessage} from "/@/hooks/web/useMessage";
 import TimeTool from "/@/boozsoft/components/SelectTimeTools/TimeTool.vue";
 import dayjs, { Dayjs } from 'dayjs';
 
+
 const {closeCurrent} = useTabs(router);
 const ARangePicker = ADatePicker.RangePicker;
 const ASelectOption = ASelect.Option;
@@ -571,7 +580,7 @@ const endDate = ref<String>('');
 const strDate = ref<String>('');
 let endDateList: any = ref([]);
 let strDateList: any = ref([]);
-
+const modelLoadIng = ref(false)
 let minkmList: any = ref([]);
 let maxkmList: any = ref([]);
 const minKm = ref<string>();

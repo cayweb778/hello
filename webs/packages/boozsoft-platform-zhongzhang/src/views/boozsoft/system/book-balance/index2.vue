@@ -3,17 +3,17 @@
     <div class="app-container">
       <ProfileOutlined style="color: #0096c7;font-size: 60px;margin-top: 10px;"/>&emsp;
       <div style="width: 33%;margin-top: 9px;">
-        <AccountPicker theme="three" @reloadTable="dynamicAdReload"/>
-        <span style="color:#666666;font-weight: bold;margin-left: 7px;">样式：</span><span style="color: black;font-weight: bold">{{ styleName }}</span>
-        &emsp;&emsp;<span style="color:#666666;font-weight: bold;">累计：</span><span><a-checkbox v-model:checked="ljchecked" @change="ljchange"/></span>
+        <AccountPicker theme="three" readonly="" @reloadTable="dynamicAdReload" style="margin-top: 2px;"/>
+        <div style="margin-top: 12px;"/>
+        <span style="color:#666666;font-weight: bold;margin-left: 6px;">显示样式：</span><span style="color: black;font-weight: bold">{{ styleName }}</span>
+        <span style="color:#666666;font-weight: bold;margin-left: 90px;">显示累计：</span><span><a-checkbox v-model:checked="ljchecked" @change="ljchange"/></span>
       </div>
-      <div style="width: 29.5%;text-align: center;">
-        <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">发生及余额表</span>
-        <p/>
-        <span style="color:#666666;font-weight: bold;">期间：</span> {{ time.strDate }} - {{ time.endDate }}
+      <div style="width: 29.5%;text-align: center;margin-top: 9px;">
+        <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">发生及余额表</span><br>
+        <span style="color:#666666;font-weight: bold;">期间：</span> <span style="color: #0f0f0f;font-weight: bold;">{{ time.strDate }} - {{ time.endDate }}</span>
 
       </div>
-      <div style="width: 33%;text-align: right;" v-if="pageMode=='1'">
+      <div style="width: 33%;text-align: right;margin-left: 8px;" v-if="pageMode=='1'">
         <a-button class="actod-btn"
           ant-click-animating-without-extra-node="false"
           @click="openQueryPage()"
@@ -32,9 +32,9 @@
           ant-click-animating-without-extra-node="false"
           @click="openPrint()"
         ><span>打印</span></a-button>
-        <a-button class="actod-btn" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
         <p/>
-        <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 130px;text-align: left;" class="special_select">
+        <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 150px;text-align: left;font-size: 12px;">
           <template v-for="item in searchConditonList">
             <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
               {{ item.title }}
@@ -45,7 +45,7 @@
           placeholder=""
           v-model:value="pageParameter.searchConditon.value"
           @search="pageSearch"
-          style="width: 150px;border-radius: 4px"
+          style="width: 150px;border-radius: 4px;border: 1px #cccccc solid;"
         />&emsp;
         <a-button class="ant-btn" @click="closeFilterV(),pageReload()">
           <SyncOutlined :style="{ fontSize: '14px' }"/>
@@ -130,19 +130,19 @@
         <a-popover placement="bottom">
           <template #content>
              <span class="group-btn-span-special2" @click="onChangeSwitch('J')"
-              :style="pageParameter.queryMark=='J'?{backgroundColor: '#0096c7',color: 'white'}:''">
+              :style="pageParameter.queryMark=='J'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
               <SortDescendingOutlined/>&nbsp;金额式&emsp;&ensp;<CheckOutlined
               v-if="pageParameter.queryMark=='J'"/></span><br/>
                   <span class="group-btn-span-special2" @click="onChangeSwitch('SJ')"
-                        :style="pageParameter.queryMark=='SJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                        :style="pageParameter.queryMark=='SJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
               <SortAscendingOutlined/>&nbsp;数量金额式<CheckOutlined
                     v-if="pageParameter.queryMark=='SJ'"/></span><br/>
                   <span class="group-btn-span-special2" @click="onChangeSwitch('WJ')"
-                        :style="pageParameter.queryMark=='WJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                        :style="pageParameter.queryMark=='WJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
               <SortDescendingOutlined/>&nbsp;外币金额式<CheckOutlined
                     v-if="pageParameter.queryMark=='WJ'"/></span><br/>
                   <span class="group-btn-span-special2" @click="onChangeSwitch('SWJ')"
-                        :style="pageParameter.queryMark=='SWJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                        :style="pageParameter.queryMark=='SWJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
               <SortAscendingOutlined/>&nbsp;数量外币式<CheckOutlined
                 v-if="pageParameter.queryMark=='SWJ'"/></span><br/>
             </template>
@@ -157,7 +157,7 @@
           ant-click-animating-without-extra-node="false"
           @click="openQueryPage()"
         ><span>查询</span></a-button>
-        <a-button type="button" class="ant-btn ant-btn-me" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
       </div>
     </div>
     <div class="app-container">
@@ -382,8 +382,8 @@
               </TableSummary>
             </template>
           </BasicTable>
-          <div class="pagination-text" :style="{top: (pageParameter.queryMark=='J'?windowHeight+85:windowHeight+95)+'px'}" v-show="showPageNumber">
-            {{`共 ${pageNumber}条记录&emsp;每页 1000 条`}}
+          <div class="pagination-text" :style="{top: windowHeight+85+'px'}" v-show="showPageNumber">
+            {{`共 ${pageNumber} 条记录&emsp;每页 1000 条`}}
           </div>
         </div>
         <div :style="{height: (60+windowHeight)+'px',overflowY: 'auto'}" v-else>
@@ -820,7 +820,7 @@ function companyImportExcelView() {
       leftrow:leftrow,
     },
   ]
-  exportExcel(sheet, 'xlsx','科目余额表-'+time.strDate+'-'+time.endDate+'-'+name)
+  exportExcel(sheet, 'xlsx','科目余额表_'+time.strDate+'-'+time.endDate+'-'+name)
 }
 // 跳转科目明细账：type=1【日期：xxx - xxx】。2【日期：1 - xxx】
 async function goRouter(ccode,type) {
@@ -1318,6 +1318,7 @@ const loadPage = async (map) => {
   pageParameter.kmList = data.kmList
   pageParameter.querytype = data.querytype
   pageParameter.pzType = data.pzType
+  pageParameter.showRulesSize = 'MIN'
   time.strDate = data.strDate.replaceAll("-", ".")
   time.endDate = data.endDate.replaceAll("-", ".")
 
@@ -1475,7 +1476,7 @@ function jtImportExcelView() {
       },
     )
   }
-  exportExcel(sheet, 'xlsx','科目余额表-'+time.strDate+'-'+time.endDate)
+  exportExcel(sheet, 'xlsx','科目余额表_'+time.strDate+'-'+time.endDate)
 }
 
 const openPrint = () => {
@@ -1739,10 +1740,11 @@ function sub(a, b) {
   border: none;
   background-color: #f1f1f1;
   color: black;
-  border-bottom: 1px solid #d2cfcf;
 }
+
 :deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
-  background-color: #f2f2f2;
+  border: 1px #cccccc solid;
+  height: 33px;
 }
 
 // ***************  button样式  ***************
@@ -1771,10 +1773,11 @@ function sub(a, b) {
 }
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px 10px;
   margin: 10px 10px 5px;
   display: inline-flex;
-  width: 100%;
+  width: 99%;
+  border-radius: 5px;
 }
 
 .app-container:nth-of-type(2) {
@@ -1786,23 +1789,27 @@ function sub(a, b) {
   .pagination-text{
     position: absolute;
     bottom: 9px;
+    right: 12%;
     font-size: 13px;
     color: black;
     z-index: 99999999;
   }
 }
+.a-table-font-size-16 :deep(td),
+.a-table-font-size-16 :deep(th) {
+  font-size: 14% !important;
+  padding: 2px 8px !important;
+  height: 25px;
+  color: black;
+}
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
   font-size: 13px !important;
   padding: 2px 8px !important;
-  border-color: #aaaaaa !important;
   height: 25px;
   color: black;
 }
 
-:deep(.h-full){
-  margin-top: 5px;
-}
 .bg-white{
   border: 1px #cccccc solid;
   background:white ;
@@ -1813,86 +1820,12 @@ function sub(a, b) {
   background-color: #1488b1;
   color: white;
 }
-.exit-class{
-  float: right;padding: 6px;cursor: pointer;
-  font-weight: bold;
-}
-.exit-class:hover{
-  background-color: plum;
-}
+// 合计行
 :deep(.nc-summary){
   font-weight: bold;
+  border-bottom-color: #9e9e9e;
   background-color: #cccccc!important;;
   border-right-color: #cccccc!important;
-}
-
-.customize-modal {
-  padding: 5% 10%;
-  font-weight: bold;
-
-  label {
-    font-size: 13px;
-    color: #666666;
-  }
-
-  .special-ulli-input {
-    font-family: "Arial" !important;
-    width: 60%;
-    margin-left: 5em;
-    text-align: right;
-    border-top: hidden;
-    border-left: hidden;
-    border-right: hidden;
-    border-color: #c9c9c9;
-    color: black;
-  }
-}
-.trial-balance-div {
-  width: 460px;
-  height: 300px;
-
-  .tb-div-dashboard {
-    width: 100%;
-    height: 55%;
-    text-align: center;
-    display: flex;
-    /*实现垂直居中*/
-    align-items: center;
-    /*实现水平居中*/
-    justify-content: center;
-  }
-
-  .tb-div {
-    text-align: center;
-    border-bottom: 1px solid #dcdbdb;
-
-    > span {
-      font-size: 20px;
-      font-weight: bold;
-      color: red;
-    }
-
-    .tb-div-line {
-      display: inline-block;
-      width: 44%;
-      height: 35%;
-      margin: 0 1%;
-
-      > span {
-        font-weight: bold;
-      }
-    }
-  }
-
-  .tb-div-bottom {
-    height: 10%;
-    text-align: center;
-    margin-top: 1%;
-
-    > .ant-btn {
-      width: 80%;
-    }
-  }
 }
 </style>
 

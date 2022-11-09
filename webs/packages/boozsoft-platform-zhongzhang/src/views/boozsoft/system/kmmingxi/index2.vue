@@ -1,301 +1,252 @@
 <template>
   <div>
     <div class="app-container">
-      <div style="width: 100%;margin-top: 5px;height: 100px;display: inline-flex;">
-        <div style="width: 40%;padding-top:20px;">
-          <div>
-            <AccountPicker theme="three" readonly="" @reloadTable="dynamicAdReload" style="margin-top: -5px;"/>
-          </div>
-          <div v-if="pageMode=='1'" style="margin-left:6px;">
-            <span style="font-size: 14px;">科目：</span>
-            <a-select
-              show-search
-              placeholder="科目选择"
-              option-filter-prop="children"
-              style="width: 250px;display: inline-block;"
-              @change="handleChangeMinKm"
-              v-model:value="pageParameter.km"
-            >
-              <a-select-option v-for="d in kmList" :value="d.ccode">
-                {{ d.ccodeName }}
-              </a-select-option>
-              <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
-            </a-select>
-          </div>
-          <div style="margin-top: 5px;margin-left: 5px;">
-            本位币：<span style="font-weight: bold">{{ bwb }} </span>
-            &emsp;&emsp;样式：<span style="color: black;font-weight: bold">{{ styleName }}</span>
-          </div>
-        </div>
-        <div v-if="pageMode=='1'" style="width: 60%;float: right;">
-          <span style="font-size: 24px;color: #0096c7;font-weight: bold;">{{ pageMode == '1' ? titleName : '科目' }}明细表</span>
-          <div class="ant-btn-group" style="float: right;margin-top: 5px;">
-            <button
-              type="button"
-              class="ant-btn ant-btn-me"
-              ant-click-animating-without-extra-node="false"
-              @click="openQueryPage()"
-            ><span>查询</span></button>
-
-            <a-popover placement="bottom">
-              <template #content>
-                <span class="group-btn-span" @click="thisPageImport">导出当前</span><br/>
-                <span class="group-btn-span" @click="allPageImport">导出全部</span>
+      <ProfileOutlined style="color: #0096c7;font-size: 60px;margin-top: 10px;"/>&emsp;
+      <div style="width: 33%;margin-top: 9px;">
+        <AccountPicker theme="three" readonly="" @reloadTable="dynamicAdReload" style="margin-top: 2px;"/>
+        <div style="margin-top: 12px;"/>
+        <span style="color:#666666;font-weight: bold;margin-left: 6px;">科目：</span>
+        <a-select
+          show-search
+          placeholder="科目选择"
+          option-filter-prop="children"
+          style="width: 250px;display: inline-block;"
+          @change="handleChangeMinKm"
+          v-model:value="pageParameter.km"
+        >
+          <a-select-option v-for="d in kmList" :value="d.ccode">
+            {{ d.ccodeName }}
+          </a-select-option>
+          <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
+        </a-select>
+        <span style="color:#666666;font-weight: bold;margin-left: 30px;">显示样式：</span><span style="color: black;font-weight: bold">{{ styleName }}</span>
+      </div>
+      <div style="width: 29.5%;text-align: center;margin-top: 9px;">
+        <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">{{ pageMode == '1' ? titleName : '科目' }}明细表</span><br>
+        <span style="color:#666666;font-weight: bold;">期间：</span> <span style="color: #0f0f0f;font-weight: bold;">{{ time.strDate }} - {{ time.endDate }}</span>
+      </div>
+      <div style="width: 33%;text-align: right;" v-if="pageMode=='1'">
+        <a-button
+          class="actod-btn"
+          ant-click-animating-without-extra-node="false"
+          @click="openQueryPage()"
+        ><span>查询</span></a-button>
+        <a-popover placement="bottom">
+          <template #content>
+            <span class="group-btn-span" @click="thisPageImport">导出当前</span><br/>
+            <span class="group-btn-span" @click="allPageImport">导出全部</span>
+          </template>
+          <a-button
+            class="actod-btn"
+            ant-click-animating-without-extra-node="false"
+          ><span>导出表格</span></a-button>
+        </a-popover>
+        <a-popover placement="bottom">
+          <template #content>
+            <span class="group-btn-span" @click="thisPrint">打印当前</span><br/>
+          </template>
+          <a-button
+            class="actod-btn"
+            ant-click-animating-without-extra-node="false"
+          ><span>打印</span></a-button>
+        </a-popover>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
+        <p/>
+        <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 130px;text-align: left;" class="special_select">
+          <template v-for="item in searchConditonList.slice(1)">
+            <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
+              {{ item.title }}
+            </a-select-option>
+          </template>
+        </a-select>
+        <a-input-search
+          placeholder=""
+          v-model:value="pageParameter.searchConditon.value"
+          @search="pageSearch"
+          style="width: 150px;border-radius: 4px;border: 1px #cccccc solid;"
+        />&emsp;
+        <a-button class="ant-btn" @click="closeFilterV(),pageReload()">
+          <SyncOutlined :style="{ fontSize: '14px' }"/>
+        </a-button>
+        <a-popover class="ant-btn-default" placement="bottom">
+          <template #content>
+            <a-popconfirm
+              ok-text="确定"
+              cancel-text="放弃"
+              @confirm="confirm"
+              @cancel="cancel">
+              <template #icon><b>栏目设置</b><br></template>
+              <template #title>
+                <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
+                         childrenColumnName="children" :pagination="false"
+                         style="max-height: 650px;overflow-y: auto" :class="'a-table-font-size-12'">
+                  <template #checkBox="{ text, record }">
+                    <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
+                  </template>
+                  <template #widthInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="number" v-model:value="editableData[record.key].width"
+                                 @pressEnter="save(record.key,record.min,record.max)"
+                                 style="width: 80px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="save(record.key,record.min,record.max)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                        <span style="float: right;">{{ record.min + '~' + record.max }}</span>
+                      </div>
+                    </div>
+                  </template>
+                  <template #nameInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="text" v-model:value="editableData[record.key].nameNew"
+                                 @pressEnter="saveName(record.key)" style="width: 100px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="saveName(record.key)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                      </div>
+                    </div>
+                  </template>
+                  <template #alignRadio="{ text, record }">
+                    <a-radio-group default-value="a" size="small" v-model:value="record.align"
+                                   :disabled="record.align==''">
+                      <a-radio-button value="left">
+                        左
+                      </a-radio-button>
+                      <a-radio-button value="center">
+                        中
+                      </a-radio-button>
+                      <a-radio-button value="right">
+                        右
+                      </a-radio-button>
+                    </a-radio-group>
+                  </template>
+                </a-table>
               </template>
-              <button
-                type="button"
-                class="ant-btn ant-btn-me"
-                ant-click-animating-without-extra-node="false"
-              ><span>导出表格</span></button>
-            </a-popover>
-            <a-popover placement="bottom">
-              <template #content>
-                <span class="group-btn-span" @click="thisPrint">打印当前</span><br/>
-                <!--            <span class="group-btn-span">条件打印</span>-->
-              </template>
-              <button
-                type="button"
-                class="ant-btn ant-btn-me"
-                ant-click-animating-without-extra-node="false"
-              ><span>打印</span></button>
-            </a-popover>
-            <button type="button" class="ant-btn ant-btn-me"
-                    @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span>
-            </button>
-          </div>
-          <span style="display: block;color: black;font-size: 14px;margin-left: 10px;">
-            期间：{{ time.strDate }} - {{ time.endDate }}
-            <span style="float: right;margin-top: 5px;">
-              <div>
-                <!-- 搜索 -->
-                <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 130px;"
-                          class="special_select">
-                  <template v-for="item in searchConditonList.slice(1)">
-                    <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
-                      {{ item.title }}
-                    </a-select-option>
-                  </template>
-                </a-select>
-                <a-input-search
-                  placeholder=""
-                  v-model:value="pageParameter.searchConditon.value"
-                  @search="pageSearch"
-                  style="width: 150px;border-radius: 4px"
-                />&emsp;
-                <a-button class="ant-btn" @click="closeFilterV(),pageReload()">
-                  <SyncOutlined :style="{ fontSize: '14px' }"/>
-                </a-button>
-                <a-popover class="ant-btn-default" placement="bottom">
-                  <template #content>
-                    <a-popconfirm
-                      ok-text="确定"
-                      cancel-text="放弃"
-                      @confirm="confirm"
-                      @cancel="cancel">
-                      <template #icon><b>栏目设置</b><br></template>
-                      <template #title>
-                        <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
-                                 childrenColumnName="children" :pagination="false"
-                                 style="max-height: 650px;overflow-y: auto" :class="'a-table-font-size-12'">
-                          <template #checkBox="{ text, record }">
-                            <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
-                          </template>
-                          <template #widthInput="{ text, record }">
-                            <div class="editable-cell">
-                              <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                                <a-input type="number" v-model:value="editableData[record.key].width"
-                                         @pressEnter="save(record.key,record.min,record.max)"
-                                         style="width: 80px"/>
-                                <check-outlined class="editable-cell-icon-check"
-                                                @click="save(record.key,record.min,record.max)"/>
-                              </div>
-                              <div v-else class="editable-cell-text-wrapper">
-                                {{ text || ' ' }}
-                                <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                                <span style="float: right;">{{ record.min + '~' + record.max }}</span>
-                              </div>
-                            </div>
-                          </template>
-                          <template #nameInput="{ text, record }">
-                            <div class="editable-cell">
-                              <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                                <a-input type="text" v-model:value="editableData[record.key].nameNew"
-                                         @pressEnter="saveName(record.key)" style="width: 100px"/>
-                                <check-outlined class="editable-cell-icon-check"
-                                                @click="saveName(record.key)"/>
-                              </div>
-                              <div v-else class="editable-cell-text-wrapper">
-                                {{ text || ' ' }}
-                                <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                              </div>
-                            </div>
-                          </template>
-                          <template #alignRadio="{ text, record }">
-                            <a-radio-group default-value="a" size="small" v-model:value="record.align"
-                                           :disabled="record.align==''">
-                              <a-radio-button value="left">
-                                左
-                              </a-radio-button>
-                              <a-radio-button value="center">
-                                中
-                              </a-radio-button>
-                              <a-radio-button value="right">
-                                右
-                              </a-radio-button>
-                            </a-radio-group>
-                          </template>
-                        </a-table>
-                      </template>
-                      <a-button style="width: 128px;margin-bottom: 2px">栏目设置</a-button>
-                    </a-popconfirm>
-                    <br/>
-                    <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
-                          :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
-                      v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
-                    <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
-                          :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortAscendingOutlined/>&nbsp;小号字体&ensp;<CheckOutlined
-                      v-if="pageParameter.showRulesSize==='MIN'"/></span>
-                  </template>
-                  <!--            <template #title>
-                                <b>设置表格字号</b></template>-->
-                  <a-button>
-                    <SettingFilled :style="{ fontSize: '14px' }"/>
-                  </a-button>
-                </a-popover>
-
-                <a-popover placement="bottom">
-                  <template #content>
-              <span class="group-btn-span-special2" @click="onChangeSwitch('J')"
-                    :style="pageParameter.queryMark=='J'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortDescendingOutlined/>&nbsp;金额式&emsp;&ensp;<CheckOutlined
-                v-if="pageParameter.queryMark=='J'"/></span><br/>
-                    <span class="group-btn-span-special2" @click="onChangeSwitch('SJ')"
-                          :style="pageParameter.queryMark=='SJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortAscendingOutlined/>&nbsp;数量金额式<CheckOutlined
-                      v-if="pageParameter.queryMark=='SJ'"/></span><br/>
-                    <span class="group-btn-span-special2" @click="onChangeSwitch('WJ')"
-                          :style="pageParameter.queryMark=='WJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortDescendingOutlined/>&nbsp;外币金额式<CheckOutlined
-                      v-if="pageParameter.queryMark=='WJ'"/></span><br/>
-                    <span class="group-btn-span-special2" @click="onChangeSwitch('SWJ')"
-                          :style="pageParameter.queryMark=='SWJ'?{backgroundColor: '#0096c7',color: 'white'}:''">
-                <SortAscendingOutlined/>&nbsp;数量外币式<CheckOutlined
-                      v-if="pageParameter.queryMark=='SWJ'"/></span><br/>
-                  </template>
-                  <a-button>
-                    <PicLeftOutlined :style="{ fontSize: '14px' }"/>
-                  </a-button>
-                </a-popover>
-              </div>
-            </span>
-          </span>
-        </div>
-        <div v-else style="width: 60%;float: right;margin-top: -77px;">
-          <span style="font-size: 24px;color: #0096c7;font-weight: bold;">{{ pageMode == '1' ? titleName : '科目' }}明细表</span>
-          <div class="ant-btn-group" style="float: right;margin-top: 5px;">
-            <button
-              type="button"
-              class="ant-btn ant-btn-me"
-              ant-click-animating-without-extra-node="false"
-              @click="openQueryPage()"
-            ><span>查询</span></button>
-            <button type="button" class="ant-btn ant-btn-me" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></button>
-          </div>
-        </div>
+              <a-button style="width: 128px;margin-bottom: 2px">栏目设置</a-button>
+            </a-popconfirm>
+            <br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
+                  :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+        <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
+              v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
+                  :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+        <SortAscendingOutlined/>&nbsp;小号字体&ensp;<CheckOutlined
+              v-if="pageParameter.showRulesSize==='MIN'"/></span>
+          </template>
+          <a-button>
+            <SettingFilled :style="{ fontSize: '14px' }"/>
+          </a-button>
+        </a-popover>
+        <a-popover placement="bottom">
+          <template #content>
+            <span class="group-btn-span-special2" @click="onChangeSwitch('J')"
+                  :style="pageParameter.queryMark=='J'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortDescendingOutlined/>&nbsp;金额式&emsp;&ensp;<CheckOutlined
+              v-if="pageParameter.queryMark=='J'"/></span><br/>
+                  <span class="group-btn-span-special2" @click="onChangeSwitch('SJ')"
+                        :style="pageParameter.queryMark=='SJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortAscendingOutlined/>&nbsp;数量金额式<CheckOutlined
+                    v-if="pageParameter.queryMark=='SJ'"/></span><br/>
+                  <span class="group-btn-span-special2" @click="onChangeSwitch('WJ')"
+                        :style="pageParameter.queryMark=='WJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortDescendingOutlined/>&nbsp;外币金额式<CheckOutlined
+                    v-if="pageParameter.queryMark=='WJ'"/></span><br/>
+                  <span class="group-btn-span-special2" @click="onChangeSwitch('SWJ')"
+                        :style="pageParameter.queryMark=='SWJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortAscendingOutlined/>&nbsp;数量外币式<CheckOutlined
+                    v-if="pageParameter.queryMark=='SWJ'"/></span><br/>
+                </template>
+                <a-button>
+            <PicLeftOutlined :style="{ fontSize: '14px' }"/>
+          </a-button>
+        </a-popover>
+      </div>
+      <div style="width: 33%;text-align: right;" v-else>
+        <a-button
+          class="actod-btn"
+          ant-click-animating-without-extra-node="false"
+          @click="openQueryPage()"
+        ><span>查询</span></a-button>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
       </div>
     </div>
     <div class="app-container">
-      <div v-if="pageMode=='1'" :style="{height: (windowHeight+60)+'px'}">
-        <BasicTable
-          ref="tableRef"
-          :striped="true"
-          :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
-          :scroll="{ x: totalColumnWidth,y: windowHeight }"
-          size="small"
-          @register="registerTable"
-          @fetch-success="fetchSuccess"
-        >
+      <div class="app-container-bottom">
+        <div v-if="pageMode=='1'" :style="{height: (windowHeight)+'px'}">
+          <BasicTable
+            ref="tableRef"
+            :striped="true"
+            :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
+            :scroll="{ x: totalColumnWidth,y: (pageParameter.queryMark=='J'?windowHeight:windowHeight-20) }"
+            size="small"
+            @register="registerTable"
+            @fetch-success="fetchSuccess"
+          >
 
-          <template #inoId="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
+            <template #inoId="{ record }">
               {{ record.inoId }}
-            </span>
-          </template>
-          <template #md="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.md)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.md)}}</span>
-          </template>
-          <template #mc="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.mc)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.mc)}}</span>
-          </template>
-          <template #yue="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.yue)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue)}}</span>
-          </template>
-          <template #ndS="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.ndS)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.ndS)}}</span>
-          </template>
-          <template #ncS="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.ncS)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.ncS)}}</span>
-          </template>
-          <template #yue_num="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-               <a style="cursor: pointer;">{{moneyformat(record.yue_num)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue_num)}}</span>
-          </template>
-          <template #nfrat_md="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.nfrat_md)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.nfrat_md)}}</span>
-          </template>
-          <template #nfrat_mc="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.nfrat_mc)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.nfrat_mc)}}</span>
-          </template>
-          <template #yue_nfrat="{ record }">
-            <span v-if="record.inoId !='booz' " class="a-table-money-font-size a-table-font-arial">
-              <a style="cursor: pointer;">{{moneyformat(record.yue_nfrat)}}</a>
-            </span>
-            <span v-else  class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue_nfrat)}}</span>
-          </template>
+            </template>
+            <template #md="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.md)}}</span>
+            </template>
+            <template #mc="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.mc)}}</span>
+            </template>
+            <template #yue="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue)}}</span>
+            </template>
+            <template #ndS="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.ndS)}}</span>
+            </template>
+            <template #ncS="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.ncS)}}</span>
+            </template>
+            <template #yue_num="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue_num)}}</span>
+            </template>
+            <template #nfrat_md="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.nfrat_md)}}</span>
+            </template>
+            <template #nfrat_mc="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.nfrat_mc)}}</span>
+            </template>
+            <template #yue_nfrat="{ record }">
+              <span class="a-table-money-font-size a-table-font-arial" style="color: black;font-weight: bold;">{{moneyformat(record.yue_nfrat)}}</span>
+            </template>
 
-          <template #summary>
-            <TableSummary fixed>
-              <TableSummaryRow style="background-color: #cccccc;">
-                <TableSummaryCell class="nc-summary" :index="0" :align="'left'" :colSpan="4" style="border-right: none;">合计</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.md}}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.mc}}</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;"/>
-                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.yue}}</TableSummaryCell>
-              </TableSummaryRow>
-            </TableSummary>
-          </template>
-        </BasicTable>
-        <div class="pagination-text" :style="{top: (windowHeight+65)+'px'}" v-show="showPageNumber">
-          {{`共 ${pageNumber}条记录&emsp;每页 1000 条`}}
+            <template #summary>
+              <TableSummary fixed>
+                <TableSummaryRow style="background-color: #cccccc;">
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'left'" :colSpan="pageParameter.queryMark=='J'?4:pageParameter.queryMark=='SWJ'?6:5" style="border-right: none;">合计</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='SJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.ndS}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='WJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.nfrat_md}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.md}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='SJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.ncS}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='WJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.nfrat_mc}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.mc}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;"/>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='SJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.yue_num}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" v-if="pageParameter.queryMark=='WJ' || pageParameter.queryMark=='SWJ'" style="border-right: none;">{{summaryTotals.yue_nfrat}}</TableSummaryCell>
+                  <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.yue}}</TableSummaryCell>
+                </TableSummaryRow>
+              </TableSummary>
+            </template>
+          </BasicTable>
+          <div class="pagination-text" :style="{top: (windowHeight+60)+'px'}" v-show="showPageNumber">
+            {{`共 ${pageNumber} 条记录&emsp;每页 1000 条`}}
+          </div>
         </div>
-      </div>
-      <div :style="{height: (60+windowHeight)+'px',overflowY: 'auto'}" v-else>
-        <TablePiece v-if="startRender" v-model="pageParameter" v-for="accId in queryAccIds" :pageAccName="showCurrentName(accId)" :pageAccId="accId" :exportData="exportData"/>
+        <div :style="{height: (60+windowHeight)+'px',overflowY: 'auto'}" v-else>
+          <TablePiece v-if="startRender" v-model="pageParameter" v-for="accId in queryAccIds" :pageAccName="showCurrentName(accId)" :pageAccId="accId" :exportData="exportData"/>
+        </div>
       </div>
     </div>
     <Query @save="loadPage" @register="registerQueryPage" />
@@ -332,6 +283,7 @@ import {
   Table as ATable
 } from "ant-design-vue"
 import {
+  ProfileOutlined,
   CaretDownOutlined,
   CheckOutlined,
   EditOutlined,
@@ -531,7 +483,7 @@ const loadMark = ref(false)
 const tableSelectedRowKeys = ref([])
 const tableSelectedRowObjs = ref([])
 const windowWidth = (window.innerWidth - 70)
-const windowHeight = (window.innerHeight - (350))
+const windowHeight = (window.innerHeight - (327))
 const totalColumnWidth = ref(0)
 
 const tableRef = ref(null)
@@ -635,7 +587,7 @@ function fetchSuccess(data) {
   calculateTotal(data.items)
   if(data.items.length<50){
     for (let i =  data.items.length; i < 50; i++) {
-      data.items.push({inoId: 'booz'})
+      data.items.push({})
     }
   }
 }
@@ -1361,7 +1313,7 @@ function thisPageImport(){
       leftrow:leftrow,
     },
   ]
-  exportExcel(sheet, 'xlsx',accNameAll.value+'-科目明细账-'+time.strDate+'-'+time.endDate)
+  exportExcel(sheet, 'xlsx','科目明细账_'+time.strDate+'-'+time.endDate+'_'+accNameAll.value)
 }
 // 导出全部
 function allPageImport(){
@@ -1487,7 +1439,7 @@ async function onlySheetExport() {
         leftrow:leftrow,
       },
     ]
-    exportExcel2(sheet, 'xlsx',accNameAll.value+'-科目明细账-'+time.strDate+'-'+time.endDate)
+    exportExcel2(sheet, 'xlsx','科目明细账_'+time.strDate+'-'+time.endDate+'_'+accNameAll.value)
     compState.loading = false;
   })
 }
@@ -1630,7 +1582,7 @@ async function companyExportView() {
     }
     compState.loading = false
   })
-  exportExcel(sheet, 'xlsx',accNameAll.value+'-科目明细账-'+time.strDate+'-'+time.endDate)
+  exportExcel(sheet, 'xlsx','科目明细账_'+time.strDate+'-'+time.endDate+'_'+accNameAll.value)
 }
 const jtImportExcelView = () => {
   let data:any=exportData.value['map']
@@ -1738,7 +1690,7 @@ const jtImportExcelView = () => {
       },
     )
   }
-  exportExcel(sheet, 'xlsx','科目明细账-'+time.strDate+'-'+time.endDate)
+  exportExcel(sheet, 'xlsx','科目明细账_'+time.strDate+'-'+time.endDate)
 }
 
 // 打印当前页
@@ -1917,9 +1869,37 @@ function setString(str, len) {
   return s;
 }
 </script>
-<style src="../../../../assets/styles/global-menu-index-block.less" lang="less" scoped></style>
-<style src="../../../../assets/styles/global-menu-index.less" lang="less" scoped></style>
-<style scoped>
+<style scoped lang="less">
+@import '/@/assets/styles/part-open.less';
+@import '/@/assets/styles/global-menu-index1.less';
+:deep(.ant-select){
+  border: none;
+  background-color: #f1f1f1;
+  color: black;
+}
+
+:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
+  border: 1px #cccccc solid;
+  height: 33px;
+}
+
+// ***************  button样式  ***************
+.actod-btn {
+  color: @Global-Comm-BcOrText-Color;
+  font-size: 14px;
+  border-color: @Global-Border-Color;
+  border-right: none;
+}
+
+.actod-btn-last {
+  border-right: 1px solid @Global-Border-Color;
+}
+
+.actod-btn:hover {
+  background-color: @Global-Comm-BcOrText-Color;
+  color: white;
+}
+// ***************  button样式  ***************
 :deep(.vben-basic-table .ant-pagination) {
   margin-top: 0px;
   background-color: #cccccc;
@@ -1927,16 +1907,13 @@ function setString(str, len) {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-:deep(.nc-summary){
-  font-weight: bold;
-  background-color: #cccccc!important;;
-  border-right-color: #cccccc!important;
-}
-
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
   padding: 10px 5px;
   margin: 10px 10px 5px;
+  display: inline-flex;
+  width: 99%;
+  border-radius: 5px;
 }
 
 .app-container:nth-of-type(2) {
@@ -1945,65 +1922,46 @@ function setString(str, len) {
   background: #b4c8e3 !important;
   margin-top: -6px;
   position: relative;
-.pagination-text{
-  position: absolute;
-  bottom: 9px;
-  right: 10%;
-  font-size: 13px;
-  color: black;
-  z-index: 99999999;
+  .pagination-text{
+    position: absolute;
+    bottom: 9px;
+    right: 12%;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
 }
-}
-.app-container-top{
-  height: 120px;
-}
-:deep(.ant-table-thead th) {
-  background-color: #d8d8d8 !important;
-  font-weight: bold !important;
-  border-left: 1px solid #d8d8d8 !important;
-  border-bottom: 1px solid #d8d8d8 !important;
-  border-top: 1px solid #d8d8d8 !important;
-}
-
-:deep(.table-month-striped) {
-  background-color: honeydew;
-}
-:deep(.table-year-striped)  {
-  background-color: lightyellow;
-}
-:deep(.table-odd-striped)  {
-  background-color: #fafafa;
-}
-
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
-  font-size: 14px !important;
-  padding: 5px 8px !important;
+  font-size: 14% !important;
+  padding: 2px 8px !important;
+  height: 25px;
+  color: black;
 }
-
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
   font-size: 13px !important;
   padding: 2px 8px !important;
-}
-.a-table-font-size-16 :deep(td) .a-table-money-font-size{
-  font-size: 14px !important;
-  color: #0096c7;
-}
-.a-table-font-size-12 :deep(td) .a-table-money-font-size{
-  font-size: 13px !important;
-  color: #0096c7;
+  height: 25px;
+  color: black;
 }
 
-:deep(.a-table-font-arial){
-  font-family: Arial!important;
+.bg-white{
+  border: 1px #cccccc solid;
+  background:white ;
+  margin-top: 10px;
 }
-.group-btn-span-special2{
-  width: 130px;
+:deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected),
+:deep(.ant-table-tbody > tr.ant-table-row-selected > td){
+  background-color: #1488b1;
+  color: white;
 }
-:deep(.ant-checkbox){
-  border: 1px solid #2f2a2a;
-  border-radius: 4px;
+// 合计行
+:deep(.nc-summary){
+  font-weight: bold;
+  border-bottom-color: #9e9e9e;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
 }
 </style>
 

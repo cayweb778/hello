@@ -1,188 +1,158 @@
 <template>
   <div>
     <div class="app-container">
-      <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
-      <div class="app-container-top">
-        <div style="width: 100%;margin-top: 5px;height: 100px;">
-          <div style="width: 40%;padding-top:20px;">
-            <div>
-              <AccountPicker theme="three" readonly="" @reloadTable="dynamicAdReload" style="margin-top: -5px;"/>
-            </div>
-            <div style="margin-top: 5px;margin-left: 5px;">
-              &nbsp;本位币：<span style="font-size: 14px;font-weight: bold">{{ bwb }} </span>
-              &emsp;&emsp;样式：<span style="color: black;font-weight: bold">{{ styleName }}</span>
-            </div>
-          </div>
-          <div style="width: 60%;float: right;margin-top: -77px;">
-            <span style="font-size: 24px;color: #0096c7;font-weight: bold;margin-left: 20px;">科目汇总</span>
-            <div class="ant-btn-group" style="float: right;margin-top: 5px;">
-              <button
-                type="button"
-                class="ant-btn ant-btn-me"
-                ant-click-animating-without-extra-node="false"
-                @click="openQueryPage()"
-              ><span>查询</span></button>
-              <a-popover placement="bottom">
-                <template #content>
-                  <span class="group-btn-span" @click="exportExcelBtn('this')">导出当前</span><br/>
-                  <span class="group-btn-span" @click="exportExcelBtn('all')">导出全部</span><br/>
-                </template>
-                <button
-                  type="button"
-                  class="ant-btn ant-btn-me"
-                  ant-click-animating-without-extra-node="false"
-                ><span>导出</span></button>
-              </a-popover>
-              <a-popover placement="bottom">
-                <template #content>
-                  <span class="group-btn-span" @click="thisPrint">打印当前</span><br/>
-                </template>
-                <button
-                  type="button"
-                  class="ant-btn ant-btn-me"
-                  ant-click-animating-without-extra-node="false"
-                ><span>打印</span></button>
-              </a-popover>
-              <button type="button" class="ant-btn ant-btn-me" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></button>
-            </div>
-            <span style="display: block;color: black;font-size: 14px;margin-top: 10px;">
-            期间：<span>{{ time.strDate }}~{{ time.endDate }}</span>
-            <span style="float: right;margin-top: 5px;">
-              <div>
-                <!-- 搜索 -->
-                <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 130px;"
-                          class="special_select">
-                  <template v-for="item in searchConditonList">
-                    <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
-                      {{ item.title }}
-                    </a-select-option>
-                  </template>
-                </a-select>
-                <a-input-search
-                  placeholder=""
-                  v-model:value="pageParameter.searchConditon.value"
-                  @search="pageSearch"
-                  style="width: 150px;border-radius: 4px"
-                />            &emsp;
+      <ProfileOutlined style="color: #0096c7;font-size: 60px;margin-top: 10px;"/>&emsp;
+      <div style="width: 33%;margin-top: 9px;">
+        <AccountPicker theme="three" readonly="" @reloadTable="dynamicAdReload" style="margin-top: 2px;"/>
+        <div style="margin-top: 12px;"/>
+        <span style="color:#666666;font-weight: bold;margin-left: 6px;">显示样式：</span><span style="color: black;font-weight: bold">{{ styleName }}</span>
+      </div>
+      <div style="width: 29.5%;text-align: center;margin-top: 9px;">
+        <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">科目汇总</span><br>
+        <span style="color:#666666;font-weight: bold;">期间：</span> <span style="color: #0f0f0f;font-weight: bold;">{{ time.strDate }} - {{ time.endDate }}</span>
 
-                <a-button class="ant-btn" @click="closeFilterV(),pageReload()">
-                  <SyncOutlined :style="{ fontSize: '14px' }"/>
-                </a-button>
-
-                <a-popover placement="bottom">
-                  <template #content>
-                    <a-popconfirm
-                      ok-text="确定"
-                      cancel-text="放弃"
-                      @confirm="confirm"
-                      @cancel="cancel"
-                    >
-                      <template #icon><b>栏目设置</b><br></template>
-                      <template #title>
-                        <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
-                                 childrenColumnName="children" :pagination="false" style="max-height: 500px;overflow-y: auto" :class="'a-table-font-size-12'">
-                          <template #checkBox="{ text, record }">
-                            <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
-                          </template>
-                          <template #widthInput="{ text, record }">
-                            <div class="editable-cell">
-                              <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                                <a-input type="number" v-model:value="editableData[record.key].width"
-                                         @pressEnter="save(record.key,record.min,record.max)" style="width: 80px"/>
-                                <check-outlined class="editable-cell-icon-check"
-                                                @click="save(record.key,record.min,record.max)"/>
-                              </div>
-                              <div v-else class="editable-cell-text-wrapper">
-                                {{ text || ' ' }}
-                                <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                                <span style="float: right;">{{ record.min + '~' + record.max }}</span>
-                              </div>
-                            </div>
-                          </template>
-                          <template #nameInput="{ text, record }">
-                            <div class="editable-cell">
-                              <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                                <a-input type="text" v-model:value="editableData[record.key].nameNew"
-                                         @pressEnter="saveName(record.key)" style="width: 100px"/>
-                                <check-outlined class="editable-cell-icon-check"
-                                                @click="saveName(record.key)"/>
-                              </div>
-                              <div v-else class="editable-cell-text-wrapper">
-                                {{ text || ' ' }}
-                                <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                              </div>
-                            </div>
-                          </template>
-                          <template #alignRadio="{ text, record }">
-                            <a-radio-group default-value="a" size="small" v-model:value="record.align"
-                                           :disabled="record.align=='' || record.name=='本币金额' || record.name=='原币金额'
-                                          || record.name=='借方' || record.name=='贷方' || record.name=='余额'">
-                              <a-radio-button value="left">
-                                左
-                              </a-radio-button>
-                              <a-radio-button value="center">
-                                中
-                              </a-radio-button>
-                              <a-radio-button value="right">
-                                右
-                              </a-radio-button>
-                            </a-radio-group>
-                          </template>
-                        </a-table>
-                      </template>
-                      <a-button style="width: 165px;border: none">栏目设置</a-button>
-                    </a-popconfirm>
-                    <br/>
-                    <span @click="pageParameter.showRulesSize = 'MAX'"
-                          :style="{backgroundColor: (pageParameter.showRulesSize==='MAX')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;&emsp;<SortDescendingOutlined
-                      :style="{ fontSize: '14px' }"/>&emsp;大号字体&emsp;<CheckOutlined v-if="pageParameter.showRulesSize==='MAX'"
-                                                                                    :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
-                    <span @click="pageParameter.showRulesSize = 'MIN'"
-                          :style="{backgroundColor: (pageParameter.showRulesSize==='MIN')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;&emsp;<SortAscendingOutlined
-                      :style="{ fontSize: '14px' }"/>&emsp;小号字体&emsp;<CheckOutlined v-if="pageParameter.showRulesSize==='MIN'"
-                                                                                    :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
+      </div>
+      <div style="width: 33%;text-align: right;margin-left: 8px;">
+        <a-button class="actod-btn"
+                  ant-click-animating-without-extra-node="false"
+                  @click="openQueryPage()"
+        ><span>查询</span></a-button>
+        <a-button
+          class="actod-btn"
+          ant-click-animating-without-extra-node="false"
+          @click="exportExcelBtn()"
+        ><span>导出表格</span></a-button>
+        <a-button
+          class="actod-btn"
+          ant-click-animating-without-extra-node="false"
+        ><span>打印</span></a-button>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
+        <p/>
+        <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 150px;text-align: left;font-size: 12px;">
+          <template v-for="item in searchConditonList">
+            <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
+              {{ item.title }}
+            </a-select-option>
+          </template>
+        </a-select>
+        <a-input-search
+          placeholder=""
+          v-model:value="pageParameter.searchConditon.value"
+          @search="pageSearch"
+          style="width: 150px;border-radius: 4px;border: 1px #cccccc solid;"
+        />&emsp;
+        <a-button class="ant-btn" @click="closeFilterV(),pageReload()">
+          <SyncOutlined :style="{ fontSize: '14px' }"/>
+        </a-button>
+        <a-popover class="ant-btn-default" placement="bottom">
+          <template #content>
+            <a-popconfirm
+              ok-text="确定"
+              cancel-text="放弃"
+              @confirm="confirm"
+              @cancel="cancel">
+              <template #icon><b>栏目设置</b><br></template>
+              <template #title>
+                <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
+                         childrenColumnName="children" :pagination="false"
+                         style="max-height: 650px;overflow-y: auto" :class="'a-table-font-size-12'">
+                  <template #checkBox="{ text, record }">
+                    <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
                   </template>
-                  <template #title>
-                    <b>设置表格字号</b>
+                  <template #widthInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="number" v-model:value="editableData[record.key].width"
+                                 @pressEnter="save(record.key,record.min,record.max)"
+                                 style="width: 80px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="save(record.key,record.min,record.max)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                        <span style="float: right;">{{ record.min + '~' + record.max }}</span>
+                      </div>
+                    </div>
                   </template>
-                  <a-button>
-                    <SettingFilled :style="{ fontSize: '14px' }"/>
-                  </a-button>
-                </a-popover>
-                <a-popover placement="bottom">
-                  <template #content>
-                    <span @click="onChangeSwitch('J')"
-                          :style="{backgroundColor: (pageParameter.queryMark==='J')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;<OrderedListOutlined
-                      :style="{ fontSize: '14px' }"/>&emsp;&emsp;金额式&nbsp;<CheckOutlined v-if="pageParameter.queryMark==='J'"
-                                                                                         :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
-                        <span @click="onChangeSwitch('SJ')"
-                              :style="{backgroundColor: (pageParameter.queryMark==='SJ')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;<OrderedListOutlined
-                          :style="{ fontSize: '14px' }"/>&emsp;数量金额式&nbsp;<CheckOutlined v-if="pageParameter.queryMark==='SJ'"
-                                                                                         :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
-                        <span @click="onChangeSwitch('WJ')"
-                              :style="{backgroundColor: (pageParameter.queryMark==='WJ')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;<OrderedListOutlined
-                          :style="{ fontSize: '14px' }"/>&emsp;外币金额式&nbsp;<CheckOutlined v-if="pageParameter.queryMark==='WJ'"
-                                                                                         :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
-                        <span @click="onChangeSwitch('SWJ')"
-                              :style="{backgroundColor: (pageParameter.queryMark==='SWJ')?'#e3e0e0':'white',cursor: 'pointer'}">&emsp;<OrderedListOutlined
-                          :style="{ fontSize: '14px' }"/>&emsp;数量外币式&nbsp;<CheckOutlined v-if="pageParameter.queryMark==='SWJ'"
-                                                                                         :style="{ fontSize: '14px' }"/>&emsp;</span><br/>
+                  <template #nameInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="text" v-model:value="editableData[record.key].nameNew"
+                                 @pressEnter="saveName(record.key)" style="width: 100px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="saveName(record.key)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                      </div>
+                    </div>
                   </template>
-                </a-popover>
-              </div>
-            </span>
-          </span>
-          </div>
-        </div>
+                  <template #alignRadio="{ text, record }">
+                    <a-radio-group default-value="a" size="small" v-model:value="record.align"
+                                   :disabled="record.align==''">
+                      <a-radio-button value="left">
+                        左
+                      </a-radio-button>
+                      <a-radio-button value="center">
+                        中
+                      </a-radio-button>
+                      <a-radio-button value="right">
+                        右
+                      </a-radio-button>
+                    </a-radio-group>
+                  </template>
+                </a-table>
+              </template>
+              <a-button style="width: 128px;margin-bottom: 2px">栏目设置</a-button>
+            </a-popconfirm>
+            <br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
+                  :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
+              &nbsp;大号字体&ensp;<CheckOutlined
+              v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
+                  :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white'}:''">
+              &nbsp;小号字体&ensp;<CheckOutlined
+              v-if="pageParameter.showRulesSize==='MIN'"/></span>
+          </template>
+          <a-button>
+            <SettingFilled :style="{ fontSize: '14px' }"/>
+          </a-button>
+        </a-popover>
+        <a-popover placement="bottom">
+          <template #content>
+             <span class="group-btn-span-special2" @click="onChangeSwitch('J')"
+                   :style="pageParameter.queryMark=='J'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortDescendingOutlined/>&nbsp;金额式&emsp;&ensp;<CheckOutlined
+               v-if="pageParameter.queryMark=='J'"/></span><br/>
+            <span class="group-btn-span-special2" @click="onChangeSwitch('SJ')"
+                  :style="pageParameter.queryMark=='SJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortAscendingOutlined/>&nbsp;数量金额式<CheckOutlined
+              v-if="pageParameter.queryMark=='SJ'"/></span><br/>
+            <span class="group-btn-span-special2" @click="onChangeSwitch('WJ')"
+                  :style="pageParameter.queryMark=='WJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortDescendingOutlined/>&nbsp;外币金额式<CheckOutlined
+              v-if="pageParameter.queryMark=='WJ'"/></span><br/>
+            <span class="group-btn-span-special2" @click="onChangeSwitch('SWJ')"
+                  :style="pageParameter.queryMark=='SWJ'?{backgroundColor: '#0096c7',color: 'white',width:'150px'}:''">
+              <SortAscendingOutlined/>&nbsp;数量外币式<CheckOutlined
+              v-if="pageParameter.queryMark=='SWJ'"/></span><br/>
+          </template>
+          <a-button>
+            <PicLeftOutlined :style="{ fontSize: '14px' }"/>
+          </a-button>
+        </a-popover>
       </div>
     </div>
     <div class="app-container">
       <div class="app-container-bottom">
-        <PageWrapper dense content-full-height fixed-height content-class="flex">
+        <div :style="{height: (windowHeight)+'px'}">
           <BasicTable
             ref="tableRef"
             :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
-            :scroll="{ x: totalColumnWidth,y: windowHeight }"
+            :scroll="{ x: totalColumnWidth,y: (pageParameter.queryMark=='J'?windowHeight:windowHeight-20) }"
             size="small"
             @register="registerTable"
             @fetch-success="fetchSuccess"
@@ -267,16 +237,15 @@
               </TableSummary>
             </template>
           </BasicTable>
-          <div class="pagination-text" :style="{top: (pageParameter.queryMark=='J'?windowHeight+65:windowHeight+90)+'px'}" v-show="showPageNumber">
-            {{`共 ${pageNumber}条记录&emsp;每页 1000 条`}}
+          <div class="pagination-text" :style="{top: (pageParameter.queryMark=='J'?windowHeight+60:windowHeight+65)+'px',left:(totalColumnWidth-600)+'px'}" v-show="showPageNumber">
+            {{`共 ${pageNumber} 条记录&emsp;每页 1000 条`}}
           </div>
           <Query @save="loadPage" @register="registerQueryPage" />
           <Print @save="loadPrint" @register="registerPrintPage"/>
-        </PageWrapper>
+        </div>
       </div>
     </div>
   </div>
-
 </template>
 <script setup lang="ts">
 import {BasicTable, useTable} from '/@/components/Table'
@@ -296,6 +265,7 @@ import {
   Table as ATable
 } from "ant-design-vue"
 import {
+  ProfileOutlined,
   CheckOutlined,
   EditOutlined,
   FilterFilled,
@@ -445,10 +415,10 @@ const loadMark = ref(false)
 const tableSelectedRowKeys = ref([])
 const tableSelectedRowObjs = ref([])
 const windowWidth = (document.documentElement.clientWidth - 70)
-const windowHeight = (window.innerHeight - (340))
+const windowHeight = (window.innerHeight - (327))
 const totalColumnWidth = ref(0)
 
-const tableRef = ref(null)
+const tableRef:any = ref(null)
 const userName = useUserStoreWidthOut().getUserInfo.username
 const database = ref(getCurrentAccountName(true));
 const accId = ref(getCurrentAccountName(false));
@@ -987,13 +957,11 @@ function initTableWidth(thisCs) {
   })
   if (total > windowWidth) {
     let f = 0
-    if (visible.value) f = 260
     totalColumnWidth.value = Number(windowWidth) - f
-    tableRef.value.$el.style.setProperty('width', (windowWidth + 20 - f) + 'px')
+    tableRef.value.$el.style.setProperty('width', (windowWidth + 58 - f) + 'px')
   } else {
-    if (visible.value && (windowWidth - 260) < total) total -= (total - (windowWidth - 260))
     totalColumnWidth.value = total
-    tableRef.value.$el.style.setProperty('width', (total + 20) + 'px')
+    tableRef.value.$el.style.setProperty('width', (total + 58) + 'px')
   }
 }
 
@@ -1147,7 +1115,7 @@ const exportExcelBtn = async (flag) => {
       leftrow:leftrow,
     },
   ]
-  exportExcel2(sheet, 'xlsx',accNameAll.value+'-科目汇总-'+time.strDate+' - '+time.endDate)
+  exportExcel2(sheet, 'xlsx','科目汇总_'+time.strDate+' - '+time.endDate+'_'+accNameAll.value)
 }
 
 const thisPrint = () => {
@@ -1318,9 +1286,37 @@ function setString(str, len) {
   return s;
 }
 </script>
-<style src="../../../../assets/styles/global-menu-index-block.less" lang="less" scoped></style>
-<style src="../../../../assets/styles/global-menu-index.less" lang="less" scoped></style>
-<style scoped>
+<style scoped lang="less">
+@import '/@/assets/styles/part-open.less';
+@import '/@/assets/styles/global-menu-index1.less';
+:deep(.ant-select){
+  border: none;
+  background-color: #f1f1f1;
+  color: black;
+}
+
+:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
+  border: 1px #cccccc solid;
+  height: 33px;
+}
+
+// ***************  button样式  ***************
+.actod-btn {
+  color: @Global-Comm-BcOrText-Color;
+  font-size: 14px;
+  border-color: @Global-Border-Color;
+  border-right: none;
+}
+
+.actod-btn-last {
+  border-right: 1px solid @Global-Border-Color;
+}
+
+.actod-btn:hover {
+  background-color: @Global-Comm-BcOrText-Color;
+  color: white;
+}
+// ***************  button样式  ***************
 :deep(.vben-basic-table .ant-pagination) {
   margin-top: 0px;
   background-color: #cccccc;
@@ -1328,84 +1324,60 @@ function setString(str, len) {
   padding-top: 5px;
   padding-bottom: 5px;
 }
-:deep(.nc-summary){
-  font-weight: bold;
-  background-color: #cccccc!important;;
-  border-right-color: #cccccc!important;
-}
-
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px 10px;
   margin: 10px 10px 5px;
+  display: inline-flex;
+  width: 99%;
+  border-radius: 5px;
 }
 
 .app-container:nth-of-type(2) {
   padding: 0px;
   margin: 0px 10px;
   background: #b4c8e3 !important;
-  margin-top: -45px;
+  margin-top: -6px;
   position: relative;
-.pagination-text{
-  position: absolute;
-  bottom: 9px;
-  right: 11%;
-  font-size: 13px;
-  color: black;
-  z-index: 99999999;
+  .pagination-text{
+    position: absolute;
+    bottom: 9px;
+    right: 12%;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
 }
-}
-.app-container-top{
-  height: 120px;
-}
-.app-container-bottom {
-:deep(.ant-table-thead th) {
-  background-color: #d8d8d8 !important;
-  font-weight: bold !important;
-  border-left: 1px solid #d8d8d8 !important;
-  border-bottom: 1px solid #d8d8d8 !important;
-  border-top: 1px solid #d8d8d8 !important;
-}
-}
-
-:deep(.table-month-striped) {
-  background-color: honeydew;
-}
-:deep(.table-year-striped)  {
-  background-color: lightyellow;
-}
-:deep(.table-odd-striped)  {
-  background-color: #fafafa;
-}
-
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
-  font-size: 14px !important;
-  padding: 5px 8px !important;
+  font-size: 14% !important;
+  padding: 2px 8px !important;
+  height: 25px;
+  color: black;
 }
-
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
   font-size: 13px !important;
   padding: 2px 8px !important;
-}
-.a-table-font-size-16 :deep(td) .a-table-money-font-size{
-  font-size: 14px !important;
-  color: #0096c7;
-}
-.a-table-font-size-12 :deep(td) .a-table-money-font-size{
-  font-size: 13px !important;
-  color: #0096c7;
+  height: 25px;
+  color: black;
 }
 
-:deep(.a-table-font-arial){
-  font-family: Arial!important;
+.bg-white{
+  border: 1px #cccccc solid;
+  background:white ;
+  margin-top: 10px;
 }
-.group-btn-span-special2{
-  width: 130px;
+:deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected),
+:deep(.ant-table-tbody > tr.ant-table-row-selected > td){
+  background-color: #1488b1;
+  color: white;
 }
-:deep(.ant-checkbox){
-  border: 1px solid #2f2a2a;
-  border-radius: 4px;
+// 合计行
+:deep(.nc-summary){
+  font-weight: bold;
+  border-bottom-color: #9e9e9e;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
 }
 </style>

@@ -12,7 +12,7 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 13px">账簿</span>
+        <span style="font-size: 13px"> 账簿</span>
       </div>
     </template>
 
@@ -206,6 +206,14 @@
         </a-tabs>
       </div>
     </div>
+    <template #footer>
+      <div style="height: 35px">
+        <div style="float: right">
+          <a-button @click="handleClose" shape="round" style="width: 100px">取消</a-button>
+          <a-button @click="handleOk" v-if="!modelLoadIng" type="primary" shape="round"  style="width: 100px">查询</a-button>
+        </div>
+      </div>
+    </template>
   </BasicModal>
 </template>
 

@@ -42,7 +42,7 @@ const dynamicColumnAndDataModel = reactive({
       check: true,
       isFixed: true,
       width: 120,
-      max: 120,
+      max: 200,
       min: 80,
       align: 'left'
     },
@@ -51,8 +51,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '科目名称',
       nameNew: '科目名称',
       check: true,
-      width: 120,
-      max: 120,
+      width: 200,
+      max: 250,
       min: 80,
       align: 'left'
     },
@@ -193,7 +193,7 @@ const dynamicColumnAndDataModel = reactive({
       check: true,
       isFixed: true,
       width: 120,
-      max: 120,
+      max: 200,
       min: 80,
       align: 'left'
     },
@@ -202,8 +202,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '科目名称',
       nameNew: '科目名称',
       check: true,
-      width: 120,
-      max: 120,
+      width: 200,
+      max: 250,
       min: 80,
       align: 'left'
     },
@@ -212,9 +212,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '计量单位',
       nameNew: '计量单位',
       check: true,
-      width: 120,
+      width: 60,
       max: 120,
-      min: 80,
+      min: 60,
       align: 'center'
     },
     {
@@ -391,7 +391,7 @@ const dynamicColumnAndDataModel = reactive({
       check: true,
       isFixed: true,
       width: 120,
-      max: 120,
+      max: 200,
       min: 80,
       align: 'left'
     },
@@ -400,8 +400,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '科目名称',
       nameNew: '科目名称',
       check: true,
-      width: 120,
-      max: 120,
+      width: 200,
+      max: 250,
       min: 80,
       align: 'left'
     },
@@ -410,9 +410,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '外币名称',
       nameNew: '外币名称',
       check: true,
-      width: 120,
+      width: 60,
       max: 120,
-      min: 80,
+      min: 60,
       align: 'center'
     },
     {
@@ -592,7 +592,7 @@ const dynamicColumnAndDataModel = reactive({
       check: true,
       isFixed: true,
       width: 120,
-      max: 120,
+      max: 200,
       min: 80,
       align: 'left'
     },
@@ -601,8 +601,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '科目名称',
       nameNew: '科目名称',
       check: true,
-      width: 120,
-      max: 120,
+      width: 200,
+      max: 250,
       min: 80,
       align: 'left'
     },
@@ -611,9 +611,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '计量单位',
       nameNew: '计量单位',
       check: true,
-      width: 120,
+      width: 60,
       max: 120,
-      min: 80,
+      min: 60,
       align: 'center'
     },
     {
@@ -621,9 +621,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '外币名称',
       nameNew: '外币名称',
       check: true,
-      width: 120,
+      width: 60,
       max: 120,
-      min: 80,
+      min: 60,
       align: 'center'
     },
     {

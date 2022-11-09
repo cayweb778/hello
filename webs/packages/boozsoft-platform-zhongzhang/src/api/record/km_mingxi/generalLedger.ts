@@ -365,10 +365,10 @@ export const mxGlStore = defineStore({
           },
           {
             title: '本币金额',
-            dataIndex: 'yue',
+            dataIndex: 'md',
             key: '6-3',
             align: 'right',
-            slots: { customRender: 'yue' },
+            slots: { customRender: 'md' },
           }
         ],
       },
@@ -392,10 +392,10 @@ export const mxGlStore = defineStore({
           },
           {
             title: '本币金额',
-            dataIndex: 'yue',
+            dataIndex: 'mc',
             key: '7-3',
             align: 'right',
-            slots: { customRender: 'yue' },
+            slots: { customRender: 'mc' },
           }
         ],
       },

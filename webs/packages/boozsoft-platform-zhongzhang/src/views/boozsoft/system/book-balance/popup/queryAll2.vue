@@ -12,7 +12,7 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 13px">账簿</span>
+        <span style="font-size: 13px"> 账簿</span>
       </div>
     </template>
 
@@ -30,7 +30,7 @@
               <li>
                 <div class="special-border-div">
                   <span style="color: #5a5a5a">业务范围</span>
-                  <AccountPicker theme="three" @reloadTable="dynamicAdReload" style="display: block;"/>
+                  <AccountPicker theme="three" @reloadTable="dynamicAdReload" style="display: block;text-align: center;"/>
                 </div>
               </li>
               <li>
@@ -228,6 +228,14 @@
         </a-tabs>
       </div>
     </div>
+    <template #footer>
+      <div style="height: 35px">
+        <div style="float: right">
+          <a-button @click="handleClose" shape="round" style="width: 100px">取消</a-button>
+          <a-button @click="handleOk" v-if="!modelLoadIng" type="primary" shape="round"  style="width: 100px">查询</a-button>
+        </div>
+      </div>
+    </template>
   </BasicModal>
 </template>
 
@@ -281,6 +289,7 @@ import router from "/@/router";
 import {useTabs} from "/@/hooks/web/useTabs";
 import {groupByCbill} from "/@/api/record/system/accvoucher";
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
+import logger from "../../../../../../mock/logger";
 
 const { closeCurrent } = useTabs(router);
 const emit = defineEmits(['register', 'save'])
@@ -321,7 +330,6 @@ const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   setModalProps({ minHeight: 400 });
 })
 const tabsChange = (val) => {
-  console.log()
   if(val=='2'){
     findByDateBase()
   }else if(val=='1'){
@@ -353,7 +361,6 @@ async function findByCbill() {
   cbillList.value= await useRouteApi(groupByCbill, {schemaName: databaseTrue})({strDate:strDate.value.replaceAll('-',''),endDate:endDate.value.replaceAll('-','')});
 }
 async function dynamicAdReload(data) {
-  console.log(data.accountMode)
   databaseTrue.value =data.accountMode
   // 获取账套信息
   getThisAdInfoData({ accId: data.accId }).then(async (res) => {
@@ -603,9 +610,7 @@ async function findByKemu() {
       return createWarningModal({content: '会计科目已被数据控制,请进行数据授权！'});
     }
   }else{
-    setTimeout(()=>{
-      findByKemuAll()
-    },500)
+    findByKemuAll()
   }
 }
 // 所有科目
@@ -765,15 +770,13 @@ async function handleOk1() {
     return createWarningModal({content: '请选择凭证类别！'});
   }
   if(kmList.value.length==0){
-    findByKemu()
+    await findByKemu()
     return false
   }
-
   formItems.value.strDate = strDate.value;
   formItems.value.endDate = endDate.value;
   formItems.value.minKm = minKm.value;
   formItems.value.maxKm = maxKm.value;
-
   formItems.value.jc = jc.value;
   formItems.value.minJc = '1';
   formItems.value.maxJc = '1';
@@ -821,7 +824,6 @@ async function handleOk1() {
   formItems.value.maxInoId = maxInoId.value;
   formItems.value.ibook = ibook.value;
   formItems.value.cbill = cbill.value;
-
   /************** 记录操作日志 ****************/
   let txt=openType.value=='yue'?'发生及余额表':'明细表'
   let map={
