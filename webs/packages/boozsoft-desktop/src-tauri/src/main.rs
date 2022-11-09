@@ -21,7 +21,7 @@ fn hasFilenameExist(path:&str, filename:&str) -> bool {
     return false
 }
 fn getTxt(path:&str, filename:&str) -> String {
-    let filepath=format!("{}/{}",path,filename);
+    let filepath=format!("{}{}",path,filename);
     println!("{}",filepath);
     let mut file = std::fs::File::open(filepath).unwrap();
     let mut contents = String::new();
@@ -29,6 +29,8 @@ fn getTxt(path:&str, filename:&str) -> String {
     return contents.to_string();
 }
 use std::collections::HashMap;
+use std::fmt::format;
+
 fn usepathInfo() -> HashMap<String, String> {
     let mut scores = HashMap::new();
     scores.insert(String::from("dirpath"),  String::from(std::env::temp_dir().display().to_string()));
@@ -40,17 +42,13 @@ use serde_json::Result;
 use serde::{Deserialize, Serialize};
 #[tauri::command]
 fn getCacheIpAddr() -> String {
-    println!("{}1","");
     let pathInfo=usepathInfo();
     let dirpath =pathInfo.get("dirpath").unwrap();
     let filename=pathInfo.get("filename").unwrap();
     let isExist=hasFilenameExist(&dirpath,&filename);
-    println!("{}2",dirpath);
-    println!("{}2",filename);
 
     let mut scores = HashMap::new();
     if isExist {
-        println!("{}3","");
 
         scores.insert(String::from("code"),  String::from("200"));
         scores.insert(String::from("msg"), String::from("成功获取"));
@@ -65,7 +63,7 @@ fn getCacheIpAddr() -> String {
     return a;
 }
 #[tauri::command]
-fn generate(name:String){
+fn generate(name:String) -> String{
     let pathInfo=usepathInfo();
     let dirpath =pathInfo.get("dirpath").unwrap();
     let filename=pathInfo.get("filename").unwrap();
@@ -73,11 +71,21 @@ fn generate(name:String){
     println!("无敌：{}",filename);
     let mut file = std::fs::File::create(format!("{}{}",dirpath,filename)).expect("create failed");
     file.write_all(name.as_bytes()).expect("write failed");
+    return format!("{}::{}::{}",dirpath,filename,dirpath)
 
 }
-
+use tauri::Manager;
 fn main() {
     tauri::Builder::default()
+        .setup(|app| {
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                let window = app.get_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
                                                       generate,
                                                       getCacheIpAddr

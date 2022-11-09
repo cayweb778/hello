@@ -41,7 +41,13 @@ async function greet() {
   const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
   const abcc=async function (){
 
-    await invoke("generate", {name: name.value});
+    console.log(";;;;;;;1")
+    console.log(name.value)
+    console.log(";;;;;;;1")
+    const aaa=await invoke("generate", {name: name.value});
+    console.log(";;;;;;;2")
+    console.log(aaa)
+    console.log(";;;;;;;2")
     window.location.href = "http://"+name.value+"/nc"
   }
   ws.onopen=abcc
