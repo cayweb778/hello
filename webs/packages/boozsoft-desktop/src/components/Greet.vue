@@ -19,6 +19,7 @@ import {
   primaryMonitor,
   availableMonitors
 } from '@tauri-apps/api/window'
+import {useDesktopStore, useDesktopStoreWidthOut} from "../store/modules/hello";
 
 const greetMsg = ref("");
 const name = ref("127.0.0.1:3000");
@@ -30,8 +31,7 @@ const emit=defineEmits(['ok']);
 
 const showError=ref('')
 async function greet() {
-  const aaa=await invoke("generate", {name: name.value});
-  emit('ok',name.value)
+  useDesktopStoreWidthOut().goApp(name.value)
   // const  ws=new WebSocket("ws://"+name.value+"/api/nc/zongzhang/pingServer")
   // const abcc=async function (){
   //

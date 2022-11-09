@@ -1,37 +1,65 @@
 <script setup lang="ts">
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Greet from "./components/Greet.vue";
+import Greet from "../../components/Greet.vue";
 // let abc=window.__TAURI__.window.WebviewWindow
+import {ref} from 'vue'
+import {useDesktopStoreWidthOut} from "../../store/modules/hello";
+
+const hello = ref('127.0.0.1:3000')
+
+function openAbc() {
+  useDesktopStoreWidthOut().goApp(hello.value)
+  console.log(window.__TAURI__)
+  debugger
+  window.__TAURI__.window.getCurrent().close()
+}
+
+function funasd() {
+  if (hello.value == '127.0.0.1:3000') {
+    hello.value = '81.70.47.206:81'
+    return
+  }
+  if (hello.value == '81.70.47.206:81') {
+    hello.value = '127.0.0.1:3000'
+    return
+  }
+  hello.value = '127.0.0.1:3000'
+
+}
 </script>
 
 <template>
-  <div class="container">
-    <h1>Welcome to 泊舟NC!</h1>
-
-    <div class="row">
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
+  <div style="text-align: center">
+    我是配置页面
+    <div>服务器地址：<input v-model="hello"/>
+      <button @click="funasd">🚀</button>
+      <button @click="openAbc">确认</button>
     </div>
-
-    <p>点击 NC, 泊舟, 微服务 学习更多.</p>
-
-    <p>
-      初次使用:
-
-      <a href="https://github.com/tauri-apps/tauri-vscode" target="_blank"
-        >指定服务地址</a
-      >
-    </p>
-
-    <Greet @ok="emit('ok',$event)" />
+    <div>
+      <button>打印控件配置</button>
+    </div>
+    <div>
+      <button>表格控件配置</button>
+    </div>
+    <div>
+      <button>卸载</button>
+    </div>
+    <div>
+      <button>清除缓存</button>
+    </div>
+    <div>
+      <button>财税达文档</button>
+    </div>
+    <div>
+      <button>财税达官网</button>
+    </div>
+    <div>
+      <button>泊舟官网</button>
+    </div>
+    <div>
+      <button>完成</button>
+    </div>
   </div>
 </template>
 

@@ -8,9 +8,17 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
     routes: [
         {
+            path: '/',
+            name: 'hello',
+            component: () => import('/@/views/Hello/index.vue'),
+            meta: {
+                title: 'hello',
+            },
+        },
+        {
             path: '/firstPage',
             name: 'firstPage',
-            component: () => import('/@/views/First/index.vue'),
+            component: () => import('/@/views/FirstPage/index.vue'),
             meta: {
                 title: '配置服务地址',
             },
@@ -18,7 +26,7 @@ const router = createRouter({
         {
             path: '/config',
             name: 'config',
-            component: () => import('/@/views/sys/Config/index.vue'),
+            component: () => import('/@/views/Config/index.vue'),
             meta: {
                 title: '配置参数',
             },
@@ -26,7 +34,7 @@ const router = createRouter({
         {
             path: '/app',
             name: 'app',
-            component: () => import('/@/views/sys/App/index.vue'),
+            component: () => import('/@/views/App/index.vue'),
             meta: {
                 title: '应用',
             },
