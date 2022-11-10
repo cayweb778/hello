@@ -134,12 +134,9 @@ export default {
       }
     },
     onKeydown(event) {
-      console.log(22223512321)
       if (event.repeat || event.key === undefined)
         return
-
       const isCombo = this.toggleCombo?.every(key => this.isKeyActive(key, event))
-      console.log(isCombo)
       if (isCombo)
         this.toggle()
     },

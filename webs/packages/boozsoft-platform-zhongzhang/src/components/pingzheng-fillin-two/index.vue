@@ -16,7 +16,7 @@
           <Button class="actod-btn actod-btn-last" v-show="hideControl('save')" @click="pageEventWatch('save')">保存</Button>
           <Button class="actod-btn actod-btn-last" v-show="hideControl('givp')" @click="pageEventWatch('givp')">放弃</Button>
           <Button class="actod-btn actod-btn-last" v-show="hideControl('tsave')" @click="pageEventWatch('tsave')">暂存</Button>
-          <Button class="actod-btn actod-btn-last" v-show="hideControl('rowa')" @click="pageEventWatch('rowa')">增行</Button>
+          <Button class="actod-btn actod-btn-last" v-show="hideControl('rowa')" @click="pageEventWatch('rowa')">插行</Button>
           <Button class="actod-btn actod-btn-last" v-show="hideControl('rowd')" @click="pageEventWatch('rowd')">删行</Button>
           <Button class="actod-btn actod-btn-last" v-show="hideControl('flow')" @click="pageEventWatch('flow')">流量</Button>
           <Button class="actod-btn actod-btn-last" v-show="hideControl('route')" @click="pageEventWatch('route')">列表</Button>
@@ -112,9 +112,9 @@
              <div><span class="title-span">本币：</span><span style="font-weight: bold;">人民币</span></div>
              <div>
                <AppstoreOutlined title="找平" @click="toolEventWatch('zp')"/>
+               <PayCircleOutlined  title="科目余额" @click="toolEventWatch('ye')"/>
                <CalculatorOutlined title="重算" @click="toolEventWatch('cs')"/>
-               <PayCircleOutlined  title="余额" @click="toolEventWatch('ye')"/>
-               <TransactionOutlined title="借贷转换" @click="toolEventWatch('jd')"/>
+               <TransactionOutlined title="借贷换位" @click="toolEventWatch('jd')"/>
                <FileAddOutlined  title="正负转换" @click="toolEventWatch('zf')"/>
 <!--               <ControlOutlined />-->
 <!--               <DollarCircleOutlined />-->
@@ -550,7 +550,7 @@ const rowEventWatch = (type) => {
     }
     setTableData(list)
   }else if (type == 'del'){
-    if (state.selectedRowKeys.length == 1) {
+    if (state.selectedRowKeys.length != 0) {
       let list:any = getDataSource()
       let selectIndex = list.findIndex(it => it.key === state.selectedRowKeys[0])
       // 修改状态下删除行
@@ -619,7 +619,7 @@ const contentSwitch = async (action) => {
       // 找到 对应行tr[data-row-key='']
       list.filter(it=>it.csign != null).forEach(r=>
         {
-          splitNumber(r,r.colum5!=0?'colum5':'colum6',document.getElementsByClassName(r.colum5!=0?'colum5':'colum6')[0])
+          splitNumber(r,r.colum5!=0?'colum5':'colum6')
           r.editColum5 = null
           r.editColum6 = null
         }
@@ -677,7 +677,15 @@ const focusNext =  (r, c,trN) => {
   let index = list.findIndex(it => it.key == r.key)
   let nextC = cols[0].dataIndex // 获取下一个列位置
   if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
-    list.push({key: buildUUID(),editCdigest: true,sopen:false,searchVal:null,tempCdigest:r.cdigest})
+    let {ce,fx} = balanceDifference(r,list)
+    let newR = {key: buildUUID(),editCdigest: true,sopen:false,searchVal:null,tempCdigest:r.cdigest}
+    if (ce != 0) newR[fx] = ce
+    list.push(newR)
+    if ( ce != 0){
+      nextTick(()=>{
+        splitNumber(list[list.length-1],fx)
+      })
+    }
   } else {
     let cObj = cols[cols.findIndex(it => it.dataIndex == c) + 1]
     if (cObj != null) {
@@ -694,26 +702,22 @@ const focusNext =  (r, c,trN) => {
       list[index][`edit${nextMark}`] = true
       list[index][`temp${nextMark}`] = list[index][`${nextC}`];
       if ((!hasBlank(r.colum5) || !hasBlank(r.colum6))){
-        let {ce,fx} = balanceDifference(r,list)
-        if (!hasBlank(r.cdigest))list[index][`tempCdigest`] = r.cdigest
-        if (ce != 0){
-          list[index]['colum5']=0
-          list[index]['colum6']=0
-          list[index][fx] = ce
-          if (trN != null)
-            splitNumber(list[index],fx,trN.cells[fx=='colum5'?5:20])
+        if (hasBlank(list[index][`tempCdigest`]))list[index][`tempCdigest`] = r.cdigest
+        if (hasBlank(list[index][`ccode`]) && (hasBlank(list[index]['colum5']) || hasBlank(list[index]['colum6']))){
+          let {ce,fx} = balanceDifference(r,list)
+          if (ce != 0){
+            list[index]['colum5']=0
+            list[index]['colum6']=0
+            list[index][fx] = ce
+            if (trN != null) splitNumber(list[index],fx)
+          }
         }
       }
     }
   }
   setTableData(list)
   totalCalculate(list)
-  nextTick(() => {
-    // tr['data-row-key'==r.key]
-    let arr = document.getElementsByClassName(nextC)
-    let doms = nextC==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
-    if (null != doms) doms.focus()
-  })
+  toFocus(nextC)
 }
 
 const tableDataRowChange =  async (r,c) => {
@@ -748,7 +752,7 @@ const amountToggle = (r,c,b,m) => {
   })
   if (!b){
     let tdE = document.getElementsByClassName(c)[0]?.parentNode
-    tdE.colSpan = 0
+    tdE.colSpan = 1
     let te = tdE
     for (let i = 0; i < 14; i++) {
       te.nextElementSibling.style.display = ''
@@ -758,25 +762,25 @@ const amountToggle = (r,c,b,m) => {
     if ( !hasBlank(r['ccode']) && null != r[`temp${ckey}`] && r[`temp${ckey}`] != 0){
       let trE = tdE?.parentNode?.nextElementSibling
       r[`${c}`] = r[`temp${ckey}`];
-      splitNumber(r,c,tdE)
+      splitNumber(r,c)
       if (c=='colum5'){
         r[`colum6`] = ''
-        splitNumber(r,'colum6',trE?.cells[20])
+        splitNumber(r,'colum6')
       }else {
         r[`colum5`] = ''
-        splitNumber(r,'colum5',trE?.cells[5])
+        splitNumber(r,'colum5')
       }
      if (m) focusNext(r,c=='colum5'?'colum6':c,trE)
     }else {
       r[`${c}`] = ''
       r[`temp${ckey}`] = ''
-      splitNumber(r,c,tdE)
+      splitNumber(r,c)
       if (m) focusNext(r,c,null)
     }
   }
 }
 
-const splitNumber = (r,key,tdO) => {
+const splitNumber = (r,key) => {
   for (let i = 15; i > 0; i--)
     r[`${key}${i>9?i:'0'+i}`] = null
   let zV = r[key]
@@ -791,6 +795,8 @@ const splitNumber = (r,key,tdO) => {
       c--
     }
   }
+  let trE =  document.getElementsByTagName(`tr[data-row-key="${r.key}"]`)[0]
+  let tdO = trE?.cells[key=='colum5'?6:21]
   if (tdO != null){ // 上色
     let te = tdO
     te.style.color = zV >-1?'':'red'
@@ -896,7 +902,7 @@ const onSelectChange = (selectedRowKeys,row) => {
 
 const rowSelection = {
   getCheckboxProps: (record) => ({
-    disabled:  record.cdigest==null
+    disabled:  status.value == 3 || record.key==null
   }),
 };
 
@@ -933,19 +939,14 @@ const clearFocus = (r,c) => {
     })
   }
   // 进入当前焦点
-  nextTick(() => {
-    let arr = document.getElementsByClassName(c)
-    let doms = c==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
-    if (null != doms) doms.focus()
-  })
+  toFocus(c)
 }
 
 const toolEventWatch = (action) => {
       if (status.value == 3) return false
+      let list = getDataSource()
   switch (action) {
     case 'zp':
-      let list = getDataSource()
-      // 关闭出当前以外的所有焦点
       for (let row of list) {
         Object.keys(row).filter(k=> (k == 'editColum5' || k == 'editColum6' ) && row[k] == true).map(k=>{
           let {ce,fx} = balanceDifference(row,list.filter(it=>it.key != row.key ))
@@ -957,7 +958,57 @@ const toolEventWatch = (action) => {
         })
       }
       break;
+    case 'cs':
+      break;
+    case 'ye':
+      break;
+    case 'jd':
+      // 借贷转换是将借贷方向换一下
+      for (let row of list) {
+        Object.keys(row).filter(k=> (k == 'editColum5' || k == 'editColum6' ) && row[k] == true).map(k=>{
+          let trE =  document.getElementsByTagName(`tr[data-row-key="${row.key}"]`)[0]
+          if (k=='editColum5'){
+            let old = row['tempColum5'] || 0
+            row['tempColum5'] = row['colum6']
+            row['colum6'] = old
+            splitNumber(row,'colum6')
+            toFocus('colum5')
+          }else {
+            let old = row['tempColum6'] || 0
+            row['tempColum6'] = row['colum5']
+            row['colum5'] = old
+            splitNumber(row,'colum5')
+            toFocus('colum6')
+          }
+        })
+      }
+      break;
+    case 'zf':
+      // 正负转换是将金额进行正负数转换。
+      for (let row of list) {
+        Object.keys(row).filter(k=> (k == 'editColum5' || k == 'editColum6' ) && row[k] == true).map(k=>{
+          let trE = document.getElementsByTagName(`tr[data-row-key="${row.key}"]`)[0]
+          if (k=='editColum5'){
+            let a = parseFloat(row['tempColum5'])
+            row['tempColum5'] = a>0?(a*-1):(Math.abs(a))
+            toFocus('colum5')
+          }else {
+            let a = parseFloat(row['tempColum6'])
+            row['tempColum6'] =  a>0?(a*-1):(Math.abs(a))
+            toFocus('colum6')
+          }
+        })
+      }
+      break;
   }
+}
+
+const toFocus = (c) => {
+  nextTick(() => {
+    let arr = document.getElementsByClassName(c)
+    let doms = c==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
+    if (null != doms) doms.focus()
+  })
 }
 
 /******************* table 表体业务 ********************/
@@ -979,7 +1030,7 @@ const checkTheAssembly = async (action) => {
     })
     return null
   }
-  if (dynamicTenant.value?.target?.iautoCode == '1'){ // 自动
+  if (action === 'save' && dynamicTenant.value?.target?.iautoCode == '1'){ // 自动
     let parm = {
       date: busDate,
       csign: saveModel['csign'] || '记',
@@ -995,7 +1046,7 @@ const checkTheAssembly = async (action) => {
     }
   }
   let list = JsonTool.parseProxy(getDataSource().filter(it=> !hasBlank(it['cdigest'] && !hasBlank(it['ccode']) && (!hasBlank(it['colum5']) || !hasBlank(it['colum6'])))))
-  if (list.length < 2 || (list.length > 2 && totalModel.mc != totalModel.md)){
+  if (list.length < 2 || (action === 'save' &&  list.length > 2 && totalModel.mc != totalModel.md)){
     createWarningModal({
       title: '温馨提示',
       content: '表体：凭证分录不得低于两行且合计借贷方金额必须对等！'
@@ -1045,6 +1096,7 @@ const checkTheAssembly = async (action) => {
 async function dbInteraction(action) {
   switch (action) {
     case 'save':
+    case 'tsave':
       let json = await checkTheAssembly(action);
       if (null != json) {
         // await useRouteApi(accvoucherSaves, {schemaName: dynamicTenant.value?.accountMode})({str: json})

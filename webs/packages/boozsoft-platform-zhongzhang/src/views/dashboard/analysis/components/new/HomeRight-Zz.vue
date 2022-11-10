@@ -12,7 +12,7 @@
       </div>
       <div class="nc-hrt-two">
         <div class="nc-hrtt-one">
-          <AccountPicker theme="one" @reloadTable="reloadTable"/>
+          <AccountPicker theme="three" @reloadTable="reloadTable"/>
         </div>
         <div>
 <!--          <Button @click="delCache">缓存</Button>-->
