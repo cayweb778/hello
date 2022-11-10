@@ -66,6 +66,8 @@ fn getCacheIpAddr() -> HashMap<String, String> {
     return scores;
 }
 
+
+
 #[tauri::command]
 fn getCacheIpAddrApi() -> String {
     let scores = getCacheIpAddr();
@@ -113,11 +115,7 @@ fn goApp(name: String, window: Window) -> String {
     // return format!("{}::{}::{}",dirpath,filename,dirpath)
 }
 
-fn printData() {
-    let printers = get_printers();
-    println!("{:?}", printers);
-    printers::print(&printers[1], "42".as_bytes());
-}
+
 
 use tauri::{App, AppHandle, Builder, Manager, Wry};
 use printers::{get_printers, print};
@@ -148,7 +146,7 @@ fn goApp2(app: &AppHandle<Wry>) {
     let url = cacheIpAddrMap["data"].clone();
 
 
-    let windowUrl = format!("http://{}/nc", url);
+    let windowUrl = format!("http://{}/nc/", url);
     let name;
     if (app.get_window("main2333").is_none()) {
         if (!app.get_window("main23333333").is_none()) {
@@ -172,6 +170,8 @@ use tauri::{
 };
 
 mod shortCar;
+mod rest;
+use rest::print;
 
 fn main() {
     let submenu_gear = Submenu::new(
@@ -221,7 +221,7 @@ fn main() {
             let cacheIpAddrMap = getCacheIpAddr();
             let code = cacheIpAddrMap["code"].clone();
             let url = cacheIpAddrMap["data"].clone();
-            let windowUrl = format!("http://{}/nc", url);
+            let windowUrl = format!("http://{}/nc/", url);
 
             if (code == "200") {
                 goApp2(app.handle().borrow());

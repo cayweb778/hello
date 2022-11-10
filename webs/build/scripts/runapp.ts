@@ -23,7 +23,7 @@ const process = require("child_process");
             message: '🚀🚀🚀 选择开启的模块 🚀🚀🚀',
             instructions:'',
             hint: '-  ️ 空格选择. 回车确认️ ',
-            choices: [createChoice('所有',null),...arr.map(it=> createChoice(it[0],null))]
+            choices: [...arr.map(it=> createChoice(it[0],null)),createChoice('所有',null),]
         }
     ]);
 
