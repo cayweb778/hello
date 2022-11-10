@@ -2,12 +2,12 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
+    "devPath": "http://localhost:3000/nc/",
     "distDir": "../dist",
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "财税达",
+    "productName": "csd",
     "version": "1.0.0"
   },
   "tauri": {

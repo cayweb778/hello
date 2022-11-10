@@ -6,7 +6,7 @@ import {useCounterStore} from "@/stores/counter";
 import {computed, ref} from "vue";
 const  showApp=ref(false)
 console.log(window.parent)
-if(self!=top){
+if(window.__TAURI__!=null){
   showApp.value=true
 }
 </script>
