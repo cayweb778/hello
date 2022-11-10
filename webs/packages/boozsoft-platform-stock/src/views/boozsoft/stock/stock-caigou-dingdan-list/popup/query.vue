@@ -528,7 +528,6 @@ const checkChange = (e) => {
       let the = parseInt(dates[1])
       if (the != 1) {
         strDate.value = dates[0] +'-'+ (((the - 1) > 9) ? `${(the - 1)}` : `0${(the - 1)}`)
-        console.log(strDate.value)
         endDate.value = strDate.value
       } else {
         message.info('暂无上月！')
@@ -568,7 +567,7 @@ const checkChange = (e) => {
             break
         }
         strDate.value = dates[0] +'-'+  min
-        endDate.value = dates[0] +'-'+  max
+        endDate.value = dates[0] +'-' + max
       }
       break
     case '4':

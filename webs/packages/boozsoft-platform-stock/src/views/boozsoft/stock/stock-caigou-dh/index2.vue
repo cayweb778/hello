@@ -353,13 +353,13 @@
           </template>
           <template #price="{ record }">
             <span class="a-table-font-arial">{{
-                (parseFloat(record.price).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                (record.price == null ? '' : parseFloat(record.price).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               }}
              </span>
           </template>
           <template #icost="{ record }">
            <span class="a-table-font-arial">{{
-               (parseFloat(record.icost).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+               (record.icost == null ? '' : parseFloat(record.icost).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
              }}
              </span>
           </template>
@@ -1460,7 +1460,7 @@ const startDel = async () => {
             // 上游单据明细
             let sourceData=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(dataList[i].sourcedetailId)
             if(!hasBlank(sourceData)){
-              if(sourceData.billStyle=='CGDD'){
+              if(sourceData.billStyle=='CGDD' || sourceData.billStyle=='CGRKD'){
                 // 修改累计到货数量
                 sourceData.isumDaohuo=parseFloat(hasBlank(sourceData.isumDaohuo)?0:sourceData.isumDaohuo)-parseFloat(dataList[i].baseQuantity)
               }else{
@@ -1560,7 +1560,7 @@ const startReview = async (b) => {
       qsText='当前单据有变更记录,弃审后将无法还原,'
     }
   }
-
+  let list:any = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   let res = await useRouteApi(findBillByCondition, {schemaName: dynamicTenantId})({
     type: pageParameter.type,
     iyear: dynamicYear.value || '2022',
@@ -1569,7 +1569,6 @@ const startReview = async (b) => {
     bdocumStyle: '0',
     curr: ''
   })
-
   let text=b?'审核':'弃审'
   let a:any = useUserStoreWidthOut().getUserInfo?.id
   loadMark.value=true
@@ -1583,7 +1582,7 @@ const startReview = async (b) => {
   res.bcheckTime=bcheckTime
   res.bcheckUser=bcheckUser
   await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(res)
-  let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
+
   list.forEach(tx=>{
     tx.bcheck=bcheck
     tx.bcheckTime=bcheckTime
@@ -1793,6 +1792,7 @@ const startReview = async (b) => {
     //**********************************************************************************************************
 
     console.log('来源单据类型='+res.sourcetype+'---到货单审核生成入库单='+dynamicTenant.value.target?.cgShDhd)
+    // 来源单据不是入库单
     if(res.sourcetype!=='CGRKD'&&dynamicTenant.value.target?.cgShDhd=='1'){
       createConfirm({
         iconType: 'warning',
@@ -1865,6 +1865,22 @@ const startReview = async (b) => {
           await contentSwitch('curr','')
         }
       })
+    }
+    // 来源单据是入库单
+    if(res.sourcetype=='CGRKD'&&dynamicTenant.value.target?.cgShDhd=='1'){
+      let sourcedate=String(Array.from(new Set(list.map(tx=>tx.sourcedate)))[0])
+      sourcedate=sourcedate.substring(0,sourcedate.length-3).replaceAll('-','')
+
+      let ddate=String(formItems.value.ddate)
+      ddate=ddate.substring(0,ddate.length-3).replaceAll('-','')
+      // 小于到货单日期
+      if(parseFloat(sourcedate)<parseFloat(ddate)){
+        let sourcecode=String(Array.from(new Set(list.map(tx=>tx.sourcecode)))[0])
+        // 获取来源主表单据
+        let sourceData=await useRouteApi(findStockWareByCcode, {schemaName: dynamicTenantId})(sourcecode)
+        // 生成红字回冲单
+        // sourceData.map(tx=>{tx.billStyle='HLHCD';})
+      }
     }
     else{
       loadMark.value=false

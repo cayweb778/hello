@@ -9,7 +9,7 @@
       </div>
       <div>
         <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购发票列表</b></div>
-        <div><span style="font-size: 14px;font-weight: bold;">日期：{{ strDate }} - {{ endDate }}</span></div>
+        <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
         <div>
@@ -1517,12 +1517,12 @@ function toThousandFloat(num: any) {
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;margin-top: 7px;
+    >div:nth-of-type(2){margin-top: 0px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-
+    margin-right: 8px;
     >div:nth-of-type(1){
       .ant-btn-me {
         color: #0096c7;

@@ -15,7 +15,7 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 14px">借用管理</span>
+        <span style="font-size: 14px"> 借用管理</span>
       </div>
     </template>
     <div style="display: inline-flex;justify-content: space-between;width: 100%;">
@@ -432,19 +432,19 @@ function datePickerChange(){
 }
 const checkChange = (e) => {
   let v = e.target.value
-  let dates = [strDate.value.substring(0,4),strDate.value.substring(4,6)]
+  let dates = [strDate.value.substring(0,4),strDate.value.substring(5,7)]
   switch (v) {
     case '1':
       let the = parseInt(dates[1])
       if (the != 1) {
-        strDate.value = dates[0]  + (((the - 1) > 9) ? `${(the - 1)}` : `0${(the - 1)}`)
+        strDate.value = dates[0] +'-'+ (((the - 1) > 9) ? `${(the - 1)}` : `0${(the - 1)}`)
         endDate.value = strDate.value
       } else {
         message.info('暂无上月！')
       }
       break
     case '2':
-      strDate.value = dates[0]  + busDate.split('-')[1]
+      strDate.value = dates[0] + '-' + busDate.split('-')[1]
       endDate.value = strDate.value
       break
     case '3':
@@ -476,14 +476,14 @@ const checkChange = (e) => {
             max = '12'
             break
         }
-        strDate.value = dates[0] +  min
-        endDate.value = dates[0] +  max
+        strDate.value = dates[0] +'-'+  min
+        endDate.value = dates[0] +'-' + max
       }
       break
     case '4':
       let list = dateList.value.filter(it => it.stockYear == dates[0])
-      strDate.value = dates[0]+list[0].stockMonth
-      endDate.value = dates[0]+list[list.length - 1].stockMonth
+      strDate.value = dates[0]+'-'+list[0].stockMonth
+      endDate.value = dates[0]+'-'+list[list.length - 1].stockMonth
       break
     case '5':
       strDate2.value=dayjs(busDate, 'YYYY-MM-DD')

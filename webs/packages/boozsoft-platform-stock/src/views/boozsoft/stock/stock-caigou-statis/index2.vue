@@ -11,7 +11,7 @@
       </div>
       <div>
         <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">{{ pageParameter.queryMark=='1'?'存货':'供应商' }}采购统计表</b></div>
-        <div><span style="font-size: 14px;font-weight: bold;color: #6a6a6a">日期：{{qijianText}}</span></div>
+        <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ qijianText }}</span></div>
       </div>
       <div>
         <div>
@@ -38,12 +38,12 @@
         </div>
         <div>
           <div>
-            <Select v-model:value="popData.searchInput" style="width: 120px;font-size: 12px;text-align-last: center;font-weight: bold;" v-if="pageParameter.queryMark == '1'" class="special_select">
+            <Select v-model:value="popData.searchInput" style="width: 150px;font-size: 12px;text-align-last: left;font-weight: bold;" v-if="pageParameter.queryMark == '1'" class="special_select">
               <SelectOption style="font-size: 12px;" value="stockNum">存货编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="stockName">存货名称</SelectOption>
             </Select>
 
-            <Select v-model:value="popData.searchInput" v-else style="width: 120px;font-size: 12px;text-align-last: center;font-weight: bold;" class="special_select">
+            <Select v-model:value="popData.searchInput" v-else style="width: 150px;font-size: 12px;text-align-last: left;font-weight: bold;" class="special_select">
               <SelectOption style="font-size: 12px;" value="custCode">供应商编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="custName">供应商名称</SelectOption>
             </Select>
@@ -51,7 +51,7 @@
             <InputSearch
               v-model:value="popData.searchVal"
               placeholder=""
-              style="width: 200px; border-radius: 4px;margin-right: 4px;"
+              style="width: 150px; border-radius: 4px;margin-right: 4px;"
               @search="findByAll"
             />
           </div>
@@ -1141,10 +1141,11 @@ function openNewPage(e) {
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    margin-top: 7px;
+    >div:nth-of-type(2){}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
+    width: 40%;text-align: right;margin-right: 7px;
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
     }

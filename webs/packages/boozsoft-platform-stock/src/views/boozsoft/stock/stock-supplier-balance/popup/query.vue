@@ -13,7 +13,7 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 14px">成本核算</span>
+        <span style="font-size: 14px"> 成本核算</span>
       </div>
     </template>
     <div style="display: inline-flex;justify-content: space-between;width: 100%;">

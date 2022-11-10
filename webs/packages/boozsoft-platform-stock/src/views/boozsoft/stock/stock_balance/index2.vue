@@ -2,7 +2,7 @@
   <div>
     <div class="app-container" style="display:flex;">
       <div style="width: 64px;display: inline-block;float: left">
-        <ShoppingCartOutlined style="color: #0096c7;font-size: 75px;"/>
+        <ReconciliationOutlined style="color: #0096c7;font-size: 60px;"/>
       </div>
       <div style="width: calc( 100% - 74px);display: inline-block;">
         <div class="app-container-head">
@@ -200,6 +200,7 @@
 import router from "/@/router";
 import {BasicTable, useTable} from '/@/components/Table';
 import {
+  ReconciliationOutlined,
   CaretDownOutlined,
   CheckOutlined,
   CloudDownloadOutlined,

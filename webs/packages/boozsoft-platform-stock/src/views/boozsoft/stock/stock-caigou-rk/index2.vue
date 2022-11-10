@@ -1480,6 +1480,11 @@ const startReview = async (b) => {
   if(pd>0){
     return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
   }
+  // 回冲单不能审核
+  if(stockWareData.chengbenHc=='1'){
+    return message.error('回冲单不能审核！')
+  }
+
 
   let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   let verifylist:any=[]
@@ -1534,18 +1539,21 @@ const startReview = async (b) => {
     res.bcheckUser=bcheckUser
     await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(res)
     let listdata = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
-
     console.log('0到货单或1发票立账：'+dynamicTenant.value.target.apSourceFlag)
-    // 审核：是参照生成单据 并且 来源单据是到货单 并且是 到货单立账
-    if(b&&canzhao.value && res.sourcetype=='CGDHD'&&(dynamicTenant.value.target.apSourceFlag=='0' || hasBlank(dynamicTenant.value.target.apSourceFlag))){
+    // 审核：是参照生成单据 并且 （来源单据是到货单 或 期初到货单） 并且是 到货单立账
+    if(b&&canzhao.value && (res.sourcetype=='CGDHD' || res.sourcetype=='QC')&&(dynamicTenant.value.target.apSourceFlag=='0' || hasBlank(dynamicTenant.value.target.apSourceFlag))){
       // 结算单据新编码
       let jsNewNum=await useRouteApi(getNewStockJiesuanNum, {schemaName: dynamicTenantId})({})
       jsNewNum='JS-'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,7).replace("T"," ").replace("-","")+'-'+jsNewNum
       let jiesuansList:any=[]
       for (let i = 0; i < listdata.length; i++) {
+        let stockWaresData=await useRouteApi(findByStockWarehLinecode,{schemaName: dynamicTenantId})(listdata[i].lineCode)
+        listdata[i].isumJiesuan=stockWaresData.stockWaresData
+
         // 获取来源单据 无税单价、无税金额 【到货单 或 发票】
         let sourceData=await useRouteApi(findByStockWaresCcodeAndLineCode, {schemaName: dynamicTenantId})({ccode:listdata[i].sourcecode,lineCode:listdata[i].sourcedetailId})
         sourceData.isumJiesuan=parseFloat(listdata[i].baseQuantity)+parseFloat(sourceData.isumJiesuan)
+
         // 到货单或者发票。累计结算数量
         await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceData])
         let jiesuans:any={}
@@ -1560,10 +1568,14 @@ const startReview = async (b) => {
         jiesuans.quantityRuku=listdata[i].baseQuantity
         jiesuans.priceJs=parseFloat(sourceData.icost)/parseFloat(sourceData.baseQuantity)
 
-        let icostJs=parseFloat(listdata[i].baseQuantity)*parseFloat(jiesuans.priceJs)
+        let icostJs:any=parseFloat(listdata[i].baseQuantity)*parseFloat(jiesuans.priceJs)
         jiesuans.icostJs=parseFloat(icostJs).toFixed(4)
-        jiesuans.priceZg=listdata[i].price
-        jiesuans.icostZg=listdata[i].icost
+
+        jiesuans.priceZg=parseFloat(listdata[i].icost)/parseFloat(listdata[i].baseQuantity)
+
+        let icostZg:any=parseFloat(listdata[i].baseQuantity)*parseFloat(jiesuans.priceZg)
+        jiesuans.icostZg=parseFloat(icostZg).toFixed(4)
+
         jiesuans.ccodeLy=listdata[i].sourcetype
         jiesuans.quantityDaohuo=jiesuans.quantityRuku
         jiesuansList.push(jiesuans)
@@ -1571,7 +1583,7 @@ const startReview = async (b) => {
         let sourceUnitRate:any=listdata[i].unitList.filter(f=>f.value==sourceData.cgUnitId)[0]?.conversionRate
         let unitRate:any=listdata[i].unitList.filter(f=>f.value==listdata[i].cgUnitId)[0]?.conversionRate
         // 入库单参照到货单单价=（来源单据无税单价 除 来源单据计量单位换算率） 乘 入库单据计量单位换算率
-        let price=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
+        let price:any=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
         listdata[i].isumJiesuan=listdata[i].baseQuantity
         listdata[i].price=price
         listdata[i].icost=parseFloat(price)*parseFloat(listdata[i].cnumber)
@@ -1597,6 +1609,12 @@ const startReview = async (b) => {
       console.log('参照生成的入库单审核增加结算下游单据='+JSON.stringify(xy))
       await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
     }
+    else if(!b){
+      for (let i = 0; i < listdata.length; i++) {
+        let stockWaresData = await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(listdata[i].lineCode)
+        listdata[i].isumJiesuan = hasBlank(stockWaresData.stockWaresData)?0:stockWaresData.stockWaresData
+      }
+    }
     listdata.map(tx=>{tx.bcheck=bcheck;tx.bcheckUser=bcheckUser;tx.bcheckTime=bcheckTime;return tx})
     await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(listdata)
     tempTaskDel(taskInfo.value?.id)
@@ -1608,6 +1626,7 @@ const startReview = async (b) => {
     if (hasBlank(a)) message.error('获取用户信息异常！')
   }
 }
+
 const sum = (...arr) => [].concat(...arr).reduce((acc, val) => Number(acc) + Number(val), 0);
 // 随机数
 function randomString(length) {
@@ -2274,11 +2293,11 @@ const tableDataChange =  async (r,c) => {
       r.cinvodeInfo = o
       if(r.cinvodeInfo?.stockMeasurementType=='单计量'){
         r.baseQuantity=r.cnumber
-        tableDataChange(r,'price')
       }
       else{
         slChange0(r)
       }
+      tableDataChange(r,'price')
       if(titleValue.value==0){
         let cha=isNaN(parseFloat(r.baseQuantity)-parseFloat(r.oldBaseQuantity))?'0':parseFloat(r.baseQuantity)-parseFloat(r.oldBaseQuantity)
         console.log(cha,r.canzhaoCnumber)

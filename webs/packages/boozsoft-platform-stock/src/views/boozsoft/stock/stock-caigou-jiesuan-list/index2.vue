@@ -8,8 +8,8 @@
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购结算列表</b></div>
-        <div><span style="font-size: 14px;font-weight: bold;">日期：{{ strDate }} - {{ endDate }}</span></div>
+        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购核算列表</b></div>
+        <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
         <div>
@@ -303,7 +303,7 @@ const loadPrint = (obj) => {
   useNewPrint({data: ['l', 'px', 'a4', true]}, (doc) => {
     loadMark.value = false
     doc.autoTable({
-      head: [['', '', '', '', '采购结算列表', '', '', '', '', '', '', ''],
+      head: [['', '', '', '', '采购核算列表', '', '', '', '', '', '', ''],
         ['核算单位：' + pageParameter.companyName, '', '','', '期间：'+ strDate.value+' - '+endDate.value ,'', '', '', '', '','', '单位：元'],
         ['序号', '单据日期', '单据编号', '供应商编码', '供应商名称', '业务员', '业务部门', '仓库', '数量合计', '价税合计', '经手人', '审核人']],
       body: printList,
@@ -475,10 +475,10 @@ async function saveLogData(optAction,log) {
     userId: useUserStoreWidthOut().getUserInfo.username,
     userName: useUserStoreWidthOut().getUserInfo.realName,
     optModule:'stock',
-    optFunction:'采购结算列表',
+    optFunction:'采购核算列表',
     optAction:optAction,
     accId:defaultAdName.value,
-    optContent:'操作内容【采购结算列表】,'+log,
+    optContent:'操作内容【采购核算列表】,'+log,
   }
   await saveLog(logmap)
 }
@@ -818,7 +818,7 @@ const excelThisData = () =>{
       leftrow:leftrow,
     },
   ]
-  exportExcel3(sheet, 'xlsx','采购结算列表_'+pageParameter.companyName)
+  exportExcel3(sheet, 'xlsx','采购核算列表_'+pageParameter.companyName)
 }
 
 /*start栏目设置*/
@@ -833,7 +833,7 @@ const tableRef1: any = ref(null)
 const visible3:any = ref(false)
 const lanMuData = ref({
   accId: 'postgres',
-  menuName: '采购结算列表',
+  menuName: '采购核算列表',
   type: '列表',
   objects: '',
   username: useUserStoreWidthOut().getUserInfo.username,
@@ -914,8 +914,8 @@ async function delFun() {
   }
   createConfirm({
     iconType: 'warning',
-    title: '采购结算删除',
-    content: '您确定要进行采购结算删除吗!',
+    title: '采购核算删除',
+    content: '您确定要进行采购核算删除吗!',
     onOk: async () => {
       loadMark.value=true
       for (let i = 0; i < getSelectRows1().length; i++) {
@@ -935,7 +935,7 @@ async function delFun() {
   })
 }
 async function tempTaskSave(method,ccode) {
-  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'采购结算',method:method,recordNum:ccode,caozuoModule:'stock'})
+  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'采购核算',method:method,recordNum:ccode,caozuoModule:'stock'})
     .then((a)=>{
       console.log('任务='+JSON.stringify(a))
     })

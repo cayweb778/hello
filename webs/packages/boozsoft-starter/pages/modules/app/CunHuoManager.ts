@@ -80,12 +80,12 @@ export const menus = [
   createPlatformMenu({ id: useId(666), path: '/cg-arrive-change', component: '/boozsoft/stock/stock-caigou-dh/index3',hidden:true, parentId: useId(211),componentName: 'StockCaiGouDHBD', name: '采购到货单（变动）' }),
   createPlatformMenu({ id: useId(313), path: '/cg-return', component: '/boozsoft/stock/stock-caigou-th/index', parentId: useId(211),componentName: 'StockCaiGouTuiHuo', name: '采购退货单' }),
   createPlatformMenu({ id: useId(314), path: '/cg-bill', component: '/boozsoft/stock/stock-caigou-fapiao/index', parentId: useId(211),componentName:'CaiGouFaPiao', name: '采购发票' }),
-  createPlatformMenu({ id: useId(668), path: '/cg-jiesuan', component: '/boozsoft/stock/stock-caigou-jiesuan/index', parentId: useId(211),componentName:'CaiGouJiesuan', name: '采购结算单' }),
+  createPlatformMenu({ id: useId(668), path: '/cg-jiesuan', component: '/boozsoft/stock/stock-caigou-jiesuan/index', parentId: useId(211),componentName:'CaiGouJiesuan', name: '采购核算单' }),
 
   createPlatformMenu({ id: useId(315), path: '/cg-dingdan-list', component: '/boozsoft/stock/stock-caigou-dingdan-list/index', componentName:'CaiGouDingDanLiat', parentId: useId(212), name: '采购订单列表' }),
   createPlatformMenu({ id: useId(316), path: '/cg-dhList', component: '/boozsoft/stock/stock-caigou-dh-list/index', componentName:'CaigouDhList', parentId: useId(212), name: '采购到货单列表' }),
   createPlatformMenu({ id: useId(318), path: '/cg-fp-list', component: '/boozsoft/stock/stock-caigou-fp-list/index', componentName:'CaigouFpList', parentId: useId(212), name: '发票列表' }),
-  createPlatformMenu({ id: useId(669), path: '/cg-js-list', component: '/boozsoft/stock/stock-caigou-jiesuan-list/index', componentName:'CaigouJsList', parentId: useId(212), name: '采购结算单列表' }),
+  createPlatformMenu({ id: useId(669), path: '/cg-js-list', component: '/boozsoft/stock/stock-caigou-jiesuan-list/index', componentName:'CaigouJsList', parentId: useId(212), name: '采购核算单列表' }),
 
   createPlatformMenu({ id: useId(319), path: '/cg-gjList', component: '/boozsoft/stock/stock-caigou-statis/index',componentName:'CaigouStatisList', parentId: useId(213), name: '采购统计表' }),
   createPlatformMenu({ id: useId(320), path: '/cg-mxList', component: '/boozsoft/stock/stock-caigou-statis-mx/index',componentName:'CaigouStatisListMX', parentId: useId(213), name: '采购明细表' }),
@@ -209,10 +209,14 @@ export const menus = [
   createPlatformMenu({ id: useId(372), path: '/cb-accounting', component: '/boozsoft/stock/stock-ckcbhs-list/index', componentName:'CkcbhsList', parentId: useId(271), name: '自动成本核算' }),
   createPlatformMenu({ id: useId(373), path: '/cb-depot', component: '/boozsoft/stock/stock-rktzd-add/index', componentName:'Rktzd', parentId: useId(271), name: '入库调整单' }),
   createPlatformMenu({ id: useId(374), path: '/cb-out-depot', component: '/boozsoft/stock/stock-cktzd-add/index', componentName:'Cktzd', parentId: useId(271), name: '出库调整单' }),
+  createPlatformMenu({ id: useId(672), path: '/red-hcd', component: '/boozsoft/stock/stock-hlhcd-red/index', componentName:'BlueHCD', parentId: useId(271), name: '红字回冲单' }),
+  createPlatformMenu({ id: useId(671), path: '/blue-hcd', component: '/boozsoft/stock/stock-hlhcd-blue/index', componentName:'RedHCD', parentId: useId(271), name: '蓝字回冲单' }),
 
   createPlatformMenu({ id: useId(375), path: '/cb-sfhz', component: '/boozsoft/system/blocktable/index', parentId: useId(273), name: '金额收发存汇总表' }),
   createPlatformMenu({ id: useId(376), path: '/cb-rktz', component: '/boozsoft/stock/stock-rktzd-list/index', componentName:'RktzdList', parentId: useId(273), name: '入库调整单列表' }),
   createPlatformMenu({ id: useId(377), path: '/cb-cktz', component: '/boozsoft/stock/stock-cktzd-list/index', componentName:'CktzdList', parentId: useId(273), name: '出库调整单列表' }),
+  createPlatformMenu({ id: useId(674), path: '/red-hcd-list', component: '/boozsoft/stock/stock-hlhcd-red-list/index', componentName:'BlueHCDList', parentId: useId(273), name: '红字回冲单列表' }),
+  createPlatformMenu({ id: useId(673), path: '/blue-hcd-list', component: '/boozsoft/stock/stock-hlhcd-blue-list/index', componentName:'RedHCDList', parentId: useId(273), name: '蓝字回冲单列表' }),
 
 
   createPlatformMenu({ id: useId(281), path: '/pz-invoice', component: '', parentId: useId(109), name: '制单' }),

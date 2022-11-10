@@ -15,14 +15,14 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 14px">采购管理</span>
+        <span style="font-size: 14px"> 采购管理</span>
       </div>
     </template>
     <div style="display: inline-flex;justify-content: space-between;width: 100%;">
       <div style="width: calc(100% - 150px);height: 100%;">
         <div style="text-align: center;padding: 10px 0 5px;">
           <SearchOutlined style="font-size: 24px;color: #0096c7;margin-top: 2px"/>
-          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;采购结算列表</span>
+          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;采购核算列表</span>
         </div>
         <div class="nc-open-content">
           <div class="open-content-up">
@@ -528,7 +528,6 @@ const checkChange = (e) => {
       let the = parseInt(dates[1])
       if (the != 1) {
         strDate.value = dates[0] +'-'+ (((the - 1) > 9) ? `${(the - 1)}` : `0${(the - 1)}`)
-        console.log(strDate.value)
         endDate.value = strDate.value
       } else {
         message.info('暂无上月！')
@@ -568,7 +567,7 @@ const checkChange = (e) => {
             break
         }
         strDate.value = dates[0] +'-'+  min
-        endDate.value = dates[0] +'-'+  max
+        endDate.value = dates[0] +'-' + max
       }
       break
     case '4':

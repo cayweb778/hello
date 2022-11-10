@@ -17,7 +17,7 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 13px">采购管理</span>
+        <span style="font-size: 13px"> 采购管理</span>
       </div>
     </template>
     <div class="nc-open-content" style="height: 100%">

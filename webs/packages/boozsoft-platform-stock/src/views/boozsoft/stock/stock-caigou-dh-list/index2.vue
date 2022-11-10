@@ -9,7 +9,7 @@
       </div>
       <div>
         <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购到货单列表</b></div>
-        <div><span style="font-size: 14px;font-weight: bold;">日期：{{ strDate }} - {{ endDate }}</span></div>
+        <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
         <div>
@@ -1863,21 +1863,29 @@ function initTableMXWidth(thisCs) {
   margin-bottom: 20px;
 }
 .lcr-theme-div{
-  display: inline-flex;justify-content: space-between;width: 99%;height: 100px;text-align: left;
+  display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
-    width: 40%;display: inline-flex;margin-top: 20px;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;vertical-align: super;}
+    width: 40%;
+    position: relative;
+    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
+      position: inherit
+    }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
-      >div:nth-of-type(2){margin-top: 14px;}
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;margin-top: 7px;
+    >div:nth-of-type(2){margin-top: 0px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
+    margin-right: 8px;
+    >div:nth-of-type(1){
+      .ant-btn-me {
+        color: #0096c7;
+      }
+    }
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
     }

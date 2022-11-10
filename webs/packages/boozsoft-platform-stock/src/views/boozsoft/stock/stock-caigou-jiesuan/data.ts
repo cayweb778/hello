@@ -94,8 +94,8 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },{
       key: '5',
-      name: '入库结算数量',
-      nameNew: '入库结算数量',
+      name: '入库核算数量',
+      nameNew: '入库核算数量',
       check: true,
       width: 90,
       max: 120,
@@ -104,8 +104,8 @@ const dynamicColumnAndDataModel = reactive({
     },
     {
       key: '6',
-      name: '到货结算数量',
-      nameNew: '到货结算数量',
+      name: '到货核算数量',
+      nameNew: '到货核算数量',
       check: true,
       width: 90,
       max: 120,
@@ -113,8 +113,8 @@ const dynamicColumnAndDataModel = reactive({
       align: 'right'
     },{
       key: '7',
-      name: "结算单价",
-      nameNew: "结算单价",
+      name: "核算单价",
+      nameNew: "核算单价",
       check: true,
       isFixed: true,
       width: 120,
@@ -123,8 +123,8 @@ const dynamicColumnAndDataModel = reactive({
       align: 'right'
     },{
       key: '8',
-      name: "结算金额",
-      nameNew: "结算金额",
+      name: "核算金额",
+      nameNew: "核算金额",
       check: true,
       isFixed: true,
       width: 120,

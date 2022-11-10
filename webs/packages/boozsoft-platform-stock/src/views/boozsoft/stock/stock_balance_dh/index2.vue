@@ -1777,6 +1777,10 @@ async function saveData() {
       o['lineId'] = (i + 1) + ''
       o['isGive'] = o['isGive'] ? '1' : '0'
 
+      // let isumJiesuan:any=parseFloat(o['baseQuantity'])-parseFloat(hasBlank(o['isumRuku'])?0:o['isumRuku'])
+      // o['isumJiesuan'] = parseFloat(isumJiesuan).toFixed(4)
+      o['isumJiesuan'] = o['isumRuku']
+
       o['cwhcode1'] = o['cwhcode']
       if (o.cangkuDuli == '0'){
         let arr =  o['tempCangkuId']

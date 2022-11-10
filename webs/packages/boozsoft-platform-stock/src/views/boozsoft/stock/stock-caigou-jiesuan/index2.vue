@@ -11,8 +11,8 @@
       <div>
         <div>
           <Button class="actod-btn">查询</Button>
-          <Button class="actod-btn" @click="addPopModel">手动结算</Button>
-          <Button class="actod-btn">自动结算</Button>
+          <Button class="actod-btn" @click="addPopModel">手动核算</Button>
+          <Button class="actod-btn">自动核算</Button>
           <Button class="actod-btn" @click="startDel">删除</Button>
           <Button class="actod-btn actod-btn-last" @click="closeCurrent(),giveUp(),router.push('/zhongZhang/home/welcome')">退出</Button>
         </div>
@@ -247,7 +247,7 @@
             </span>
           </template>
           <template #ccodeLy="{ record }">
-            <span class="a-table-font-arial">{{ record.ccodeLy=='CGDHD'?'采购到货单':record.ccodeLy=='CGRKD'?'采购入库单':'' }} </span>
+            <span class="a-table-font-arial">{{ record.ccodeLy=='CGDHD'?'采购到货单':record.ccodeLy=='CGRKD'?'采购入库单':record.ccodeLy=='QC'?'采购到货单':'' }} </span>
           </template>
           <template #summary>
             <TableSummary fixed>
@@ -386,7 +386,7 @@ const dynamicTenant:any = ref('')
 const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
-const titleContents:any = ['采购结算单', '采购结算单']
+const titleContents:any = ['采购核算单', '采购核算单']
 const titleValue:any = ref(0)
 const formRowNum :any= ref(1)
 const tempType:any =  ref('')
@@ -647,26 +647,26 @@ const CrudApi = {
       width: 80
     },
     {
-      title: '入库结算数量',
+      title: '入库核算数量',
       dataIndex: 'quantityRuku',
       ellipsis: true,
       slots: {customRender: 'quantityRuku'},
       width: 80
     },
     {
-      title: '到货结算数量',
+      title: '到货核算数量',
       dataIndex: 'quantityDaohuo',
       ellipsis: true,
       slots: {customRender: 'quantityDaohuo'},
       width: 80
     }, {
-      title: '结算单价',
+      title: '核算单价',
       dataIndex: 'priceJs',
       ellipsis: true,
       slots: {customRender: 'priceJs'},
       width: 80
     },{
-      title: '结算金额',
+      title: '核算金额',
       dataIndex: 'icostJs',
       ellipsis: true,
       slots: {customRender: 'icostJs'},
@@ -790,25 +790,25 @@ const startDel = async () => {
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
 // 任务
-  let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购结算单',method:'删除',recordNum:formItems.value.ccode})
+  let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购核算单',method:'删除',recordNum:formItems.value.ccode})
   if(!hasBlank(taskData)){
-    return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'采购结算单,不能同时进行操作！' });
+    return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'采购核算单,不能同时进行操作！' });
   }
     createConfirm({
       iconType: 'warning',
-      title: '采购结算单删除',
-      content: '您确定要进行采购结算单删除吗!',
+      title: '采购核算单删除',
+      content: '您确定要进行采购核算单删除吗!',
       onOk: async () => {
         tempTaskSave('删除')
-        // 结算明细
+        // 核算明细
         let jsmx=await useRouteApi(findByCcodeStockJiesuanList, { schemaName: dynamicTenantId })(formItems.value.ccode)
         for (let i = 0; i < jsmx.length; i++) {
           // 查询入库单明细
           let rukuMx=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(jsmx[i].lineCode)
           rukuMx.isumJiesuan=parseFloat(rukuMx.isumJiesuan)-parseFloat(jsmx[i].quantityRuku)
-          // 入库单来源是到货单
-          if(rukuMx.sourcetype=='CGDHD'){
-            // 修改到货单累计结算数量
+          // 入库单来源是到货单 或 期初到货单
+          if(rukuMx.sourcetype=='CGDHD' || rukuMx.sourcetype=='QC'){
+            // 修改到货单累计核算数量
             let daohuoMx=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(rukuMx.sourcedetailId)
             daohuoMx.isumJiesuan=parseFloat(daohuoMx.isumJiesuan)-parseFloat(jsmx[i].quantityRuku)
             await useRouteApi(stockWarehListSave, {schemaName: dynamicTenantId})([daohuoMx])
@@ -816,7 +816,7 @@ const startDel = async () => {
           await useRouteApi(stockWarehListSave, {schemaName: dynamicTenantId})([rukuMx])
         }
         await useRouteApi(delJiesuansByCcode, { schemaName: dynamicTenantId })(formItems.value.ccode)
-        // 删除下游结算表
+        // 删除下游核算表
         await useRouteApi(delXyCsourceByxyCcode, { schemaName: dynamicTenantId })(formItems.value.ccode)
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
@@ -830,7 +830,7 @@ async function tempTaskDel(id) {
   await useRouteApi(stockTaskDelById, { schemaName: dynamicTenantId })(id)
 }
 async function tempTaskSave(method) {
-  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'采购结算单',method:method,recordNum:formItems.value.ccode,caozuoModule:'stock'})
+  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'采购核算单',method:method,recordNum:formItems.value.ccode,caozuoModule:'stock'})
     .then((a)=>{
       taskInfo.value=a
       console.log('任务='+JSON.stringify(a))
@@ -1015,7 +1015,7 @@ const editableData = reactive({});
 const tableRef:any = ref(null)
 const lanMuData = ref({
   accId: dynamicTenantId,
-  menuName: '采购结算单',
+  menuName: '采购核算单',
   type: '列表',
   objects: '',
   username: useUserStoreWidthOut().getUserInfo.username,

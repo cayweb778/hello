@@ -354,7 +354,6 @@ const checkChange = (e) => {
       let the = parseInt(dates[1])
       if (the != 1) {
         strDate.value = dates[0] +'-'+ (((the - 1) > 9) ? `${(the - 1)}` : `0${(the - 1)}`)
-        console.log(strDate.value)
         endDate.value = strDate.value
       } else {
         message.info('暂无上月！')
@@ -393,14 +392,14 @@ const checkChange = (e) => {
             max = '12'
             break
         }
-        strDate.value = dates[0] +  min
-        endDate.value = dates[0] +  max
+        strDate.value = dates[0] +'-'+  min
+        endDate.value = dates[0] +'-' + max
       }
       break
     case '4':
       let list = dateList.value.filter(it => it.stockYear == dates[0])
-      strDate.value = dates[0]+list[0].stockMonth
-      endDate.value = dates[0]+list[list.length - 1].stockMonth
+      strDate.value = dates[0]+'-'+list[0].stockMonth
+      endDate.value = dates[0]+'-'+list[list.length - 1].stockMonth
       break
     case '5':
       strDate2.value=dayjs(busDate, 'YYYY-MM-DD')

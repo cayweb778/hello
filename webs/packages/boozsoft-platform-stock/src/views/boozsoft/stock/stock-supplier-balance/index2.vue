@@ -9,7 +9,7 @@
       </div>
       <div>
         <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">供应商应付余额表</b></div>
-        <div><span style="font-size: 14px;font-weight: bold;">期间：{{ strDate }} - {{ endDate }}</span></div>
+        <div><span style="font-size: 14px;font-weight: bold;color: #666666">期间：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
         <div>
