@@ -108,87 +108,96 @@
 
         <template #summary>
           <TableSummary fixed>
-            <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">
+            <TableSummaryRow style="background-color: #cccccc;">
               <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;">合</TableSummaryCell>
               <TableSummaryCell class="nc-summary" :index="1" :align="'center'" style="border-right: none;">计</TableSummaryCell>
-              <TableSummaryCell class="nc-summary" :index="2" :colSpan="10" :align="'center'"/>
-              <TableSummaryCell :index="2" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.baseQuantity }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="2" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.subQuantity1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.subQuantity2 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.keyong }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.keyong1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.keyong2 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.ztrkQuantityCgdh }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.cgdh1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.cgdh2 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.ztrkQuantityCgrk }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.cgrk1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.cgrk2 }}
-              </TableSummaryCell>
-
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.ztckQuantityXhd }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.xhd1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.xhd2 }}
-              </TableSummaryCell>
-
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.ztrkQuantityQtck }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.qtck1 }}
-              </TableSummaryCell>
-              <TableSummaryCell :index="3" :align="'right'"
-                                style="background-color: #cccccc;font-weight: bold;border-right: none;">
-                {{ summaryTotals.qtck2 }}
-              </TableSummaryCell>
+              <TableSummaryCell class="nc-summary" style="border-right: none;" v-for="cell in getCurrSummary()" :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryTotals[cell.dataIndex]?'':summaryTotals[cell.dataIndex]}}</span></TableSummaryCell>
             </TableSummaryRow>
           </TableSummary>
         </template>
+<!--        <template #summary>-->
+<!--          <TableSummary fixed>-->
+<!--            <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">-->
+<!--              <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;">合</TableSummaryCell>-->
+<!--              <TableSummaryCell class="nc-summary" :index="1" :align="'center'" style="border-right: none;">计</TableSummaryCell>-->
+<!--              <TableSummaryCell class="nc-summary" :index="2" :colSpan="10" :align="'center'"/>-->
+<!--              <TableSummaryCell :index="2" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.baseQuantity }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="2" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.subQuantity1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.subQuantity2 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.keyong }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.keyong1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.keyong2 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.ztrkQuantityCgdh }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.cgdh1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.cgdh2 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.ztrkQuantityCgrk }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.cgrk1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.cgrk2 }}-->
+<!--              </TableSummaryCell>-->
+
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.ztckQuantityXhd }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.xhd1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.xhd2 }}-->
+<!--              </TableSummaryCell>-->
+
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.ztrkQuantityQtck }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.qtck1 }}-->
+<!--              </TableSummaryCell>-->
+<!--              <TableSummaryCell :index="3" :align="'right'"-->
+<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
+<!--                {{ summaryTotals.qtck2 }}-->
+<!--              </TableSummaryCell>-->
+<!--            </TableSummaryRow>-->
+<!--          </TableSummary>-->
+<!--        </template>-->
       </BasicTable>
       <div class="pagination-text" v-show="showPaginationText">
         {{`共 ${paginationNumber}条记录&emsp;每页 1000 条`}}
@@ -380,37 +389,57 @@ async function getStockXCL() {
     let keyong2=0
 
     a.baseQuantity=a.xcl
-    a.subQuantity1=parseFloat(a.rate1)==0?null:parseFloat(a.xcl/a.rate1).toFixed(2)
-    a.subQuantity2=parseFloat(a.rate2)==0?null:parseFloat(a.xcl/a.rate2).toFixed(2)
+    a.subQuantity1=parseFloat(a.rate1)==0?0:parseFloat(a.xcl/a.rate1).toFixed(2)
+    a.subQuantity1=parseFloat(a.subQuantity1)
+
+    a.subQuantity2=parseFloat(a.rate2)==0?0:parseFloat(a.xcl/a.rate2).toFixed(2)
+    a.subQuantity2=parseFloat(a.subQuantity2)
+
     keyong1+=hasBlank(a.subQuantity1)?0:parseFloat(a.subQuantity1)
     keyong2+=hasBlank(a.subQuantity2)?0:parseFloat(a.subQuantity2)
 
     a.ztrkQuantityCgdh=a.midWayDh
-    a.cgdh1=parseFloat(a.rate1)==0?null:parseFloat(a.midWayDh/a.rate1).toFixed(2)
-    a.cgdh2=parseFloat(a.rate2)==0?null:parseFloat(a.midWayDh/a.rate2).toFixed(2)
+    a.cgdh1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayDh/a.rate1).toFixed(2)
+    a.cgdh1=parseFloat(a.cgdh1)
+
+    a.cgdh2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayDh/a.rate2).toFixed(2)
+    a.cgdh2=parseFloat(a.cgdh2)
+
     keyong1+=hasBlank(a.cgdh1)?0:parseFloat(a.cgdh1)
     keyong2+=hasBlank(a.cgdh2)?0:parseFloat(a.cgdh2)
 
     a.ztrkQuantityCgrk=a.midWayRk
-    a.cgrk1=parseFloat(a.rate1)==0?null:parseFloat(a.midWayRk/a.rate1).toFixed(2)
-    a.cgrk2=parseFloat(a.rate2)==0?null:parseFloat(a.midWayRk/a.rate2).toFixed(2)
+    a.cgrk1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayRk/a.rate1).toFixed(2)
+    a.cgrk1=parseFloat(a.cgrk1)
+
+    a.cgrk2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayRk/a.rate2).toFixed(2)
+    a.cgrk2=parseFloat(a.cgrk2)
+
     keyong1+=hasBlank(a.cgrk1)?0:parseFloat(a.cgrk1)
     keyong2+=hasBlank(a.cgrk2)?0:parseFloat(a.cgrk2)
 
     a.ztckQuantityXhd=a.midWayXh
-    a.xhd1=parseFloat(a.rate1)==0?null:parseFloat(a.midWayXh/a.rate1).toFixed(2)
-    a.xhd2=parseFloat(a.rate2)==0?null:parseFloat(a.midWayXh/a.rate2).toFixed(2)
+    a.xhd1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayXh/a.rate1).toFixed(2)
+    a.xhd1=parseFloat(a.xhd1)
+
+    a.xhd2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayXh/a.rate2).toFixed(2)
+    a.xhd2=parseFloat(a.xhd2)
+
     keyong1-=hasBlank(a.xhd1)?0:parseFloat(a.xhd1)
     keyong2-=hasBlank(a.xhd2)?0:parseFloat(a.xhd2)
 
     a.ztrkQuantityQtck=a.midWayCk
-    a.qtck1=parseFloat(a.rate1)==0?null:parseFloat(a.midWayCk/a.rate1).toFixed(2)
-    a.qtck2=parseFloat(a.rate2)==0?null:parseFloat(a.midWayCk/a.rate2).toFixed(2)
+    a.qtck1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayCk/a.rate1).toFixed(2)
+    a.qtck1=parseFloat(a.qtck1)
+
+    a.qtck2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayCk/a.rate2).toFixed(2)
+    a.qtck2=parseFloat(a.qtck2)
+
     keyong1-=hasBlank(a.qtck1)?0:parseFloat(a.qtck1)
     keyong2-=hasBlank(a.qtck2)?0:parseFloat(a.qtck2)
 
-    a.keyong1 = keyong1
-    a.keyong2 = keyong2
+    a.keyong1 = parseFloat(keyong1)
+    a.keyong2 = parseFloat(keyong2)
     a.keyong = (a.xcl + a.midWayDh + a.midWayRk) - (a.midWayXh + a.midWayCk)
   })
   let len = temp.length
@@ -426,6 +455,20 @@ async function getStockXCL() {
     tableData.value=temp
     loadMark.value=false
   },500)
+}
+
+const getCurrSummary  = () => {
+  let arr:any = []
+  getColumns().filter(it=> it.title != '序号' && it.ifShow)
+    .map((it)=>{
+      //存在children 循环添加
+      if(it.children){
+        it.children.forEach(v=> arr.push(v))
+      }else{
+        arr.push(it)
+      }
+    })
+  return arr
 }
 
 const assembleTotal = (list) => {
@@ -647,19 +690,19 @@ const ccc=ref(
         {
           title: '主数量',
           dataIndex: 'baseQuantity',
-          key: '10-1',
+          key: '7-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'baseQuantity' }
         },
         {
           title: '数量1',
           dataIndex: 'subQuantity1',
-          key: '10-2',
+          key: '7-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'subQuantity1' }
         },
         {
           title: '数量2',
           dataIndex: 'subQuantity2',
-          key: '10-3',
+          key: '7-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'subQuantity2' }
         }
       ],
@@ -672,19 +715,19 @@ const ccc=ref(
         {
           title: '主数量',
           dataIndex: 'keyong',
-          key: '11-1',
+          key: '8-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'keyong' }
         },
         {
           title: '数量1',
           dataIndex: 'keyong1',
-          key: '11-2',
+          key: '8-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'keyong1' }
         },
         {
           title: '数量2',
           dataIndex: 'keyong2',
-          key: '11-3',
+          key: '8-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'keyong2' }
         }
       ],
@@ -696,19 +739,19 @@ const ccc=ref(
         {
           title: '主数量',
           dataIndex: 'ztrkQuantityCgdh',
-          key: '12-1',
+          key: '9-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'ztrkQuantityCgdh' }
         },
         {
           title: '数量1',
           dataIndex: 'cgdh1',
-          key: '12-2',
+          key: '9-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'cgdh1' }
         },
         {
           title: '数量2',
           dataIndex: 'cgdh2',
-          key: '12-3',
+          key: '9-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'cgdh2' }
         }
       ],
@@ -720,67 +763,67 @@ const ccc=ref(
         {
           title: '主数量',
           dataIndex: 'ztrkQuantityCgrk',
-          key: '13-1',
+          key: '10-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'ztrkQuantityCgrk' }
         },
         {
           title: '数量1',
           dataIndex: 'cgrk1',
-          key: '13-2',
+          key: '10-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'cgrk1' }
         },
         {
           title: '数量2',
           dataIndex: 'cgrk2',
-          key: '13-3',
+          key: '10-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'cgrk2' }
         }
       ],
     },
     {
-      title: '在途销货',
+      title: '在途销售发货',
       dataIndex: 'ztckQuantityXhd',width: 400,
       children: [
         {
           title: '主数量',
           dataIndex: 'ztckQuantityXhd',
-          key: '14-1',
+          key: '11-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'ztckQuantityXhd' }
         },
         {
           title: '数量1',
           dataIndex: 'xhd1',
-          key: '14-2',
+          key: '11-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'xhd1' }
         },
         {
           title: '数量2',
           dataIndex: 'xhd2',
-          key: '14-3',
+          key: '11-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'xhd2' }
         }
       ],
     },
     {
-      title: '在途出库',
+      title: '在途销售(其他)出库',
       dataIndex: 'ztrkQuantityQtck',width: 400,
       children: [
         {
           title: '主数量',
           dataIndex: 'ztrkQuantityQtck',
-          key: '15-1',
+          key: '12-1',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'ztrkQuantityQtck' }
         },
         {
           title: '数量1',
           dataIndex: 'qtck1',
-          key: '15-2',
+          key: '12-2',
           align: 'right',width: 130,ellipsis: true,slots: { customRender: 'qtck1' }
         },
         {
           title: '数量2',
           dataIndex: 'qtck2',
-          key: '15-3',
+          key: '12-3',
           align: 'right',width: 140,ellipsis: true,slots: { customRender: 'qtck2' }
         }
       ],

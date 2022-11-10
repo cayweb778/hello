@@ -116,6 +116,264 @@ const dynamicColumnAndDataModel = reactive({
       min: 60,
       align: 'center'
     },
+    {
+      key: '7',
+      name: '现存量',
+      nameNew: '现存量',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '7-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '7-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '7-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
+    {
+      key: '8',
+      name: '可用量',
+      nameNew: '现存量',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '8-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '8-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '8-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
+    {
+      key: '9',
+      name: '在途采购到货',
+      nameNew: '在途采购到货',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '9-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '9-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '9-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
+    {
+      key: '10',
+      name: '在途采购(其他)入库',
+      nameNew: '在途采购(其他)入库',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '10-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '10-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '10-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
+    {
+      key: '11',
+      name: '在途销售发货',
+      nameNew: '在途销售发货',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '11-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '11-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '11-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
+    {
+      key: '12',
+      name: '在途销售(其他)出库',
+      nameNew: '在途销售(其他)出库',
+      check: true,
+      width: 150,
+      max: 600,
+      min: 100,
+      isFixed: true,
+      children: [
+        {
+          key: '12-1',
+          name: '主数量',
+          nameNew: '主数量',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '12-2',
+          name: '数量1',
+          nameNew: '数量1',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },{
+          key: '12-3',
+          name: '数量2',
+          nameNew: '数量2',
+          check: true,
+          width: 120,
+          max: 200,
+          min: 100,
+          isFixed: true,
+          align: 'right'
+        },
+      ]
+    },
   ],
 })
 
