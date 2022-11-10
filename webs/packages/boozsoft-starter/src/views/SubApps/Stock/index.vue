@@ -31,9 +31,6 @@ import {useCounterStore} from "../../../stores/counter";
 const hello={
   id:1
 }
-setInterval(()=>{
-  console.log(hello)
-},1000)
 const wujieAttrs = ref({
 
   globalData:useCounterStore(),

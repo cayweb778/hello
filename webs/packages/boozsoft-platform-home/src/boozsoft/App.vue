@@ -47,6 +47,13 @@ const layoutsStore = usePlatformsStoreWidthOut();
 const newPlatformId=window.localStorage.getItem("newPlatformId")
 layoutsStore.switchPlatform({ id:newPlatformId})
 
+window?.$wujie.bus.$on("goPlatform", function (id) {
+  setCacheShowGdzc(false)
+  const layoutsStore = usePlatformsStoreWidthOut();
+
+
+  layoutsStore.switchPlatform({ id})
+});
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>
 <style>

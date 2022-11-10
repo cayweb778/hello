@@ -22,6 +22,13 @@ const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 const layoutsStore = usePlatformsStoreWidthOut();
 const newPlatformId=window.localStorage.getItem("newPlatformId")
 layoutsStore.switchPlatform({ id:newPlatformId})
+window?.$wujie.bus.$on("goPlatform", function (id) {
+  setCacheShowGdzc(false)
+  const layoutsStore = usePlatformsStoreWidthOut();
+
+
+  layoutsStore.switchPlatform({ id})
+});
 
 
 
