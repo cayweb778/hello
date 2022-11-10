@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="margin-right: 10px;">
         <div>
           <Button class="actod-btn" @click="openPage()" v-if="status == 3">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -950,7 +950,7 @@ async function cvencodeChange(){
     }))
     saleousingList.value = await useRouteApi(findBySkWhxXhd,{schemaName: dynamicTenantId})({year:dynamicYear.value,cvencode:formItems.value.cvencode})
     if (arSourceFlag.value=='1') {
-      tableData1.value.push(...saleousingList.value.filter(item => item.busStyle !='XHD' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
+      tableData1.value.push(...saleousingList.value.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
         item.hxStyle = item.billStyle
         item.hxCcode = item.ccode
         if (item.hxIsum!=null && item.hxIsum !='') {
@@ -963,7 +963,7 @@ async function cvencodeChange(){
       }))
     } else {
       if(arCheckFlag=='1'){
-        tableData1.value.push(...saleousingList.value.filter(item => item.busStyle != 'XSFP' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
+        tableData1.value.push(...saleousingList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
           item.hxStyle = item.billStyle
           item.hxCcode = item.ccode
           if (item.hxIsum!=null && item.hxIsum !='') {
@@ -975,7 +975,7 @@ async function cvencodeChange(){
           return item
         }))
       } else {
-        tableData1.value.push(...saleousingList.value.filter(item => item.busStyle != 'XSFP' && item.bdocumStyle=='1').map(item=>{
+        tableData1.value.push(...saleousingList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bdocumStyle=='1').map(item=>{
           item.hxStyle = item.billStyle
           item.hxCcode = item.ccode
           if (item.hxIsum!=null && item.hxIsum !='') {
@@ -1309,6 +1309,10 @@ function formatHxStyle(hxStyle){
     str = '应收单'
   } else if (hxStyle=='XSFP'){
     str = '销售发票'
+  } else if (hxStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (hxStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }
@@ -2940,7 +2944,7 @@ const calculateTotal = () => {
     font-size: 14px !important;
     padding: 2px 8px !important;
     border-color: #aaaaaa !important;
-    font-weight: 550;
+    //font-weight: 550;
     color: #000000 !important;
   }
 
@@ -2949,7 +2953,7 @@ const calculateTotal = () => {
     font-size: 13px !important;
     padding: 2px 8px !important;
     border-color: #aaaaaa !important;
-    font-weight: 550;
+    //font-weight: 550;
     color: #000000 !important;
   }
 

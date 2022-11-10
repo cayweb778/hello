@@ -68,7 +68,7 @@
               style="width: 100px;text-align: center;"
               @change="pageReload"
             >
-                <a-select-option :value="item" v-for=" item in iyearList">{{ item }}</a-select-option>
+                <a-select-option v-for=" item in iyearList" :value="item">{{ item }}</a-select-option>
                 <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
               </a-select>
           </span>

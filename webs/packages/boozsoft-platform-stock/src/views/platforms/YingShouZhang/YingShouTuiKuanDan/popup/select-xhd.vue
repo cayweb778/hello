@@ -185,6 +185,10 @@ function formatBillStyle(billStyle){
     str = '借用借出单'
   } else if (billStyle=='XSFP'){
     str = '销售发票'
+  } else if (hxStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (hxStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }
@@ -230,7 +234,7 @@ async function reloadList(){
   xhdList.value = res.filter(item => item.bdocumStyle=='1')
   // console.log(thisCheckKey.value)
   if (arSourceFlag.value=='1') {
-    tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle !='XHD' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
+    tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle !='XHD' && item.busStyle != 'QCXHD' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
       item.hxStyle = item.billStyle
       item.hxCcode = item.ccode
       if (item.hxIsum!=null && item.hxIsum !='') {
@@ -243,7 +247,7 @@ async function reloadList(){
     }))
   } else {
     if(arCheckFlag=='1'){
-      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
+      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bworkable=='1' && item.bdocumStyle=='1').map(item=>{
         item.hxStyle = item.billStyle
         item.hxCcode = item.ccode
         if (item.hxIsum!=null && item.hxIsum !='') {
@@ -255,7 +259,7 @@ async function reloadList(){
         return item
       }))
     } else {
-      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bdocumStyle=='1').map(item=>{
+      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bdocumStyle=='1').map(item=>{
         item.hxStyle = item.billStyle
         item.hxCcode = item.ccode
         if (item.hxIsum!=null && item.hxIsum !='') {

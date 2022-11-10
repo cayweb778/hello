@@ -383,14 +383,14 @@ export const menus = [
   }),*/
 
 
-  createPlatformMenu({
+  /*createPlatformMenu({
     id: 3201003,
     path: 'FeiYongDan',
     componentName: 'YingShouZhangXXFeiYongDan',
     component: '/platforms/YingShouZhang/FeiYongDan/layouts/RouteCache',
     parentId: 3200001,
     name: '费用单',
-  }),
+  }),*/
 
 
   createPlatformMenu({
@@ -413,14 +413,14 @@ export const menus = [
   }),*/
 
 
-  createPlatformMenu({
+  /*createPlatformMenu({
     id: 3202003,
     path: 'FeiYongDanLieBiao',
     componentName: 'YingShouZhangXXFeiYongDanLieBiao',
     component: '/platforms/YingShouZhang/FeiYongDanLieBiao/layouts/RouteCache',
     parentId: 3200002,
     name: '费用单列表',
-  }),
+  }),*/
 
 
  /* createPlatformMenu({

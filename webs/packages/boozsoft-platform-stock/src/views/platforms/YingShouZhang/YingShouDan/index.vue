@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="margin-right: 10px;">
         <div>
           <Button class="actod-btn" @click="openPage()" v-if="status == 3">查看</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -1963,6 +1963,24 @@ const getNextMark = (c,b) => {
     /*    background-image: url(/@/assets/images/homes/bg-pattern2.png);
         background-repeat: no-repeat;
         background-position: center;*/
+  }
+
+  .a-table-font-size-16 :deep(td),
+  .a-table-font-size-16 :deep(th) {
+    font-size: 14px !important;
+    padding: 2px 8px !important;
+    border-color: #aaaaaa !important;
+    //font-weight: 550;
+    color: #000000 !important;
+  }
+
+  .a-table-font-size-12 :deep(td),
+  .a-table-font-size-12 :deep(th) {
+    font-size: 13px !important;
+    padding: 2px 8px !important;
+    border-color: #aaaaaa !important;
+    //font-weight: 550;
+    color: #000000 !important;
   }
 
   .app-container-bottom {

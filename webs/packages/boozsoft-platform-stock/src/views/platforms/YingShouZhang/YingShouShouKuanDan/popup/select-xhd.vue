@@ -9,7 +9,7 @@
       @register="register"
     >
       <template #title>
-        <div style="display: flex;height:30px;" class="vben-basic-title">
+        <div style="display: flex;height:30px;margin-top: 10px;margin-left: 10px;" class="vben-basic-title">
         <span style="font-size: 24px;line-height:30px;">
           <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
         </span>
@@ -185,6 +185,10 @@ function formatBillStyle(billStyle){
     str = '借用借出单'
   } else if (billStyle=='XSFP'){
     str = '销售发票'
+  } else if (billStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (billStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }
@@ -229,7 +233,7 @@ async function reloadList(){
   xhdList.value = res.filter(item => item.bdocumStyle!='1')
   // console.log(thisCheckKey.value)
   if (arSourceFlag.value=='1') {
-    tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle !='XHD' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
+    tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
       item.hxStyle = item.billStyle
       item.hxCcode = item.ccode
       if (item.hxIsum!=null && item.hxIsum !='') {
@@ -242,7 +246,7 @@ async function reloadList(){
     }))
   } else {
     if(arCheckFlag=='1'){
-      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
+      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
         item.hxStyle = item.billStyle
         item.hxCcode = item.ccode
         if (item.hxIsum!=null && item.hxIsum !='') {
@@ -254,7 +258,7 @@ async function reloadList(){
         return item
       }))
     } else {
-      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bdocumStyle!='1').map(item=>{
+      tableDataAll.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.busStyle != 'QCXSFP' && item.bdocumStyle!='1').map(item=>{
         item.hxStyle = item.billStyle
         item.hxCcode = item.ccode
         if (item.hxIsum!=null && item.hxIsum !='') {
