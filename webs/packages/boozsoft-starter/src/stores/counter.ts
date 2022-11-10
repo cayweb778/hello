@@ -1,9 +1,9 @@
 import {defineStore} from 'pinia'
 
-let footerShow=false
+let footerShow = false
 const cache = window.localStorage.getItem("showFooter")
 if (cache == null) {
-    footerShow=false
+    footerShow = false
 } else {
     if (cache == "1") {
         footerShow = false
@@ -15,14 +15,19 @@ if (cache == null) {
 export const useCounterStore = defineStore({
     id: 'counter',
     state: () => ({
+        platformId: '',
         counter: 0,
         footerShow
     }),
     getters: {
+        getPlatformId: (state) => state.platformId,
         doubleCount: (state) => state.counter * 2,
         showFooterShow: (state) => state.footerShow
     },
     actions: {
+        setPlatformId(id) {
+            this.platformId = id
+        },
         increment() {
             this.counter++
         },

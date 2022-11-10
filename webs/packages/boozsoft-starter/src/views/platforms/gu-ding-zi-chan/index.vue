@@ -33,7 +33,7 @@ const wujieAttrs = ref({
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb
       jsLoader: (code, url) => {
-        console.log(url)
+
         if (url!=null && url.indexOf('jspdf.umd.min.js')!=-1) return code.replace("var jspdf", "window.jspdf");
         if (url!=null && url.indexOf( "http://192.168.199.111:81/nc/gdzc/_app.config.js")!=-1) return code.replace("var __PRODUCTION__BOOZSOFTNC__CONF__", "window.__PRODUCTION__BOOZSOFTNC__CONF__");
         // if (url === "https://unpkg.com/ant-design-vue@2.2.8/dist/antd.min.js") return code.replace("var antd", "window.antd");

@@ -54,7 +54,7 @@
            </span>
 
             </Badge>&emsp;&emsp;
-            <MessagePop @throwData="modalData" @register="registerModalPopPage"/>
+<!--            <MessagePop @throwData="modalData" @register="registerModalPopPage"/>-->
             <Badge :count="4" :number-style="{ backgroundColor: '#52c41a' }">
 <span class="hoverSvg" @click="goMessage()">
            <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
@@ -130,6 +130,10 @@ const dateChange = async (v) => {
   window.localStorage.setItem('loginDate',v)
 
 }
+
+const  showOpen=ref(false)
+const windowWidth = document.documentElement.clientWidth - 170;
+const windowHeight = (window.innerHeight - (325))
 const showFooter=computed(()=>useCounterStore().showFooterShow)
 const {createConfirm} = useMessage();
 const outSystemBefore = () => {

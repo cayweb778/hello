@@ -30,9 +30,10 @@ import 'dayjs/locale/zh-cn';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import {getPopupContainer} from "/@/boozsoft/designs/antdFuns";
 import {usePlatformsStoreWidthOut} from "/@/store/modules/platforms";
+const layoutsStore = usePlatformsStoreWidthOut();
 
 window?.$wujie.bus.$on("goStock", function (id) {
-  const layoutsStore = usePlatformsStoreWidthOut();
+
 
 
   layoutsStore.switchPlatform({ id})

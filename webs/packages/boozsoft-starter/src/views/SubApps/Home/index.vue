@@ -23,6 +23,8 @@ import {useCounterStore} from "@/stores/counter";
 
 const wujieVueRef = ref()
 const wujieAttrs = ref({
+
+  globalData:useCounterStore(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/nchome' : '//localhost:3800',
   props: {
     menuModules: modules,
@@ -36,7 +38,7 @@ const wujieAttrs = ref({
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb
       jsLoader: (code, url) => {
-        console.log(url)
+
 
         if (url!=null && url.indexOf("app.config") ) return code.replace("var __PRODUCTION__BOOZSOFTNC__CONF__", "window.__PRODUCTION__BOOZSOFTNC__CONF__");
       },

@@ -5,8 +5,8 @@ const {bus}=WujieVue
 
 export function goHome(id : any){
     useCounterStore().setShowFooter(true)
-    bus.$emit("goPlatform",20006);
     router.push("/home")
+    bus.$emit("goPlatform",20006);
 }
 
 export function goPlatformById(id : any){

@@ -25,6 +25,7 @@ import {isProdMode} from "@/utils/env";
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
+import {useCounterStore} from "../../../stores/counter";
 // const ncModals=ref(defineNcModals())
 // const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
@@ -33,6 +34,8 @@ const wujieAttrs = ref({
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/zongzhang':"ws://localhost:8086/zongzhang",
 
   props: {
+
+    globalData:useCounterStore(),
     menuModules:modules,
     NcModals:{
       // async openDeptModal(params2){
@@ -53,7 +56,7 @@ const wujieAttrs = ref({
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb
       jsLoader: (code, url) => {
-        console.log(url)
+
         if (url!=null && url.indexOf('jspdf.umd.min.js')!=-1) return code.replace("var jspdf", "window.jspdf");
         if (url!=null && url.indexOf( "http://81.70.47.206:81/nc/gdzc/_app.config.js")!=-1) return code.replace("var __PRODUCTION__BOOZSOFTNC__CONF__", "window.__PRODUCTION__BOOZSOFTNC__CONF__");
         // if (url === "https://unpkg.com/ant-design-vue@2.2.8/dist/antd.min.js") return code.replace("var antd", "window.antd");

@@ -5,7 +5,6 @@ import NcProvider from "./views/boozsoft/provider/index.vue"
 import {useCounterStore} from "@/stores/counter";
 import {computed, ref} from "vue";
 const  showApp=ref(false)
-console.log(window.parent)
 if(window.__TAURI__!=null){
   showApp.value=true
 }
