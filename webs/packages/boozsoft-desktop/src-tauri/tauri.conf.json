@@ -72,10 +72,7 @@
       "resources": [],
       "shortDescription": "",
       "targets": "all",
-      "linux": {
-        "wix": {
-          "language": "zh-CN"
-        }
+
       },
       "windows": {
         "certificateThumbprint": null,
