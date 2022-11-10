@@ -162,7 +162,6 @@ fn goApp2(app: &AppHandle<Wry>) {
     let win = tauri::window::WindowBuilder::new(app, name.to_string(), WindowUrl::App(windowUrl.into()))
         .title("财税达ERP-NC企业管理软件")
         .maximized(true)
-        .resizable(false)
         .inner_size(600.0, 400.0)
         .build().unwrap();
 }
