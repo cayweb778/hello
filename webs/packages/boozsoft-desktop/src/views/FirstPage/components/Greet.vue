@@ -19,7 +19,7 @@ import {
   primaryMonitor,
   availableMonitors
 } from '@tauri-apps/api/window'
-import {useDesktopStore, useDesktopStoreWidthOut} from "../store/modules/hello";
+import {useDesktopStore, useDesktopStoreWidthOut} from "../../../store/modules/hello";
 
 const greetMsg = ref("");
 const name = ref("127.0.0.1:3000");

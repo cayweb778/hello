@@ -1919,6 +1919,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "925383efa346730478fb4838dbe9137d2a47675ad789c546d150a6e1dd4ab31c"
 
 [[package]]
+name = "printers"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b9f1988d1b7f98e56d05f2cc4bd486f2bc9bfbcc3251f2c6b007fb65163aea8f"
+dependencies = [
+ "uuid 1.2.1",
+]
+
+[[package]]
 name = "proc-macro-crate"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2401,6 +2410,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "sha1_smol"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae1a47186c03a32177042e55dbc5fd5aee900b8e0069a8d70fba96a9375cd012"
+
+[[package]]
 name = "sha2"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2698,6 +2713,7 @@ dependencies = [
 name = "tauri-app"
 version = "0.0.0"
 dependencies = [
+ "printers",
  "serde",
  "serde_json",
  "tauri",
@@ -3104,6 +3120,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
 dependencies = [
  "getrandom 0.2.8",
+ "sha1_smol",
 ]
 
 [[package]]

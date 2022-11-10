@@ -2,7 +2,7 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:3000/nc/",
+    "devPath": "http://localhost:1420",
     "distDir": "../dist",
     "withGlobalTauri": true
   },
@@ -12,13 +12,38 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true,
-      "http":{
-        "scope":[
-          "http://**",
-          "https://**"
-        ]
-      }
+      "window": {
+        "all": true,
+        "create": true,
+        "center": true,
+        "requestUserAttention": true,
+        "setResizable": true,
+        "setTitle": true,
+        "maximize": true,
+        "unmaximize": true,
+        "minimize": true,
+        "unminimize": true,
+        "show": true,
+        "hide": true,
+        "close": true,
+        "setDecorations": true,
+        "setAlwaysOnTop": true,
+        "setSize": true,
+        "setMinSize": true,
+        "setMaxSize": true,
+        "setPosition": true,
+        "setFullscreen": true,
+        "setFocus": true,
+        "setIcon": true,
+        "setSkipTaskbar": true,
+        "setCursorGrab": true,
+        "setCursorVisible": true,
+        "setCursorIcon": true,
+        "setCursorPosition": true,
+        "startDragging": true,
+        "print": true
+      },
+      "all": true
     },
     "bundle": {
       "active": true,
@@ -47,6 +72,11 @@
       "resources": [],
       "shortDescription": "",
       "targets": "all",
+      "linux": {
+        "wix": {
+          "language": "zh-CN"
+        }
+      },
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
@@ -63,14 +93,7 @@
       "active": false
     },
     "windows": [
-      {
-        "fullscreen": false,
-        "height": 800,
-        "resizable": true,
-        "title": "财税达ERP-NC企业管理软件",
-        "width": 1000,
-        "maximized": true
-      }
+
     ]
   }
 }

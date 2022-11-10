@@ -12,15 +12,16 @@ export function createDesktopGuard(router: Router) {
 
     // Jump to the 404 page after processing the login
     if(from.path === '/' &&to.fullPath==='/' &&to.fullPath==='/'){
-        const addrObj = await getAddr()
-        if(addrObj.code != '404'){
-          useDesktopStoreWidthOut().setShowFirstPage(false)
-          useDesktopStoreWidthOut().setUrl("http://"+addrObj.data+"/nc/")
-          next('/app');
-        }else{
-            next('/firstPage');
-            useDesktopStoreWidthOut().setShowFirstPage(true)
-        }
+
+        next('/firstPage');
+        // const addrObj = await getAddr()
+        // if(addrObj.code != '404'){
+        //     useDesktopStoreWidthOut().setShowFirstPage(false)
+        //     useDesktopStoreWidthOut().setUrl("http://"+addrObj.data+"/nc/")
+        // }else{
+        //     next('/firstPage');
+        //     useDesktopStoreWidthOut().setShowFirstPage(true)
+        // }
       return
     }else{
         next()

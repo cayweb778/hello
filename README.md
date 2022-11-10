@@ -1,3 +1,4 @@
+https://github.com/talesluna/rust-printers
 虚拟机安装
 https://www.cnblogs.com/lin-wang/p/15748235.html
 https://www.cnblogs.com/tarzen213/p/15851998.html

@@ -28,9 +28,10 @@ export const useDesktopStore = defineStore({
             this.showFirstPage=bol
         },
         async goApp(path){
-            this.setUrl(path+'/')
+            // this.setUrl(path+'/')
             await invoke("generate", {name: path});
-            router.push('/app')
+            await invoke("goApp", {name: path});
+            // router.push('/app')
         }
     }
 });

@@ -21,7 +21,7 @@ function openConfig(){
     <SiderButton @clickThis="openConfig">
     </SiderButton>
   </div>
-<iframe :src="url" style="border:none;position: fixed;left:0;top:0;z-index:1;width:100vw;height:100vh;margin:0"></iframe>
+<!--<iframe :src="url" style="border:none;position: fixed;left:0;top:0;z-index:1;width:100vw;height:100vh;margin:0"></iframe>-->
 </template>
 
 <style scoped>
