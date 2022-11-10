@@ -83,20 +83,20 @@ export const kcPcXCLStore = defineStore({
           {
             title: '主数量',
             dataIndex: 'baseQuantity',
-            key: '10-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'baseQuantity' }
+            key: '7-1',
+            align: 'right',slots: { customRender: 'baseQuantity' }
           },
           {
             title: '数量1',
             dataIndex: 'subQuantity1',
-            key: '10-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'subQuantity1' }
+            key: '7-2',
+            align: 'right',slots: { customRender: 'subQuantity1' }
           },
           {
             title: '数量2',
             dataIndex: 'subQuantity2',
-            key: '10-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'subQuantity2' }
+            key: '7-3',
+            align: 'right',slots: { customRender: 'subQuantity2' }
           }
         ],
       },
@@ -107,20 +107,20 @@ export const kcPcXCLStore = defineStore({
           {
             title: '主数量',
             dataIndex: 'keyong',
-            key: '11-1',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong' }
+            key: '8-1',
+            align: 'right',slots: { customRender: 'keyong' }
           },
           {
             title: '数量1',
             dataIndex: 'keyong1',
-            key: '11-2',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong1' }
+            key: '8-2',
+            align: 'right',slots: { customRender: 'keyong1' }
           },
           {
             title: '数量2',
             dataIndex: 'keyong2',
-            key: '11-3',
-            align: 'right',width: 100,ellipsis: true,slots: { customRender: 'keyong2' }
+            key: '8-3',
+            align: 'right',slots: { customRender: 'keyong2' }
           }
         ],
       },
@@ -131,19 +131,19 @@ export const kcPcXCLStore = defineStore({
           {
             title: '主数量',
             dataIndex: 'ztrkQuantityCgdh',
-            key: '12-1',
+            key: '9-1',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityCgdh' }
           },
           {
             title: '数量1',
             dataIndex: 'cgdh1',
-            key: '12-2',
+            key: '9-2',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgdh1' }
           },
           {
             title: '数量2',
             dataIndex: 'cgdh2',
-            key: '12-3',
+            key: '9-3',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgdh2' }
           }
         ],
@@ -155,67 +155,67 @@ export const kcPcXCLStore = defineStore({
           {
             title: '主数量',
             dataIndex: 'ztrkQuantityCgrk',
-            key: '13-1',
+            key: '10-1',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityCgrk' }
           },
           {
             title: '数量1',
             dataIndex: 'cgrk1',
-            key: '13-2',
+            key: '10-2',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgrk1' }
           },
           {
             title: '数量2',
             dataIndex: 'cgrk2',
-            key: '13-3',
+            key: '10-3',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'cgrk2' }
           }
         ],
       },
       {
-        title: '在途销货',
+        title: '在途销售发货',
         dataIndex: 'ztckQuantityXhd',
         children: [
           {
             title: '主数量',
             dataIndex: 'ztckQuantityXhd',
-            key: '14-1',
+            key: '11-1',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztckQuantityXhd' }
           },
           {
             title: '数量1',
             dataIndex: 'xhd1',
-            key: '14-2',
+            key: '11-2',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'xhd1' }
           },
           {
             title: '数量2',
             dataIndex: 'xhd2',
-            key: '14-3',
+            key: '11-3',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'xhd2' }
           }
         ],
       },
       {
-        title: '在途出库',
+        title: '在途销售(其他)出库',
         dataIndex: 'ztrkQuantityQtck',
         children: [
           {
             title: '主数量',
             dataIndex: 'ztrkQuantityQtck',
-            key: '15-1',
+            key: '12-1',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'ztrkQuantityQtck' }
           },
           {
             title: '数量1',
             dataIndex: 'qtck1',
-            key: '15-2',
+            key: '12-2',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'qtck1' }
           },
           {
             title: '数量2',
             dataIndex: 'qtck2',
-            key: '15-3',
+            key: '12-3',
             align: 'right',width: 100,ellipsis: true,slots: { customRender: 'qtck2' }
           }
         ],
