@@ -68,7 +68,7 @@ fn getCacheIpAddr() -> HashMap<String, String> {
 
 #[tauri::command]
 fn getCacheIpAddrApi() -> String {
-    let scores=getCacheIpAddr();
+    let scores = getCacheIpAddr();
     return serde_json::to_string(&scores).unwrap();
 }
 
@@ -146,30 +146,26 @@ fn goApp2(app: &AppHandle<Wry>) {
     let cacheIpAddrMap = getCacheIpAddr();
     let code = cacheIpAddrMap["code"].clone();
     let url = cacheIpAddrMap["data"].clone();
+
+
+    let windowUrl = format!("http://{}/nc", url);
+    let name;
     if (app.get_window("main2333").is_none()) {
         if (!app.get_window("main23333333").is_none()) {
             app.get_window("main23333333").unwrap().close();
         }
-
-        let windowUrl = format!("http://{}/nc", url);
-        let win = tauri::window::WindowBuilder::new(app, "main2333".to_string(), WindowUrl::App(windowUrl.into()))
-            .title("Main2333")
-            .maximized(true)
-            .inner_size(600.0, 400.0)
-            .build().unwrap();
-
-        // win.open_devtools();
+        name = "main2333";
     } else {
+        name = "main23333333";
         app.get_window("main2333").unwrap().close();
-        let windowUrl = format!("http://{}/nc", url);
-        let win = tauri::window::WindowBuilder::new(app, "main23333333".to_string(), WindowUrl::App(windowUrl.into()))
-            .title("Main2333")
-            .maximized(true)
-            .inner_size(600.0, 400.0)
-            .build().unwrap();
-
-        // win.open_devtools();
     }
+    let win = tauri::window::WindowBuilder::new(app, name.to_string(), WindowUrl::App(windowUrl.into()))
+        .title("财税达ERP-NC企业管理软件")
+        .maximized(true)
+        .decorations(false)
+        .resizable(false)
+        .inner_size(600.0, 400.0)
+        .build().unwrap();
 }
 
 use tauri::{Menu, Submenu, MenuItem, command, window::WindowBuilder, Window, WindowUrl, RunEvent, GlobalShortcutManager};
@@ -233,7 +229,7 @@ fn main() {
                 goApp2(app.handle().borrow());
             } else {
                 let win = tauri::window::WindowBuilder::new(app, "main".to_string(), WindowUrl::default())
-                    .title("Main")
+                    .title("财税达ERP-NC企业管理软件")
                     .maximized(true)
                     .inner_size(600.0, 400.0)
                     .build()?;
