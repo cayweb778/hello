@@ -25,22 +25,13 @@ public class AdminWebSocketHandler implements WebSocketHandler {
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
-        // 校验权限
-        HandshakeInfo handshakeInfo = session.getHandshakeInfo();
-        Map<String, String> queryMap = getQueryMap(handshakeInfo.getUri().getQuery());
-        String id = queryMap.get("id");
-        // 暂时只校验了是否携带了ID,以后可以改为校验TOKEN
-        if (StringUtils.isNotBlank(id)) {
-            // 输入输出封装
-            Mono<Void> input = session.receive().doOnNext(message -> this.messageHandle(session, message))
-                    .log()
-                    .doOnError(throwable -> log.error("webSocket发生异常：" + throwable))
-                    .doOnComplete(() -> log.info("webSocket结束")).then();
-            Mono<Void> output = session.send(Flux.create(sink -> WebSocketWrap.SENDER.put(id, new WebSocketWrap(id, session, sink))));
-            return Mono.zip(input, output).then();
-        } else {
-            return session.close(new CloseStatus(1016, "连接未通过校验,即将关闭连接"));
-        }
+        // 输入输出封装
+        Mono<Void> input = session.receive().doOnNext(message -> this.messageHandle(session, message))
+                .log()
+                .doOnError(throwable -> log.error("webSocket发生异常：" + throwable))
+                .doOnComplete(() -> log.info("webSocket结束")).then();
+        Mono<Void> output = session.send(Flux.create(sink -> WebSocketWrap.SENDER.put("", new WebSocketWrap("", session, sink))));
+        return Mono.zip(input, output).then();
     }
 
 
