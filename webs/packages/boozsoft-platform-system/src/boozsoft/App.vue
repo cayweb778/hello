@@ -19,26 +19,11 @@ const showServerError=ref(true)
 const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 
 
-window?.$wujie.bus.$on("goPlatform", function (id) {
-  setCacheShowGdzc(false)
-  const layoutsStore = usePlatformsStoreWidthOut();
+const layoutsStore = usePlatformsStoreWidthOut();
+const newPlatformId=window.localStorage.getItem("newPlatformId")
+layoutsStore.switchPlatform({ id:newPlatformId})
 
 
-  layoutsStore.switchPlatform({ id})
-});
-
-// 跳转平台监听
-window?.$wujie.bus.$on("goGuDingZiChan", function (id) {
-  setCacheShowGdzc(true)
-  // /** 设定延时请求( 比如router.ready() )，防止首次加载,组件还未渲染 start **/
-  window?.$wujie.bus.$emit('goGuDingZiChanxxxx',id)
-  /** 非该模块的平台，抛出异常，弹出错误 start **/
-
-  /**  end **/
-
-
-  /** end **/
-});
 
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>

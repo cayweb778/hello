@@ -32,12 +32,14 @@ import {getPopupContainer} from "/@/boozsoft/designs/antdFuns";
 import {usePlatformsStoreWidthOut} from "/@/store/modules/platforms";
 const layoutsStore = usePlatformsStoreWidthOut();
 
-window?.$wujie.bus.$on("goStock", function (id) {
+
+const newPlatformId=window.localStorage.getItem("newPlatformId")
+layoutsStore.switchPlatform({ id:newPlatformId})
 
 
 
-  layoutsStore.switchPlatform({ id})
-});
+// window?.$wujie.bus.$on("goStock", function (id) {
+// });
 useTitle();
 </script>
 <style lang='less' src="./assets/styles/boozsoft-public.less" scoped></style>

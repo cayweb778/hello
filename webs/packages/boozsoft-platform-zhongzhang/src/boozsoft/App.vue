@@ -16,13 +16,9 @@ const showServerError=ref(true)
 const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 
 
-window?.$wujie.bus.$on("goZongzhang", function (id) {
-  setCacheShowGdzc(false)
-  const layoutsStore = usePlatformsStoreWidthOut();
-
-
-  layoutsStore.switchPlatform({ id})
-});
+const layoutsStore = usePlatformsStoreWidthOut();
+const newPlatformId=window.localStorage.getItem("newPlatformId")
+layoutsStore.switchPlatform({ id:newPlatformId})
 
 
 </script>
