@@ -11,7 +11,7 @@ const url=computed(()=>useDesktopStoreWidthOut().getUrl)
 function openConfig(){
   var WebviewWindow = window.__TAURI__.window.WebviewWindow
   let webview = new WebviewWindow('theUniqueLabel', {
-    url: new URL(window.location.href).origin+"/config",
+    url: "config",
   })
 }
 </script>
