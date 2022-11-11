@@ -1155,10 +1155,10 @@ public class StockCostAccController {
                     if(type.equals("移动平均")){
                         AtomicReference<BigDecimal> n = new AtomicReference<>(BigDecimal.ZERO);
                         AtomicReference<BigDecimal> m = new AtomicReference<>(BigDecimal.ZERO);
-                        //入库 采购蓝字入库+其他蓝字入库+入库调整单
+                        //入库 采购蓝字入库+其他蓝字入库+入库调整单+红字回冲单+篮子回冲单
                         Mono<AtomicReference<BigDecimal>> map1 = warehousingsRepository.findAllByCwhcodeAndCinvodeAndDdate(stockCangku, stockNum, year, ddate)
                                 .filter(o-> "0".equals(rkBcheck)? "1".equals(o.getBcheck()) : true)
-                                .filter(o-> o.getBillStyle().equals("RKTZD")? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
+                                .filter(o-> (o.getBillStyle().equals("RKTZD") || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
                                 .filter(o -> batchId.equals(o.getBatchId()))
                                 .collectList()
                                 .map(list->{
@@ -1279,7 +1279,7 @@ public class StockCostAccController {
                                         return true;
                                     }
                                 })
-                                .filter(o-> new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0)
+                                .filter(o -> ("CGRKD".equals(o.getBillStyle()) || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))  && new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0)
                                 .collectList();
 
                         //期初
@@ -1373,7 +1373,7 @@ public class StockCostAccController {
                     //入库 采购蓝字入库+其他蓝字入库+入库调整单
                     return warehousingsRepository.findAllByCinvodesAndDdate(stocks, year, ddate)
                             .filter(o-> "0".equals(rkBcheck)? "1".equals(o.getBcheck()) : true)
-                            .filter(o-> o.getBillStyle().equals("RKTZD")? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
+                            .filter(o-> (o.getBillStyle().equals("RKTZD") || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
                             .collectList()
                             .map(list-> list1.addAll(list));
                 })
@@ -1506,7 +1506,7 @@ public class StockCostAccController {
                             }else if(type.equals("相同批号")){
                                 //采购入库
                                 List<StockWarehousings> l1 = list1.stream()
-                                        .filter(o -> "CGRKD".equals(o.getBillStyle()) && item.getStockNum().equals(o.getCinvode()) && (ObjectUtil.isNotNull(item.getBatchId())?item.getBatchId().equals(o.getBatchId()):false) && "2".equals(kca)?true:o.getCwhcode().equals(item.getStockCangku()))
+                                        .filter(o -> ("CGRKD".equals(o.getBillStyle()) || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD")) && item.getStockNum().equals(o.getCinvode()) && (ObjectUtil.isNotNull(item.getBatchId())?item.getBatchId().equals(o.getBatchId()):false) && "2".equals(kca)?true:o.getCwhcode().equals(item.getStockCangku()))
                                         .collect(Collectors.toList());
                                 if(l1.size() > 0 ){
                                     //汇总主数量 无税金额
@@ -1676,7 +1676,7 @@ public class StockCostAccController {
                                     return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
                                 }
                             })
-                            .filter(o-> o.getBillStyle().equals("RKTZD")? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
+                            .filter(o-> (o.getBillStyle().equals("RKTZD") || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
                             .collectList()
                             .map(item->{
                                 rkList.addAll(item);
@@ -1723,7 +1723,7 @@ public class StockCostAccController {
                         }else if("相同批号".equals(v.getBuname())){
                             //采购入库
                             List<StockWarehousings> l1 = rkList.stream()
-                                    .filter(o -> "CGRKD".equals(o.getBillStyle()) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
+                                    .filter(o -> ("CGRKD".equals(o.getBillStyle()) || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD")) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
                                     .collect(Collectors.toList());
                             if(l1.size() > 0 ){
                                 //汇总主数量 无税金额
@@ -1969,7 +1969,7 @@ public class StockCostAccController {
                                     return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
                                 }
                             })
-                            .filter(o-> o.getBillStyle().equals("RKTZD")? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
+                            .filter(o-> (o.getBillStyle().equals("RKTZD") || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
                             .collectList()
                             .map(item->{
                                 rkList.addAll(item);
@@ -2016,7 +2016,7 @@ public class StockCostAccController {
                         }else if("相同批号".equals(v.getBuname())){
                             //采购入库
                             List<StockWarehousings> l1 = rkList.stream()
-                                    .filter(o -> "CGRKD".equals(o.getBillStyle()) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
+                                    .filter(o -> ("CGRKD".equals(o.getBillStyle()) || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD")) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
                                     .collect(Collectors.toList());
                             if(l1.size() > 0 ){
                                 //汇总主数量 无税金额
@@ -2263,7 +2263,7 @@ public class StockCostAccController {
                                     return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
                                 }
                             })
-                            .filter(o-> o.getBillStyle().equals("RKTZD")? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
+                            .filter(o-> (o.getBillStyle().equals("RKTZD") || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD"))? true : (new BigDecimal(o.getIcost()).compareTo(BigDecimal.ZERO) > 0))
                             .collectList()
                             .map(item->{
                                 rkList.addAll(item);
@@ -2310,7 +2310,7 @@ public class StockCostAccController {
                         }else if("相同批号".equals(v.getBuname())){
                             //采购入库
                             List<StockWarehousings> l1 = rkList.stream()
-                                    .filter(o -> "CGRKD".equals(o.getBillStyle()) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
+                                    .filter(o -> ("CGRKD".equals(o.getBillStyle()) || o.getBillStyle().equals("HZHCD") || o.getBillStyle().equals("LZHCD")) && v.getCinvode().equals(o.getCinvode()) && (ObjectUtil.isNotEmpty(v.getBatchId())?v.getBatchId().equals(o.getBatchId()):false) && "2".equals(hs)?true:o.getCwhcode().equals(v.getCwhcode()))
                                     .collect(Collectors.toList());
                             if(l1.size() > 0 ){
                                 //汇总主数量 无税金额

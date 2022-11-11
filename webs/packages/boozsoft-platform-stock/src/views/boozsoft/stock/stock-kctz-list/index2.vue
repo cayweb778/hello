@@ -7,8 +7,9 @@
         </div>
         <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
           <div>
-            <div style="margin-top: 8px;margin-left: 10px;">
+            <div style="margin-top: 1px;margin-left: 10px;">
               <b><span style="color: #666666;padding-left:5px;">存货：</span>{{pageParameter.chname}}</b>
+              <br>
               <b><span style="color: #666666;padding-left:5px;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
               <b><span style="color: #666666;padding-left:5px;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
             </div>
@@ -1163,7 +1164,12 @@ const billStyleFilter = (a) => {
     str="入库调整单"
   }else if(a == 'CKTZD'){
     str="出库调整单"
+  }else if(a == 'HZHCD'){
+    str="红字回冲单"
+  }else if(a == 'LZHCD'){
+    str="蓝字回冲单"
   }
+
   return str
 }
 

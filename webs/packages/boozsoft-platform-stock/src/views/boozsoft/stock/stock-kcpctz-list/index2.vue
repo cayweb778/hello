@@ -1151,6 +1151,10 @@ const billStyleFilter = (a) => {
     str="入库调整单"
   }else if(a == 'CKTZD'){
     str="出库调整单"
+  }else if(a == 'HZHCD'){
+    str="红字回冲单"
+  }else if(a == 'LZHCD'){
+    str="蓝字回冲单"
   }
   return str
 }
