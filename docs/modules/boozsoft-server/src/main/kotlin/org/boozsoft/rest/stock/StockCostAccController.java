@@ -2324,7 +2324,7 @@ public class StockCostAccController {
                                     return Double.parseDouble(o.getIcost().toString());
                                 }).sum());
 
-                                //数量0 =单价0 没奸雄的奸雄骑 好用吗
+                                //数量0 =单价0
                                 if(n.compareTo(BigDecimal.ZERO) == 0){
                                     v.setPrice("0");
                                 }
