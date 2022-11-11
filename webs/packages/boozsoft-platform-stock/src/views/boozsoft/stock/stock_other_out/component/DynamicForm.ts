@@ -78,7 +78,7 @@ export const defaultRows = () => {
     },
     {
       columnType: '1',
-      field: 'methodPay',
+      field: 'bstyle',
       label: '收发方式',
       component: 'Select',
       componentProps: 'method',

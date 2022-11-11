@@ -2,7 +2,7 @@
   <div class="dynamic-form">
     <BasicForm @register="register"  ref="formElRef">
       <template #unitType="{ model, field }">
-        <Select placeholder="其他/客户/供应商/员工/项目" v-model:value="model[field]" ref="cvencodeRef" :show-search="true" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['methodPay']) != -1"
+        <Select placeholder="其他/客户/供应商/员工/项目" v-model:value="model[field]" ref="cvencodeRef" :show-search="true" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['bstyle']) != -1"
                 :filter-option="filterOption"  @change="model['unitValue']='',resetSchemas()"
                 :options="[{value: 'etc',label: '其他'},{value: 'cust',label: '客户'},{value: 'supplier',label: '供应商'},{value: 'user',label: '员工'},{value: 'project',label: '项目'}]">
           <template #option="{ value: val, label ,title }">{{ label }}</template>
@@ -13,7 +13,7 @@
       </template>
 
       <template #unitValue="{ model, field }">
-        <Select v-if="model['unitType'] != 'etc'" placeholder="请选择" v-model:value="model[field]" ref="cvencodeJsRef" :show-search="true" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['methodPay']) != -1"
+        <Select v-if="model['unitType'] != 'etc'" placeholder="请选择" v-model:value="model[field]" ref="cvencodeJsRef" :show-search="true" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['bstyle']) != -1"
                 :filter-option="filterOption"
                 :options="selectModel[model['unitType']]">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
@@ -21,11 +21,11 @@
             <SearchOutlined/>
           </template>
         </Select>
-        <Input placeholder="输入"  v-else v-model:value="model[field]" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['methodPay']) != -1" />
+        <Input placeholder="输入"  v-else v-model:value="model[field]" :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['bstyle']) != -1" />
       </template>
 
       <template #cwhcode="{ model, field }">
-        <Select placeholder="请选择" v-model:value="model[field]" :show-search="true"  :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['methodPay']) != -1"
+        <Select placeholder="请选择" v-model:value="model[field]" :show-search="true"  :disabled="['DBCK','PKCK','XTZHCK'].indexOf(model['bstyle']) != -1"
                 :filter-option="filterOption" ref="cwhcodeRef"
                 @keyup.enter.native="focusNext(field)"  option-label-prop="label"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
@@ -81,8 +81,8 @@
       </template>
 
 
-      <template #methodPay="{ model, field }">
-        <Select placeholder="请选择" v-model:value="model[field]" ref="methodPayRef" :disabled="true"
+      <template #bstyle="{ model, field }">
+        <Select placeholder="请选择" v-model:value="model[field]" ref="bstyleRef" :disabled="true"
                 @keyup.enter.native="focusNext(field)"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ label }}</template>
@@ -161,7 +161,7 @@ watch(() => props.datasource, async () => {
   let q = showList.filter(it=>!hasBlank(it.componentProps)).map(it => it.componentProps)
   q.push(...['operator','supplier','project'])
   let map = (await useRouteApi(findStockCaiGouList, {schemaName: props.accId})([...new Set(q)].join(',')))
-  map['method'] = [{value: 'QTCK',label: '其他出库'},{value: 'DBCK',label: '调拨出库'},{value: 'PKCK',label: '盘亏出库'},{value: 'XTZHCK',label: '形态转换出库'},{value: 'JRHHCK',label: '借入还回出库'},{value: 'JCJYCK',label: '借出借用出库'},{value: 'ZZCK',label: '组装出库'},{value: 'CXCK',label: '拆卸出库'}]
+  map['method'] = [{value: '其他出库',label: '其他出库'},{value: '调拨出库',label: '调拨出库'},{value: '盘亏出库',label: '盘亏出库'},{value: '形态转换出库',label: '形态转换出库'},{value: '借入还回出库',label: '借入还回出库'},{value: '借出借用出库',label: '借出借用出库'},{value: '组装出库',label: '组装出库'},{value: '拆卸出库',label: '拆卸出库'}]
   selectModel.value = map
   resetSchemas()
   props.formDataFun.getSelectMap = () => selectModel.value

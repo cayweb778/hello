@@ -1036,7 +1036,7 @@ const startEdit = async (type) => {
       formFuns.value.setFormValue({
         ddate: formItems.value.ddate,
         ccode: formItems.value.ccode,
-        methodPay: 'QTCK'
+        bstyle: '其他出库'
       })
     }
     showAvailability(true)
@@ -1048,7 +1048,7 @@ const startEdit = async (type) => {
   } else {
     status.value = 2
     // 以下单据只能修改 单价与金额
-    biandong.value = ['DBCK','PKCK','XTZHCK'].indexOf(formFuns.value.getFormValue()['methodPay'])!=-1
+    biandong.value = ['调拨出库','盘亏出库','形态转换出库'].indexOf(formFuns.value.getFormValue()['bstyle'])!=-1
     let list = getDataSource()
     let dLen = list.length
     for (let i = 0; i < (maxR - dLen); i++) {
@@ -1082,8 +1082,8 @@ const startDel = async () => {
       content: '您确定要进行其他出库单删除吗!',
       onOk: async () => {
         // 删除前校验
-        if (['DBCK','PKCK','XTZHCK','ZZCK','CXCK'].indexOf(formItems.value.methodPay)!=-1) {
-          createWarningModal({title: '温馨提示', content: '当前单据由来源“'+formFuns.value.getSelectMap()['method'].filter(it=>it.value==formItems.value.methodPay)[0]?.label+'”单据关联生成，不能直接删除单据，弃审来源单据时将自动删除！'})
+        if (['调拨出库','盘亏出库','形态转换出库','组装出库','拆卸出库'].indexOf(formItems.value.bstyle)!=-1) {
+          createWarningModal({title: '温馨提示', content: '当前单据由来源“'+formFuns.value.getSelectMap()['method'].filter(it=>it.value==formItems.value.bstyle)[0]?.label+'”单据关联生成，不能直接删除单据，弃审来源单据时将自动删除！'})
         } else {
           if (formItems.value?.bdocumStyle=='1' ){
             let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))

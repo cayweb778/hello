@@ -248,7 +248,7 @@ public class StockSaleousingController {
                     zck = zck.add(new BigDecimal(tw.getBaseQuantity()));
                 }
                 t1.setChukuStatus(zck.equals(yck) ? "1" : null);
-                for (StockSaleousings saleousings : sub) saleousings.setId(null).setBstyle("201");
+                for (StockSaleousings saleousings : sub) saleousings.setId(null).setBstyle("销售出库");
                 Mono<String> xy = stockXyCsourceRepository.save(new StockXyCsource().setIyear(db.getIyear()).setCcode(t1.getCcode()).setCcodeDate(t1.getDdate()).setBillStyle(t1.getBillStyle()).setXyccode(db.getCcode()).setXyccodeDate(db.getDdate()).setXyBillStyle(db.getBillStyle())).flatMap(z -> Mono.just(""));
                 return Mono.zip(collect.size() > 0 ? saleousingRepository.save(t1).thenReturn("") : Mono.just(""), collect.size() > 0 ? saleousingsRepository.saveAll(t2).collectList().thenReturn("") : Mono.just(""), saleousingsRepository.deleteAll(t3).thenReturn(""),Mono.just(new ArrayList<>()), saleousingsRepository.saveAll(sub).collectList(),(b && collect.size() > 0?xy:Mono.just(""))).flatMap(tips2 -> Mono.just(""));
             });
@@ -1053,7 +1053,7 @@ public class StockSaleousingController {
     private Mono<Tuple3<StockSaleousing, List<StockSaleousings>, StockXyCsource>> portrayXsckd(StockSaleousing dbEntry, List<StockSaleousings> list,String code,List<StockCostAccRo> priceList) {
         StockSaleousing saleousing = new StockSaleousing();
         BeanUtils.copyProperties(dbEntry,saleousing);
-        saleousing.setId(null).setCcode(code).setBillStyle("XSCKD").setBcheck(null).setBcheckTime(null).setBcheckUser(null).setCcodePl(null).setSourcetype("XHD").setSourcecode(dbEntry.getCcode()).setSourcedate(dbEntry.getDdate()).setBstyle("201").setChukuStatus(null);
+        saleousing.setId(null).setCcode(code).setBillStyle("XSCKD").setBcheck(null).setBcheckTime(null).setBcheckUser(null).setCcodePl(null).setSourcetype("XHD").setSourcecode(dbEntry.getCcode()).setSourcedate(dbEntry.getDdate()).setBstyle("销售出库").setChukuStatus(null);
         if (dbEntry.getBdocumStyle().equals("1"))saleousing.setIsum(null).setTaxAmount(null);
         List<StockSaleousings> xsckd = new ArrayList<>();
         for (StockSaleousings s : list) {
@@ -1061,7 +1061,7 @@ public class StockSaleousingController {
             BeanUtils.copyProperties(s,a);
             s.setIsumChuku(a.getBaseQuantity()); // 存入累计数量
             a.setId(null).setCcode(code).setBillStyle("XSCKD").setBcheck(null).setBcheckTime(null).setBcheckUser(null).setTotalsourceid(null)
-                    .setSourcedetailId(s.getLineCode()).setSourcetype("XHD").setSourcecode(s.getCcode()).setSourcedate(s.getDdate()).setBstyle("201"); // 填写来源信息
+                    .setSourcedetailId(s.getLineCode()).setSourcetype("XHD").setSourcecode(s.getCcode()).setSourcedate(s.getDdate()).setBstyle("销售出库"); // 填写来源信息
             if (dbEntry.getBdocumStyle().equals("1"))a.setIsum(null).setTaxprice(null).setItaxprice(null);
             List<StockCostAccRo> accRos = priceList.stream().filter(p -> p.getStockCangku().equals(a.getCwhcode1()) && p.getStockNum().equals(a.getCinvode()) && (StrUtil.isBlank(a.getBatchId()) ? true : a.getBatchId().equals(p.getBatchId()))).collect(Collectors.toList());
             if (accRos.size() > 0 && StrUtil.isNotBlank(accRos.get(0).getPrice())){

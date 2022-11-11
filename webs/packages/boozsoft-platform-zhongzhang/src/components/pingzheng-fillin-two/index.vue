@@ -106,7 +106,7 @@
                <span class="title-span">字&nbsp;第</span>
                <Input style="width: 100px;" v-model:value="saveModel['inoId']"/>
                <span class="title-span">号&ensp;附单据数：</span>
-               <InputNumber style="width: 60px;" :min="0" v-model:value="saveModel['idoc']"/>
+               <InputNumber style="width: 60px;" :min="0" :controls="false" v-model:value="saveModel['idoc']"/>
              </div>
              <div><span class="title-span">制单日期：</span><DatePicker  v-model:value="saveModel['dbillDate']" value-format="YYYY-MM-DD"/></div>
              <div><span class="title-span">本币：</span><span style="font-weight: bold;">人民币</span></div>
@@ -209,12 +209,15 @@
           </template>
 
           <template #colum4="{ record }">
-                <span>{{record?.colum4}}</span>
+             <div class="topAndDownDiv">
+               <span>{{record?.wbTopStr}}</span>
+               <span>{{record?.wbDownStr}}</span>
+             </div>
           </template>
 
           <template #colum501="{ record }">
             <template v-if="record.editColum5">
-              <InputNumber  class="colum5" :precision="0" :controls="false" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum5"   @keyup="(e)=>amountWatch(e,record,'colum5')"/>
+              <InputNumber  class="colum5" :precision="2" :controls="false" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum5"   @keyup="(e)=>amountWatch(e,record,'colum5')"/>
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -227,7 +230,7 @@
           <template #colum601="{ record }">
             <template v-if="record.editColum6">
 <!--            :step="0.01"  -->
-              <InputNumber  class="colum6"  :precision="0" :controls="false" :min="-9999999999999.99" :max="9999999999999.99"  v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
+              <InputNumber  class="colum6"  :precision="2" :controls="false" :min="-9999999999999.99" :max="9999999999999.99"  v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -337,9 +340,9 @@ const tableRef = ref(null)
 const testColums = [
   {title: '摘要', dataIndex: 'cdigest', ellipsis: true,width:150, slots: {customRender: 'cdigest'}},
   {title: '会计科目', dataIndex: 'ccode', ellipsis: true,width:250, slots: {customRender: 'ccode'}},
-  {title: '辅助核算', dataIndex: 'colum3', ellipsis: true, width:120,slots: {customRender: 'colum3'}},
+  {title: '辅助核算', dataIndex: 'colum3',  width:120,slots: {customRender: 'colum3'}},
   {title: '货币/金额',dataIndex: 'colum4', width:120,children:
-      [{title: '汇率', dataIndex: 'colum41', ellipsis: true, width:120, slots: {customRender: 'colum41'}}]
+      [{title: '汇率', dataIndex: 'colum41', ellipsis: true, width:120, slots: {customRender: 'colum4'}}]
   },
   {title: '借方金额（本币）',dataIndex: 'colum5', width:260,slots: {customRender: 'colum5'},children: [
     {title: '万', dataIndex: 'colum501', ellipsis: true,width:20, slots: {customRender: 'colum501'},customCell: (o) => {	return {style: {padding: '0px'}}} },
