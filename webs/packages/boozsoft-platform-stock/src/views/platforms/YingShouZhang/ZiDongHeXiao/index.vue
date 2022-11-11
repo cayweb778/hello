@@ -5,7 +5,7 @@
     <div class="app-container">
 
       <div class="app-container-head">
-        <div class="container-head-title" style="float: left;">
+        <div class="container-head-title" style="float: left;margin-left: -10px;">
           <b class="noneSpan" style="font-size: 60px;"><BarChartOutlined /></b>
         </div>
         <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
@@ -16,7 +16,7 @@
             </span>
           </div>
         </div>
-        <div class="ant-btn-group" style="float: right">
+        <div class="ant-btn-group" style="float: right;margin-right: 10px;">
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -40,12 +40,12 @@
       </div>
 
       <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;">
+      <div style="margin-top: -25px;margin-left: 80px;">
         <div style="display: inline-block;float: left;margin-left: 1%;margin-top: -20px;">
           <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
         </div>
 
-        <div style="float: right; margin-left: 10px">
+        <div style="float: right; margin-left: 10px;margin-right: 10px;">
           <Button class="ant-btn-me">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -131,7 +131,7 @@
           </Popover>
         </div>
         <div style="float: right; position: relative">
-          <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+          <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;" class="special_select">
             <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
             <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
             <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
@@ -140,16 +140,16 @@
           <!-- 搜索 -->
           <InputSearch
             placeholder=""
-            style="width: 200px; border-radius: 4px"
+            style="width: 150px; border-radius: 4px"
             @search="onSearch"
           />
         </div>
+        <div style="clear:both"/>
       </div>
-
-      <div style="clear:both"/>
 
     </div>
     <div class="app-container">
+      <div class="temp">
       <a-spin :spinning="spinning" tip="正在核销中...">
       <BasicTable
         ref="tableRef"
@@ -233,6 +233,7 @@
           共 {{paginationNumber}} 条记录&nbsp;&nbsp; 每页 200 条
         </div>
       </a-spin>
+      </div>
     </div>
     <Query @save="saveQuery" @register="registerQueryPage"/>
   </div>
@@ -1670,7 +1671,7 @@ const calculateTotal = () => {
   font-size: 14px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 550;
+  //font-weight: 550;
   color: #000000 !important;
 }
 
@@ -1679,7 +1680,7 @@ const calculateTotal = () => {
   font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 550;
+  //font-weight: 550;
   color: #000000 !important;
 }
 
@@ -1693,8 +1694,20 @@ const calculateTotal = () => {
   padding: 0px;
   margin: 5px 10px;
   background: #b4c8e3 !important;
-  position: relative;
+  /*position: relative;
   :deep(.pagination-text){
+    position: absolute;
+    bottom: 6px;
+    right: 30%;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }*/
+}
+
+.temp{
+  position: relative;
+  .pagination-text {
     position: absolute;
     bottom: 6px;
     right: 30%;

@@ -5,7 +5,7 @@
     <div class="app-container">
 
       <div class="app-container-head">
-        <div class="container-head-title" style="float: left;">
+        <div class="container-head-title" style="float: left;margin-left: -15px;">
           <b class="noneSpan" style="font-size: 60px;"><ToolOutlined /></b>
         </div>
         <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
@@ -16,7 +16,7 @@
             </span>
           </div>
         </div>
-        <div class="ant-btn-group" style="float: right">
+        <div class="ant-btn-group" style="float: right;margin-right: 10px;">
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -36,15 +36,15 @@
       </div>
 
       <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;">
-        <div style="display: inline-block;float: left;margin-top: -35px;">
+      <div style="margin-top: -25px;margin-left: 60px;">
+        <div style="display: inline-block;float: left;margin-top: -40px;">
           <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
         </div>
         <div style="display: inline-block;float: left;margin-left: 12px;font-weight: bold;">
           <span style="color:#666666;">结算客户名称：</span>{{ formatCvencode(cvencode) }}
         </div>
 
-        <div style="float: right; margin-left: 10px;">
+        <div style="float: right; margin-left: 10px;margin-right: 10px;">
           <Button class="ant-btn-me">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -77,9 +77,8 @@
             @search="onSearch"
           />-->
         </div>
+        <div style="clear:both"/>
       </div>
-
-      <div style="clear:both"/>
 
     </div>
 <!--    <div class="app-container">
@@ -539,12 +538,12 @@ async function reloadTable(){
 
   const saleList = await useRouteApi(findBySkWhxXhd,{schemaName: dynamicTenantId})({year:pageParameter.year,cvencode:cvencode.value})
   if (arSourceFlag.value=='1') {
-    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.bworkable=='1')
+    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1')
   } else {
     if(arCheckFlag=='1'){
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.bworkable=='1')
+      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.bworkable=='1')
     } else {
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP')
+      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP')
     }
   }
   for (let i = 0; i < saleousingList.value.length; i++) {
@@ -1645,7 +1644,7 @@ async function saveSelectXhd(data){
   font-size: 14px !important;
   padding: 5px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 550;
+  //font-weight: 550;
 }
 
 .a-table-font-size-12 :deep(td),
@@ -1653,7 +1652,7 @@ async function saveSelectXhd(data){
   font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 600;
+  //font-weight: 600;
 }
 
 .app-container:nth-of-type(1) {

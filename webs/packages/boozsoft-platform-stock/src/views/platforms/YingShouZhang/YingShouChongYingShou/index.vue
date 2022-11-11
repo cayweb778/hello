@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="">
         <div>
           <Button class="actod-btn" @click="openPage()" v-if="status == 3">查看</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -1105,7 +1105,8 @@ const startDel = async () => {
         const list = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.busStyle})
         for (let i = 0; i < list.length; i++) {
           let item = list[i]
-          if(item.sourcetype.substring(0,2)=='QC'){
+          // if(item.sourcetype.substring(0,2)=='QC'){
+          if(item.sourcetype=='QCYSD'){
             //期初应收单
             const xhdyue = await useRouteApi(findArBeginBalanceByCcode, {schemaName: dynamicTenantId})(item.targetCode)
             xhdyue.hxIsum = sub(xhdyue.hxIsum, add(item.hxIsum == null ? '' : item.hxIsum, item.idiscount == null ? '' : item.idiscount))
@@ -1932,6 +1933,8 @@ const getNextMark = (c,b) => {
       :deep(.nc-summary) {
         font-size: 14px;
         font-weight: bold;
+        margin: 0;
+        padding: 5px;
         width: 100%;
         background-color: #cccccc;
         border:none !important;

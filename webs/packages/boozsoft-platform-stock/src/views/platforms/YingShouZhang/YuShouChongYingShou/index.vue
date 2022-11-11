@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="margin-right: 10px;">
         <div>
           <Button class="actod-btn" @click="openPage()" v-if="status == 3">查看</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -1106,7 +1106,8 @@ const startDel = async () => {
         //修改应收单核销金额和核销状态
         for (let j = 0; j < skdList.length; j++) {
           let item1 = skdList[j]
-          if(item1.sourcetype.substring(0,2)=='QC'){
+          // if(item1.sourcetype.substring(0,2)=='QC'){
+          if(item1.sourcetype=='QCYSD'){
             //期初应收单
             const xhdyue = await useRouteApi(findArBeginBalanceByCcode, {schemaName: dynamicTenantId})(item1.sourcecode)
             xhdyue.hxIsum = sub(xhdyue.hxIsum, add(item1.hxIsum == null ? '' : item1.hxIsum, item1.idiscount == null ? '' : item1.idiscount))

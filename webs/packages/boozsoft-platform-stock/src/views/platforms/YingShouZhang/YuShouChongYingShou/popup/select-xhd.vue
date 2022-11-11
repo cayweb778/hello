@@ -9,13 +9,13 @@
       @register="register"
     >
       <template #title>
-        <div style="display: flex;height:30px;" class="vben-basic-title">
-        <span style="font-size: 24px;line-height:30px;">
-          <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;预收冲应收选单
-        </span>
+        <div style="display: flex;height:30px;margin-left: 10px;margin-top: 10px;" class="vben-basic-title">
+          <span style="font-size: 24px;line-height:30px;">
+            <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;预收冲应收选单
+          </span>
         </div>
       </template>
-      <div class="nc-open-content" style="margin:0;padding:0;">
+      <div class="nc-open-content" style="margin-top: 10px;">
         <div class="open-content-up" style="margin:0;padding:0;">
           <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;color: #ffffff;font-weight: bold">
             <div class="a1">
@@ -228,12 +228,12 @@ async function reloadList(){
     cvencode: cvencode.value
   })
   if (arSourceFlag.value=='1') {
-    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.bworkable=='1' && item.isum!='0')
+    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1' && item.isum!='0')
   } else {
     if(arCheckFlag=='1'){
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.bworkable=='1' && item.isum!='0')
+      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.bworkable=='1' && item.isum!='0')
     } else {
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.isum!='0')
+      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.isum!='0')
     }
   }
   tableDataAll.value.push(...saleousingList.value.map(item => {

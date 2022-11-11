@@ -10,12 +10,12 @@
     >
       <template #title>
         <div style="display: flex;height:30px;" class="vben-basic-title">
-        <span style="font-size: 24px;line-height:30px;">
-          <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
-        </span>
+          <span style="font-size: 24px;line-height:30px;margin-left: 10px;margin-top: 10px;">
+            <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
+          </span>
         </div>
       </template>
-      <div class="nc-open-content" style="margin:0;padding:0;">
+      <div class="nc-open-content" style="margin-top: 10px;">
         <div class="open-content-up" style="margin:0;padding:0;">
           <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;color: #ffffff;font-weight: bold">
             <div class="a1">
@@ -167,22 +167,10 @@ const columns = [
 
 function formatBillStyle(billStyle){
   let str = billStyle
-  if (billStyle=='XHD'){
-    str = '销货单'
-  } else if (billStyle=='YSD'){
-    str = '应收单'
-  } else if (billStyle=='XSFP'){
-    str = '销售发票'
-  } else if (billStyle=='QCXHD'){
-    str = '期初销货单'
-  } else if (billStyle=='QCYSD'){
-    str = '期初应收单'
-  } else if (billStyle=='QCXSFP'){
-    str = '期初销售发票'
-  } else if (billStyle=='SKD'){
-    str = '收款单'
-  } else if (billStyle=='QCSKD'){
-    str = '期初收款单'
+  if (billStyle=='YSK'){
+    str = '应收款'
+  } else if (billStyle=='PTSK'){
+    str = '普通收款'
   }
   return str
 }
