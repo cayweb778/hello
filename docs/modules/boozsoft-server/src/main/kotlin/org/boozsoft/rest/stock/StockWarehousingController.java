@@ -602,6 +602,13 @@ public class StockWarehousingController {
         return warehousingRepository.findByCcodeData(ccode).map(a->R.ok().setResult(a)).defaultIfEmpty(R.ok().setResult(""));
     }
 
+    @PostMapping("findByCcodeAdnBillStyleData")
+    public Mono<R> findByCcodeAdnBillStyleData(@RequestBody Map map){
+        String ccode=map.get("ccode").toString();
+        String billStyle=map.get("billStyle").toString();
+        return warehousingRepository.findByCcodeAdnBillStyleData(ccode,billStyle).map(a->R.ok().setResult(a)).defaultIfEmpty(R.ok().setResult(""));
+    }
+
     /**
      * 只增加入库单主表
      * @param obj
@@ -728,12 +735,12 @@ public class StockWarehousingController {
             endDate=map.get("endDate").toString().substring(0,4)+"-"+map.get("endDate").toString().substring(4)+"-31";
         }
         String dataType=map.get("dataType").toString();
-        String strNum=map.get("strNum").toString();
-        String endNum=map.get("endNum").toString();
-        String sup=map.get("sup").toString();
-        String jssup=map.get("jssup").toString();
+        String strNum=map.get("strNum")==null?"":map.get("strNum").toString();
+        String endNum=map.get("endNum")==null?"":map.get("endNum").toString();
+        String sup=map.get("sup")==null?"":map.get("sup").toString();
+        String jssup=map.get("jssup")==null?"":map.get("jssup").toString();
         String bdocumStyle=map.get("bdocumStyle")==null?"":map.get("bdocumStyle").toString();
-        String cangku=map.get("cangku").toString();
+        String cangku=map.get("cangku")==null?"":map.get("cangku").toString();
         Map<String, String> pageSearch = ((HashMap<String,  String>) map.get("pageSearch"));
         // 按添加日期
         return warehousingRepository.findMainList2(type,strDate,endDate).collectList()
@@ -940,6 +947,102 @@ public class StockWarehousingController {
         .map(R::ok);
     }
 
+    @PostMapping("findAllCGRKD_And_QCZGRKHD")
+    public Mono<R> findAllCGRKD_And_QCZGRKHD(@RequestBody Map map){
+        String iyear=map.get("iyear").toString();
+        String cvencode=map.get("cvencode").toString();
+        String cwhcode=map.get("cwhcode").toString();
+        String startDate=map.get("startDate").toString();
+        String endDate=map.get("endDate").toString();
+        String titleValue=map.get("titleValue").toString();
+        String type=map.get("type").toString();
+        Map<String, String> searchMap = ((HashMap<String,  String>) map.get("searchConditon"));
+
+        StringBuffer sb=new StringBuffer();
+        if(StrUtil.isNotBlank(cwhcode)){
+            sb.append("and sw.cwhcode='"+cwhcode+"' ");
+        }
+        if(StrUtil.isNotBlank(searchMap.get("value"))){
+            sb.append("and sw.ccode like '%"+cwhcode+"%' ");
+        }
+
+        String sql="select temp.* from ((select (select sum(cast(sws.base_quantity as float))\n" +
+                "        from stock_warehousings sws\n" +
+                "        where sws.ccode = sw.ccode) -\n" +
+                "       (select sum(cast(coalesce(sws.isum_ruku,'0') as float))\n" +
+                "        from stock_warehousings sws\n" +
+                "        where sws.ccode = sw.ccode) sws_isum_ruku," +
+                "(select sum(cast(sws.base_quantity as float)) from stock_warehousings sws where sws.ccode = sw.ccode) -\n" +
+                "       (select sum(cast(coalesce(sws.isum_daohuo, '0') as float))\n" +
+                "        from stock_warehousings sws\n" +
+                "        where sws.ccode = sw.ccode) sws_isum_daohuo,"+
+                "(select sum(cast(sws.base_quantity as float)) from stock_warehousings sws where sws.ccode = sw.ccode) -\n" +
+                "       (select sum(cast(coalesce(sws.isum_fapiao, '0') as float))\n" +
+                "        from stock_warehousings sws\n" +
+                "        where sws.ccode = sw.ccode) sws_isum_fapiao," +
+                "(select sum(cast(coalesce(sws.isum_tui_huo, '0') as float))\n" +
+                "                from stock_warehousings sws\n" +
+                "                where sws.ccode = sw.ccode) sws_isum_tuihuo,(select sum(cast(sws.base_quantity as float))\n" +
+                "                     from stock_warehousings sws\n" +
+                "                     where sws.ccode = sw.ccode) -\n" +
+                "                    (select sum(cast(coalesce(sws.isum_tui_huo, '0') as float))\n" +
+                "                     from stock_warehousings sws\n" +
+                "                     where sws.ccode = sw.ccode) sws_isum_tuihuo,"+
+                " dept.dept_name as dname,psn.psn_name as buname,psn2.real_name as cmaker_name,sw.*\n" +
+                "from stock_warehousing sw\n" +
+                " left join sys_department dept on dept.unique_code=sw.cdepcode\n" +
+                " left join sys_psn psn on psn.id=sw.cpersoncode\n" +
+                " left join _app_group_sys_user psn2 on psn2.id=sw.cmaker\n" +
+                "where sw.bill_style='"+type+"' \n" +
+                "  and (sw.bcheck is null or sw.bcheck = '1') and cvencode='"+cvencode+"' and sw.iyear='"+iyear+"' and sw.ddate between '"+startDate+"' and '"+endDate+"' and sw.bdocum_style='"+titleValue+"' "+sb+")" +
+                " union all (select temp.* from (select\n" +
+                "     (select sum(cast(sws.base_quantity as float))\n" +
+                "         from stock_warehousings sws\n" +
+                "         where sws.ccode = sw.ccode) -\n" +
+                "        (select sum(cast(coalesce(sws.isum_ruku, '0') as float))\n" +
+                "         from stock_warehousings sws\n" +
+                "         where sws.ccode = sw.ccode) sws_isum_ruku,\n" +
+                "        (select sum(cast(sws.base_quantity as float)) from stock_warehousings sws where sws.ccode = sw.ccode) -\n" +
+                "        (select sum(cast(coalesce(sws.isum_daohuo, '0') as float))\n" +
+                "         from stock_warehousings sws\n" +
+                "         where sws.ccode = sw.ccode) sws_isum_daohuo,\n" +
+                "        (select sum(cast(sws.base_quantity as float)) from stock_warehousings sws where sws.ccode = sw.ccode) -\n" +
+                "        (select sum(cast(coalesce(sws.isum_fapiao, '0') as float))\n" +
+                "         from stock_warehousings sws\n" +
+                "         where sws.ccode = sw.ccode) sws_isum_fapiao,\n" +
+                "        (select sum(cast(coalesce(sws.isum_tui_huo, '0') as float))\n" +
+                "         from stock_warehousings sws\n" +
+                "         where sws.ccode = sw.ccode) sws_isum_tuihuo,(select sum(cast(sws.base_quantity as float))\n" +
+                "                     from stock_warehousings sws\n" +
+                "                     where sws.ccode = sw.ccode) -\n" +
+                "                    (select sum(cast(coalesce(sws.isum_tui_huo, '0') as float))\n" +
+                "                     from stock_warehousings sws\n" +
+                "                     where sws.ccode = sw.ccode) sws_isum_tuihuo,\n" +
+                "        dept.dept_name as            dname,\n" +
+                "        psn.psn_name   as            buname,\n" +
+                "        psn2.real_name as            cmaker_name,\n" +
+                "        sw.*\n" +
+                " from stock_warehousing sw\n" +
+                "          left join sys_department dept on dept.unique_code = sw.cdepcode\n" +
+                "          left join sys_psn psn on psn.id = sw.cpersoncode\n" +
+                "          left join _app_group_sys_user psn2 on psn2.id = sw.cmaker\n" +
+                " where sw.bill_style in ('QT')\n" +
+                "   and (sw.bcheck is null or sw.bcheck = '1')\n" +
+                "   and cvencode = '"+cvencode+"' "+sb+" " +
+                " ) as temp )) as temp  order by temp.bill_style desc, temp.ccode asc" ;
+        // where cast(temp.sws_isum_ruku as float)>0
+        return client.sql(sql).fetch().all().collectList()
+                .flatMap(list->{
+                    List<StockWarehousingVo> listVo = JSON.parseArray(JSON.toJSONString(list), StockWarehousingVo.class);
+                    // 不是到货单  需排序 期初到货单
+                    if(!"CGDHD".equals(type)){
+                        listVo=listVo.stream().filter(a->!a.getBillStyle().equals("QC")).collect(Collectors.toList());
+                    }
+                    return Mono.just(listVo);
+                })
+                .map(R::ok);
+    }
+
     // 期间是否结账
     @PostMapping("findByStockPeriodIsClose")
     public Mono<R> findByStockPeriodIsClose(String iyear,String month){
@@ -961,6 +1064,22 @@ public class StockWarehousingController {
         return Mono.zip(a,b).then(Mono.just(R.ok()));
     }
 
+    /**
+     * @description: 删除回冲单
+     * @author: miao
+     * @date: 2022/11/11 11:52
+     * @param: [map]
+     * @return: Mono<R>
+     **/
+    @PostMapping("delStockWareHCD")
+    @Transactional
+    public Mono<R> delStockWareHCD(@RequestBody Map map){
+        if (map.keySet().size() == 0) return Mono.just(R.error());
+        String sourcecode= map.get("sourcecode").toString();
+        Mono<Void> a=warehousingRepository.deleteBySourcetype(sourcecode).then();
+        Mono<Void> b=warehousingsRepository.delByHCD(sourcecode).then();
+        return Mono.zip(a,b).then(Mono.just(R.ok()));
+    }
 
     private Map<String, Object> assemblyCorrespondingRulesData(Map map) {
         String type = map.get("billStyle").toString();
@@ -1040,7 +1159,7 @@ public class StockWarehousingController {
                 resut.put("master", warehousing);
                 resut.put("sub", entrys);
                 break;
-            case ("QCZGRKD"):
+            case ("QT"):
                 warehousing = new StockWarehousing();
                 bcheckUser = map.containsKey("bcheckUser") ? map.get("bcheckUser").toString() : null; // 审核人
                 warehousing.setId(map.containsKey("id") ? map.get("id").toString() : null).setCcode(map.containsKey("ccode") ? map.get("ccode").toString() : null) //单号
@@ -1643,6 +1762,12 @@ public class StockWarehousingController {
         DecimalFormat decimalFormat = new DecimalFormat("0." + s + "#");
         BigDecimal value = b.setScale(len, BigDecimal.ROUND_HALF_UP);
         return decimalFormat.format(value);
+    }
+
+    @PostMapping("delXyHCD")
+    public Mono<R> delXyHCD(@RequestBody Map map){
+        String ccode=map.get("ccode").toString();
+        return xyCsourceRepository.delXyHCD(ccode).then(Mono.just(R.ok()));
     }
 
 }

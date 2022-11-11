@@ -19,7 +19,7 @@
               <Radio value="CGRKD" style="color: white;">采购入库单</Radio>
               <Radio value="CGDHD" style="color: white;">采购到货单</Radio>
               <Radio value="CGFP" style="color: white;">采购发票</Radio>
-              <Radio value="CGJSD" style="color: white;">采购结算单</Radio>
+              <Radio value="CGJSD" style="color: white;">采购核算单</Radio>
               <Radio value="JZPZ" style="color: white;">记账凭证</Radio>
             </RadioGroup>
           </span>
@@ -38,7 +38,7 @@
           @register="registerTable"
         >
           <template #xyBillStyle="{ record }">
-            {{ record.xyBillStyle=='CGRKD'?'采购入库单':record.xyBillStyle=='CGFP'?'采购发票':record.xyBillStyle=='CGJSD'?'采购结算单':'' }}
+            {{ record.xyBillStyle=='CGRKD'?'采购入库单':record.xyBillStyle=='CGFP'?'采购发票':record.xyBillStyle=='CGJSD'?'采购核算单':'' }}
           </template>
           <template #xyccode="{ record }">
             <a @click="goRuter(record)">{{ record.xyccode }}</a>

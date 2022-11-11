@@ -11,9 +11,9 @@
       <div>
         <div>
           <Button class="actod-btn">查询</Button>
-          <Button class="actod-btn" @click="addPopModel">手动核算</Button>
+<!--          <Button class="actod-btn" @click="addPopModel">手动核算</Button>-->
           <Button class="actod-btn">自动核算</Button>
-          <Button class="actod-btn" @click="startDel">删除</Button>
+<!--          <Button class="actod-btn" @click="startDel">删除</Button>-->
           <Button class="actod-btn actod-btn-last" @click="closeCurrent(),giveUp(),router.push('/zhongZhang/home/welcome')">退出</Button>
         </div>
         <div>

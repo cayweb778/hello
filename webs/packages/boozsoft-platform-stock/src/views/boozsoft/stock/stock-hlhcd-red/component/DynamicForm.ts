@@ -90,7 +90,7 @@ const defaultRows = () => {
       required: false,
       readonly: false,
       serial: 8,
-      isShow: true
+      isShow: false
     },
     {
       columnType: '1',
@@ -101,7 +101,7 @@ const defaultRows = () => {
       required: false,
       readonly: false,
       serial: 9,
-      isShow: true
+      isShow: false
     },
     {
       columnType: '1',
@@ -117,7 +117,7 @@ const defaultRows = () => {
   ]
 }
 export const lanMuData = {
-  'menuName': '采购入库单表头栏目',
+  'menuName': '红字入库单表头栏目',
   objects: '',
 }
 export async function GenerateDynamicColumn(schemaName) {

@@ -1045,7 +1045,7 @@ const startReview = async (b) => {
       let findByRukuData = await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({
         year: list[i].iyear,
         ccode: list[i].ccode,
-        billStyle: 'QCZGRKD'
+        billStyle: 'QT'
       })
       if (findByRukuData.length > 0) {
         message.error('已经生成下游单据,不能弃审！')

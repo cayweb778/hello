@@ -62,3 +62,9 @@ export const findJieSuanTableList=defRouteApi( (params)=>{
     method: 'POST',params
   }
 })
+export const deleteByCcodeDaohuo=defRouteApi( (ccodeRuku)=>{
+  return {
+    url: '/stockJiesuan/deleteByCcodeDaohuo?ccodeRuku='+ccodeRuku,
+    method: 'POST',
+  }
+})

@@ -90,7 +90,7 @@ const defaultRows = () => {
       required: false,
       readonly: false,
       serial: 8,
-      isShow: true
+      isShow: false
     },
     {
       columnType: '1',
@@ -101,7 +101,7 @@ const defaultRows = () => {
       required: false,
       readonly: false,
       serial: 9,
-      isShow: true
+      isShow: false
     },
     {
       columnType: '1',

@@ -57,17 +57,6 @@
                 <SettingFilled :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
-            <Popover placement="bottom">
-              <template #content>
-                <span class="group-btn-span-special2" @click="titleValue = 0;contentSwitch('tail','')" :style="titleValue===0?{backgroundColor: '#0096c7',color: 'white'}:''">
-                &nbsp;蓝字单据&ensp;<CheckOutlined v-if="titleValue===0"/></span><br/>
-                <span class="group-btn-span-special2" @click="titleValue = 1;contentSwitch('tail','')" :style="titleValue===1?{backgroundColor: '#0096c7',color: 'white'}:''">
-                &nbsp;红字单据&ensp;<CheckOutlined v-if="titleValue===1"/></span>
-              </template>
-              <Button class="acttdrd-btn">
-                <PicLeftOutlined :style="{ fontSize: '14px' }"/>
-              </Button>
-            </Popover>
           </div>
           <div class="acttd-right-d-btns" v-else>
             <Button v-if="status<3" class="acttdrd-btn" @click="pageReload()">
@@ -94,24 +83,6 @@
             <LeftOutlined @click="contentSwitch('prev','')"/>&nbsp;
             <RightOutlined @click="contentSwitch('next','')"/>&nbsp;
             <VerticalLeftOutlined @click="contentSwitch('tail','')"/>
-            <span v-if="status=='3'">
-              &nbsp;
-              <Tag v-if="stockWareData.bcheck=='1'" :color="'volcano' ">
-                已审核
-              </Tag>
-              <Tag v-if="stockWareData.swsIsumDaohuo>0" :color="'volcano' ">
-                已到货
-              </Tag>
-              <Tag v-if="stockWareData.swsIsumJiesuan>0" :color="'volcano' ">
-                已结算
-              </Tag>
-              <Tag :color="'volcano'" v-if="stockWareData.swsIsumFapiao >0 ">
-                已开票
-              </Tag>
-               <Tag :color="'volcano'" v-if="!hasBlank(stockWareData.isVoucher)&&stockWareData.isVoucher =='1' ">
-                记账凭证
-              </Tag>
-            </span>
           </div>
           <span style="font-size: 22px;font-weight: bold;margin-right: 300px;" :style="{color: titleValue==0?'#0096c7':'#c0392b'}">{{ titleContents[titleValue] }}</span>
         </div>
@@ -546,7 +517,7 @@ import {useRoute} from "vue-router";
 import {assemblyDynamicColumn, initDynamics} from "./data";
 import {hasBlank, trim} from "/@/api/task-api/tast-bus-api";
 import {usePlatformsStore} from "/@/store/modules/platforms";
-import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock-caigou-rk/component/DynamicForm";
+import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock-hlhcd-blue/component/DynamicForm";
 import StockCangKuModalPop from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
 import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInfoModalPop.vue";
 import {
@@ -560,7 +531,7 @@ import {
   delRuKu,
   delXyCsourceByxyCcodeAndxyBillTypeAndBillTypeAndCcode,
   findBillByCondition,
-  findBillCode,
+  findBillCode, findByCcodeAdnBillStyleData,
   findByStockPeriodIsClose,
   findByStockWareRecentlySupMoney, findByWarSearch,
   findStockPeriodYmFlag,
@@ -642,7 +613,7 @@ const dynamicTenantId = ref('')
 const stockAccountObj:any = ref('')
 const dynamicAccId = ref('')
 const dynamicYear = ref('')
-const titleContents = ['采购入库单', '采购入库单', '采购回冲单']
+const titleContents = ['蓝字回冲单', '蓝字回冲单', '蓝字回冲单']
 const titleValue = ref(0)
 const formRowNum = ref(1)
 const tempType =  ref('')
@@ -654,7 +625,7 @@ const pageParameter:any = reactive({
     requirement: '',
     value: '',
   },
-  type: 'CGRKD'
+  type: 'LZHCD'
 })
 const formItems: any = ref({})
 const jiList:any = ref([])
@@ -726,7 +697,7 @@ const dynamicAdReload = async (obj) => {
 }
 // 获取单据信息
 async function findStockWareByCcodeData(ccode) {
-  stockWareData.value=await useRouteApi(findStockWareByCcode, {schemaName: dynamicTenantId})(ccode)
+  stockWareData.value=await useRouteApi(findByCcodeAdnBillStyleData, {schemaName: dynamicTenantId})({ccode:ccode,billStyle:'LZHCD'})
 }
 const dynamicFormModel:any = ref([])
 const formFuns:any = ref({
@@ -1016,53 +987,53 @@ const CrudApi = {
       width: 120,
       align: 'right'
     },
-    {
-      title: '税额',
-      dataIndex: 'itaxprice',
-      slots: {customRender: 'itaxprice'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '税率%',
-      dataIndex: 'itaxrate',
-      slots: {customRender: 'itaxrate'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '含税单价',
-      dataIndex: 'taxprice',
-      slots: {customRender: 'taxprice'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '价税合计',
-      dataIndex: 'isum',
-      slots: {customRender: 'isum'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '累计入库数量',
-      dataIndex: 'isumRuku',
-      slots: {customRender: 'isumRuku'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },{
-      title: '累计开票数量',
-      dataIndex: 'isumFapiao',
-      slots: {customRender: 'isumFapiao'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
+    // {
+    //   title: '税额',
+    //   dataIndex: 'itaxprice',
+    //   slots: {customRender: 'itaxprice'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },
+    // {
+    //   title: '税率%',
+    //   dataIndex: 'itaxrate',
+    //   slots: {customRender: 'itaxrate'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },
+    // {
+    //   title: '含税单价',
+    //   dataIndex: 'taxprice',
+    //   slots: {customRender: 'taxprice'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },
+    // {
+    //   title: '价税合计',
+    //   dataIndex: 'isum',
+    //   slots: {customRender: 'isum'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },
+    // {
+    //   title: '累计入库数量',
+    //   dataIndex: 'isumRuku',
+    //   slots: {customRender: 'isumRuku'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },{
+    //   title: '累计开票数量',
+    //   dataIndex: 'isumFapiao',
+    //   slots: {customRender: 'isumFapiao'},
+    //   ellipsis: true,
+    //   width: 120,
+    //   align: 'right'
+    // },
     {
       title: '批号',
       dataIndex: 'batchId',
@@ -1070,39 +1041,39 @@ const CrudApi = {
       slots: {customRender: 'batchId'},
       width: 150,
     },
-    {
-      title: '生产日期',
-      dataIndex: 'dpdate',
-      slots: {customRender: 'dpdate'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: '失效日期',
-      dataIndex: 'dvdate',
-      slots: {customRender: 'dvdate'},
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: '备注',
-      dataIndex: 'cmemo',
-      ellipsis: true,
-      width: 120,
-      slots: {customRender: 'cmemo'},
-    },
-    {
-      title: '项目',
-      dataIndex: 'citemcode',
-      ellipsis: true,
-      width: 120,
-    },{
-      title: '赠品',
-      dataIndex: 'isGive',
-      ellipsis: true,
-      width: 120,
-      slots: {customRender: 'isGive'},
-    },
+    // {
+    //   title: '生产日期',
+    //   dataIndex: 'dpdate',
+    //   slots: {customRender: 'dpdate'},
+    //   ellipsis: true,
+    //   width: 150,
+    // },
+    // {
+    //   title: '失效日期',
+    //   dataIndex: 'dvdate',
+    //   slots: {customRender: 'dvdate'},
+    //   ellipsis: true,
+    //   width: 150,
+    // },
+    // {
+    //   title: '备注',
+    //   dataIndex: 'cmemo',
+    //   ellipsis: true,
+    //   width: 120,
+    //   slots: {customRender: 'cmemo'},
+    // },
+    // {
+    //   title: '项目',
+    //   dataIndex: 'citemcode',
+    //   ellipsis: true,
+    //   width: 120,
+    // },{
+    //   title: '赠品',
+    //   dataIndex: 'isGive',
+    //   ellipsis: true,
+    //   width: 120,
+    //   slots: {customRender: 'isGive'},
+    // },
   ]
 }
 // 这是示例组件

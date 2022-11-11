@@ -58,6 +58,14 @@ public class StockJiesuanController {
         Mono<Void> sjs = stockJiesuansRepository.deleteByCcodeRuku(ccodeRuku).then();
         return Mono.zip(sj,sjs).thenReturn(R.ok());
     }
+    @PostMapping("deleteByCcodeDaohuo")
+    @Transactional
+    public Mono<R> deleteByCcodeDaohuo(String ccodeRuku){
+        Mono<Void> sj = stockJiesuanRepository.deleteByCcodeRuku(ccodeRuku).then();
+        Mono<Void> sjs = stockJiesuansRepository.deleteByCcodeDaohuo(ccodeRuku).then();
+        return Mono.zip(sj,sjs).thenReturn(R.ok());
+    }
+
     @PostMapping("delJiesuansByCcode")
     @Transactional
     public Mono<R> delJiesuansByCcode(String ccode){

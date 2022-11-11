@@ -8,7 +8,7 @@
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购入库单列表</b></div>
+        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">红字回冲单列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
@@ -18,28 +18,6 @@
             class="ant-btn ant-btn-me"
             @click="openQuery()"
           ><span>查询</span></button>
-          <button
-            type="button"
-            class="ant-btn ant-btn-me"
-            @click="router.push({name: 'CaigouRk',params: {type:'add',ccode:''}})"
-          ><span>新增</span></button>
-          <button
-            type="button"
-            class="ant-btn ant-btn-me"
-            @click="editFun()"
-          ><span>修改</span></button>
-          <button
-            type="button"
-            class="ant-btn ant-btn-me"
-            @click="delFun()"
-          ><span>删除</span></button>
-          <Popover placement="bottom">
-            <template #content>
-              <Button @click="startReview(true)">审核</Button><br/>
-              <Button @click="startReview(false)">弃审</Button>
-            </template>
-            <Button class="ant-btn ant-btn-me">审核</Button>
-          </Popover>
           <button type="button" class="ant-btn ant-btn-me" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></button>
         </div>
         <div>
@@ -734,40 +712,33 @@ const CrudApi1 = {
       align: 'left',
       ellipsis: true,
     },
-    {
-      title: '结算供应商编码',
-      dataIndex: 'jscustCode',
-      width: 150,
-      align: 'left',
-      ellipsis: true,
-    },{
-      title: '结算供应商简称',
-      dataIndex: 'jscustName',
-      width: 150,
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '业务员',
-      dataIndex: 'personName',
-      width: 150,
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '业务部门',
-      dataIndex: 'deptName',
-      width: 150,
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '库管员',
-      dataIndex: 'cwhcodeUserName',
-      width: 150,
-      align: 'left',
-      ellipsis: true,
-    },
+    // {
+    //   title: '结算供应商编码',
+    //   dataIndex: 'jscustCode',
+    //   width: 150,
+    //   align: 'left',
+    //   ellipsis: true,
+    // },{
+    //   title: '结算供应商简称',
+    //   dataIndex: 'jscustName',
+    //   width: 150,
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
+    // {
+    //   title: '业务员',
+    //   dataIndex: 'personName',
+    //   width: 150,
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
+    // {
+    //   title: '业务部门',
+    //   dataIndex: 'deptName',
+    //   width: 150,
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
     {
       title: '仓库',
       dataIndex: 'cwhcodeNameJoin',
@@ -844,18 +815,18 @@ const CrudApi1 = {
       align: 'left',
       ellipsis: true,
     },
-    {
-      title: '结算供应商编码',
-      dataIndex: 'cvencodeJs',
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '结算供应商简称',
-      dataIndex: 'cvencodeJsname',
-      align: 'left',
-      ellipsis: true,
-    },
+    // {
+    //   title: '结算供应商编码',
+    //   dataIndex: 'cvencodeJs',
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
+    // {
+    //   title: '结算供应商简称',
+    //   dataIndex: 'cvencodeJsname',
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
     {
       title: '仓库',
       dataIndex: 'cwhcodeNameJoin',
@@ -918,32 +889,32 @@ const CrudApi1 = {
       align: 'left',
       ellipsis: true,
     },
-    {
-      title: '生产日期',
-      dataIndex: 'dpdate',
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '失效日期',
-      dataIndex: 'dvdate',
-      align: 'left',
-      ellipsis: true,
-    },
-    {
-      title: '税率%',
-      dataIndex: 'itaxrate',
-      align: 'right',
-      ellipsis: true,
-      slots: { customRender: 'itaxrate' },
-    },
-    {
-      title: '税额',
-      dataIndex: 'itaxprice',
-      align: 'right',
-      ellipsis: true,
-      slots: { customRender: 'itaxprice' },
-    },
+    // {
+    //   title: '生产日期',
+    //   dataIndex: 'dpdate',
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
+    // {
+    //   title: '失效日期',
+    //   dataIndex: 'dvdate',
+    //   align: 'left',
+    //   ellipsis: true,
+    // },
+    // {
+    //   title: '税率%',
+    //   dataIndex: 'itaxrate',
+    //   align: 'right',
+    //   ellipsis: true,
+    //   slots: { customRender: 'itaxrate' },
+    // },
+    // {
+    //   title: '税额',
+    //   dataIndex: 'itaxprice',
+    //   align: 'right',
+    //   ellipsis: true,
+    //   slots: { customRender: 'itaxprice' },
+    // },
     {
       title: '无税单价',
       dataIndex: 'price',
@@ -1132,7 +1103,7 @@ const excelThisData = () =>{
       leftrow:leftrow,
     },
   ]
-  exportExcel3(sheet, 'xlsx','采购入库单列表_'+pageParameter.companyName)
+  exportExcel3(sheet, 'xlsx','红字回冲单列表_'+pageParameter.companyName)
 }
 
 /*start栏目设置*/

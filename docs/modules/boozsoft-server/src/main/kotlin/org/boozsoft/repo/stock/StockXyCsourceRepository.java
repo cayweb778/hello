@@ -19,6 +19,7 @@ public interface StockXyCsourceRepository extends ReactiveCrudRepository<StockXy
     Flux<StockXyCsource> findAllByBillStyleAndCcode(String type,String code);
 
     Flux<StockXyCsource> findAllByBillStyleAndIyear(String billStyle,String iyear);
+    @Query("select * from stock_xy_csource where bill_style=:billStyle and iyear=:iyear and ccode=:ccode and xy_bill_style not in ('HZHCD','LZHCD','CGJSD')")
     Flux<StockXyCsource> findAllByBillStyleAndIyearAndCcode(String billStyle,String iyear,String ccode);
 
     Mono<StockXyCsource> findByXyBillStyleAndXyccodeAndIyear(String xyStyle,String xyCode,String iyear);
@@ -151,6 +152,9 @@ public interface StockXyCsourceRepository extends ReactiveCrudRepository<StockXy
 
     @Query("select COALESCE(sw.isum_daohuo, '0') isum_daohuo, COALESCE(sw.isum_ruku, '0') isum_ruku, COALESCE(sw.isum_fapiao, '0') isum_fapiao from stock_xy_csource xy left join stock_warehousings sw on xy.ccode = sw.ccode where xy.ccode=:ccode ")
     Flux<StockWarehousings2Vo> findByStockWareSMax(String ccode);
+
+    @Query("delete from stock_xy_csource where ccode=:ccode and xy_bill_style in ('HZHCD','LZHCD')")
+    Mono<Void> delXyHCD(String ccode);
 }
 
 

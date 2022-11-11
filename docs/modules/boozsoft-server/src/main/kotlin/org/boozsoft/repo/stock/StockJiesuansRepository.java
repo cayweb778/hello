@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 
 public interface StockJiesuansRepository extends ReactiveCrudRepository<StockJiesuans, String> {
     Mono<Void> deleteByCcodeRuku(String ccodeRuku);
+    Mono<Void> deleteByCcodeDaohuo(String ccodeDaohuo);
     Mono<Void> deleteByCcode(String ccode);
     Flux<StockJiesuans> findAllByCcode(String ccode);
     @Query("select sj.*\n" +

@@ -196,7 +196,7 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
     Flux<StockWarehousings> findAllByIyearAndCinvodeAndBatchIdAndDpdateAndDvdateAndBillStyleOrderByDvdateDesc(String year,  String stockId, String batchId, String start, String end,String bill);
 
 
-    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD','RKTZD')")
+    @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.iyear=:year and sbb.ddate <=:date  and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD','RKTZD','HZHCD','LZHCD')")
     Flux<StockWarehousings> findAllByCwhcodeAndCinvodeAndDdate(String ck,String ch, String year, String date);
 
     @Query(" select sbb.* from stock_warehousings sbb  where  sbb.cinvode=:ch and sbb.batch_id=:batchId and sbb.iyear=:year and sbb.ddate <=:date  and sbb.bcheck = '1' and cwhcode = :ck and sbb.bill_style in ('CGRKD','QTRKD')")
@@ -217,6 +217,9 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
 
     @Query(" select sc.* from stock_warehousings sc where  sc.iyear=:year and sc.sourcetype ='DBRKD' and sc.sourcecode in (:syccodes)")
     Flux<StockWarehousings> findAllBySourcecodeList(String year, List<String> syccodes);
+
+    @Query("delete from stock_warehousings where sourcecode=:sourcecode and bill_style in ('HZHCD','LZHCD')  ")
+    Mono<Void> delByHCD(String sourcecode);
 }
 
 

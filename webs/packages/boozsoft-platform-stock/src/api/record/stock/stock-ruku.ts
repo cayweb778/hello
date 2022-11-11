@@ -164,6 +164,13 @@ export const findStockWareByCcode = defRouteApi(async (ccode) => {
     method: 'POST',
   };
 });
+export const findByCcodeAdnBillStyleData = defRouteApi(async (params) => {
+  return {
+    url: '/stock/warehousing/findByCcodeAdnBillStyleData',
+    method: 'POST',params
+  };
+});
+
 export const findXyCsourceByXyStyleAndXyCodeAndIyear = defRouteApi(async (params: any) => {
   return {
     url: '/stock/warehousing/findXyCsourceByXyStyleAndXyCodeAndIyear',
@@ -213,6 +220,14 @@ export const findAllCGDHD_And_QCDHD = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const findAllCGRKD_And_QCZGRKHD = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/warehousing/findAllCGRKD_And_QCZGRKHD',
+    method: 'POST',
+    params,
+  };
+});
+
 export const findAllMainList = defRouteApi(async (params: any) => {
   return {
     url: '/stock/warehousing/findAllMainList',
@@ -245,5 +260,19 @@ export const findByWarSearch = defRouteApi(async ({billStyle,ccode}) => {
   return {
     url: '/stock/warehousing/findByWarSearch?billStyle='+billStyle+'&ccode='+ccode,
     method: 'POST',
+  };
+});
+export const delStockWareHCD = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/warehousing/delStockWareHCD',
+    method: 'POST',
+    params,
+  };
+});
+export const delXyHCD = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/warehousing/delXyHCD',
+    method: 'POST',
+    params,
   };
 });

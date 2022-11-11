@@ -618,7 +618,7 @@ function handleOk() {
     ggxh:ggxh.value,
     cangku:cangku.value,
     stockClass:stockClass.value,
-    type:'QCZGRKD'
+    type:'QT'
   }
   emit('save', map);
   closeModal();

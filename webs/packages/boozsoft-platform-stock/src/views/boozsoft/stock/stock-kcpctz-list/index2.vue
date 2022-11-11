@@ -7,10 +7,13 @@
         </div>
         <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
           <div>
-            <div style="margin-top: 8px;margin-left: 10px;">
-              <b><span style="color: #666666;padding-left:5px;">存货：</span>{{pageParameter.chname}}</b>
-              <b><span style="color: #666666;padding-left:5px;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
-              <b><span style="color: #666666;padding-left:5px;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
+            <div style="margin-top: 1px;margin-left: 10px;">
+              <b><span style="color: #666666;padding-left:5px;">存 货：</span>{{pageParameter.chname}}</b>
+              <br>
+              <div style="padding-top: 3px;">
+                <b><span style="color: #666666;padding-left:5px;"> 规则型号：</span>{{pageParameter.stockGgxh}}</b>
+                <b><span style="color: #666666;padding-left:5px;"> 主计量：</span>{{pageParameter.stockUnitName}}</b>
+              </div>
             </div>
           </div>
         </div>
@@ -176,7 +179,7 @@
         <template #bcheck="{ record }">
           <span>
             <Tag v-if="record.bcheck != '5' && record.bcheck != '6' " :color="record.bcheck === '1' ? 'green' : 'volcano'">
-              {{ record.bcheck === '1' ? '已审核' : '未审核' }}
+              {{ ('HZHCD' == record.billStyle || 'LZHCD' == record.billStyle)? '' : (record.bcheck === '1' ? '已审核' : '未审核') }}
             </Tag>
           </span>
         </template>
@@ -1151,6 +1154,10 @@ const billStyleFilter = (a) => {
     str="入库调整单"
   }else if(a == 'CKTZD'){
     str="出库调整单"
+  }else if(a == 'HZHCD'){
+    str="红字回冲单"
+  }else if(a == 'LZHCD'){
+    str="蓝字回冲单"
   }
   return str
 }
@@ -1203,9 +1210,9 @@ const calculateTotal = (data) => {
     icost+=parseFloat(e['icost'] || 0)
     bq1+=parseFloat(e['bq1'] || 0)
     icost1+=parseFloat(e['icost1'] || 0)
-    bq2+=parseFloat(e['bq2'] || 0)
-    icost2+=parseFloat(e['icost2'] || 0)
   }
+  bq2 = list[list.length-1].bq2
+  icost2 = list[list.length-1].icost2
   summaryModel.value={
     ddate:'合计',
     bq: toThousandFilter(bq),
@@ -1320,12 +1327,12 @@ const calculateTotal = (data) => {
     >div:nth-of-type(1){width: 64px;display: inline-block;
       position: absolute;
       top: 12px;
-      left: 15px;
+      left: 3px;
     }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
       position: absolute;
-      top: 10px;
+      top: 0px;
       left: 75px;
     }
   }
@@ -1334,7 +1341,7 @@ const calculateTotal = (data) => {
     >div:nth-of-type(2){margin-top: 1px;}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
+    width: 40%;text-align: right;padding-right: 3px;
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
 
@@ -1384,4 +1391,3 @@ const calculateTotal = (data) => {
   border-right-color: #cccccc!important;
 }
 </style>
-
