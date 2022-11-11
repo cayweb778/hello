@@ -133,7 +133,7 @@
                 </a-select>
                 &nbsp;
                 <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="supPopShow('sup')" /></a>
-                <label style="margin-left: 25px;width: 110px;">结算客户：</label>
+                <label style="margin-left: 20px;width: 110px;">结算客户：</label>
                 &nbsp;
                 <a-select
                   v-model:value="jssup"
@@ -168,7 +168,7 @@
                 </a-select>
                 &nbsp;
                 <a style="font-weight: bold;font-size: 18px;"><LinkOutlined @click="openHeadSelectContent('cdepcode')" /></a>
-                <label style="margin-left: 25px;width: 110px;">收款人：&emsp;</label>
+                <label style="margin-left: 20px;width: 110px;">收款人：&emsp;</label>
                 &nbsp;
                 <a-select
                   v-model:value="formItems.cpersoncode"
