@@ -45,7 +45,7 @@
         >
           <template #billStyle="{ record }">
             <span v-if="record.ccode!=undefined">
-              {{ record.billStyle=='CGDHD'?'采购到货单':record.billStyle=='CGDD'?'采购订单':record.billStyle=='CGFP'?'采购发票':record.billStyle=='CGRKD'?'采购入库单':record.billStyle=='QC'?'期初到货单':'' }}
+              {{ record.billStyle=='CGDD'?'采购订单':record.billStyle=='CGRKD'?'采购入库单':record.billStyle=='QCZGRKD'?'期初暂估入库单':'' }}
             </span>
           </template>
           <template #isum="{ record }">
@@ -90,7 +90,7 @@ import router from "/@/router";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 // import ModalPop from '/@/views/boozsoft/system/supplier/popup/modalPop.vue';
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {findAllCGDHD_And_QCDHD} from "/@/api/record/stock/stock-ruku";
+import {findAllCGRKD_And_QCZGRKHD} from "/@/api/record/stock/stock-ruku";
 import {findAllByStockWarehListCcode, getUnitRate} from "/@/api/record/system/stock-wareh";
 import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record";
 import {findByStockNum2} from "/@/api/record/stock/stock";
@@ -148,7 +148,7 @@ const [registerTable, { deleteSelectRowByKey,setTableData,getSelectRows,getDataS
     {
       title: '单据类型',
       dataIndex: 'billStyle',
-      width: '100px',
+      width: '150px',
       align: 'left',slots: {customRender: 'billStyle'}
     },
     {
@@ -301,7 +301,7 @@ async function findByTable(){
     titleValue:titleValue.value
   }
 
-  let data=await useRouteApi(findAllCGDHD_And_QCDHD, {schemaName: database})(map)
+  let data=await useRouteApi(findAllCGRKD_And_QCZGRKHD, {schemaName: database})(map)
   // swsIsumDaohuo 是 数量 减 累计到货单数量 不等于0。来源不是到货单
   data=data.filter(a=>a.swsIsumDaohuo!=0&&a.sourcetype!='CGDHD')
   let data2:any=[]

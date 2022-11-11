@@ -170,67 +170,67 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     },
-    {
-      key: '11',
-      name: "税额",
-      nameNew: "税额",
-      check: false,
-      width: 120,
-      max: 200,
-      min: 120,
-      align: 'right'
-    },
-    {
-      key: '12',
-      name: "税率%",
-      nameNew: "税率%",
-      check: false,
-      isFixed: false,
-      width: 90,
-      max: 120,
-      min: 90,
-      align: 'right'
-    },
-    {
-      key: '13',
-      name: "含税单价",
-      nameNew: "含税单价",
-      check: false,
-      isFixed: false,
-      width: 120,
-      max: 200,
-      min: 120,
-      align: 'right'
-    },{
-      key: '14',
-      name: "价税合计",
-      nameNew: "价税合计",
-      check: false,
-      isFixed: false,
-      width: 120,
-      max: 200,
-      min: 120,
-      align: 'right'
-    },
-   {
-      key: '15',
-      name: "累计入库数量",
-      nameNew: "累计入库数量",
-      check: false,
-     width: 120,
-     max: 200,
-     min: 120,
-     align: 'right'
-    },{
-      key: '16',
-      name: "累计开票数量",
-      nameNew: "累计开票数量",
-      check: false,
-      width: 120,
-      max: 200,
-      min: 120,
-      align: 'right'
-    },
+   //  {
+   //    key: '11',
+   //    name: "税额",
+   //    nameNew: "税额",
+   //    check: false,
+   //    width: 120,
+   //    max: 200,
+   //    min: 120,
+   //    align: 'right'
+   //  },
+   //  {
+   //    key: '12',
+   //    name: "税率%",
+   //    nameNew: "税率%",
+   //    check: false,
+   //    isFixed: false,
+   //    width: 90,
+   //    max: 120,
+   //    min: 90,
+   //    align: 'right'
+   //  },
+   //  {
+   //    key: '13',
+   //    name: "含税单价",
+   //    nameNew: "含税单价",
+   //    check: false,
+   //    isFixed: false,
+   //    width: 120,
+   //    max: 200,
+   //    min: 120,
+   //    align: 'right'
+   //  },{
+   //    key: '14',
+   //    name: "价税合计",
+   //    nameNew: "价税合计",
+   //    check: false,
+   //    isFixed: false,
+   //    width: 120,
+   //    max: 200,
+   //    min: 120,
+   //    align: 'right'
+   //  },
+   // {
+   //    key: '15',
+   //    name: "累计入库数量",
+   //    nameNew: "累计入库数量",
+   //    check: false,
+   //   width: 120,
+   //   max: 200,
+   //   min: 120,
+   //   align: 'right'
+   //  },{
+   //    key: '16',
+   //    name: "累计开票数量",
+   //    nameNew: "累计开票数量",
+   //    check: false,
+   //    width: 120,
+   //    max: 200,
+   //    min: 120,
+   //    align: 'right'
+   //  },
     {
       key: '17',
       name: "批号",
@@ -240,52 +240,52 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100,
       align: 'left'
-    },
-    {
-      key: '18',
-      name: "生产日期",
-      nameNew: "生产日期",
-      check: true,
-      width: 120,
-      max: 150,
-      min: 100,align: 'left'
-    },
-    {
-      key: '19',
-      name: "失效日期",
-      nameNew: "失效日期",
-      check: true,
-      width: 100,
-      max: 150,
-      min: 100, align: 'left'
-    },
-    {
-      key: '20',
-      name: "备注",
-      nameNew: "备注",
-      check: true,
-      width: 100,
-      max: 200,
-      min: 100, align: 'left'
-    },
-    {
-      key: '21',
-      name: "项目",
-      nameNew: "项目",
-      check: false,
-      width: 90,
-      max: 120,
-      min: 90, align: 'left'
-    },
-    {
-      key: '22',
-      name: "赠品",
-      nameNew: "赠品",
-      check: true,
-      width: 80,
-      max: 120,
-      min: 80,align: 'left'
     }
+    // {
+    //   key: '18',
+    //   name: "生产日期",
+    //   nameNew: "生产日期",
+    //   check: true,
+    //   width: 120,
+    //   max: 150,
+    //   min: 100,align: 'left'
+    // },
+    // {
+    //   key: '19',
+    //   name: "失效日期",
+    //   nameNew: "失效日期",
+    //   check: true,
+    //   width: 100,
+    //   max: 150,
+    //   min: 100, align: 'left'
+    // },
+    // {
+    //   key: '20',
+    //   name: "备注",
+    //   nameNew: "备注",
+    //   check: true,
+    //   width: 100,
+    //   max: 200,
+    //   min: 100, align: 'left'
+    // },
+    // {
+    //   key: '21',
+    //   name: "项目",
+    //   nameNew: "项目",
+    //   check: false,
+    //   width: 90,
+    //   max: 120,
+    //   min: 90, align: 'left'
+    // },
+    // {
+    //   key: '22',
+    //   name: "赠品",
+    //   nameNew: "赠品",
+    //   check: true,
+    //   width: 80,
+    //   max: 120,
+    //   min: 80,align: 'left'
+    // }
   ]
 })
 

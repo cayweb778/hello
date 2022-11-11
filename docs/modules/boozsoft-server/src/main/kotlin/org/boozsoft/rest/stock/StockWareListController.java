@@ -562,7 +562,7 @@ public class StockWareListController {
                 "               (case when sws.cg_unit_id=sk.stock_unit_id2 then sk.stock_unit_name2 else '' end ) end )) end ) unit_name,"+
                 "       sws.icost,sws.itaxprice,sws.isum, (case when sws.is_give ='1' then '是' else '否' end) as is_give,psn2.real_name as cmaker_name\n" +
                 "from stock_warehousings sws\n" +
-                "         left join stock_warehousing sw on sw.ccode=sws.ccode " +
+                "         left join stock_warehousing sw on sw.ccode=sws.ccode and sws.bill_style=sw.bill_style " +
                 "         left join stock sk on sk.stock_num = sws.cinvode\n" +
                 "         left join sys_psn psn on psn.id = sw.cpersoncode left join supplier sup on sup.id=sw.cvencode left join supplier sup2 on sup2.id=sw.cvencode_js \n" +
                 "         left join sys_department dept on dept.unique_code = sw.cdepcode left join _app_group_sys_user psn2 on psn2.id = sw.cmaker "+sql2+"  order by sws.ccode";

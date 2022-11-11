@@ -217,6 +217,9 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
 
     @Query(" select sc.* from stock_warehousings sc where  sc.iyear=:year and sc.sourcetype ='DBRKD' and sc.sourcecode in (:syccodes)")
     Flux<StockWarehousings> findAllBySourcecodeList(String year, List<String> syccodes);
+
+    @Query("delete from stock_warehousings where sourcecode=:sourcecode and bill_style in ('HZHCD','LZHCD')  ")
+    Mono<Void> delByHCD(String sourcecode);
 }
 
 

@@ -6,9 +6,6 @@
                 :filter-option="filterOption" @keyup.enter.native="focusNext(field)"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
-          <template #suffixIcon>
-            <SearchOutlined @click="testOpenGysModal(model)"/>
-          </template>
         </Select>
       </template>
       <template #cvencodeJs="{ model, field }">
@@ -16,9 +13,6 @@
                 :filter-option="filterOption" @keyup.enter.native="focusNext(field)"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
-          <template #suffixIcon>
-            <SearchOutlined @click="exec('cvencode')"/>
-          </template>
         </Select>
       </template>
       <template #cdepcode="{ model, field }">
@@ -27,9 +21,6 @@
                 @keyup.enter.native="focusNext(field)"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
-          <template #suffixIcon>
-            <SearchOutlined @click="exec(field)"/>
-          </template>
         </Select>
       </template>
       <template #cpersoncode="{ model, field }">
@@ -38,9 +29,6 @@
                 @keyup.enter.native="focusNext(field)"
                 :options="dynamicSchemas.filter(it=>it.field===field)[0]['componentProps']['options']">
           <template #option="{ value: val, label ,title }">{{ title }}</template>
-          <template #suffixIcon>
-            <SearchOutlined @click="exec(field)"/>
-          </template>
         </Select>
       </template>
       <template #rate="{ model, field }">

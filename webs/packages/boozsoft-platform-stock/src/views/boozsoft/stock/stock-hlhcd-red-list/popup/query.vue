@@ -15,14 +15,14 @@
     <template #title>
       <div style="height: 30px;width: 100%;background-color: #5f375c;color: white;line-height: 30px;text-align: left;">
         <AppstoreOutlined  style="margin: 0 2px;font-size: 14px;"/>
-        <span style="font-size: 14px"> 库存管理</span>
+        <span style="font-size: 14px"> 成本管理</span>
       </div>
     </template>
     <div style="display: inline-flex;justify-content: space-between;width: 100%;">
       <div style="width: calc(100% - 150px);height: 100%;">
         <div style="text-align: center;padding: 10px 0 5px;">
           <SearchOutlined style="font-size: 24px;color: #0096c7;margin-top: 2px"/>
-          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;采购入库单列表</span>
+          <span style="line-height:30px;font-size: 24px;color: #0096c7;font-weight: bold;">&ensp;红字回冲单列表</span>
         </div>
         <div class="nc-open-content">
           <div class="open-content-up">
@@ -95,63 +95,6 @@
             <div class="border-div">
               <span>查询条件</span>
               <div>
-                <label>单据编码：</label>
-                <a-input :allowClear="true" v-model:value="strNum" placeholder="" style="width: 100px;margin-left: 20px;"/>
-                <span>~</span>
-                <a-input :allowClear="true" v-model:value="endNum" placeholder="" style="width: 100px"/>
-
-                <label style="margin-left: 50px;">业务类型：</label>
-                <a-select
-                  v-model:value="dataType"
-                  show-search
-                  style="width: 190px;text-align: center;margin-left: 22px;"
-                >
-                  <a-select-option
-                    v-for="item in dataTypeList"
-                    :value="item.value"
-                  >
-                    {{ item.title }}
-                  </a-select-option>
-                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
-                </a-select>
-              </div>
-              <div>
-                <label>供应商：</label>
-                &nbsp;
-                <a-select
-                  v-model:value="sup"
-                  show-search
-                  style="width: 210px;margin-left: 20px;"
-                >
-                  <a-select-option
-                    v-for="item in supList"
-                    :value="item.uniqueCode"
-                  >
-                    {{ item.custName }}
-                  </a-select-option>
-                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
-                </a-select>
-                &nbsp;
-                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('sup')" /></a>
-                <label style="margin-left: 20px;">结算供应商：</label>
-                &nbsp;
-                <a-select
-                  v-model:value="jssup"
-                  show-search
-                  style="width: 190px;"
-                >
-                  <a-select-option
-                    v-for="item in jssupList"
-                    :value="item.uniqueCode"
-                  >
-                    {{ item.custName }}
-                  </a-select-option>
-                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
-                </a-select>
-                &nbsp;
-                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('js')" /></a>
-              </div>
-              <div>
                 <label>存货：</label>
                 &nbsp;
                 <a-select
@@ -169,59 +112,24 @@
                 </a-select>
                 &nbsp;
                 <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockPopShow" /></a>
-                <label style="margin-left: 20px;">规格型号：</label>
+                &emsp;
+                <label>供应商：</label>
                 &nbsp;
                 <a-select
-                  v-model:value="ggxh"
+                  v-model:value="sup"
                   show-search
-                  style="width: 190px;margin-left: 15px;"
+                  style="width: 210px;margin-left: 20px;"
                 >
                   <a-select-option
-                    v-for="item in ggxhList"
-                    :value="item.value"
+                    v-for="item in supList"
+                    :value="item.uniqueCode"
                   >
-                    {{ item.title }}
+                    {{ item.custName }}
                   </a-select-option>
                   <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
                 </a-select>
                 &nbsp;
-                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
-              </div>
-              <div>
-                <label>仓库：</label>
-                &nbsp;
-                <a-select
-                  v-model:value="cangku"
-                  show-search
-                  style="width: 210px;margin-left: 34px;"
-                >
-                  <a-select-option
-                    v-for="item in cangkuList"
-                    :value="item.id"
-                  >
-                    {{ item.ckName }}
-                  </a-select-option>
-                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
-                </a-select>
-                &nbsp;
-                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockCangKuModalShow" /></a>
-                <label style="margin-left: 20px;">存货分类：</label>
-                &nbsp;
-                <a-select
-                  v-model:value="stockClass"
-                  show-search
-                  style="width: 190px;margin-left: 15px;"
-                >
-                  <a-select-option
-                    v-for="item in stockClassList"
-                    :value="item.uniqueStockclass"
-                  >
-                    {{ item.stockCclassName }}
-                  </a-select-option>
-                  <template #suffixIcon><CaretDownOutlined style="color:#666666;"/></template>
-                </a-select>
-                &nbsp;
-                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="stockClassModalShow" /></a>
+                <a style="font-weight: bold;font-size: 18px;color: #0a84ff;"><LinkOutlined @click="supPopShow('sup')" /></a>
               </div>
             </div>
           </div>
@@ -298,8 +206,8 @@ const formItems: any = ref({});
 let radiovalue = ref('1');
 const endDate2:any = ref<String>("")
 const strDate2:any = ref<String>("")
-const endDate = ref<String>("")
-const strDate = ref<String>("")
+const endDate:any = ref<String>("")
+const strDate:any = ref<String>("")
 let endDateList: any = ref([])
 let strDateList: any = ref([])
 let time: any = ref<Moment[]>([]);
@@ -338,7 +246,7 @@ const [registerStockClassPopPage, {openModal: openStockClassPopPage}] = useModal
 const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   formItems.value.openOne = data.data.openOne;
   openType.value=data.openType
-  setModalProps({ minHeight: 475 });
+  setModalProps({ minHeight: 300 });
 })
 const dynamicAdReload = async (obj) =>{
   databaseTrue.value=obj.accountMode
@@ -611,17 +519,11 @@ function handleOk() {
     endTimeView:endTimeView,
     strDate:strTime,
     endDate:endTime,
-    strNum:strNum.value,
-    endNum:endNum.value,
-    dataType:dataType.value,
     sup:sup.value,
-    jssup:jssup.value,
     stock:stock.value,
-    ggxh:ggxh.value,
-    cangku:cangku.value,
-    stockClass:stockClass.value,
+    dataType:dataType.value,
     databaseTrue:databaseTrue.value,
-    type:'CGRKD'
+    type:'HZHCD'
   }
   emit('save', map);
   closeModal();

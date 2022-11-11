@@ -83,7 +83,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left'
     },
     {
-      key: '14',
+      key: '4',
       name: '供应商简称',
       nameNew: '供应商简称',
       check: true,
@@ -91,55 +91,56 @@ const dynamicColumnAndDataModel = reactive({
       max: 300,
       min: 100,
       align: 'left'
-    },{
-      key: '15',
-      name: '结算供应商编码',
-      nameNew: '结算供应商编码',
-      check: true,
-      width: 120,
-      max: 300,
-      min: 120,
-      align: 'left'
     },
-    {
-      key: '16',
-      name: '结算供应商简称',
-      nameNew: '结算供应商简称',
-      check: true,
-      width: 150,
-      max: 300,
-      min: 100,
-      align: 'left'
-    },
-    {
-      key: '17',
-      name: '业务员',
-      nameNew: '业务员',
-      check: true,
-      width: 80,
-      max: 200,
-      min: 80,
-      align: 'left'
-    },{
-      key: '18',
-      name: '业务部门',
-      nameNew: '业务部门',
-      check: true,
-      width: 80,
-      max: 200,
-      min: 80,
-      align: 'left'
-    },
-    {
-      key: '4',
-      name: '库管员',
-      nameNew: '库管员',
-      check: true,
-      width: 80,
-      max: 200,
-      min: 80,
-      align: 'left'
-    },
+    // {
+    //   key: '15',
+    //   name: '结算供应商编码',
+    //   nameNew: '结算供应商编码',
+    //   check: true,
+    //   width: 120,
+    //   max: 300,
+    //   min: 120,
+    //   align: 'left'
+    // },
+    // {
+    //   key: '16',
+    //   name: '结算供应商简称',
+    //   nameNew: '结算供应商简称',
+    //   check: true,
+    //   width: 150,
+    //   max: 300,
+    //   min: 100,
+    //   align: 'left'
+    // },
+    // {
+    //   key: '17',
+    //   name: '业务员',
+    //   nameNew: '业务员',
+    //   check: true,
+    //   width: 80,
+    //   max: 200,
+    //   min: 80,
+    //   align: 'left'
+    // },{
+    //   key: '18',
+    //   name: '业务部门',
+    //   nameNew: '业务部门',
+    //   check: true,
+    //   width: 80,
+    //   max: 200,
+    //   min: 80,
+    //   align: 'left'
+    // },
+    // {
+    //   key: '4',
+    //   name: '库管员',
+    //   nameNew: '库管员',
+    //   check: true,
+    //   width: 80,
+    //   max: 200,
+    //   min: 80,
+    //   align: 'left'
+    // },
     {
       key: '5',
       name: '仓库',
@@ -171,7 +172,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'right'
     },
     {
-      key: '9',
+      key: '8',
       name: '备注',
       nameNew: '备注',
       check: true,
@@ -181,7 +182,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left'
     },
     {
-      key: '10',
+      key: '9',
       name: '经手人',
       nameNew: '经手人',
       check: true,
@@ -191,7 +192,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left'
     },
     {
-      key: '11',
+      key: '10',
       name: '审核人',
       nameNew: '审核人',
       check: true,
@@ -252,26 +253,26 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'left'
     },
-    {
-      key: '5',
-      name: '结算供应商编码',
-      nameNew: '结算供应商编码',
-      check: false, isFixed: false,
-      width: 120,
-      max: 150,
-      min: 100,
-      align: 'left'
-    },
-    {
-      key: '6',
-      name: '结算供应商简称',
-      nameNew: '结算供应商简称',
-      check: true, isFixed: true,
-      width: 120,
-      max: 150,
-      min: 100,
-      align: 'left'
-    },
+    // {
+    //   key: '5',
+    //   name: '结算供应商编码',
+    //   nameNew: '结算供应商编码',
+    //   check: false, isFixed: false,
+    //   width: 120,
+    //   max: 150,
+    //   min: 100,
+    //   align: 'left'
+    // },
+    // {
+    //   key: '6',
+    //   name: '结算供应商简称',
+    //   nameNew: '结算供应商简称',
+    //   check: true, isFixed: true,
+    //   width: 120,
+    //   max: 150,
+    //   min: 100,
+    //   align: 'left'
+    // },
     {
       key: '23',
       name: '仓库',
@@ -371,45 +372,46 @@ const dynamicColumnAndDataModel = reactive({
       max: 150,
       min: 100,
       align: 'right'
-    },{
-      key: '16',
-      name: '生产日期',
-      nameNew: '生产日期',
-      check: true, isFixed: false,
-      width: 100,
-      max: 150,
-      min: 100,
-      align: 'right'
-    },{
-      key: '17',
-      name: '失效日期',
-      nameNew: '失效日期',
-      check: true, isFixed: false,
-      width: 100,
-      max: 150,
-      min: 100,
-      align: 'right'
     },
-    {
-      key: '18',
-      name: '税率%',
-      nameNew: '税率%',
-      check: true, isFixed: false,
-      width: 60,
-      max: 80,
-      min: 60,
-      align: 'right'
-    },
-    {
-      key: '19',
-      name: '税额',
-      nameNew: '税额',
-      check: true, isFixed: false,
-      width: 100,
-      max: 150,
-      min: 100,
-      align: 'right'
-    },
+    // ,{
+    //   key: '16',
+    //   name: '生产日期',
+    //   nameNew: '生产日期',
+    //   check: true, isFixed: false,
+    //   width: 100,
+    //   max: 150,
+    //   min: 100,
+    //   align: 'right'
+    // },{
+    //   key: '17',
+    //   name: '失效日期',
+    //   nameNew: '失效日期',
+    //   check: true, isFixed: false,
+    //   width: 100,
+    //   max: 150,
+    //   min: 100,
+    //   align: 'right'
+    // },
+    // {
+    //   key: '18',
+    //   name: '税率%',
+    //   nameNew: '税率%',
+    //   check: true, isFixed: false,
+    //   width: 60,
+    //   max: 80,
+    //   min: 60,
+    //   align: 'right'
+    // },
+    // {
+    //   key: '19',
+    //   name: '税额',
+    //   nameNew: '税额',
+    //   check: true, isFixed: false,
+    //   width: 100,
+    //   max: 150,
+    //   min: 100,
+    //   align: 'right'
+    // },
     {
       key: '20',
       name: '无税单价',

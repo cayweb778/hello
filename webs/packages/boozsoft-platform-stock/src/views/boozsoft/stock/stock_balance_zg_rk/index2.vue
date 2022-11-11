@@ -657,7 +657,7 @@ const pageParameter: any = reactive({
     requirement: '',
     value: '',
   },
-  type: 'QCZGRKD'
+  type: 'QT'
 })
 const formItems: any = ref({})
 const jiList: any = ref([])
@@ -1319,7 +1319,7 @@ const startReview = async (b) => {
     let findByRukuData = await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({
       year: formItems.value.iyear,
       ccode: formItems.value.ccode,
-      billStyle: 'QCZGRKD'
+      billStyle: 'QT'
     })
     if (findByRukuData.length > 0) {
       message.error('已经生成下游单据,不能弃审！')
@@ -1355,7 +1355,7 @@ const startReview = async (b) => {
   tempTaskDel(taskInfo.value?.id)
   saveLogData('审核')
   message.success(`${b ? '审核' : '弃审'}成功！`)
-  pageParameter.type = 'QCZGRKD'
+  pageParameter.type = 'QT'
   await contentSwitch('tail', '')
 }
 const sum = (...arr) => [].concat(...arr).reduce((acc, val) => Number(acc) + Number(val), 0);
@@ -1446,15 +1446,13 @@ function saveCheck(list) {
 
 //数据保存
 async function saveData() {
-  // 入库单收发方式
-  let ecName = await useRouteApi(findByLikeEcName, {schemaName: dynamicTenantId})("采购入库")
   let id = formItems.value.id
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
   formItems.value.cmaker = useUserStoreWidthOut().getUserInfo.id // 制单人
   formItems.value.billStyle = pageParameter.type
   formItems.value.bdocumStyle = titleValue.value == 0 ? "0" : "1"
-  formItems.value.bstyle = hasBlank(ecName) ? '' : ecName.ecCode
+  formItems.value.bstyle = '采购入库'
   formItems.value.cmakerTime = cmakerTime.value
 
   getDataSource().forEach(a => {

@@ -66,6 +66,7 @@
 
               <Button class="actod-btn" @click="saveData">保存</Button>
               <Button class="actod-btn" @click="giveUp">放弃</Button>
+              <Button class="actod-btn" @click="tableAdd" v-if="status == 1 || status == 2">插行</Button>
               <Button class="actod-btn" @click="tableDel">删行</Button>
             </span>
             <span v-else>
@@ -163,7 +164,7 @@
               <Tag :color="'volcano'" v-if="stockWareData.swsIsumTuihuo >0 ">
                 已退货
               </Tag>
-              <Tag :color="'volcano'" v-if="!hasBlank(stockWareData.hxIsum)&&parseFloat(stockWareData.hxIsum)!=0">
+             <Tag :color="'volcano'" v-if="!hasBlank(stockWareData.hxIsum)&&parseFloat(stockWareData.hxIsum)!=0">
                 已核销
               </Tag>
               <Tag :color="'volcano'" v-if="stockWareData.biandong=='1'">
@@ -179,7 +180,7 @@
                 记账凭证
               </Tag>
               <Tag v-if="stockWareData.swsIsumJiesuan>0" :color="'volcano' ">
-                已结算
+                已核算
               </Tag>
             </span>
           </div>
@@ -605,7 +606,7 @@ import {
 } from "/@/api/record/system/unit-mea";
 import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import {
-  delRuKu,
+  delRuKu, delStockWareHCD,delXyHCD,
   delXyCsourceByxyCcodeAndxyBillTypeAndBillTypeAndCcode,
   findBillByCondition,
   findBillCode,
@@ -1866,21 +1867,168 @@ const startReview = async (b) => {
         }
       })
     }
-    // 来源单据是入库单
-    if(res.sourcetype=='CGRKD'&&dynamicTenant.value.target?.cgShDhd=='1'){
-      let sourcedate=String(Array.from(new Set(list.map(tx=>tx.sourcedate)))[0])
+    // 来源单据是入库单--生成红蓝
+    else if((res.sourcetype=='CGRKD' || res.sourcetype=='QT')&&dynamicTenant.value.target?.cgShDhd=='1'){
+      let sourcedate:any=String(Array.from(new Set(list.map(tx=>tx.sourcedate)))[0])
       sourcedate=sourcedate.substring(0,sourcedate.length-3).replaceAll('-','')
 
-      let ddate=String(formItems.value.ddate)
+      let ddate:any=String(formItems.value.ddate)
       ddate=ddate.substring(0,ddate.length-3).replaceAll('-','')
-      // 小于到货单日期
-      if(parseFloat(sourcedate)<parseFloat(ddate)){
-        let sourcecode=String(Array.from(new Set(list.map(tx=>tx.sourcecode)))[0])
-        // 获取来源主表单据
-        let sourceData=await useRouteApi(findStockWareByCcode, {schemaName: dynamicTenantId})(sourcecode)
-        // 生成红字回冲单
-        // sourceData.map(tx=>{tx.billStyle='HLHCD';})
+
+      // kcEstimated=1单到回冲、2单到补差、3月初回冲
+      // 回冲单
+      if(dynamicTenant.value.target?.kcEstimated=='1'){
+        // 小于到货单日期
+        if(parseFloat(sourcedate)<parseFloat(ddate)){
+          let sourcecodeList= Array.from(new Set(list.map(tx=>tx.sourcecode)))
+
+          // 生成红蓝回冲单
+          for (let i = 0; i < sourcecodeList.length; i++) {
+            let sourcecode=sourcecodeList[i]
+            // 获取来源主表单据
+            let sourceData=await useRouteApi(findStockWareByCcode, {schemaName: dynamicTenantId})(sourcecode)
+            sourceData.id=null
+            sourceData.billStyle='HZHCD'
+            sourceData.sourcetype=formItems.value.ccode
+            await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(sourceData)
+            // 添加红字下游表
+            let hzxy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:formItems.value.ccode,xyBillStyle:'HZHCD',xyccode:sourceData.ccode}
+            await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(hzxy)
+
+            sourceData.billStyle='LZHCD'
+            await useRouteApi(reviewSetCGRKG, {schemaName: dynamicTenantId})(sourceData)
+            // 添加下游表
+            let lzxy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:formItems.value.ccode,xyBillStyle:'LZHCD',xyccode:sourceData.ccode}
+            await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(lzxy)
+          }
+
+          // ------------------------- 生成核算单 -------------------------
+          // 结算单据新编码
+          let jsNewNum=await useRouteApi(getNewStockJiesuanNum, {schemaName: dynamicTenantId})({})
+          jsNewNum='JS-'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,7).replace("T"," ").replace("-","")+'-'+jsNewNum
+          let jieSuanData:any={}
+          jieSuanData.ccode=jsNewNum
+          jieSuanData.cmaker=a
+          jieSuanData.bdocumStyle=titleValue.value
+          jieSuanData.iyear=formItems.value.iyear
+          jieSuanData.cvencode=formItems.value.cvencode
+          jieSuanData.cvencodeJs=formItems.value.cvencodeJs
+          jieSuanData.cdepcode=formItems.value.cdepcode
+          jieSuanData.cpersoncode=formItems.value.cpersoncode
+          jieSuanData.ccodeRuku=formItems.value.ccode
+          jieSuanData.ddate=new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,10).replace("T"," ")
+          // 增加 结算单主表
+          await useRouteApi(saveJiesuanPojo, {schemaName: dynamicTenantId})(jieSuanData)
+
+          // 添加下游表
+          let xy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:formItems.value.ccode,ccodeDate:formItems.value.ddate,xyBillStyle:'CGJSD',xyccode:jsNewNum,xyccodeDate:formItems.value.ddate}
+          await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
+
+          let jiesuansList:any=[]
+          for (let i = 0; i < list.length; i++) {
+            let sourceDataList=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
+            let sourceDataList2=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
+            // 修改累计核算数量
+            sourceDataList2.isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(sourceDataList2.isumJiesuan)
+            list[i].isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(list[i].isumJiesuan)
+
+            // 修改入库单价
+            sourceDataList2.price=list[i].price
+            tableDataChange(sourceDataList,'price')
+            await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
+
+            // 1单到回冲：生成红蓝回冲单
+            if(dynamicTenant.value.target?.kcEstimated=='1'){
+              // 取到货单数量
+              sourceDataList.id=null
+              sourceDataList.sourcecode=formItems.value.ccode
+              sourceDataList.sourcetype=formItems.value.billStyle
+              sourceDataList.sourcedetailId=list[i].lineCode
+              sourceDataList.cnumber=list[i].cnumber*-1
+              sourceDataList.lineCode=randomString(30)
+              sourceDataList.baseQuantity=list[i].baseQuantity*-1
+              sourceDataList.icostZangu=sourceDataList.icostZangu*-1
+              sourceDataList.subQuantity1=sourceDataList.subQuantity1*-1
+              sourceDataList.subQuantity2=sourceDataList.subQuantity2*-1
+              sourceDataList.isumDaohuo=sourceDataList.isumDaohuo*-1
+              sourceDataList.isumFapiao=sourceDataList.isumFapiao*-1
+              sourceDataList.isumFapiaoMoney=sourceDataList.isumFapiaoMoney*-1
+              sourceDataList.isumJiesuan=sourceDataList.isumJiesuan*-1
+              sourceDataList.isumRuku=sourceDataList.isumRuku*-1
+              sourceDataList.isumTuiHuo=sourceDataList.isumTuiHuo*-1
+              sourceDataList.billStyle='HZHCD'
+              titleValue.value=1
+              tableDataChange(sourceDataList,'price')
+              await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList])
+
+              titleValue.value=0
+              sourceDataList.sourcecode=formItems.value.ccode
+              sourceDataList.sourcetype=formItems.value.billStyle
+              sourceDataList.sourcedetailId=list[i].lineCode
+              sourceDataList.price=list[i].price
+              sourceDataList.lineCode=randomString(30)
+              sourceDataList.cnumber=Math.abs(list[i].cnumber)
+              sourceDataList.baseQuantity=Math.abs(list[i].baseQuantity)
+              sourceDataList.icostZangu=Math.abs(sourceDataList.icostZangu)
+              sourceDataList.subQuantity1=Math.abs(sourceDataList.subQuantity1)
+              sourceDataList.subQuantity2=Math.abs(sourceDataList.subQuantity2)
+              sourceDataList.isumDaohuo=Math.abs(sourceDataList.isumDaohuo)
+              sourceDataList.isumFapiao=Math.abs(sourceDataList.isumFapiao)
+              sourceDataList.isumFapiaoMoney=Math.abs(sourceDataList.isumFapiaoMoney)
+              sourceDataList.isumJiesuan=Math.abs(sourceDataList.isumJiesuan)
+              sourceDataList.isumRuku=Math.abs(sourceDataList.isumRuku)
+              sourceDataList.isumTuiHuo=Math.abs(sourceDataList.isumTuiHuo)
+              sourceDataList.billStyle='LZHCD'
+              tableDataChange(sourceDataList,'price')
+              await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList])
+            }
+
+            // he算单子表
+            let jiesuans:any={}
+            jiesuans.iyear=list[i].iyear
+            jiesuans.lineCode=list[i].lineCode
+            jiesuans.ddate=list[i].ddate
+            jiesuans.ccode=jsNewNum
+            jiesuans.ccodeRuku=sourceDataList2.ccode
+            jiesuans.ccodeDaohuo=list[i].ccode
+            jiesuans.cinvode=list[i].cinvode
+            jiesuans.cgUnitId=JsonTool.parseObj(list[i].unitInfo.detail).filter(a=>a.isMain=='true')[0]?.id
+            jiesuans.quantityRuku=list[i].baseQuantity
+            jiesuans.priceJs=parseFloat(sourceDataList2.icost)/parseFloat(sourceDataList2.baseQuantity)
+
+            let icostJs:any=parseFloat(list[i].baseQuantity)*parseFloat(jiesuans.priceJs)
+            jiesuans.icostJs=parseFloat(icostJs).toFixed(4)
+
+            jiesuans.priceZg=parseFloat(list[i].icost)/parseFloat(list[i].baseQuantity)
+
+            let icostZg:any=parseFloat(list[i].baseQuantity)*parseFloat(jiesuans.priceZg)
+            jiesuans.icostZg=parseFloat(icostZg).toFixed(4)
+
+            jiesuans.ccodeLy=list[i].sourcetype
+            jiesuans.quantityDaohuo=jiesuans.quantityRuku
+            jiesuansList.push(jiesuans)
+          }
+          await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(list)
+          await useRouteApi(saveJiesuansPojo, {schemaName: dynamicTenantId})(jiesuansList)
+        }
+        // 等于本月直接修改入库单价
+        else{
+          for (let i = 0; i < list.length; i++) {
+            let sourceDataList2=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
+            // 修改入库单价
+            sourceDataList2.price=list[i].price
+            await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
+          }
+        }
+      }else if(dynamicTenant.value.target?.kcEstimated=='2'){ // 2单到补差
+
+      }else if(dynamicTenant.value.target?.kcEstimated=='3'){ // 3月初回冲
+
       }
+
+      loadMark.value=false
+      pageParameter.type='CGDHD'
+      await contentSwitch('curr','')
     }
     else{
       loadMark.value=false
@@ -1892,12 +2040,46 @@ const startReview = async (b) => {
   }
   else{
     loadMark.value=false
+    for (let i = 0; i < list.length; i++) {
+      await delJieSuanFun(list[i].ccode)
+    }
+    delXyHCDDFun()
+    delStockWareHCDFun()
     saveLogData(text)
     tempTaskDel(taskInfo.value?.id)
     pageParameter.type='CGDHD'
-    await contentSwitch('curr','')
+    setTimeout(async ()=>{
+      await contentSwitch('curr','')
+    },300)
   }
 }
+// 删除红蓝回冲单
+const delStockWareHCDFun = async () => {
+  // 删除时减去累计核算数量
+  let list:any = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
+  for (let i = 0; i < list.length; i++) {
+    let sourceDataList2 = await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
+    // 修改累计核算数量
+    sourceDataList2.isumJiesuan =parseFloat(sourceDataList2.isumJiesuan)- parseFloat(list[i].baseQuantity)
+    list[i].isumJiesuan =parseFloat(list[i].isumJiesuan)- parseFloat(list[i].baseQuantity)
+    await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
+  }
+  await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(list)
+
+  let map={sourcecode:formItems.value.ccode}
+  await useRouteApi(delStockWareHCD, {schemaName: dynamicTenantId})(map)
+}
+// 删除下游红蓝回冲单
+const delXyHCDDFun = async () => {
+  let map={ccode:formItems.value.ccode}
+  await useRouteApi(delXyHCD, {schemaName: dynamicTenantId})(map)
+}
+// 删除核算单
+const delJieSuanFun = async (ccode) => {
+  await useRouteApi(deleteByCcodeDaohuo, {schemaName: dynamicTenantId})(ccode)
+}
+
+
 const sum = (...arr) => [].concat(...arr).reduce((acc, val) => Number(acc) + Number(val), 0);
 // 随机数
 function randomString(length) {
@@ -2826,6 +3008,30 @@ const tableDataChange =  async (r,c) => {
       r.icost=r.isum-r.itaxprice
       r.tempTen=r.icost
       break;
+    case 'price':
+      if (!hasBlank(r.cnumber) && !hasBlank(r.price)) {
+        let n:any = parseFloat(r.cnumber).toFixed(10)
+        if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
+        if (titleValue.value == 0 && n < 0) n = 0 - Math.abs(n)
+        let d:any = parseFloat(r.price).toFixed(10)
+        if (titleValue.value != 0 && d > 0) d = 0 - (Math.abs(d))
+        if (titleValue.value == 0 && d < 0) d = Math.abs(d)
+
+        r.icost = titleValue.value == 0?parseFloat(String(n * d)).toFixed(4) + '':parseFloat(String(n * d)).toFixed(4)*-1
+        r.tempTen = r.icost
+        r.price = Math.abs(d)
+
+        // 含税单价
+        let itaxrate=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
+        r.taxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
+        r.tempTaxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
+        // 价税合计
+        r.isum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
+        r.tempIsum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
+        // 税额=价税合计-无税金额
+        r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):null
+      }
+      break;
   }
   calculateTotal()
 }
@@ -3750,6 +3956,13 @@ const toReceipt = async (v) => {
 }
 /********** 单据搜索 *********/
 import { onBeforeRouteLeave } from 'vue-router'
+import {
+  deleteByCcodeDaohuo,
+  delJiesuansByCcodeRuku,
+  getNewStockJiesuanNum,
+  saveJiesuanPojo,
+  saveJiesuansPojo
+} from "/@/api/record/stock/stock-jiesuan";
 onBeforeRouteLeave(giveUp)
 </script>
 <style lang="less" scoped="scoped">

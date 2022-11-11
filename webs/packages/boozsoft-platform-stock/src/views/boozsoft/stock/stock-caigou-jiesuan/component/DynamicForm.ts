@@ -11,7 +11,7 @@ const defaultRows = () => {
       label: '单据编号',
       component: 'Input',
       componentProps: null,
-      required: true,
+      required: false,
       readonly: true,
       serial: 1,
       isShow: true
@@ -21,7 +21,7 @@ const defaultRows = () => {
       label: '单据日期',
       component: 'DatePicker',
       componentProps: null,
-      required: true,
+      required: false,
       readonly: true,
       serial: 2,
       isShow: true
@@ -32,7 +32,7 @@ const defaultRows = () => {
       label: '供应商',
       component: 'Select',
       componentProps: 'supplier',
-      required: true,
+      required: false,
       readonly: true,
       serial: 3,
       isShow: true
@@ -43,7 +43,7 @@ const defaultRows = () => {
       label: '结算供应商',
       component: 'Select',
       componentProps: 'supplier',
-      required: true,
+      required: false,
       readonly: true,
       serial: 4,
       isShow: true

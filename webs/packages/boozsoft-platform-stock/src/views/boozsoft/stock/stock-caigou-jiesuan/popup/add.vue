@@ -318,7 +318,7 @@ const findByTable = async () => {
   tableLoading.value=false
 
   // 入库单
-  let rkData:any=await useRouteApi(findAllByBillStyleAndDdateAndCvencode, {schemaName: dynamicTenant.value.accountMode})({billStyle:'CGRKD,QCZGRKD',cvencode:supNum.value,ddate:formatTimer(dhDate.value)})
+  let rkData:any=await useRouteApi(findAllByBillStyleAndDdateAndCvencode, {schemaName: dynamicTenant.value.accountMode})({billStyle:'CGRKD,QT',cvencode:supNum.value,ddate:formatTimer(dhDate.value)})
   rkTableData.value=rkData
   rkTableData.value.forEach(tx=>{
     tx.price=toThousandFilter(tx.price)

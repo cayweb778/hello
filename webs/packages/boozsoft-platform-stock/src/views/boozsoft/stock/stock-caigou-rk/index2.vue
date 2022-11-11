@@ -153,7 +153,7 @@
                 已到货
               </Tag>
               <Tag v-if="stockWareData.swsIsumJiesuan>0" :color="'volcano' ">
-                已结算
+                已核算
               </Tag>
               <Tag :color="'volcano'" v-if="stockWareData.swsIsumFapiao >0 ">
                 已开票

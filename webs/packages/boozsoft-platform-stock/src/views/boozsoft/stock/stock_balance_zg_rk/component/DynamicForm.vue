@@ -138,7 +138,7 @@ function formatTimer(value) {
 }
 
 async function verifyCcode(val) {
-  let ccode=await useRouteApi(findAllByCcodeAndBillStyle, {schemaName: props.accId})({ccode:val,billStyle:'QCZGRKD'})
+  let ccode=await useRouteApi(findAllByCcodeAndBillStyle, {schemaName: props.accId})({ccode:val,billStyle:'QT'})
   console.log(ccode.length)
 }
 function temp123(val,a) {

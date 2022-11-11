@@ -21,7 +21,7 @@ public interface StockWarehousingRepository extends ReactiveCrudRepository<Stock
             "order by sw.bcheck, sw.ddate, sw.ccode asc")
     Flux<StockWarehousingVo> findAllByBillStyleAndIyearOrderByBcheckAscDdateAscCcodeAsc(String type, String Iyaer);
 
-    @Query("select * from stock_warehousing where bill_style=:type and iyear=:iyear order by ddate,ccode asc")
+    @Query("select * from stock_warehousing where bill_style=:type and iyear=:iyear order by ccode,ddate asc")
     Flux<StockWarehousing> findAllByBillStyleAndIyearOrderByDdateAscCcodeAsc(String type, String iyear);
     Flux<StockWarehousing> findAllByBillStyleAndDdateLikeOrderByBcheckAscDdateAscCcodeAsc(String type, String like);
 
@@ -63,9 +63,28 @@ public interface StockWarehousingRepository extends ReactiveCrudRepository<Stock
             "                where sws.ccode = sw.ccode) sws_isum_daohuo," +
             "(select sum(cast(coalesce(sws.isum_jiesuan, '0') as float))\n" +
             "                from stock_warehousings sws\n" +
-            "                where sws.ccode = sw.ccode) sws_isum_jiesuan\n" +
-            "from stock_warehousing sw where sw.ccode=:ccode ")
+            "                where sws.ccode = sw.ccode ) sws_isum_jiesuan\n" +
+            "from stock_warehousing sw where sw.ccode=:ccode and sw.bill_style not in ('HZHCD', 'LZHCD')")
     Mono<StockWarehousingVo> findByCcodeData(String ccode);
+
+    @Query("select sw.*,\n" +
+            "       (select sum(cast(coalesce(sws.isum_ruku, '0') as float))\n" +
+            "        from stock_warehousings sws\n" +
+            "        where sws.ccode = sw.ccode) as sws_isum_ruku,\n" +
+            "       (select sum(cast(coalesce(sws.isum_fapiao, '0') as float))\n" +
+            "        from stock_warehousings sws\n" +
+            "        where sws.ccode = sw.ccode) as sws_isum_fapiao,\n" +
+            "       (select sum(cast(coalesce(sws.isum_tui_huo, '0') as float))\n" +
+            "        from stock_warehousings sws\n" +
+            "        where sws.ccode = sw.ccode) as sws_isum_tuihuo," +
+            "(select sum(cast(coalesce(sws.isum_daohuo, '0') as float))\n" +
+            "                from stock_warehousings sws\n" +
+            "                where sws.ccode = sw.ccode) sws_isum_daohuo," +
+            "(select sum(cast(coalesce(sws.isum_jiesuan, '0') as float))\n" +
+            "                from stock_warehousings sws\n" +
+            "                where sws.ccode = sw.ccode) sws_isum_jiesuan\n" +
+            "from stock_warehousing sw where sw.ccode=:ccode and sw.bill_style=:billStyle")
+    Mono<StockWarehousingVo> findByCcodeAdnBillStyleData(String ccode,String billStyle);
 
     @Query("select st.*, sp1.psn_name as puname, sp3.psn_name as buname, sd.dept_name as dname, sc.ck_name as cname " +
             " from stock_warehousing st " +
@@ -417,6 +436,8 @@ public interface StockWarehousingRepository extends ReactiveCrudRepository<Stock
     Mono<StockWarehousing> findBySearch(String billStyle,String ccode);
 
     Flux<StockWarehousing> findAllByBillStyleAndIyearAndBdocumStyleAndCcodeLikeOrderByDdateAscCcodeAsc(String type, String year, String style, String s);
+
+    Mono<Void> deleteBySourcetype(String sourcetype);
 }
 
 
