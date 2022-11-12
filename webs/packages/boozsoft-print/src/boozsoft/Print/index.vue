@@ -62,7 +62,7 @@ function testPrint() {
   dataaaa.value=useNewPrintLang({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
     let bbb=[]
-    for(let i=0;i<100000;i++){
+    for(let i=0;i<200;i++){
       bbb.push(  ['结算客户编码', '结算客户名称', '期初余额', '应收金额', '收款金额', '期末余额'])
     }
     doc.autoTable({
