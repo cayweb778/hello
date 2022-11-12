@@ -17,7 +17,7 @@
     "pinia": "^2.0.14",
     "vue": "^3.2.37",
     "vue-router": "^4.1.2",
-    "wujie-vue3": "^1.0.0-rc.3",
+    "wujie-vue3": "^1.0.0",
     "less": "^4.1.2",
     "postcss-less": "^5.0.0",
     "@ant-design/colors": "^6.0.0",

@@ -44,7 +44,7 @@
         </Form>
       </div>
       <div style="height:100vh;width:64vw;background:white">
-        <iframe style="width:100%;height:100vh" src="http://127.0.0.1:5010"></iframe>
+          <PdfViewer/>
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@
 <script setup>
 import {savePdf, useNewPrint} from "/@/utils/boozsoft/print/print";
 import {Button, Select, Form,Divider} from "ant-design-vue";
-
+import PdfViewer from './SubApps/PdfViewer.vue'
 const Item = Form.Item
 
 window.helloK = 'https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf'

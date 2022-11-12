@@ -12,6 +12,7 @@ import {setupStore} from "./store";
 
 const app = createApp(App)
 
+window.WujieVue=WujieVue
 app.use(router)
 app.use(WujieVue)
 // router-guard

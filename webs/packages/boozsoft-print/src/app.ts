@@ -16,11 +16,11 @@ import 'ant-design-vue/dist/antd.less';
 
 
 (async () => {
-
   // createWindowDebuggerInfo()
   const app = createApp(App);
   // Configure store
   setupStore(app);
+  app.use(window.top.WujieVue)
   // app.use(STable);
   app.mount('#app_auth', true);
 })();
