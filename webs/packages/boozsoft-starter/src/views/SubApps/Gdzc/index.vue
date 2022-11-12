@@ -19,15 +19,16 @@
 </template>
 <script setup lang="ts">
 import {ref, inject} from 'vue'
-// import {defineNcModals} from "@/views/boozsoft/global/funs";
+import {defineNcModals} from "@/views/boozsoft/global/funs";
 import {isProdMode} from "@/utils/env";
 import Layout from '../components/Layout.vue'
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
 import {useCounterStoreWidthOut} from "../../../store/modules/counter";
-// const ncModals=ref(defineNcModals())
-// const NcProvider = inject('NcProvider')
+import {useGlobalStoreWidthOut} from "../../../store/modules/global";
+const ncModals=ref(defineNcModals())
+const NcProvider = inject('NcProvider')
 
 
 
@@ -36,8 +37,7 @@ const wujieAttrs = ref({
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncgdzc' : '//localhost:4100',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newgdzc':"ws://localhost:8085/newgdzc",
 
-  props: {
-    menuModules:modules,
+  props: useGlobalStoreWidthOut().defineWujieProps({
     NcModals:{
       // async openDeptModal(params2){
       //   return await ncModals.value.openDeptModal(params2)
@@ -52,7 +52,7 @@ const wujieAttrs = ref({
       //   return await ncModals.value.openGysModal(params2)
       // }
     }
-  },
+  }),
   plugins:[
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb

@@ -11,5 +11,8 @@
   </div>
 </template>
 <script setup>
-
+import {ref} from 'vue'
+import {defineNcModals} from "/@/views/boozsoft/global/funs";
+const ncModals=ref(defineNcModals())
+window.$wujie.$emit("registerNcModals",ncModals)
 </script>

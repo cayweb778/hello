@@ -19,6 +19,7 @@ import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";
 import {useCounterStoreWidthOut} from "../../../store/modules/counter";
+import {useGlobalStoreWidthOut} from "../../../store/modules/global";
 
 const wujieVueRef = ref()
 const NcProvider = inject('NcProvider')
@@ -26,15 +27,25 @@ const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncbak' : '//localhost:3103',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newsystem':"ws://localhost:8087",
-  props: {
-
-    globalData:useCounterStoreWidthOut(),
-    menuModules: modules,
+  props: useGlobalStoreWidthOut().defineWujieProps({
     NcProvider,
-    aa: 1,
     goSystem: (attrs: any) => {
       router.push('/system')
+    },
+    NcModals:{
+      // async openDeptModal(params2){
+      //   return await ncModals.value.openDeptModal(params2)
+      // },
+      // async openPsnModal(params2){
+      //   return await ncModals.value.openPsnModal(params2)
+      // },
+      // async openCustomModal(params2){
+      //   return await ncModals.value.openCustomModal(params2)
+      // },
+      // async openGysModal(params2){
+      //   return await ncModals.value.openGysModal(params2)
+      // }
     }
-  }
+  }),
 })
 </script>

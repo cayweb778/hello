@@ -9,6 +9,7 @@ import './assets/main.css'
 import WujieVue from "wujie-vue3";
 import {setupRouterGuard} from "@/router/guard";
 import {setupStore} from "./store";
+import {setupEventbus} from "./eventbus";
 
 const app = createApp(App)
 
@@ -17,5 +18,6 @@ app.use(router)
 app.use(WujieVue)
 // router-guard
 setupStore(app)
+setupEventbus()
 setupRouterGuard();
 app.mount('#app')

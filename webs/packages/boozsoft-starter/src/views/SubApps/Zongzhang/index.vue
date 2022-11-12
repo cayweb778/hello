@@ -26,6 +26,8 @@ import {isProdMode} from "@/utils/env";
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
 import {useCounterStoreWidthOut} from "../../../store/modules/counter";
+import {useGlobalStoreWidthOut} from "../../../store/modules/global";
+import router from "../../../router";
 // const ncModals=ref(defineNcModals())
 // const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
@@ -33,10 +35,7 @@ const wujieAttrs = ref({
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/nczongzhang' : '//localhost:4200',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/zongzhang':"ws://localhost:8086/zongzhang",
 
-  props: {
-
-    globalData:useCounterStoreWidthOut(),
-    menuModules:modules,
+  props: useGlobalStoreWidthOut().defineWujieProps({
     NcModals:{
       // async openDeptModal(params2){
       //   return await ncModals.value.openDeptModal(params2)
@@ -50,8 +49,7 @@ const wujieAttrs = ref({
       // async openGysModal(params2){
       //   return await ncModals.value.openGysModal(params2)
       // }
-    }
-  },
+    },
   plugins:[
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb
