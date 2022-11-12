@@ -44,25 +44,25 @@
         </Form>
       </div>
       <div style="height:100vh;width:64vw;background:white">
-          <PdfViewer/>
+          <PdfViewer v-model="dataaaa"/>
       </div>
     </div>
   </div>
 
 </template>
 <script setup>
-import {savePdf, useNewPrint} from "/@/utils/boozsoft/print/print";
+import {savePdf, useNewPrint, useNewPrintLang} from "/@/utils/boozsoft/print/print";
 import {Button, Select, Form,Divider} from "ant-design-vue";
-import PdfViewer from './SubApps/PdfViewer.vue'
+import PdfViewer from './SubApps/PdfViewer/index.vue'
 const Item = Form.Item
 
 window.helloK = 'https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf'
-
+const dataaaa=ref()
 function testPrint() {
-  useNewPrint({data: ['l', 'px', 'a4', true]}, (doc) => {
+  dataaaa.value=useNewPrintLang({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
     let bbb=[]
-    for(let i=0;i<1000;i++){
+    for(let i=0;i<100000;i++){
       bbb.push(  ['结算客户编码', '结算客户名称', '期初余额', '应收金额', '收款金额', '期末余额'])
     }
     doc.autoTable({
@@ -88,7 +88,7 @@ function testPrint() {
       }
     })
     return doc
-  })
+  }).getBase64()
 
 }
 

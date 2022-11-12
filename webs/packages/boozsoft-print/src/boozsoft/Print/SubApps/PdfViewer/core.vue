@@ -1,15 +1,14 @@
 <template>
- <div>
-     <WujieVue
+  <div style="width:100%;heigth:100vh">
+    <WujieVue
       ref="wujieVueRef"
-      width="100vw"
-      height="100vh"
       name="prin3123213t"
       :url="wujieAttrs.url"
       :sync="true"
+      height="100vh"
       :props="wujieAttrs.props"
     ></WujieVue>
- </div>
+  </div>
   <!--    <div id="ncModalMount">-->
   <!--      11-->
   <!--      {{ncModals.componentData.componentRef}}-->
@@ -31,12 +30,14 @@ const wujieVueRef = ref()
 const hello={
   id:1
 }
+const props=defineProps(["value"])
 const wujieAttrs = ref({
 
   // globalData:useCounterStoreWidthOut(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncprint' : '//localhost:5010',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: {
+    pdfDoc:props.value,
     hello,
     NcModals:{
       // async openDeptModal(params2){

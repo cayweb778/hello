@@ -8,7 +8,6 @@ export function usePrint() {
 
   function print(params, fun) {
     pdfmodel.data = printDefault(params, fun).output('datauristring');
-    debugger
     pdfmodel.data=pdfmodel.data.replace("data:application/pdf;filename=generated.pdf;base64,","")
     window.top.__TAURI_INVOKE__("printData",{contents:pdfmodel.data})
     // debugger
@@ -31,7 +30,15 @@ export function useNewPrint(params, fun) {
   document.body.appendChild(dom);
   createApp(print, { params, fun }).mount(dom);
 }
+export function useNewPrintLang(params, fun) {
+  const doc=printDefault(params,fun)
+  return {
+    getBase64(){
+      return doc.output('datauristring')
+    }
+  }
 
+}
 export function savePdf(name, params, fun) {
   const doc = printDefault(params, fun);
   doc.save(name);

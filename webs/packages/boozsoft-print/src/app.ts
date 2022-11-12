@@ -12,7 +12,7 @@ import {setupStore} from '/@/store';
 import 'virtual:svg-icons-register';
 
 import 'ant-design-vue/dist/antd.less';
-
+import WujieVue from "wujie-vue3";
 
 
 (async () => {
@@ -20,7 +20,7 @@ import 'ant-design-vue/dist/antd.less';
   const app = createApp(App);
   // Configure store
   setupStore(app);
-  app.use(window.top.WujieVue)
+  app.use(WujieVue)
   // app.use(STable);
   app.mount('#app_auth', true);
 })();

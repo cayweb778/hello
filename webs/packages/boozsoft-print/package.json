@@ -7,7 +7,6 @@
     "url": "https://github.com/anncwb"
   },
   "scripts": {
-    "wujie-vue3": "^1.0.0",
     "bootstrap": "pnpm install",
     "serve": "npm run dev",
     "dev": "vite",
@@ -33,6 +32,7 @@
     "gen:icon": "esno ./build/generate/icon/index.ts"
   },
   "dependencies": {
+    "wujie-vue3": "^1.0.0",
     "@micro-zoe/micro-app": "^0.8.5",
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.0.1",
