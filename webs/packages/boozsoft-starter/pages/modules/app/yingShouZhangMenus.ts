@@ -371,6 +371,14 @@ export const menus = [
     parentId: 3200001,
     name: '应收单',
   }),
+  createPlatformMenu({
+    id: 3201002,
+    path: 'YingShouDanHong',
+    componentName: 'YingShouZhangXXYingShouDanHong',
+    component: '/platforms/YingShouZhang/YingShouDanHong/layouts/RouteCache',
+    parentId: 3200001,
+    name: '红字应收单',
+  }),
 
 
   /*createPlatformMenu({
@@ -631,7 +639,7 @@ export const menus = [
     componentName: 'YingShouZhangXXCXHongZiHuiChong',
     component: '/platforms/YingShouZhang/HongZiHuiChongDan/layouts/RouteCache',
     parentId: 3500001,
-    name: '红字回冲单',
+    name: '红票对冲',
   }),
 
   createPlatformMenu({
@@ -668,7 +676,7 @@ export const menus = [
     componentName: 'YingShouZhangXXCxHongZiHuiChongList',
     component: '/platforms/YingShouZhang/HongZiHuiChongDanLieBiao/layouts/RouteCache',
     parentId: 3500002,
-    name: '红字回冲单列表',
+    name: '红票对冲列表',
   }),
 
 

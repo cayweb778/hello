@@ -4,18 +4,18 @@
       v-bind="$attrs"
       title="收款单"
       @ok="handleOk()"
-      @cancel="handleOk()"
+      @cancel="closeModal()"
       wrapClassName="head-title"
       @register="register"
     >
       <template #title>
-        <div style="display: flex;height:30px;" class="vben-basic-title">
+        <div style="display: flex;height:30px;margin-top:10px;margin-left: 10px;" class="vben-basic-title">
         <span style="font-size: 24px;line-height:30px;">
           <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
         </span>
         </div>
       </template>
-      <div class="nc-open-content" style="margin:0;padding:0;">
+      <div class="nc-open-content" style="margin-top:10px;">
         <div class="open-content-up" style="margin:0;padding:0;">
           <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;color: #ffffff;font-weight: bold">
             <div class="a1">
@@ -178,6 +178,12 @@ function formatBillStyle(billStyle){
     str = '形态转换出库单'
   } else if (billStyle=='JYJCD'){
     str = '借用借出单'
+  } else if (billStyle=='XSFP'){
+    str = '销售发票'
+  } else if (billStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (billStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }

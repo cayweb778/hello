@@ -2257,6 +2257,8 @@ async function saveSelectXhd(data){
       :deep(.nc-summary) {
         font-size: 14px;
         font-weight: bold;
+        margin: 0;
+        padding: 5px;
         width: 100%;
         background-color: #cccccc;
         border:none !important;

@@ -183,9 +183,8 @@
             @search="onSearch"
           />
         </div>
+        <div style="clear:both"/>
       </div>
-
-      <div style="clear:both"/>
 
     </div>
     <div class="app-container">
@@ -1479,7 +1478,7 @@ const calculateTotal = () => {
   font-size: 14px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 550;
+  //font-weight: 550;
   color: #000000 !important;
 }
 
@@ -1488,7 +1487,7 @@ const calculateTotal = () => {
   font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
-  font-weight: 550;
+  //font-weight: 550;
   color: #000000 !important;
 }
 

@@ -381,7 +381,7 @@ const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
 const titleContents = ['应付单', '红字应付单', '应付单']
-const titleValue = ref(0)
+const titleValue = ref(1)
 const formRowNum = ref(1)
 
 const clickMoney = ref(true)

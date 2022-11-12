@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="margin-right:10px;">
         <div>
           <Button class="actod-btn" @click="" v-if="status == 3">查看</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -178,7 +178,7 @@
             @register="registerTable"
             :dataSource="tableData"
           >
-            <template #billStyle="{ record }">{{formatBillStyle(record.billStyle)}}</template>
+            <template #billStyle="{ record }">{{formatBillStyle(record.sourcetype)}}</template>
             <template #isum="{ record }">
               <span v-if="record.isum!=null && record.isum!=''">{{toThousandFilter(record.isum)}}</span>
             </template>
@@ -264,7 +264,7 @@
             @register="registerTable1"
             :dataSource="tableData1"
           >
-            <template #billStyle="{ record }">{{formatBillStyle(record.billStyle)}}</template>
+            <template #billStyle="{ record }">{{formatBillStyle(record.sourcetype)}}</template>
             <template #isum="{ record }">
               <span v-if="record.isum!=null && record.isum!=''">{{toThousandFilter(record.isum)}}</span>
             </template>
@@ -812,12 +812,12 @@ async function cvencodeChange(){
         cvencode: formItems.value.cvencode
       })
       if (arSourceFlag.value=='1') {
-        saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.bworkable=='1')
+        saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1')
       } else {
         if(arCheckFlag=='1'){
-          saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.bworkable=='1')
+          saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.bworkable=='1')
         } else {
-          saleousingList.value = saleList.filter(item => item.busStyle !='XSFP')
+          saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP')
         }
       }
       for (let i = 0; i < saleousingList.value.length; i++) {
@@ -1304,6 +1304,10 @@ function formatHxStyle(hxStyle){
     str = '预收款'
   } else if (hxStyle=='XSFP'){
     str = '销售发票'
+  } else if (hxStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (hxStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }
@@ -1327,6 +1331,10 @@ function formatBillStyle(billStyle){
     str = '借用借出单'
   } else if (billStyle=='XSFP'){
     str = '销售发票'
+  } else if (billStyle=='QCXHD'){
+    str = '期初销货单'
+  } else if (billStyle=='QCXSFP'){
+    str = '期初销售发票'
   }
   return str
 }
@@ -2848,6 +2856,8 @@ async function saveSelectXhd(data){
       :deep(.nc-summary) {
         font-size: 13px;
         font-weight: bold;
+        margin: 0;
+        padding: 5px;
         width: 100%;
         background-color: #cccccc;
         border:none !important;

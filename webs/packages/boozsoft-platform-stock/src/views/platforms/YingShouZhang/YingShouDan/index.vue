@@ -62,7 +62,7 @@
                         v-model:value="pageParameter.searchConditon.value"
                       />
                     </div>-->
-          <div class="acttd-right-d-btns" v-if="status==3">
+          <div class="acttd-right-d-btns">
             <Button class="acttdrd-btn" @click="pageReload()">
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
@@ -81,7 +81,7 @@
                 <SettingFilled :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
-            <Popover placement="bottom"><!-- v-if="status != 3" -->
+<!--            <Popover placement="bottom">
               <template #content>
                 <span class="group-btn-span-special2" @click="titleValue = 0;contentSwitch('tail','')" :style="titleValue===0?{backgroundColor: '#0096c7',color: 'white'}:''">
                 &nbsp;蓝字应收单&ensp;<CheckOutlined v-if="titleValue===0"/></span>
@@ -92,7 +92,7 @@
               <Button class="acttdrd-btn">
                 <PicLeftOutlined :style="{ fontSize: '14px' }"/>
               </Button>
-            </Popover>
+            </Popover>-->
           </div>
         </div>
       </div>
@@ -380,7 +380,7 @@ const totalColumnWidth = ref(0)
 const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
-const titleContents = ['应收单', '应收单', '应收单']
+const titleContents = ['应收单', '红字应收单', '应收单']
 const titleValue = ref(0)
 const formRowNum = ref(1)
 

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
         <!-- 请注释下行，不要删除下行，方便快速定位页面  -->
-<!--   <div><textarea>应付单的页面</textarea>复制内容快速定位页面</div>-->
+<!--   <div><textarea>应收单的页面</textarea>复制内容快速定位页面</div>-->
     <div class="app-container-top lcr-theme-div">
       <div>
         <div>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <div></div>
-      <div>
+      <div style="margin-right: 10px;">
         <div>
           <Button class="actod-btn" @click="openPage()" v-if="status == 3">查看</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
@@ -84,10 +84,10 @@
 <!--            <Popover placement="bottom">
               <template #content>
                 <span class="group-btn-span-special2" @click="titleValue = 0;contentSwitch('tail','')" :style="titleValue===0?{backgroundColor: '#0096c7',color: 'white'}:''">
-                &nbsp;蓝字应付单&ensp;<CheckOutlined v-if="titleValue===0"/></span>
+                &nbsp;蓝字应收单&ensp;<CheckOutlined v-if="titleValue===0"/></span>
                 <br/>
                 <span class="group-btn-span-special2" @click="titleValue = 1;contentSwitch('tail','')" :style="titleValue===1?{backgroundColor: '#0096c7',color: 'white'}:''">
-                &nbsp;红字应付单&ensp;<CheckOutlined v-if="titleValue===1"/></span>
+                &nbsp;红字应收单&ensp;<CheckOutlined v-if="titleValue===1"/></span>
               </template>
               <Button class="acttdrd-btn">
                 <PicLeftOutlined :style="{ fontSize: '14px' }"/>
@@ -127,7 +127,7 @@
         </div>
         <div class="acbgead-two" :style="status == 3?{ pointerEvents: 'none'}:{}">
           <label>单据日期：</label>
-          <DatePicker v-model:value="formItems.ddate" @change="generateCode(formItems.ddate)" :disabled-date="disabledDate" :locale="localeCn" placeholder="变动日期" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 15%;"/>
+          <DatePicker v-model:value="formItems.ddate" @change="generateCode(formItems.ddate)" :disabled-date="disabledDate" :locale="localeCn" placeholder="" format="YYYY-MM-DD" value-format="YYYY-MM-DD" style="width: 15%;"/>
           <label>单据编号：</label>
           <Input v-model:value="formItems.ccode" :disabled="true" style="width: 15%;"/>
 <!--          <label>业务类型：</label>
@@ -136,7 +136,7 @@
             <SelectOption value="YSK">预收款</SelectOption>
             <SelectOption value="PTSK">普通收款</SelectOption>
           </Select>-->
-          <label>供应商：</label>
+          <label>客户：</label>
           <Select v-model:value="formItems.cvencode" @change="changeCvencode" style="width: 15%;">
             <template #suffixIcon>
               <SearchOutlined v-if="status == 1 || status == 2" @click="openHeadSelectContent('cvencode')"/>
@@ -145,7 +145,7 @@
               {{ item.custName }}
             </SelectOption>
           </Select>
-          <label>结算供应商：</label>
+          <label>结算客户：</label>
           <Select v-model:value="formItems.cvencodeJs" :disabled="true" style="width: 15%;">
             <template #suffixIcon>
               <SearchOutlined v-if="status == 1 || status == 2" @click="openHeadSelectContent('cvencodeJs')"/>
@@ -192,7 +192,7 @@
         <!--  针对过滤框显示添加的内容高度 :class="status == 3?'status-look':''"  -->
         <!--       :rowKey="r=>r.assetsCode"-->
         <div>
-<!--          <span style="font-size: 18px;font-weight: bold;color: #0096c7;">付款明细</span>
+<!--          <span style="font-size: 18px;font-weight: bold;color: #0096c7;">收款明细</span>
           <div style="float: right;">
             <Button class="ant-btn-sm actod-btn" @click="tableAdd">增行</Button>
             <Button class="ant-btn-sm actod-btn" @click="tableDel">删行</Button>
@@ -238,7 +238,7 @@
                   <span>合计</span>
                 </div>
                 <div style="width:50%;">
-                  <span>付款金额:</span>
+                  <span>收款金额:</span>
                   <span>&ensp;{{ toThousandFilter(isum) }}</span>
                 </div>
               </div>
@@ -327,7 +327,7 @@ import moment from "moment";
 import localeCn from 'ant-design-vue/es/date-picker/locale/zh_CN';
 import {findPsnByFlag} from "/@/api/record/system/psn";
 import {findDeptByFlag} from "/@/api/record/system/dept";
-import {findAll} from "/@/api/record/supplier_data/supplier";
+import {findAll} from "/@/api/record/costomer_data/customer";
 import {buildUUID} from "/@/utils/uuid";
 import {findAllProject} from "/@/api/record/system/project";
 import {findSettModesByFlag} from "/@/api/record/system/sett-modes";
@@ -340,11 +340,11 @@ import {
 import {getSysBankAccountByStatus} from "/@/api/record/system/sys-bank-account";
 import {
   findBukongCcode,
-  deleteWarehousingsById,
-  saveWarehousing,
-  saveWarehousingsList,
-  deleteWarehousingById, deleteWarehousingsByCcode, findWarehousingsByCcode, findWarehousingList
-} from "/@/api/record/system/yfd";
+  deleteSaleousingsById,
+  saveSaleousing,
+  saveSaleousingsList,
+  deleteSaleousingById, deleteSaleousingsByCcode, findSaleousingsByCcode, findSaleousingList
+} from "/@/api/record/system/ysd";
 import {useAccountPickerCache} from "/@/store/modules/boozsoft/components/AccountPicker/cache";
 import {
   getByStockBalanceTask, stockBalanceTaskDelByUserName,
@@ -380,8 +380,8 @@ const totalColumnWidth = ref(0)
 const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
-const titleContents = ['应付单', '红字应付单', '应付单']
-const titleValue = ref(0)
+const titleContents = ['应收单', '红字应收单', '应收单']
+const titleValue = ref(1)
 const formRowNum = ref(1)
 
 const clickMoney = ref(true)
@@ -392,7 +392,7 @@ const pageParameter:any = reactive({
     requirement: '',
     value: '',
   },
-  type: 'YFD'
+  type: 'YSD'
 })
 const changeBtns = ref({
   first: true,
@@ -426,7 +426,7 @@ const dynamicAdReload = async (obj) => {
   await pageReload()
 }
 
-//打开应付单列表
+//打开应收单列表
 function openPage(){
   pageParameter.year = dynamicYear.value
   pageParameter.dynamicTenantId = dynamicTenantId.value
@@ -434,7 +434,7 @@ function openPage(){
   pageParameter.ddate1 = dynamicYear.value+'-01-01'
   pageParameter.ddate2 = dynamicYear.value+'-12-31'
   router.push({
-    path: '/YingFuZhang/YingShou/ChaXun/YingShouDanLieBiao',
+    path: '/YingShouZhang/YingShou/ChaXun/YingShouDanLieBiao',
     query: pageParameter
   });
 }
@@ -518,10 +518,38 @@ async function reloadList() {
   assetsCardList.value = (await useRouteApi(findCunHuoAllList, {schemaName: dynamicTenantId})({date: useCompanyOperateStoreWidthOut().getLoginDate}))
 }
 
+/*async function contentSwitch(action) {
+  loadMark.value = true
+  let res = await useRouteApi(findBillByCondition, {schemaName: dynamicTenantId})({
+    type: pageParameter.type,
+    iyear: dynamicYear.value || '2022',
+    action: action,
+    curr: formFuns.value.getFormValue()?.ccode || ''
+  })
+  if (null != res) {
+    formItems.value = JsonTool.parseProxy(res)
+    res.entryList = null
+    formFuns.value.setFormValue(res)
+    titleValue.value = parseInt(res.bdocumStyle || 0)
+    if (!hasBlank(formItems.value.entryList)) {
+      let list = JsonTool.parseObj(formItems.value.entryList).map(it => resetRow(it))
+      let len = list.length
+      for (let i = 0; i < (25 - len); i++) {
+        list.push({})
+      }
+      tableData.value = list
+      setTableData(list)
+    }
+    formItems.value.entryList = null
+  } else {
+    message.success('暂无数据！')
+  }
+  loadMark.value = false
+}*/
 const num = ref(0)
 async function contentSwitch(action) {
   loadMark.value = true
-  const res = await useRouteApi(findWarehousingList,{schemaName: dynamicTenantId})({billStyle:'YFD',iyear:dynamicYear.value})
+  const res = await useRouteApi(findSaleousingList,{schemaName: dynamicTenantId})({billStyle:'YSD',iyear:dynamicYear.value})
   if (titleValue.value==0){
     arApYsyfList.value = res.filter(item => item.bdocumStyle!='1')
   } else {
@@ -551,7 +579,7 @@ async function contentSwitch(action) {
       }
       formItems.value = JsonTool.parseProxy(arApYsyfList.value[num.value])
     }
-    const res = await useRouteApi(findWarehousingsByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:'YFD'})
+    const res = await useRouteApi(findSaleousingsByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:'YSD'})
     tableData.value = res
     if (tableData.value.length<20) {
       let num = 20 - tableData.value.length
@@ -640,6 +668,27 @@ function formatCvencode(cvencode){
       str = item.custName
     }
   })
+  return str
+}
+
+function formatHxStyle(hxStyle){
+  let str = hxStyle
+  //XHD销货单、PLXHD批量销货单、XSCKD销售出库单、QTCKD其他出库单、DBCKD调拨出库单、XTZHCKD形态转换出库单、JYJCD借用借出单
+  if (hxStyle=='XHD'){
+    str = '销货单'
+  } else if (hxStyle=='PLXHD'){
+    str = '批量销货单'
+  } else if (hxStyle=='XSCKD'){
+    str = '销售出库单'
+  } else if (hxStyle=='QTCKD'){
+    str = '其他出库单'
+  } else if (hxStyle=='DBCKD'){
+    str = '调拨出库单'
+  } else if (hxStyle=='XTZHCKD'){
+    str = '形态转换出库单'
+  } else if (hxStyle=='JYJCD'){
+    str = '借用借出单'
+  }
   return str
 }
 
@@ -750,7 +799,7 @@ async function jiezhang() {
   for (let i = 0; i < res.length; i++) {
     let item = res[0]
     if (item.stockMonth == mm) {
-      if (item.iap == '1') {
+      if (item.iar == '1') {
         flag.value = true
       }
     }
@@ -763,17 +812,17 @@ const startEdit = async (type) => {
   if (type === 'add') {
     await jiezhang()
     if(flag.value){
-      return createWarningModal({ content: '应付款已进行月末结账,不能进行操作！' });
+      return createWarningModal({ content: '应收款已进行月末结账,不能进行操作！' });
     }
-    let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付款月末结账',method:'月末结账'})
+    let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收款月末结账',method:'月末结账'})
     if(ymjz.length){
-      return createWarningModal({ content: ymjz[0]?.username+'正在进行应付款月末结账,不能同时进行操作！' });
+      return createWarningModal({ content: ymjz[0]?.username+'正在进行应收款月末结账,不能同时进行操作！' });
     }
-    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付单',method:'添加'})
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'添加'})
     if(taskData.length==0){
-      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'添加',caozuoModule:'ap'})
+      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'添加',caozuoModule:'ar'})
     } else {
-      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'添加',caozuoModule:'ap'})
+      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'添加',caozuoModule:'ar'})
     }
     status.value = 1
     formItems.value.id=null
@@ -784,12 +833,12 @@ const startEdit = async (type) => {
     formItems.value = {
       ddate: date,
       ccode: code,
-      busStyle: 'YFK',
+      busStyle: 'YSK',
     }
     formFuns.value.setFormValue({
       ddate: date,
       ccode: code,
-      busStyle: 'YFK',
+      busStyle: 'YSK',
     })
     let list:any = []
     for (let i = 0; i < maxR; i++) {
@@ -801,15 +850,15 @@ const startEdit = async (type) => {
     tableData1.value = []
     // setTableData1(list)
   } else {
-    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付单',method:'修改,删除,复核,弃审',recordNum:formItems.value.ccode})
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,复核,弃审',recordNum:formItems.value.ccode})
     if(taskData.length==0){
-      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'修改',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+      await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'修改',recordNum:formItems.value.ccode,caozuoModule:'ar'})
     } else {
       // 任务不是当前操作员的
       if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-        return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应付单,不能同时进行操作！' });
+        return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应收单,不能同时进行操作！' });
       }else{
-        await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'修改',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+        await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'修改',recordNum:formItems.value.ccode,caozuoModule:'ar'})
       }
     }
     status.value = 2
@@ -875,24 +924,24 @@ const startDel = async () => {
     } else {
       createConfirm({
         iconType: 'warning',
-        title: '应付单删除',
-        content: '您确定要进行应付单删除吗!',
+        title: '收款单删除',
+        content: '您确定要进行收款单删除吗!',
         onOk: async () => {
-          let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付单',method:'修改,删除,弃复,弃审',recordNum:formItems.value.ccode})
+          let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,弃复,弃审',recordNum:formItems.value.ccode})
           if(taskData.length==0){
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'删除',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:formItems.value.ccode,caozuoModule:'ar'})
           } else {
             // 任务不是当前操作员的
             if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-              return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应付单,不能同时进行操作！' });
+              return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应收单,不能同时进行操作！' });
             }else{
-              await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'删除',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+              await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:formItems.value.ccode,caozuoModule:'ar'})
             }
           }
-          await useRouteApi(deleteWarehousingById,{schemaName: dynamicTenantId})(formItems.value.id)
-          await useRouteApi(deleteWarehousingsByCcode,{schemaName: dynamicTenantId})(formItems.value.ccode)
+          await useRouteApi(deleteSaleousingById,{schemaName: dynamicTenantId})(formItems.value.id)
+          await useRouteApi(deleteSaleousingsByCcode,{schemaName: dynamicTenantId})(formItems.value.ccode)
           //删除任务锁定
-          await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'删除',recordNum:formItems.value.ccode})
+          await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:formItems.value.ccode})
           message.success('删除成功！')
           // formItems.value.czId = ''
           await contentSwitch('tail')
@@ -907,15 +956,15 @@ const startReview = async (b) => {
   if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
     if (b==true){
       // console.log('复核')
-      let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付单',method:'修改,删除,复核,弃复',recordNum:formItems.value.ccode})
+      let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,复核,弃复',recordNum:formItems.value.ccode})
       if(taskData.length==0){
-        await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'复核',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+        await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'复核',recordNum:formItems.value.ccode,caozuoModule:'ar'})
       } else {
         // 任务不是当前操作员的
         if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-          return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应付单,不能同时进行操作！' });
+          return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应收单,不能同时进行操作！' });
         }else{
-          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'复核',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'复核',recordNum:formItems.value.ccode,caozuoModule:'ar'})
         }
       }
       let dateTime = new_Date()
@@ -925,9 +974,9 @@ const startReview = async (b) => {
       formItems.value.bworkable = '1'
       formItems.value.bworkableTime = dateTime
       formItems.value.bworkableUser = useUserStore().getUserInfo['name']
-      const saleousingsList = await useRouteApi(findWarehousingsByCcode, {schemaName: dynamicTenantId})({
+      const saleousingsList = await useRouteApi(findSaleousingsByCcode, {schemaName: dynamicTenantId})({
         ccode: formItems.value.ccode,
-        billStyle: 'YFD'
+        billStyle: 'YSD'
       })
       saleousingsList.map(saleousings => {
         saleousings.bcheck = '1'
@@ -940,7 +989,7 @@ const startReview = async (b) => {
         let money = isum.value
         //查询期初收款单
         let qcList = await useRouteApi(findByCvencode,{schemaName: dynamicTenantId})({cvencode:formItems.value.cvencode,iyear:pageParameter.year})
-        let qcskdList = qcList.filter(item=>item.busStyle=='FKD')
+        let qcskdList = qcList.filter(item=>item.busStyle=='SKD')
         for (let i = 0; i < qcskdList.length; i++) {
           let qcskd = qcskdList[i]
           let whxIsum = sub(qcskd.ysIsumBenbi, qcskd.hxIsum == null ? 0 : qcskd.hxIsum)
@@ -979,7 +1028,7 @@ const startReview = async (b) => {
               iyear: pageParameter.year,
               ccode: qcskd.ccode,
               ddate: qcskd.ddate,
-              billStyle: 'FKD',
+              billStyle: 'SKD',
               hxStyle: formItems.value.billStyle,
               cvencode: formItems.value.cvencodeJs,
               hxCcode: formItems.value.ccode,
@@ -1048,7 +1097,7 @@ const startReview = async (b) => {
               iyear: pageParameter.year,
               ccode: ysyf.ccode,
               ddate: ysyf.ddate,
-              billStyle: 'FKD',
+              billStyle: 'SKD',
               hxStyle: formItems.value.billStyle,
               cvencode: formItems.value.cvencodeJs,
               hxCcode: formItems.value.ccode,
@@ -1064,7 +1113,7 @@ const startReview = async (b) => {
             //保存下游单据
             let stockXyCsource: any = {
               iyear: pageParameter.year,
-              xyBillStyle: 'FKD',
+              xyBillStyle: 'SKD',
               billStyle: formItems.value.billStyle,
               ccode: formItems.value.ccode,
               ccodeDate: formItems.value.ddate,
@@ -1080,7 +1129,7 @@ const startReview = async (b) => {
         } else {
           formItems.value.hxFlag = '0'
         }
-        await useRouteApi(saveWarehousing, {schemaName: dynamicTenantId})(formItems.value)
+        await useRouteApi(saveSaleousing, {schemaName: dynamicTenantId})(formItems.value)
         //修改销货单子表
         let money1 = formItems.value.hxIsum
         for (let j = 0; j < saleousingsList.length; j++) {
@@ -1114,14 +1163,14 @@ const startReview = async (b) => {
           }
           saleousingsList[j] = aa
         }
-        await useRouteApi(saveWarehousingsList, {schemaName: dynamicTenantId})(saleousingsList)
+        await useRouteApi(saveSaleousingsList, {schemaName: dynamicTenantId})(saleousingsList)
       } else {
         //应收审核不自动核销
-        await useRouteApi(saveWarehousing, {schemaName: dynamicTenantId})(formItems.value)
-        await useRouteApi(saveWarehousingsList, {schemaName: dynamicTenantId})(saleousingsList)
+        await useRouteApi(saveSaleousing, {schemaName: dynamicTenantId})(formItems.value)
+        await useRouteApi(saveSaleousingsList, {schemaName: dynamicTenantId})(saleousingsList)
       }
       //删除任务锁定
-      await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'复核',recordNum:formItems.value.ccode})
+      await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'复核',recordNum:formItems.value.ccode})
     } else {
       // console.log('取消复核')
       if (formItems.value.hxFlag=='1' || formItems.value.hxIsum>0) {
@@ -1133,25 +1182,25 @@ const startReview = async (b) => {
       } else {
         await jiezhang()
         if(flag.value){
-          return createWarningModal({ content: '应付款已进行月末结账,不能进行操作！' });
+          return createWarningModal({ content: '应收款已进行月末结账,不能进行操作！' });
         }
-        let zdhx= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付自动核销',method:'核销'})
+        let zdhx= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收自动核销',method:'核销'})
         if(zdhx.length){
-          return createWarningModal({ content: zdhx[0]?.username+'正在进行应付自动核销,不能同时进行操作！' });
+          return createWarningModal({ content: zdhx[0]?.username+'正在进行应收自动核销,不能同时进行操作！' });
         }
-        let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付款月末结账',method:'月末结账'})
+        let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收款月末结账',method:'月末结账'})
         if(ymjz.length){
-          return createWarningModal({ content: ymjz[0]?.username+'正在进行应付款月末结账,不能同时进行操作！' });
+          return createWarningModal({ content: ymjz[0]?.username+'正在进行应收款月末结账,不能同时进行操作！' });
         }
-        let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应付单',method:'修改,删除,复核,弃复',recordNum:formItems.value.ccode})
+        let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,复核,弃复',recordNum:formItems.value.ccode})
         if(taskData.length==0){
-          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'弃复',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'弃复',recordNum:formItems.value.ccode,caozuoModule:'ar'})
         } else {
           // 任务不是当前操作员的
           if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-            return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应付单,不能同时进行操作！' });
+            return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应收单,不能同时进行操作！' });
           }else{
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'弃复',recordNum:formItems.value.ccode,caozuoModule:'ap'})
+            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'弃复',recordNum:formItems.value.ccode,caozuoModule:'ar'})
           }
         }
         formItems.value.bcheck = '0'
@@ -1160,17 +1209,17 @@ const startReview = async (b) => {
         formItems.value.bworkable = '0'
         formItems.value.bworkableTime = ''
         formItems.value.bworkableUser = ''
-        await useRouteApi(saveWarehousing, {schemaName: dynamicTenantId})(formItems.value)
-        const ysyfsList = await useRouteApi(findWarehousingsByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:'YFD'})
+        await useRouteApi(saveSaleousing, {schemaName: dynamicTenantId})(formItems.value)
+        const ysyfsList = await useRouteApi(findSaleousingsByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:'YSD'})
         ysyfsList.map(ysyfs => {
           ysyfs.bcheck = '0'
           ysyfs.bcheckTime = ''
           ysyfs.bcheckUser = ''
           return ysyfs
         })
-        await useRouteApi(saveWarehousingsList, {schemaName: dynamicTenantId})(ysyfsList)
+        await useRouteApi(saveSaleousingsList, {schemaName: dynamicTenantId})(ysyfsList)
         //删除任务锁定
-        await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'弃复',recordNum:formItems.value.ccode})
+        await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'弃复',recordNum:formItems.value.ccode})
       }
     }
     message.success(`${b?'复核':'弃复'}成功！`)
@@ -1265,7 +1314,7 @@ function saveCheck(list) {
 async function saveData() {
   await jiezhang()
   if(flag.value){
-    return createWarningModal({ content: '应付款已进行月末结账,不能进行操作！' });
+    return createWarningModal({ content: '应收款已进行月末结账,不能进行操作！' });
   }
   if (hasBlank(formItems.value.ccode)) {
     createErrorModal({
@@ -1355,7 +1404,7 @@ async function saveData() {
   ysd.squantity2 = formItems.value.squantity2
   ysd.icost = formItems.value.icost
   ysd.isum = isum.value
-  ysd.billStyle = 'YFD'
+  ysd.billStyle = 'YSD'
   ysd.bdocumStyle = isum.value>0?'0':'1'
   ysd.taxAmount = formItems.value.taxAmount
   ysd.hxFlag = '0'
@@ -1368,14 +1417,14 @@ async function saveData() {
   ysd.pickingId = formItems.value.pickingId
   ysd.unitType = formItems.value.unitType
   ysd.unitValue = formItems.value.unitValue
-  await useRouteApi(saveWarehousing,{schemaName: dynamicTenantId})(ysd)
+  await useRouteApi(saveSaleousing,{schemaName: dynamicTenantId})(ysd)
   //删除收款单子表
   for (let i = 0; i < delIds.value.length; i++) {
     let id = delIds.value[i]
-    await useRouteApi(deleteWarehousingsById,{schemaName: dynamicTenantId})(id)
+    await useRouteApi(deleteSaleousingsById,{schemaName: dynamicTenantId})(id)
   }
   let list:any = []
-  //保存应付单子表
+  //保存应收单子表
   for (let i = 0; i < getDataSource().length; i++) {
     const item = getDataSource()[i]
     if(!hasBlank(item.isum)) {
@@ -1384,7 +1433,7 @@ async function saveData() {
       ysds.iyear = dynamicYear.value
       ysds.lineCode = buildUUID()
       ysds.lineId = i+1
-      ysds.billStyle = 'YFD'
+      ysds.billStyle = 'YSD'
       ysds.bstyle = item.bstyle
       ysds.ddate = formItems.value.ddate
       ysds.ccode = formItems.value.ccode
@@ -1460,7 +1509,7 @@ async function saveData() {
       list.push(ysds)
     }
   }
-  await useRouteApi(saveWarehousingsList,{schemaName: dynamicTenantId})(list)
+  await useRouteApi(saveSaleousingsList,{schemaName: dynamicTenantId})(list)
   await balanceTaskDel()
   message.success('保存成功！')
   await pageReload()
@@ -1494,8 +1543,8 @@ async function giveUp() {
 }
 
 async function balanceTaskDel() {
-  await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'添加'})
-  await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应付单',method:'修改',recordNum:formItems.value.ccode})
+  await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'添加'})
+  await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'修改',recordNum:formItems.value.ccode})
 }
 
 const loadPage = (e) => {
@@ -1914,6 +1963,24 @@ const getNextMark = (c,b) => {
     /*    background-image: url(/@/assets/images/homes/bg-pattern2.png);
         background-repeat: no-repeat;
         background-position: center;*/
+  }
+
+  .a-table-font-size-16 :deep(td),
+  .a-table-font-size-16 :deep(th) {
+    font-size: 14px !important;
+    padding: 2px 8px !important;
+    border-color: #aaaaaa !important;
+    //font-weight: 550;
+    color: #000000 !important;
+  }
+
+  .a-table-font-size-12 :deep(td),
+  .a-table-font-size-12 :deep(th) {
+    font-size: 13px !important;
+    padding: 2px 8px !important;
+    border-color: #aaaaaa !important;
+    //font-weight: 550;
+    color: #000000 !important;
   }
 
   .app-container-bottom {
