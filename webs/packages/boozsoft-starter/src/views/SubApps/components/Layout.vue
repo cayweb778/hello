@@ -1,6 +1,6 @@
 <template>
   <div style="position:fixed;left:0;top:0;">
-    <div v-if="showModuleError">模块未加载，请联系管理员</div>
+    <ErrorPage  v-if="showModuleError"></ErrorPage>
     <div v-else>
       <slot v-if="!showServerError"></slot>
       <div v-else>该模块后端未启动,前端路径：{{props.wujieAttrs.url}}</div>
@@ -9,6 +9,7 @@
 </template>
 <script setup>
 import {ref} from 'vue'
+import ErrorPage from './ErrorPage.vue'
 const props=defineProps(['wujieAttrs'])
 
 const showModuleError=ref(true)

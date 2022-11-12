@@ -97,14 +97,17 @@
       <!--        <CustomizeInfo style="min-width:90px;" />-->
       <span class="hoverSvg" style="min-width:100px;padding-top:4px;position: relative;" @click="outSystemBefore">
         <LogoutOutlined style="font-size: 18px"/>
-        <span style="font-size: 12px;position: absolute;left: 30px;top: 7px;">退出系统00000</span>
+        <span style="font-size: 12px;position: absolute;left: 30px;top: 7px;">退出系统</span>
       </span>
     </div>
   </div>
 </template>
-<script>
-import {computed, ref} from "vue";
-import {useCounterStoreWidthOut} from "@/store/modules/counter";
+<script setup>
+import {computed, ref} from "vue"
+import {useCounterStoreWidthOut} from "@/store/modules/counter"
+import {LogoutOutlined} from '@ant-design/icons-vue'
+import {useMessage} from "../../../hooks/web/useMessage"
+import {Badge,DatePicker,Button} from 'ant-design-vue'
 const {createConfirm} = useMessage();
 let mark = false;
 const loginDate=ref()

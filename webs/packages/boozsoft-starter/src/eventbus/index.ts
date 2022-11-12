@@ -1,4 +1,5 @@
 import {useGlobalStoreWidthOut} from "../store/modules/global";
+import WujieVue from "wujie-vue3";
 const { bus } = WujieVue;
 
 
