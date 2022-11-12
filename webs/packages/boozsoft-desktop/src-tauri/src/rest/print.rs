@@ -4,16 +4,19 @@ use serde_json::Result;
 #[tauri::command]
 pub fn get_printers_all() -> String {
     let printers = get_printers();
-    println!("{:?}", printers);
-    printers::print(&printers[1], "42".as_bytes());
-    // return serde_json::to_string(&printers);
-    return "".to_string();
+    let aaaa=format!("{:?}", printers);
+    // printers::print(&printers[1], "42".as_bytes());
+    // let ddddd=serde_json::to_string(&printers);
+    return aaaa.to_string();
 }
-
+use base64::{encode as base64encode, decode as base64Decode};
 #[tauri::command]
-pub fn printData() -> String {
+pub fn printData(contents:&str) -> String {
+
     let printers = get_printers();
-    println!("{:?}", printers);
-    printers::print(&printers[1], "42".as_bytes());
+
+    let base64DecodeVec=base64Decode(contents).unwrap();
+
+    printers::print(&printers[1],&base64DecodeVec);
     return "".to_string();
 }

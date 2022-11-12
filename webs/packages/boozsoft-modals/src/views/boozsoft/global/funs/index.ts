@@ -32,11 +32,11 @@ import abc1 from "../abc1.vue";
 
 export function defineNcModals() {
   // 跳转平台监听
-  window?.$wujie.bus.$on("openModal", function (callbak) {
-    console.log(888880000)
-    // console.log(callbak())
-    return 'aabcc'
-  });
+  // window?.$wujie.bus.$on("openModal", function (callbak) {
+  //   console.log(888880000)
+  //   // console.log(callbak())
+  //   return 'aabcc'
+  // });
   const abc= {
     componentData: {
       componentRef: ref( abc1),

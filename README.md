@@ -7,7 +7,7 @@ UUID=8d27ac77-824f-4d1b-8035-5bd05232dfd2
 https://blog.csdn.net/Latte_plus/article/details/125728697
 github访问慢
 https://zhuanlan.zhihu.com/p/560622268
-
+https://hub.nuaa.cf/search?o=desc&p=2&q=tauri&s=stars&type=Repositories
 linux pnpm build错误
 https://www.likecs.com/ask-10329563.html#sc=760
 这是一个与操作系统相关的问题。在linux的虚拟内存映射中有一个最大的内存分配，你可以增加它

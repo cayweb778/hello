@@ -18,7 +18,7 @@
     <iframe
       v-once
       ref="ddd"
-      src="/nc/?data="
+      :src="abasdsadsa+'boozsoft-print/?data='"
       style="width: 100%; position: absolute; height: calc(100% - 0px); background: #ededf0"
     ></iframe>
     <div
@@ -37,55 +37,60 @@
         left: calc((100% - 20px) / 2);
       "
     >
-      <CloseSquareOutlined style="color: white" />
+      <CloseSquareOutlined style="color: white"/>
     </div>
   </div>
 </template>
 <script setup>
-  import { nextTick, ref } from 'vue';
-  import {
-    SearchOutlined,
-    PlusOutlined,
-    SettingOutlined,
-    CloseSquareOutlined,
-  } from '@ant-design/icons-vue';
-  const abc = ref(false);
-  const ddd = ref();
-  const props = defineProps(['modelValue']);
-  async function abcd() {
-    return new Promise((r) => {
-      let i = 0;
-      const int = setInterval(() => {
-        if (i++ == 100) {
-          window.clearInterval(int);
-          throw new Error('找不到pdf iframe');
-        }
-        if (ddd.value.contentWindow.startPdf != null) {
-          r();
-          window.clearInterval(int);
-        }
-      }, 100);
-    });
-  }
+import {nextTick, ref} from 'vue';
+import {
+  SearchOutlined,
+  PlusOutlined,
+  SettingOutlined,
+  CloseSquareOutlined,
+} from '@ant-design/icons-vue';
 
-  function startPrint() {
-    abc.value = true;
-    nextTick(async () => {
-      await abcd();
-      ddd.value.contentWindow.startPdf(props.modelValue);
-    });
-  }
-  defineExpose({ startPrint });
+const abc = ref(false);
+const ddd = ref();
+const props = defineProps(['modelValue']);
+
+const abasdsadsa=new URL("http:"+window.__WUJIE.url).href
+async function abcd() {
+  return new Promise((r) => {
+    let i = 0;
+    const int = setInterval(() => {
+      if (i++ == 100) {
+        window.clearInterval(int);
+        throw new Error('找不到pdf iframe');
+      }
+      if (ddd.value.contentWindow.startPdf != null) {
+        r();
+        window.clearInterval(int);
+      }
+    }, 100);
+  });
+}
+
+function startPrint() {
+
+  abc.value = true;
+  nextTick(async () => {
+    await abcd();
+    ddd.value.contentWindow.startPdf(props.modelValue);
+  });
+}
+
+defineExpose({startPrint});
 </script>
 <style>
-  .boozsoftPdfViewer {
-    position: fixed;
-    z-index: 2147483647;
-    left: 0px;
-    top: 0px;
-    background: rgba(0, 0, 0, 0.8);
-    width: 100%;
-    height: calc(100% - 24px);
-    box-shadow: 0 0 20px black;
-  }
+.boozsoftPdfViewer {
+  position: fixed;
+  z-index: 2147483647;
+  left: 0px;
+  top: 0px;
+  background: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: calc(100% - 24px);
+  box-shadow: 0 0 20px black;
+}
 </style>

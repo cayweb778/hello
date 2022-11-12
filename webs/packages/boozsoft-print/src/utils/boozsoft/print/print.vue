@@ -14,7 +14,8 @@ const props = defineProps(['params', 'fun'])
 async function printData() {
   const printParams=usePrint()
   await printParams.print(props.params, props.fun)
-  // pdfmodel.value = printParams.pdfmodel.data
+  pdfmodel.value = printParams.pdfmodel.data
+  console.log(pdfmodel.value )
   // pdfViewerRef.value.startPrint()
 }
 

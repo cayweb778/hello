@@ -1,12 +1,12 @@
 import WujieVue from "wujie-vue3";
 import router from "@/router";
-import {useCounterStore} from "@/stores/counter";
+import {useCounterStoreWidthOut} from "@/store/modules/counter";
 const {bus}=WujieVue
 
 export function goHome(id : any){
 
     window.localStorage.setItem("newPlatformId","20006")
-    useCounterStore().setShowFooter(true)
+    useCounterStoreWidthOut().setShowFooter(true)
     router.push("/home")
     bus.$emit("goPlatform",20006);
 }

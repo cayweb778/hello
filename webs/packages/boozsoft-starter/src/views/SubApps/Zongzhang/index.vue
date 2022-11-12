@@ -25,7 +25,7 @@ import {isProdMode} from "@/utils/env";
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "../../../stores/counter";
+import {useCounterStoreWidthOut} from "../../../store/modules/counter";
 // const ncModals=ref(defineNcModals())
 // const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
@@ -35,7 +35,7 @@ const wujieAttrs = ref({
 
   props: {
 
-    globalData:useCounterStore(),
+    globalData:useCounterStoreWidthOut(),
     menuModules:modules,
     NcModals:{
       // async openDeptModal(params2){

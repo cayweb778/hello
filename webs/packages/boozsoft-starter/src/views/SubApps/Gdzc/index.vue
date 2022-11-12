@@ -25,14 +25,14 @@ import Layout from '../components/Layout.vue'
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "../../../stores/counter";
+import {useCounterStoreWidthOut} from "../../../store/modules/counter";
 // const ncModals=ref(defineNcModals())
 // const NcProvider = inject('NcProvider')
 
 
 
 const wujieAttrs = ref({
-  globalData:useCounterStore(),
+  globalData:useCounterStoreWidthOut(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncgdzc' : '//localhost:4100',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newgdzc':"ws://localhost:8085/newgdzc",
 

@@ -1,28 +1,26 @@
 <script setup lang="ts">
-import {  RouterView } from 'vue-router'
+import {RouterView} from 'vue-router'
 import Layout from "./views/boozsoft/layouts/index.vue"
 import NcProvider from "./views/boozsoft/provider/index.vue"
-import {useCounterStore} from "@/stores/counter";
-import {computed, ref} from "vue";
-const  showApp=ref(false)
-if(window.__TAURI__!=null){
-  showApp.value=true
-}
+import LeftSider from './views/boozsoft/layouts/LeftSider/index.vue'
+import AppView from './views/boozsoft/layouts/AppView.vue'
+import Abc from './Abc.vue'
+import PluginView from './PluginViews/index.vue'
 </script>
 
 <template>
-  <div>
-    <NcProvider v-if="showApp" >
+  <Abc>
+    <NcProvider>
       <Layout>
-        <RouterView/>
+        <PluginView/>
+        <!--    left sider switch    -->
+        <!--    platfrom view    -->
+        <AppView>
+          <RouterView/>
+        </AppView>
+        <!--    footer view    -->
+        <Footer></Footer>
       </Layout>
     </NcProvider>
-    <div v-else>
-          NC暂不支持网页端，请使用桌面端
-    </div>
-  </div>
+  </Abc>
 </template>
-
-<style scoped>
-
-</style>

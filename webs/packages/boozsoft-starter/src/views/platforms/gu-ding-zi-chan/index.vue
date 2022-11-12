@@ -15,7 +15,7 @@
 import {ref, getCurrentInstance, inject} from 'vue'
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
-import {useCounterStore} from "@/stores/counter";
+import {useCounterStoreWidthOut} from "@/store/modules/counter";
 
 const wujieVueRef = ref()
 
@@ -25,7 +25,7 @@ const wujieAttrs = ref({
   props: {
     NcProvider,
     aa: 1, goSystem: (attrs: any) => {
-      useCounterStore().setShowFooter(true)
+      useCounterStoreWidthOut().setShowFooter(true)
       router.push('/system')
     }
   },

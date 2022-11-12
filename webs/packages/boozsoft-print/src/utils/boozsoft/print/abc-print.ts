@@ -1,20 +1,27 @@
-const jspdf =null
-const jsPDF = null
+const jspdf = window.jspdf
+const jsPDF = jspdf.jsPDF
 
 
-export function addFont(jsPDF, {fontBase64, name}) {
-
+export function addFont(jsPDF,{base64,name}){
+  ;(function(jsPDFAPI) {
+    var font =base64;
+    var callAddFont = function(aa) {
+      this.addFileToVFS(name+'-normal.ttf', font)
+      this.addFont(name+'-normal.ttf', name, 'normal')
+    }
+    jsPDFAPI.events.push(['addFonts', callAddFont])
+  })(jsPDF.API)
 }
 
-// jsPDF.API.events.push(['addFonts', function () {
-//   this.addFileToVFS('fuhuiR-normal.ttf', window.puhuittf)
-//   this.addFont('fuhuiR-normal.ttf', 'fuhuiR', 'normal')
-// }])
-//
-// jsPDF.API.events.push(['addFonts', function () {
-//   this.addFileToVFS('fuhuiR-bold.ttf', window.AlibabaRBold)
-//   this.addFont('fuhuiR-bold.ttf', 'fuhuiR', 'bold')
-// }])
+jsPDF.API.events.push(['addFonts', function () {
+  this.addFileToVFS('fuhuiR-normal.ttf', window.puhuittf)
+  this.addFont('fuhuiR-normal.ttf', 'fuhuiR', 'normal')
+}])
+
+jsPDF.API.events.push(['addFonts', function () {
+  this.addFileToVFS('fuhuiR-bold.ttf', window.AlibabaRBold)
+  this.addFont('fuhuiR-bold.ttf', 'fuhuiR', 'bold')
+}])
 const data = ''
 
 export function tableStyle() {
@@ -27,25 +34,17 @@ export function tableStyle() {
     halign: 'left', // left, center, right, justify
     valign: 'top', // top, middle, bottom
     fontSize: 10,
-    // cellPadding: {
-    //     top:6,
-    //     left:6,
-    //     right:6,
-    //     bottom:6,
-    // }, // number or {top,left,right,left,vertical,horizontal}
     cellWidth: 'auto', // 'auto'|'wrap'|number
     minCellHeight: 0,
     minCellWidth: 0,
-    // lineColor: [0, 0, 0],
     lineColor: [0, 0, 0],
     lineWidth: 0.2
   }
 }
 
 export function printDefault(params, fun) {
-
+  console.log(params.data)
   const doc: any = new jsPDF(...params.data);
-
   doc.setFont('fuhuiR')
 
   fun(doc)

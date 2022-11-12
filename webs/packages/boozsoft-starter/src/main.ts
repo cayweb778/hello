@@ -8,13 +8,13 @@ import router from './router'
 import './assets/main.css'
 import WujieVue from "wujie-vue3";
 import {setupRouterGuard} from "@/router/guard";
-import {createPinia} from "pinia";
+import {setupStore} from "./store";
 
 const app = createApp(App)
 
 app.use(router)
 app.use(WujieVue)
-app.use(createPinia())
 // router-guard
+setupStore(app)
 setupRouterGuard();
 app.mount('#app')

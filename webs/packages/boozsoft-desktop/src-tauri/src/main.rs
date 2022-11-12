@@ -238,7 +238,7 @@ fn main() {
             Ok(())
         })
 
-        .invoke_handler(tauri::generate_handler![generate,goApp,getCacheIpAddrApi]);
+        .invoke_handler(tauri::generate_handler![generate,goApp,getCacheIpAddrApi,rest::print::get_printers_all,rest::print::printData]);
     app.run(tauri::generate_context!())
         .expect("error while running tauri application");
     // let mut bvvv=json.get_mut("build")

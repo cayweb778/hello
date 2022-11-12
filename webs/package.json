@@ -16,6 +16,7 @@
     "start:desktop": "cd packages/boozsoft-desktop && pnpm tauri dev",
     "start:print": "cd packages/boozsoft-print && pnpm dev",
     "start:main": "cd packages/boozsoft-starter && pnpm dev",
+    "start:modals": "cd packages/boozsoft-modals && pnpm dev",
     "start:auth": "cd packages/boozsoft-auth && pnpm dev",
     "start:system": "cd packages/boozsoft-platform-system && pnpm dev",
     "start:home": "cd packages/boozsoft-platform-home && pnpm dev",

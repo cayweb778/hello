@@ -17,7 +17,7 @@ import {ref, getCurrentInstance} from 'vue'
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "@/stores/counter";
+import {useCounterStoreWidthOut} from "@/store/modules/counter";
 
 const wujieVueRef = ref()
 const wujieAttrs = ref({
@@ -26,7 +26,7 @@ const wujieAttrs = ref({
     menuModules: modules,
     aa: 1,
     goSystem: (attrs: any) => {
-      useCounterStore().setShowFooter(true)
+      useCounterStoreWidthOut().setShowFooter(true)
 
       router.push('/home')
     }

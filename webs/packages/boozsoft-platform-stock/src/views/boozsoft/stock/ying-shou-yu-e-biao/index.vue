@@ -713,6 +713,7 @@ onMounted(async() => {
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 function printData(){
+
   // console.log("打印成功！")
   loadMark.value = true
   let printList: any = []

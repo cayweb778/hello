@@ -18,7 +18,7 @@ import Layout from '../components/Layout.vue'
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "../../../stores/counter";
+import {useCounterStoreWidthOut} from "../../../store/modules/counter";
 
 const wujieVueRef = ref()
 const NcProvider = inject('NcProvider')
@@ -28,7 +28,7 @@ const wujieAttrs = ref({
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newsystem':"ws://localhost:8087",
   props: {
 
-    globalData:useCounterStore(),
+    globalData:useCounterStoreWidthOut(),
     menuModules: modules,
     NcProvider,
     aa: 1,

@@ -46,52 +46,45 @@ function registerNcModal(){
 
 (async () => {
   registerNcModal()
-  if(isUseMock()){
-    const aa=sysMenuQueryAll()
-    await putMenu(aa)
-  }
-
-  createWindowDebuggerInfo()
   const app = createApp(App);
 
   // Configure store
-  setupStore(app);
+  // setupStore(app);
 
   // Initialize internal system configuration
-  initAppConfigStore();
+  // initAppConfigStore();
 
   // Register global components
-  registerGlobComp(app);
+  // registerGlobComp(app);
 
   // Multilingual configuration
-  await setupI18n(app);
+  // await setupI18n(app);
 
 
   // 优化加载，提前加载内容 end
 
   // Configure routing
   // 跳转到 缓存平台id 对应的平台
-  getCurrentPlatformIdCache() != null && await usePlatformsStoreWidthOut().goCurrentCachePlatform()
+  // getCurrentPlatformIdCache() != null && await usePlatformsStoreWidthOut().goCurrentCachePlatform()
 
-  setupRouter(app);
+  // setupRouter(app);
 
   // router-guard
-  setupRouterGuard();
+  // setupRouterGuard();
 
   // Register global directive
-  setupGlobDirectives(app);
+  // setupGlobDirectives(app);
 
   // Configure global error handling
-  setupErrorHandle(app);
+  // setupErrorHandle(app);
 
 
   // 优化加载，提前加载内容 start
-  const {Hello} = await import('/@/boozsoft/layouts/platforms/platform-nc-enter/index.vue')
-  const {Root} = await import( '/@/views/Root.vue')
-  const {Aaa} = await import('/@/views/Aaa.vue')
+  // const {Hello} = await import('/@/boozsoft/layouts/platforms/platform-nc-enter/index.vue')
+  // const {Root} = await import( '/@/views/Root.vue')
+  // const {Aaa} = await import('/@/views/Aaa.vue')
   // Mount when the route is ready
   // https://next.router.vuejs.org/api/#isready
-  await router.isReady();
 
   app.use(STable);
   app.use(WujieVue)

@@ -19,18 +19,18 @@ import Layout from '../components/Layout.vue'
 import router from "../../../router";
 import {isProdMode} from "@/utils/env";
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "@/stores/counter";
+import {useCounterStoreWidthOut} from "@/store/modules/counter";
 
 const wujieVueRef = ref()
 const wujieAttrs = ref({
 
-  globalData:useCounterStore(),
+  globalData:useCounterStoreWidthOut(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/nchome' : '//localhost:3800',
   props: {
     menuModules: modules,
     aa: 1,
     goSystem: (attrs: any) => {
-      useCounterStore().setShowFooter(true)
+      useCounterStoreWidthOut().setShowFooter(true)
       router.push('/home')
     }
   },

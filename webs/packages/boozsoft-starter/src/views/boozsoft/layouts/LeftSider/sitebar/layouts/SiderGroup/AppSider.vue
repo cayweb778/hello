@@ -114,10 +114,10 @@ function abdc(){
 
 import {goZongZhang,goStock,goSystem,goGuDingZiChan, goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
 import router from "@/router";
-import {useCounterStore} from "@/stores/counter";
+import {useCounterStoreWidthOut} from "@/store/modules/counter";
 
 function toGoPlatformById(id : any){
-  useCounterStore().setShowFooter(true)
+  useCounterStoreWidthOut().setShowFooter(true)
   if(id==1006 ||id==1001 || id==10131200){
     goZongZhang(id)
   }else if(id==20001){

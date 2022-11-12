@@ -25,7 +25,7 @@ import {isProdMode} from "@/utils/env";
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../pages/menuData";
-import {useCounterStore} from "../../../stores/counter";
+import {useCounterStoreWidthOut} from "../../../store/modules/counter";
 // const ncModals=ref(defineNcModals())
 // const NcProvider = inject('NcProvider')
 const hello={
@@ -33,7 +33,7 @@ const hello={
 }
 const wujieAttrs = ref({
 
-  globalData:useCounterStore(),
+  globalData:useCounterStoreWidthOut(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncstock' : '//localhost:3500',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: {

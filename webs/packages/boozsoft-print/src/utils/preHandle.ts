@@ -1,5 +1,5 @@
 export function isGoPdf() {
-  return !( self.frameElement == null || self.frameElement.src.indexOf('?data') == -1)
+  return !( window.location.href.indexOf('?data') == -1)
 }
 
 export async function goPdf() {
