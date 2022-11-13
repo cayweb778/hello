@@ -6,7 +6,7 @@ const {bus}=WujieVue
 export function goHome(id : any){
 
     window.localStorage.setItem("newPlatformId","20006")
-    useCounterStoreWidthOut().setShowFooter(true)
+    // useCounterStoreWidthOut().setShowFooter(true)
     router.push("/home")
     bus.$emit("goPlatform",20006);
 }

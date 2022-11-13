@@ -3,11 +3,22 @@
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import Greet from "./components/Greet.vue";
 // let abc=window.__TAURI__.window.WebviewWindow
+import { readDir , BaseDirectory } from '@tauri-apps/api/fs';
+async function  abssss(){
+  console.log(BaseDirectory)
+  debugger
+  const  AppConfig=await readDir('', { dir: BaseDirectory.  AppConfig,recursive:true });
+  debugger
+  const  AppData=await readDir('', { dir: BaseDirectory.  AppData,recursive:true });
+  const  AppLocalData=await readDir('', { dir: BaseDirectory.  AppLocalData,recursive:true });
+  const  AppCache=await readDir('', { dir: BaseDirectory.  AppCache,recursive:true });
+  const  AppLog=await readDir('', { dir: BaseDirectory.  AppLog,recursive:true });
+}
 </script>
 
 <template>
   <div class="container">
-    <h1>Welcome to 泊舟NC!</h1>
+    <h1>Welcome to 泊舟NC!<button @click="abssss">hello</button></h1>
 
     <div class="row">
       <a href="https://vitejs.dev" target="_blank">

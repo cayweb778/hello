@@ -60,54 +60,54 @@
       </Tabs>
     </div>
     <div style="display: inline;width: 75%;float: right;margin-top: 5px;">
-      <BasicTable @register="registerTable" :scroll="{ y: 400 }"
-                  :class="'a-table-font-size-12'"
-                  :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"
-                  @row-dbClick="rowDbClick">
-        <template #number="{record,index }">
-        <span slot="number" slot-scope="text,record,index">
-         {{index+1}}
-        </span>
-        </template>
+<!--      <BasicTable @register="registerTable" :scroll="{ y: 400 }"-->
+<!--                  :class="'a-table-font-size-12'"-->
+<!--                  :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange }"-->
+<!--                  @row-dbClick="rowDbClick">-->
+<!--        <template #number="{record,index }">-->
+<!--        <span slot="number" slot-scope="text,record,index">-->
+<!--         {{index+1}}-->
+<!--        </span>-->
+<!--        </template>-->
 
-        <template #ifrag="{record,index }">
-          <a-tag color="success" v-if="record.ifrag === '1'" slot="ifrag" @click="look(record)" slot-scope="text,record,index">
-            {{formatIfrag(record.ifrag)}}
-          </a-tag>
-          <a-tag color="processing" v-else-if="record.ifrag === '0'"  @click="look(record)" slot="ifrag"  slot-scope="text,record,index">
-            {{formatIfrag(record.ifrag)}}
-          </a-tag>
-          <a-tag color="warning" v-else-if="record.ifrag === '2'"  @click="look(record)" slot="ifrag" slot-scope="text,record,index">
-            {{formatIfrag(record.ifrag)}}
-          </a-tag>
-          <a-tag color="success" v-else="record.ifrag != '-1'"  @click="look(record)" slot="ifrag" slot-scope="text,record,index">
-            已发送
-          </a-tag>
-        </template>
+<!--        <template #ifrag="{record,index }">-->
+<!--          <a-tag color="success" v-if="record.ifrag === '1'" slot="ifrag" @click="look(record)" slot-scope="text,record,index">-->
+<!--            {{formatIfrag(record.ifrag)}}-->
+<!--          </a-tag>-->
+<!--          <a-tag color="processing" v-else-if="record.ifrag === '0'"  @click="look(record)" slot="ifrag"  slot-scope="text,record,index">-->
+<!--            {{formatIfrag(record.ifrag)}}-->
+<!--          </a-tag>-->
+<!--          <a-tag color="warning" v-else-if="record.ifrag === '2'"  @click="look(record)" slot="ifrag" slot-scope="text,record,index">-->
+<!--            {{formatIfrag(record.ifrag)}}-->
+<!--          </a-tag>-->
+<!--          <a-tag color="success" v-else="record.ifrag != '-1'"  @click="look(record)" slot="ifrag" slot-scope="text,record,index">-->
+<!--            已发送-->
+<!--          </a-tag>-->
+<!--        </template>-->
 
 
-        <template #sendTime="{record,index }">
-        <span slot="sendTime" slot-scope="text,record,index">
-            {{formatTime(record.sendTime)}}
-        </span>
-        </template>
+<!--        <template #sendTime="{record,index }">-->
+<!--        <span slot="sendTime" slot-scope="text,record,index">-->
+<!--            {{formatTime(record.sendTime)}}-->
+<!--        </span>-->
+<!--        </template>-->
 
-        <template #weights="{record,index }">
-          <a-tag v-if="record.weights === '1'" color="red">重要紧急</a-tag>
-          <a-tag v-if="record.weights === '2'" color="orange">重要不紧急</a-tag>
-          <a-tag v-if="record.weights === '3'" color="blue">紧急不重要</a-tag>
-          <a-tag v-if="record.weights === '4'" color="green">一般</a-tag>
-        </template>
+<!--        <template #weights="{record,index }">-->
+<!--          <a-tag v-if="record.weights === '1'" color="red">重要紧急</a-tag>-->
+<!--          <a-tag v-if="record.weights === '2'" color="orange">重要不紧急</a-tag>-->
+<!--          <a-tag v-if="record.weights === '3'" color="blue">紧急不重要</a-tag>-->
+<!--          <a-tag v-if="record.weights === '4'" color="green">一般</a-tag>-->
+<!--        </template>-->
 
-      </BasicTable>
+<!--      </BasicTable>-->
     </div>
 
     <template #footer>
       <a-button @click="handleOk()" type="primary">关闭</a-button>
     </template>
 
-    <Query @save="loadPage" @register="registerQueryPage"/>
-    <Look @register="registerLookPage"/>
+<!--    <Query @save="loadPage" @register="registerQueryPage"/>-->
+<!--    <Look @register="registerLookPage"/>-->
   </BasicModal>
 </template>
 <script setup="props, { content }" lang="ts">
@@ -120,6 +120,7 @@ import { onMounted, reactive, ref, toRaw, unref } from 'vue';
 import {BasicModal, useModal, useModalInner} from '/@/components/Modal';
 import {
   Select as ASelect,
+  Button as AButton,
   Form as AForm,
   Input as AInput,
   Statistic as AStatistic, message, Tabs,Tag as ATag
@@ -154,7 +155,8 @@ const treeData:any = ref([]);
 const selectedKeys:any = ref([]);
 const expandedKeys:any = ref([]);
 const dataSource:any = ref([]);
-
+const windowHeight = (document.documentElement.clientHeight - (350))
+const windowWidth = (document.documentElement.clientWidth - (70/*+280*/))
 const CrudApi = {
   list: [],
   columns: [

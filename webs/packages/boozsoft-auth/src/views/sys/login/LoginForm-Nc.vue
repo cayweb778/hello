@@ -216,6 +216,7 @@ export default defineComponent({
 
         const date = moment().format('YYYY-MM-DD')
         useCompanyOperateStoreWidthOut().commitLoginDate(date);
+        window.$wujie.bus.$emit("setLoginData",date)
         useCompanyOperateStoreWidthOut().commitShowLoginDate(false);
         userStore.goLogin(userinfo)
         abc.value = true

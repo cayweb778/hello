@@ -1,5 +1,4 @@
 export const modules = window.$wujie?.props.menuModules
-
 const menus = Object.values(modules).map(it => it.menus)
 
 

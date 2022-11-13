@@ -1,4 +1,3 @@
-
 import '@surely-vue/table/dist/index.css'
 import STable from '@surely-vue/table';
 import '/@/design/index.less';
@@ -35,15 +34,14 @@ import {createWindowDebuggerInfo} from "/@/utils/boozsoft/boozsoftDebuggerInfo/p
 import {sysMenuQueryAll} from "/@/utils/boozsoft/rbac/menuData";
 import {putMenu} from "/@/api/mock/mock-menu";
 import {isUseMock} from "/@/utils/env";
-import {useNcModalWidthOut} from "/@/boozsoft/nc-modal";
+import {setupNcdn} from "/@/ncdn2";
 // }
-
 
 
 (async () => {
   // registerNcModal()
-  if(isUseMock()){
-    const aa=sysMenuQueryAll()
+  if (isUseMock()) {
+    const aa = sysMenuQueryAll()
     await putMenu(aa)
   }
 
@@ -89,11 +87,11 @@ import {useNcModalWidthOut} from "/@/boozsoft/nc-modal";
   // https://next.router.vuejs.org/api/#isready
   await router.isReady();
 
+  setupNcdn(app)
   app.use(STable);
   app.use(WujieVue)
   app.use(STable);
   app.mount('#system-web', true);
-
 
 
 })();

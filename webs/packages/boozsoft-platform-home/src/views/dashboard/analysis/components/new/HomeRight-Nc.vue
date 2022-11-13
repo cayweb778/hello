@@ -271,7 +271,7 @@ accountInit()
     height: 120px;
     width: 100%;
     background-color: #146dc1;
-    background-image: url(/nc/img/bg/007.png);
+    background-image: v-bind("withNcdn('/img/all/bg/007.png')");
     background-position: 50% 50%;
     background-repeat: no-repeat;
     display: inline-flex;

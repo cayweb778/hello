@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div style="background:gray;width:100px;height:100px;">
     <div>
-      <div v-if="currentPluginName==='modals'"><modals></modals></div>
-      <div v-else-if="currentPluginName==='print'"><Print></Print></div>
-      <div v-else>未选择模块</div>
+      <div v-show="currentPluginName==='modals'"><modals></modals></div>
+      <div v-show="currentPluginName==='print'"><Print></Print></div>
+<!--      <div v-else>未选择模块</div>-->
     </div>
   </div>
 </template>

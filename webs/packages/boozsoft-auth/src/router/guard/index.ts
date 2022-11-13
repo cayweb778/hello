@@ -11,13 +11,5 @@ import { createStateGuard } from './stateGuard';
 import {createAccountPickerGuard} from "/@/router/guard/accountPicker";
 
 export function setupRouterGuard() {
-  createAccountPickerGuard(router);
-  createPageGuard(router);
-  createPageLoadingGuard(router);
-  createHttpGuard(router);
-  createScrollGuard(router);
-  createMessageGuard(router);
-  createProgressGuard(router);
   createPermissionGuard(router);
-  createStateGuard(router);
 }

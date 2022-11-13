@@ -49,7 +49,7 @@ const wujieAttrs = ref({
       // async openGysModal(params2){
       //   return await ncModals.value.openGysModal(params2)
       // }
-    },
+    }}),
   plugins:[
     {
       // 将url为aaa.js的脚本中的aaa替换成bbb

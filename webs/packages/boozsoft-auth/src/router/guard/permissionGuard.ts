@@ -20,9 +20,21 @@ export function createPermissionGuard(router: Router) {
   const permissionStore = usePermissionStoreWidthOut();
 
   router.beforeEach(async (to, from, next) => {
-    // Jump to the 404 page after processing the login
-    if(from.path === '/hello/aaa' ||to.fullPath==='/hello' ||to.fullPath==='/hello/aaaa'){
-      next();
+    if(to.fullPath!=='/login' ){
+      next("/login");
+      return
+    }else {
+      next()
+      return
+    }
+    debugger
+    if(from.path=='/'){
+
+      next("/login");
+      return
+    }
+    if(to.fullPath!=='/' ){
+      next("/login");
       return
     }
     if ((from.path === LOGIN_PATH && to.name === PAGE_NOT_FOUND_ROUTE.name)) {

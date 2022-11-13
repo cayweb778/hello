@@ -30,7 +30,7 @@ const wujieAttrs = ref({
     menuModules: modules,
     aa: 1,
     goSystem: (attrs: any) => {
-      useCounterStoreWidthOut().setShowFooter(true)
+      // useCounterStoreWidthOut().setShowFooter(true)
       router.push('/home')
     }
   },

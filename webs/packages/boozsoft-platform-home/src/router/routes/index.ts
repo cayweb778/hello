@@ -19,7 +19,6 @@ export const asyncRoutes = [PAGE_NOT_FOUND_ROUTE, ...routeModuleList];
 export const RootRoute: AppRouteRecordRaw = {
   path: '/',
   name: 'Root',
-  redirect:'/login',
   component: () => import('/@/views/Root.vue'),
   // redirect: PageEnum.BASE_HOME,
   meta: {

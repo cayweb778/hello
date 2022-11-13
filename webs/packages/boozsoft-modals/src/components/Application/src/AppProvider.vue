@@ -4,11 +4,10 @@ import {defineComponent, toRefs, ref, unref, provide} from 'vue';
   import { createAppProviderContext } from './useAppContext';
 
   import { prefixCls } from '/@/settings/designSetting';
-  import { createBreakpointListen } from '/@/hooks/event/useBreakpoint';
   import { propTypes } from '/@/utils/propTypes';
   import { useAppStore } from '/@/store/modules/app';
   import { MenuModeEnum, MenuTypeEnum } from '/@/enums/menuEnum';
-import {useBoozSoftStoreWidthOut} from "/@/store/modules/boozsoft/boozsoft-app";
+// import {useBoozSoftStoreWidthOut} from "/@/store/modules/boozsoft/boozsoft-app";
 
   export default defineComponent({
     name: 'AppProvider',
@@ -33,11 +32,11 @@ import {useBoozSoftStoreWidthOut} from "/@/store/modules/boozsoft/boozsoft-app";
       const { prefixCls } = toRefs(props);
       createAppProviderContext({ prefixCls, isMobile });
       function createBoozsoftAppProvider(){
-        const AppProviderLang=ref(useBoozSoftStoreWidthOut())
+        // const AppProviderLang=ref(useBoozSoftStoreWidthOut())
 
-        provide('AppProviderLang',AppProviderLang)
+        // provide('AppProviderLang',AppProviderLang)
       }
-      createBoozsoftAppProvider()
+      // createBoozsoftAppProvider()
       function handleRestoreState() {
         if (unref(isMobile)) {
           if (!unref(isSetState)) {

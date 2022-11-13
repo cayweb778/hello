@@ -49,13 +49,13 @@ function registerNcModal(){
   const app = createApp(App);
 
   // Configure store
-  // setupStore(app);
+  setupStore(app);
 
   // Initialize internal system configuration
-  // initAppConfigStore();
+  initAppConfigStore();
 
   // Register global components
-  // registerGlobComp(app);
+  registerGlobComp(app);
 
   // Multilingual configuration
   // await setupI18n(app);
@@ -73,10 +73,10 @@ function registerNcModal(){
   // setupRouterGuard();
 
   // Register global directive
-  // setupGlobDirectives(app);
+  setupGlobDirectives(app);
 
   // Configure global error handling
-  // setupErrorHandle(app);
+  setupErrorHandle(app);
 
 
   // 优化加载，提前加载内容 start

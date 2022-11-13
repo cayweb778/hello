@@ -25,7 +25,7 @@ const wujieAttrs = ref({
   props: {
     NcProvider,
     aa: 1, goSystem: (attrs: any) => {
-      useCounterStoreWidthOut().setShowFooter(true)
+      // useCounterStoreWidthOut().setShowFooter(true)
       router.push('/system')
     }
   },

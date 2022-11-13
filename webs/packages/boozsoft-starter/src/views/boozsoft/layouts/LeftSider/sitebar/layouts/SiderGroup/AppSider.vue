@@ -117,7 +117,7 @@ import router from "@/router";
 import {useCounterStoreWidthOut} from "@/store/modules/counter";
 
 function toGoPlatformById(id : any){
-  useCounterStoreWidthOut().setShowFooter(true)
+  // useCounterStoreWidthOut().setShowFooter(true)
   if(id==1006 ||id==1001 || id==10131200){
     goZongZhang(id)
   }else if(id==20001){
