@@ -122,6 +122,7 @@ watch(()=>  loginDateCompoted.value,(e)=>{
   loginDate.value=e
 },{immediate:true})
 const dateChange = async (v) => {
+  useGlobalStoreWidthOut().setLoginDate(v)
   window.localStorage.setItem('loginDate',v)
 
 }
@@ -137,6 +138,9 @@ import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import router from "../../../router";
 import {useGlobalStoreWidthOut} from "../../../store/modules/global";
 
+const changeOpenStatus = () => {
+  showOpen.value = !showOpen.value
+}
 
 function goMessage(){
   let aaaa=useGlobalStoreWidthOut().getNcModals
