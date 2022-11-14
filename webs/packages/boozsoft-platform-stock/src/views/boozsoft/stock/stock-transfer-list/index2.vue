@@ -3,9 +3,10 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <ProfileOutlined style="color: #0096c7;font-size: 60px;"/>
         </div>
-        <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
+        <div> <AccountPicker theme="three" readonly style="background-color: #f5f5f5;" @reloadTable="dynamicAdReload"/>
+        </div>
       </div>
       <div>
         <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">调拨单列表</b></div>
@@ -44,7 +45,7 @@
         </div>
         <div>
           <div>
-            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;font-weight: bold;" class="special_select">
+            <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;font-weight: bold;border-radius: 4px;text-align: left;" class="special_select">
               <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="2">供应商简称</SelectOption>
               <SelectOption style="font-size: 12px;" value="3">仓库</SelectOption>
@@ -53,7 +54,7 @@
             <!-- 搜索 -->
             <InputSearch
               placeholder=""
-              style="width: 200px; border-radius: 4px;margin-right: 4px"
+              style="width: 150px; border-radius: 4px;margin-right: 4px"
               @search="onSearch"
             />
           </div>
@@ -535,6 +536,7 @@ async function saveQuery(data) {
     strDate.value=data.strDate.replaceAll('-','.')
     endDate.value=data.endDate.replaceAll('-','.')
   }
+  dynamicTenant.value = data.obj
   pageParameter.strDate = strDate.value
   pageParameter.endDate = endDate.value
   iyear.value = data.iyear
@@ -1115,6 +1117,8 @@ function randomString(length) {
   return result;
 }
 
+
+const dynamicTenant:any = ref('')
 const toAudit = async () => {
   if (checkRow.value.length == 1) {
     if(checkRow.value[0].bcheck === '1'){
@@ -1147,11 +1151,29 @@ const toAudit = async () => {
     }
 
     //校验现存量
-    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})(checkRow.value[0].ccode)
+    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'XCL',
+  })
     console.log(b)
     if(!b){
       compState.loading = false
       return message.error('现存量不足不能审核！！！')
+    }
+
+    //校验可用量
+    let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'KYL',
+    })
+    console.log(kyl)
+    if(!kyl){
+      compState.loading = false
+      return message.error('可用量不足不能审核！！！')
     }
 
     let a = useUserStoreWidthOut().getUserInfo.id
@@ -1205,11 +1227,28 @@ const toAuditBack = async () => {
     }
 
     //校验现存量
-    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})(checkRow.value[0].ccode)
+    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'XCL',
+    })
     console.log(b)
     if(!b){
       compState.loading = false
       return message.error('现存量不足不能审核！！！')
+    }
+    //校验可用量
+    let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'KYL',
+    })
+    console.log(kyl)
+    if(!kyl){
+      compState.loading = false
+      return message.error('可用量不足不能审核！！！')
     }
     let a = useUserStoreWidthOut().getUserInfo.id
     await useRouteApi(auditBack,{schemaName: dynamicTenantId})({
@@ -1284,44 +1323,63 @@ async function saveLogData(optAction,ccode) {
   await saveLog(logmap)
 }
 </script>
-<style src="./global-menu-index.less" lang="less" scoped></style>
 <style scoped lang="less">
+@import "./global-menu-index.less";
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
   box-shadow: rgb(72 113 140) -3px 1px 7px -1px;
 }
+.ant-btn-me {
+  color: #0096c7;
+}
 
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
-  font-size: 16px !important;
+  font-size: 14px !important;
   padding: 5px 8px !important;
   border-color: #aaaaaa !important;
+  height: 30px;
+  font-weight: unset;
+  color: black;
 }
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
-  font-size: 13px !important;
+  font-size: 12px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
+  height: 27px;
+  font-weight: unset;
+  color: black;
 }
+
 
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
   padding: 10px 5px;
-  margin: 10px 10px 5px;
+  margin: 10px 10px 3px;
 }
 
 .app-container:nth-of-type(2) {
   padding: 0px;
   margin: 0px 10px;
   background: #b4c8e3 !important;
+  margin-top: -6px;
+  position: relative;
+  .pagination-text{
+    position: absolute;
+    bottom: 6px;
+    right: 20%;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
 }
 
 :deep(.ant-table-thead) th{
   text-align: center !important;
   font-weight: bold;
-  //background-color: #f2f2f2 !important;
   background-color: #cccccc !important;
   border-color: #aaaaaa !important;
 }
@@ -1344,12 +1402,14 @@ async function saveLogData(optAction,ccode) {
   padding-top: 5px;
   padding-bottom: 5px;
   margin: 0!important;
+  width: 100%;
 }
 
 :deep(.vben-basic-table){
   min-height: 500px;
   height: calc(100% - 160px);
   margin-bottom: 20px;
+  width: 100%!important;
 }
 
 :deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
@@ -1357,78 +1417,75 @@ async function saveLogData(optAction,ccode) {
 }
 
 .lcr-theme-div{
+  border-radius: 5px 5px 0 0;
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
     position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    >div:nth-of-type(1){width: 64px;display: inline-block;
+      position: absolute;
+      top: 12px;
+      left: 3px;
     }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
+      position: absolute;
+      top: 27px;
+      left: 75px;
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;padding-top:8px;
+    >div:nth-of-type(2){margin-top: 1px;}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
-
-    >div:nth-of-type(1){
-      .ant-btn-me {
-        color: #0096c7;
-      }
-    }
+    width: 40%;text-align: right;padding-right: 3px;
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
+
+    }
+    .acttd-right-d-search {
+      .acttdrd-search-select {
+        width: 120px;
+
+        :deep(.ant-select-selector) {
+          border-radius: 2px 0 0 2px;
+          height: 30px;
+        }
+      }
+
+      .acttdrd-search-input {
+        width: 180px;
+        :deep(.ant-input){
+          border-color: @Global-Border-Color;
+          border-left: none;
+        }
+        :deep(.ant-input-search-button){
+          border-color: #c9c9c9;
+          border-left: none;
+          //color: #0096c7;
+        }
+      }
     }
   }
 }
-:deep(.nc-summary) {
-  font-size: 14px;
+.tableUStyle {
+  color: #0798c8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tableUStyle:hover {
+  color: #b4c8e3;
+}
+:deep(.ant-table-measure-row){
+  td{
+    padding: 0 !important;
+  }
+}
+:deep(.nc-summary){
   font-weight: bold;
-  width: 100%;
-
-  > div {
-    display: inline-block;
-    background-color: #d8d8d8;
-    padding: 5px;
-  }
-  > div:nth-of-type(1) {
-    width: 59.5%;
-    text-align: center;
-  }
-
-  > div:nth-of-type(2) {
-    width: 20%;
-    margin: 0 1px;
-    text-align: left;
-  }
-  > div:nth-of-type(3) {
-    width: 20%;
-    margin: 0 1px;
-    text-align: left;
-  }
-}
-
-.app-container:nth-of-type(2) {
-  padding: 0px;
-  margin: 0px 10px;
-  background: #b4c8e3 !important;
-  position: relative;
-  .pagination-text{
-    position: absolute;
-    bottom: 6px;
-    right: 10%;
-    font-size: 13px;
-    color: black;
-    z-index: 99999999;
-  }
-}
-:deep(.ant-table-tbody) {
-  tr.ant-table-measure-row{
-    visibility: collapse !important;
-  }
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
 }
 </style>

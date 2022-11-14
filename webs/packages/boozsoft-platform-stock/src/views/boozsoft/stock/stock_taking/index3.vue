@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <ProfileOutlined style="color: #0096c7;font-size:60px;"/>
         </div>
         <div style="margin-top:20px;">
           <div>
@@ -98,13 +98,13 @@
             <span  class="ap-text">{{fomartStyle(routemsg.bstyle)}}</span>
           </div>
           <div>
-            <a-select v-model:value="selectSearchValue" style="width: 120px;font-size: 12px;font-weight: bold;" class="special_select">
+            <a-select v-model:value="selectSearchValue" style="width: 150px;font-size: 12px;font-weight: bold;" class="special_select">
               <a-select-option value="ccode">存货编码</a-select-option>
               <a-select-option value="ccodeName">存货名称</a-select-option>
             </a-select>
             <!-- 搜索 -->
             <a-input-search placeholder="" v-model:value="inputsearchtext"
-                            style="width: 200px; border-radius: 4px;margin-right: 4px" @search="selectSearch"/>
+                            style="width: 150px; border-radius: 4px;margin-right: 4px" @search="selectSearch"/>
           </div>
 
           <a-button class="ant-btn-me">
@@ -217,7 +217,7 @@
       </div>
     </div>
 
-    <div class="app-container" :style="{height: (windowHeight)+'px',display: 'inline',width: showCatalog?'calc( 100% - 310px )':'calc( 100% - 22px )',float: 'right',marginTop: '0px'}">
+    <div class="app-container" :style="{height: (windowHeight)+'px',display: 'inline',width: showCatalog?'calc( 100% - 300px )':'calc( 100% - 22px )',float: 'right',marginTop: '0px'}">
 
       <BasicTable
         ref="tableRef"
@@ -841,7 +841,7 @@ const [registerCodePopPage, {openModal: openCodePopPage}] = useModal();
 
 const tableRef = ref(null)
 const windowWidth = (window.innerWidth)
-const windowHeight = (window.innerHeight - (320))
+const windowHeight = (window.innerHeight - (300))
 const totalColumnWidth = ref(0)
 const [registerTable, {
   reload,
@@ -2474,8 +2474,8 @@ const openExcel = (obj) => {
     }
   }
   >div:nth-of-type(2){
-    width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    width: 20%;text-align:center;padding-top:8px;
+    >div:nth-of-type(2){margin-top: 1px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;

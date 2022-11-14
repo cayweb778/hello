@@ -82,6 +82,20 @@ public interface StockRepository extends ReactiveCrudRepository<Stock, String> {
             " order by s.create_time desc")
     Flux<StockVo> findAllByXcl();
 
+    @Query("select s.*, sc.stock_cclass_name,(case\n" +
+            "            when s.stock_measurement_type = '单计量' then\n" +
+            "                (select sm.unit_name as cunitid_name from sys_unit_of_mea sm where sm.id = s.stock_measurement_unit)\n" +
+            "            else\n" +
+            "                (select sml.unit_name as cunitid_name\n" +
+            "                 from sys_unit_of_mea_many sml\n" +
+            "                 where sml.id = s.stock_measurement_unit)\n" +
+            "           end) as stock_measurement_name  " +
+            " from  stock s " +
+            " left join  stock_class sc on s.stock_class=sc.unique_stockclass " +
+            " where s.stock_num in (:cinvodeList) " +
+            " order by s.create_time desc")
+    Flux<StockVo> findAllByXcl2(List<String> cinvodeList);
+
     @Query("select distinct  scs.base_quantity as xcl,s.* from stock_currentstock scs left join  stock s on  scs.inv_code = s.stock_num order by s.create_time desc")
     Flux<Stock> findCunHuoAllByXcl();
 

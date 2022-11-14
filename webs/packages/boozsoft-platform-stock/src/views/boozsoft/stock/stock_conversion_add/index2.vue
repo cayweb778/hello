@@ -2593,7 +2593,7 @@ const gotoPk = async () => {
     >div:nth-of-type(2){margin-top: 14px;}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
+    width: 43%;text-align: right;
     display: block;
     >div:nth-of-type(1){
       .actod-btn {

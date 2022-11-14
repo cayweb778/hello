@@ -70,9 +70,15 @@ public interface StockSaleousingsRepository extends ReactiveCrudRepository<Stock
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost,  sbb.bcheck," +
             " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '2' as types, sbb.isum_xiaohuo as isum " +
             " from stock_saleousings sbb  " +
-            " where sbb.iyear=:iyear and sbb.bcheck = '1' and cwhcode = :ck and sbb.bill_style in ('XSCKD', 'DBCKD', 'XTZHCKD', 'QTCKD', 'PYCKD','CLLYCKD','CKTZD')")
-    Flux<StockAccSheetVo> findAllByIyearAndCk(String ck, String iyear);
+            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.bill_style in ('XSCKD', 'QTCKD','CLLYCKD','CKTZD')")
+    Flux<StockAccSheetVo> findAllByIyearAndCk(String iyear, String ck);
 
+    @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
+            " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost,  sbb.bcheck," +
+            " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '2' as types, sbb.isum_xiaohuo as isum " +
+            " from stock_saleousings sbb  " +
+            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.cinvode in (:list) and sbb.bill_style in ('XSCKD', 'QTCKD','CLLYCKD')")
+    Flux<StockAccSheetVo> findAllByIyearAndCkAndList(String iyear,String ck,List<String> list);
 
     @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost, " +

@@ -236,7 +236,10 @@ const [register, {closeModal, setModalProps}] = useModalInner((data) => {
   openType.value=data.openType
   setModalProps({ minHeight: 475 });
 })
+
+const dynamicTenant:any = ref('')
 const dynamicAdReload = async (obj) =>{
+  dynamicTenant.value = obj
   databaseTrue.value=obj.accountMode
   dynamicAccId.value=obj.accId
   modelLoadIng.value=true
@@ -340,7 +343,8 @@ function handleOk() {
     database:databaseTrue.value,
     coCode:coCode.value,
     companyName:companyName.value,
-    type:'DBD'
+    type:'DBD',
+    obj:dynamicTenant.value
   }
   emit('save', map);
   closeModal();

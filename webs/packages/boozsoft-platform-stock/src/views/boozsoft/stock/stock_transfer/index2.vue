@@ -1205,10 +1205,18 @@ const startReview = async (b) => {
       }
 
       //校验现存量
-      let xcl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})(formFuns.value.getFormValue().ccode)
-      if(!xcl){
+      let isCheck = true
+      let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity)  && !hasBlank(it.price + ''))
+      list.forEach(v=>{
+        let num = verifyRowXCLData(v)
+        if(num < v.baseQuantity){
+          isCheck = false
+          return
+        }
+      })
+      if(!isCheck){
         compState.loading = false
-        return message.error('现存量不足不能进行操作！！！')
+        return message.error('现存量不足不能审核！！！')
       }
 
       let a = useUserStoreWidthOut().getUserInfo.id
