@@ -25,6 +25,11 @@
           <button
             type="button"
             class="ant-btn ant-btn-me"
+            @click="fentan()"
+          ><span>分摊</span></button>
+          <button
+            type="button"
+            class="ant-btn ant-btn-me"
             @click="saveData()"
           ><span>保存</span></button>
           <button
@@ -960,7 +965,7 @@ const onSelectChange = (selectedRowKeys,row) => {
   // console.log('selectedRowKeys changed: ', row);
   state.selectedRowKeys = selectedRowKeys;
   checkRow.value = row
-  isum.value = 0
+  /*isum.value = 0
   wjsIsum.value = 0
   bcjsIsum.value = 0
   zkIsum.value = 0
@@ -981,7 +986,7 @@ const onSelectChange = (selectedRowKeys,row) => {
     if (item.ljhxIsum!=null && item.ljhxIsum!=''){
       ljjsIsum.value = add(ljjsIsum.value,item.ljhxIsum)
     }
-  })
+  })*/
 };
 
 //选中内容
@@ -1131,6 +1136,28 @@ const hxMoney:any = ref('0')
 const idiscount:any = ref('0')
 //计算收款明细和结算明细
 function countTable(){
+  isum.value = 0
+  wjsIsum.value = 0
+  bcjsIsum.value = 0
+  zkIsum.value = 0
+  ljjsIsum.value = 0
+  getDataSource().forEach(item=>{
+    if (item.isum!=null && item.isum!=''){
+      isum.value = add(isum.value,item.isum)
+    }
+    if (item.whxIsum!=null && item.whxIsum!=''){
+      wjsIsum.value = add(wjsIsum.value,item.whxIsum)
+    }
+    if (item.hxMoney!=null && item.hxMoney!=''){
+      bcjsIsum.value = add(bcjsIsum.value,item.hxMoney)
+    }
+    if (item.idiscount!=null && item.idiscount!=''){
+      zkIsum.value = add(zkIsum.value,item.idiscount)
+    }
+    if (item.ljhxIsum!=null && item.ljhxIsum!=''){
+      ljjsIsum.value = add(ljjsIsum.value,item.ljhxIsum)
+    }
+  })
   isum1.value = 0
   hxIsum.value = 0
   hxMoney.value = 0
@@ -1240,6 +1267,97 @@ function countFentan(){
       title: '温馨提示',
       content: '请选择需要分摊的数据！'
     })
+  }
+}
+
+//分摊
+function fentan(){
+  if(isum.value==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '未核销收款单的合计为零，不能进行核销处理，请选择红票对冲！'
+    })
+    return false
+  }
+  if(isum1.value==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '未核销应收单的合计为零，不能进行核销处理，请选择红票对冲！'
+    })
+    return false
+  }
+  if(isum.value>0 && isum1.value<0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '未核销收款单和应收单的合计金额正负方向不一致，不能进行核销处理，请稍后在试！'
+    })
+    return false
+  }
+  if(isum.value<0 && isum1.value>0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '未核销收款单和应收单的合计金额正负方向不一致，不能进行核销处理，请稍后在试！'
+    })
+    return false
+  }
+  tableData.value.forEach(item=>{
+    item.hxMoney = ''
+    item.idiscount = ''
+    return item
+  })
+  tableData1.value.forEach(item=>{
+    item.hxMoney = ''
+    item.idiscount = ''
+    return item
+  })
+  if(isum.value>0 && wjsIsum.value>hxIsum.value){//合计为正，按照hxIsum分摊
+    let num1=hxIsum.value
+    tableData.value.forEach(item=>{
+      if (item.isum<0){
+        item.hxMoney = item.whxIsum
+        num1 = sub(num1,item.hxMoney)
+      }
+    })
+    tableData.value.forEach(item=>{
+      if (num1 > 0) {
+        if (item.isum > 0) {
+          if (item.whxIsum <= num1) {
+            item.hxMoney = item.whxIsum
+            num1 = sub(num1, item.hxMoney)
+          } else {
+            item.hxMoney = num1
+            num1 = sub(num1, item.hxMoney)
+          }
+        }
+      }
+    })
+    let num2=hxIsum.value
+    tableData1.value.forEach(item=>{
+      if (item.isum<0){
+        item.hxMoney = item.whxIsum
+        num2 = sub(num2,item.whxIsum)
+      }
+    })
+    tableData1.value.forEach(item=>{
+      if (num2 > 0) {
+        if (item.isum > 0) {
+          if (item.whxIsum <= num2) {
+            item.hxMoney = item.whxIsum
+            num2 = sub(num2, item.hxMoney)
+          } else {
+            item.hxMoney = num2
+            num2 = sub(num2, item.hxMoney)
+          }
+        }
+      }
+    })
+  } else if(isum.value>0 && wjsIsum.value<hxIsum.value){//合计为正，按照wjsIsum分摊
+  } else if(isum.value<0 && wjsIsum.value>hxIsum.value){//合计为负，按照wjsIsum分摊
+  } else if(isum.value<0 && wjsIsum.value<hxIsum.value){//合计为负，按照hxIsum分摊
   }
 }
 
