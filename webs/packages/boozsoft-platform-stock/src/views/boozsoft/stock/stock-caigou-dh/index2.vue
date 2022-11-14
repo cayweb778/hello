@@ -1442,7 +1442,7 @@ const startDel = async () => {
     // 可用量不足 不足 弹出框提示
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
       return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
     }
@@ -2062,10 +2062,12 @@ const delStockWareHCDFun = async () => {
   let list:any = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   for (let i = 0; i < list.length; i++) {
     let sourceDataList2 = await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
-    // 修改累计核算数量
-    sourceDataList2.isumJiesuan =parseFloat(sourceDataList2.isumJiesuan)- parseFloat(list[i].baseQuantity)
+    if(!hasBlank(sourceDataList2)){
+      // 修改累计核算数量
+      sourceDataList2.isumJiesuan =parseFloat(sourceDataList2.isumJiesuan)- parseFloat(list[i].baseQuantity)
+      await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
+    }
     list[i].isumJiesuan =parseFloat(list[i].isumJiesuan)- parseFloat(list[i].baseQuantity)
-    await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
   }
   await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(list)
 
@@ -2919,8 +2921,8 @@ const tableDataChange =  async (r,c) => {
           verifylist.push(temp2)
 
           let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
-          // 如果是负数强制转换成正数比较
-          currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+          // 如果是负数强制转换成正数比较;可用量不能等于0
+          currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
           if(currData.length>0){
             return openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
           }
@@ -3524,8 +3526,8 @@ async function setCGTHD_data() {
   }
   // 可用量不足 弹出框提示
   let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
-  // 如果是负数强制转换成正数比较
-  currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+  // 如果是负数强制转换成正数比较;可用量不能等于0
+  currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
   console.log('弃审判断可用量：'+currData)
   if(currData.length>0){
     return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})

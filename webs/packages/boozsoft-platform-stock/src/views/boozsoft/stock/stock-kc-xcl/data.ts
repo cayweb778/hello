@@ -162,7 +162,7 @@ const dynamicColumnAndDataModel = reactive({
     {
       key: '8',
       name: '可用量',
-      nameNew: '现存量',
+      nameNew: '可用量',
       check: true,
       width: 150,
       max: 600,

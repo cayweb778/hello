@@ -47,6 +47,7 @@ public class StockKcXCLController {
         StringBuffer sb2 = new StringBuffer("where 1=1");
         StringBuffer sb3 = new StringBuffer("");
         StringBuffer sb4 = new StringBuffer("");
+        StringBuffer sb5 = new StringBuffer("");
         StringBuffer cwhcodeColumn = new StringBuffer("");
         StringBuffer cwhcodeColumn1 = new StringBuffer("");
         String cinvode = "";
@@ -97,6 +98,7 @@ public class StockKcXCLController {
             if (StrUtil.isNotBlank(cinvode)) {
                 sb1.append(" and sbb.stock_id in (" + cinvode.substring(0, cinvode.length() - 1) + ") ");
                 sb2.append(" and sws.cinvode in (" + cinvode.substring(0, cinvode.length() - 1) + ") ");
+                sb5.append(" and sws.cinvode in (" + cinvode.substring(0, cinvode.length() - 1) + ") ");
             }
             sb4.append(" and temp.cinvode in (" + cinvode.substring(0, cinvode.length() - 1) + ") ");
         }
@@ -111,6 +113,7 @@ public class StockKcXCLController {
         if (StrUtil.isNotBlank(cwhcode)) {
             sb1.append(" and sbb.stock_cangku_id='" + cwhcode + "' ");
             sb2.append(" and sws.cwhcode='" + cwhcode + "' ");
+            sb5.append(" and sws.cwhcode='" + cwhcode + "' ");
         }
 
         // 做过单据的存货---------批次现存量
@@ -128,7 +131,7 @@ public class StockKcXCLController {
                 "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1) rate1,\n" +
                 "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id2),'0') rate2 " +
                 " from (select sbb.stock_id as cinvode, sbb.stock_cangku_id as cwhcode, sbb.batch_number as batch_id, sbb.dpdate, sbb.dvdate\n" +
-                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode, sws.cwhcode, sws.batch_id, sws.dpdate, sws.dvdate from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' union all \n" +
+                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode, sws.cwhcode, sws.batch_id, sws.dpdate, sws.dvdate from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' "+sb5+" union all \n" +
                 "               select distinct sws.cinvode, sws.cwhcode, sws.batch_id, sws.dpdate, sws.dvdate\n" +
                 "               from stock_warehousings sws " + sb2 + " and sws.bill_style!='CGDD' union all\n" +
                 "               select distinct sws.cinvode, sws.cwhcode, sws.batch_id, sws.dpdate, sws.dvdate\n" +
@@ -149,7 +152,7 @@ public class StockKcXCLController {
                 "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1) rate1,\n" +
                 "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id2),'0') rate2 " +
                 " from (select sbb.stock_id as cinvode "+cwhcodeColumn+" \n" +
-                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode "+cwhcodeColumn1+" from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' union all \n" +
+                "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode "+cwhcodeColumn1+" from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' "+sb5+" union all \n" +
                 "               select distinct sws.cinvode "+cwhcodeColumn1+"\n" +
                 "               from stock_warehousings sws " + sb2 + " and sws.bill_style!='CGDD' union all\n" +
                 "               select distinct sws.cinvode "+cwhcodeColumn1+"\n" +

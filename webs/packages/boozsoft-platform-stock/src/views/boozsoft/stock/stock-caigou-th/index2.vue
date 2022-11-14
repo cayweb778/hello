@@ -814,9 +814,7 @@ const pageReload = async () => {
       // 可用量
       await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({queryType:'keyong',cinvode:list[i].cinvode,cwhcode:list[i].cwhcode,iyear:dynamicYear.value,rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
         .then((t)=>{
-          let conversionRate= list[i].unitList.filter(j=>j.value==list[i].cgUnitId)[0]?.conversionRate
-          console.log(t)
-          console.log(conversionRate)
+          let conversionRate:any= list[i].unitList.filter(j=>j.value==list[i].cgUnitId)[0]?.conversionRate
           list[i].showNumber=parseFloat(t/conversionRate).toFixed(2)
         })
     }
@@ -1304,31 +1302,6 @@ const startDel = async () => {
     }
 
     let dataList = getDataSource().filter(it => !hasBlank(it.cwhcode))
-    let verifylist:any=[]
-    for (let i = 0; i < dataList.length; i++) {
-      let tx=dataList[i]
-      let temp2:any={}
-      temp2.iyear=tx.iyear
-      temp2.stockNum=tx.cinvode
-      temp2.stockName=tx.cinvodeName
-      temp2.stockGgxh=tx.bcheck1
-      temp2.cwhcode=tx.cwhcode
-      temp2.batchId=tx.batchId
-      temp2.dpdate=tx.dpdate
-      temp2.dvdate=tx.dvdate
-      temp2.baseQuantity=tx.baseQuantity
-      temp2.lackBaseQuantity=''
-      temp2.unitName=tx.unitList.filter(uni=>uni.value==tx.cgUnitId)[0]?.title
-      verifylist.push(temp2)
-    }
-    // 可用量不足 不足 弹出框提示
-    let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
-    // 如果是负数强制转换成正数比较
-    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
-    if(currData.length>0){
-      return  openLackPage(true,{data:currData,dynamicTenantId:dynamicTenantId.value,queryType:'keyong'})
-    }
-
     // 上游单据明细
     let symxList:any=[]
     createConfirm({
@@ -1675,7 +1648,7 @@ async function saveData() {
   let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   if (saveCheck(list)) {
     for (let i = 0; i < list.length; i++) {
-      let o=list[i]
+      let o:any=list[i]
       o['iyear'] = dynamicYear.value
       o['lineCode'] = o['key']
       o['lineId'] = (i + 1) + ''
@@ -1725,10 +1698,10 @@ async function saveData() {
       temp2.unitName=tx.unitList.filter(uni=>uni.value==tx.cgUnitId)[0]?.title
       verifylist.push(temp2)
     }
-    // 可用量不足 不足 弹出框提示
+    // 可用量不足 不足 弹出框提示；不能等于0
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
       return openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
     }
