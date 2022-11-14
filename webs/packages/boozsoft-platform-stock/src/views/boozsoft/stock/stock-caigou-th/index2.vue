@@ -2893,6 +2893,7 @@ function referData() {
     dynamicAccId:dynamicAccId.value,
     cwhcode:formFuns.value.getFormValue().cwhcode,
     cvencode:formFuns.value.getFormValue().cvencode,
+    ddate:formFuns.value.getFormValue().ddate,
     iyear:formFuns.value.getFormValue().ddate.split('-')[0]
   })
 }

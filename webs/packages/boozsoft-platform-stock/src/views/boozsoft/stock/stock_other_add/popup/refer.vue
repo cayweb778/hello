@@ -19,11 +19,15 @@
         <div style="float: left;margin-right: 5px;">
           <Select style="width: 100px;" v-model:value="pageParameter.searchConditon.requirement">
             <SelectOption value="ccode">单据编码</SelectOption>
+            <SelectOption value="dname">业务部门</SelectOption>
+            <SelectOption value="buname">业务员</SelectOption>
+            <SelectOption value="cmakerName">制单人</SelectOption>
             <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
           </Select>
           <a-input-search placeholder="" v-model:value="pageParameter.searchConditon.value" style="width: 200px; border-radius: 4px" @search="findByTable"/>
-          <span style="margin-left: 50px;">
-            <a-range-picker :allowClear="false" v-model:value="pageParameter.ddate" />
+          <span style="margin-left: 200px;color: white;">
+            截止日期：
+            {{pageParameter.ddate }}
           </span>
         </div>
 
@@ -116,7 +120,7 @@ const rowSelection = {
 const pageParameter = reactive({
   list:'',
   type:'CGDHD',
-  ddate: [dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate).subtract(1,'month'))),dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate)))],
+  ddate: '',
   searchConditon: {
     requirement: 'ccode',
     value: '',
@@ -264,6 +268,7 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (data) => {
   database.value=data.dynamicTenantId
   referType.value=data.referType
   pageParameter.type=data.referType
+  pageParameter.ddate=formatTimer(data.ddate)
 
   findByTable()
   let temp:any=[]
@@ -279,8 +284,8 @@ async function findByTable(){
   let map={
     iyear:iyear.value,
     borrowStyle:pageParameter.type,
-    strDate:formatTimer(pageParameter.ddate[0]),
-    endDate:formatTimer(pageParameter.ddate[1]),
+    startDate:formatTimer(pageParameter.ddate).split('-')[0]+'-01-31',
+    endDate:formatTimer(pageParameter.ddate),
   }
   let data=await useRouteApi(getReferData, {schemaName: database})(map)
   for (let i = 0; i < 50-data.length; i++) {

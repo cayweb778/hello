@@ -17,7 +17,7 @@
           <span style="margin-left: 0px;">
             <RadioGroup v-model:value="pageParameter.xytype" @change="findAllXySource">
               <Radio value="CGDHD" style="color: white;">采购到货单</Radio>
-              <Radio value="CGJSD" style="color: white;">采购结算单</Radio>
+              <Radio value="CGJSD" style="color: white;">采购核算单</Radio>
               <Radio value="JZPZ" style="color: white;">记账凭证</Radio>
             </RadioGroup>
           </span>
@@ -68,6 +68,7 @@ import router from "/@/router";
 import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record";
 import {useTabs} from "/@/hooks/web/useTabs";
 import {findByStockAccId} from "/@/api/record/system/stock-account";
+import {findJieSuanByCaigouDaoHuo} from "/@/api/record/stock/stock-jiesuan";
 
 const RangePicker = DatePicker.RangePicker;
 const SelectOption = Select.Option;
@@ -161,7 +162,10 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (o) => {
 async function findAllXySource() {
   tableLoading.value=true
   pageParameter.syccode=ccode.value
-  let list = await useRouteApi(findByXyDataMainSourrceMap,{schemaName: schemaName})(pageParameter)
+  let list = await useRouteApi(pageParameter.xytype=='CGJSD'?findJieSuanByCaigouDaoHuo:findByXyDataMainSourrceMap,{schemaName: schemaName})(pageParameter)
+  if(pageParameter.xytype=='CGJSD'){
+    list.map(it=>{it.xyBillStyle='CGJSD';it.xyccode=it.ccode;it.xyccodeDate=it.ddate;it.cwhcode='';return it;})
+  }
   let tableLength=0
   for (let i = 0; i < list.length; i++) {
     list[i].cwhcodeName=await getCKName(list[i].cwhcode)

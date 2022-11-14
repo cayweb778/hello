@@ -19,16 +19,20 @@
         <div style="float: left;margin-right: 5px;">
           <Select style="width: 100px;" v-model:value="pageParameter.searchConditon.requirement">
             <SelectOption value="ccode">单据编码</SelectOption>
+            <SelectOption value="dname">业务部门</SelectOption>
+            <SelectOption value="buname">业务员</SelectOption>
+            <SelectOption value="cmakerName">制单人</SelectOption>
             <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
           </Select>
           <a-input-search placeholder="" v-model:value="pageParameter.searchConditon.value" style="width: 200px; border-radius: 4px" @search="findByTable"/>
-          <span style="margin-left: 50px;">
-            <a-range-picker :allowClear="false" v-model:value="pageParameter.ddate" />
+          <span style="margin-left: 200px;color: white;">
+            截止日期：
+            {{pageParameter.ddate }}
           </span>
         </div>
 
         <div style="float: right;margin-right: 5px;">
-          <button type="button" class="ant-btn ant-btn-me" @click="findByTable"><span>选单</span></button>
+          <button type="button" class="ant-btn ant-btn-me" @click="findByTable"><span>刷新</span></button>
         </div>
       </div>
       <br>
@@ -111,7 +115,7 @@ const rowSelection = {
 const pageParameter = reactive({
   list:'',
   type:'CGDHD',
-  ddate: [dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate).subtract(1,'month'))),dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate)))],
+  ddate: '',
   searchConditon: {
     requirement: 'ccode',
     value: '',
@@ -279,6 +283,7 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (data) => {
   referType.value=data.referType
   titleValue.value=data.titleValue
   pageParameter.type=data.referType
+  pageParameter.ddate=formatTimer(data.ddate)
 
   findByTable()
   let temp:any=[]
@@ -297,8 +302,8 @@ async function findByTable(){
     cwhcode:sourceCwhcode.value,
     type:'CGDHD',
     searchConditon:pageParameter.searchConditon,
-    startDate:formatTimer(pageParameter.ddate[0]),
-    endDate:formatTimer(pageParameter.ddate[1]),
+    startDate:formatTimer(pageParameter.ddate).split('-')[0]+'-01-31',
+    endDate:formatTimer(pageParameter.ddate),
     titleValue:'0'
   }
   let data=await useRouteApi(findAllCGDHD_And_QCDHD, {schemaName: database})(map)

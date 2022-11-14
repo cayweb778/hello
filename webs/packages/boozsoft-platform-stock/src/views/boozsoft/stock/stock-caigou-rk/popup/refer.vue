@@ -17,18 +17,22 @@
     <div class="nc-query-open-content">
       <div style="background-color: #158eb8;height: 50px;padding-top: 10px;padding-left:10px;border-radius: 5px;">
         <div style="float: left;margin-right: 5px;">
-          <Select style="width: 100px;" v-model:value="pageParameter.searchConditon.requirement">
+          <Select style="width: 150px;" v-model:value="pageParameter.searchConditon.requirement">
             <SelectOption value="ccode">单据编码</SelectOption>
+            <SelectOption value="dname">业务部门</SelectOption>
+            <SelectOption value="buname">业务员</SelectOption>
+            <SelectOption value="cmakerName">制单人</SelectOption>
             <template #suffixIcon><CaretDownOutlined style="color:#666666;" /></template>
           </Select>
-          <a-input-search placeholder="" v-model:value="pageParameter.searchConditon.value" style="width: 200px; border-radius: 4px" @search="findByTable"/>
-          <span style="margin-left: 50px;">
-            <a-range-picker :allowClear="false" v-model:value="pageParameter.ddate" />
+          <a-input-search placeholder="" v-model:value="pageParameter.searchConditon.value" style="width: 150px; border-radius: 4px" @search="findByTable"/>
+          <span style="margin-left: 200px;color: white;">
+            截止日期：
+            {{pageParameter.ddate }}
           </span>
         </div>
 
         <div style="float: right;margin-right: 5px;">
-          <button type="button" class="ant-btn ant-btn-me" @click="findByTable"><span>选单</span></button>
+          <button type="button" class="ant-btn ant-btn-me" @click="findByTable"><span>刷新</span></button>
         </div>
       </div>
       <br>
@@ -84,13 +88,10 @@ import {reactive, ref} from 'vue';
 import {BasicModal, useModal, useModalInner} from '/@/components/Modal';
 import {SearchOutlined} from '@ant-design/icons-vue';
 import {Button, DatePicker, InputNumber, message, Radio, Select} from 'ant-design-vue';
-const ARangePicker=DatePicker.RangePicker
-
 import {BasicTable, useTable} from '/@/components/Table'
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
-// import ModalPop from '/@/views/boozsoft/system/supplier/popup/modalPop.vue';
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
 import {findAllCGDHD_And_QCDHD} from "/@/api/record/stock/stock-ruku";
 import {findAllByStockWarehListCcode, getUnitRate} from "/@/api/record/system/stock-wareh";
@@ -108,16 +109,15 @@ const rowSelection = {
     disabled: record.billStyle==undefined
   }),
 };
-const pageParameter = reactive({
+const pageParameter:any = reactive({
   list:'',
   type:'CGDHD',
-  ddate: [dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate).subtract(1,'month'))),dayjs(formatTimer(dayjs(useCompanyOperateStoreWidthOut().getLoginDate)))],
+  ddate: '',
   searchConditon: {
     requirement: 'ccode',
     value: '',
   },
 })
-const RangePicker = DatePicker.RangePicker;
 const SelectOption = Select.Option;
 const RadioGroup = Radio.Group;
 const emit = defineEmits(['register', 'query']);
@@ -279,6 +279,7 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (data) => {
   referType.value=data.referType
   titleValue.value=data.titleValue
   pageParameter.type=data.referType
+  pageParameter.ddate=formatTimer(data.ddate)
 
   findByTable()
   let temp:any=[]
@@ -297,8 +298,8 @@ async function findByTable(){
     cwhcode:pageParameter.type=='CGDD'?'':sourceCwhcode.value,
     type:pageParameter.type,
     searchConditon:pageParameter.searchConditon,
-    startDate:formatTimer(pageParameter.ddate[0]),
-    endDate:formatTimer(pageParameter.ddate[1]),
+    startDate:formatTimer(pageParameter.ddate).split('-')[0]+'-01-31',
+    endDate:formatTimer(pageParameter.ddate),
     titleValue:titleValue.value
   }
   let data=await useRouteApi(findAllCGDHD_And_QCDHD, {schemaName: database})(map)

@@ -1902,40 +1902,9 @@ const startReview = async (b) => {
             await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(lzxy)
           }
 
-          // ------------------------- 生成核算单 -------------------------
-          // 结算单据新编码
-          let jsNewNum=await useRouteApi(getNewStockJiesuanNum, {schemaName: dynamicTenantId})({})
-          jsNewNum='JS-'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,7).replace("T"," ").replace("-","")+'-'+jsNewNum
-          let jieSuanData:any={}
-          jieSuanData.ccode=jsNewNum
-          jieSuanData.cmaker=a
-          jieSuanData.bdocumStyle=titleValue.value
-          jieSuanData.iyear=formItems.value.iyear
-          jieSuanData.cvencode=formItems.value.cvencode
-          jieSuanData.cvencodeJs=formItems.value.cvencodeJs
-          jieSuanData.cdepcode=formItems.value.cdepcode
-          jieSuanData.cpersoncode=formItems.value.cpersoncode
-          jieSuanData.ccodeRuku=formItems.value.ccode
-          jieSuanData.ddate=new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,10).replace("T"," ")
-          // 增加 结算单主表
-          await useRouteApi(saveJiesuanPojo, {schemaName: dynamicTenantId})(jieSuanData)
-
-          // 添加下游表
-          let xy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:formItems.value.ccode,ccodeDate:formItems.value.ddate,xyBillStyle:'CGJSD',xyccode:jsNewNum,xyccodeDate:formItems.value.ddate}
-          await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
-
-          let jiesuansList:any=[]
           for (let i = 0; i < list.length; i++) {
             let sourceDataList=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
-            let sourceDataList2=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
-            // 修改累计核算数量
-            sourceDataList2.isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(sourceDataList2.isumJiesuan)
             list[i].isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(list[i].isumJiesuan)
-
-            // 修改入库单价
-            sourceDataList2.price=list[i].price
-            tableDataChange(sourceDataList,'price')
-            await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
 
             // 1单到回冲：生成红蓝回冲单
             if(dynamicTenant.value.target?.kcEstimated=='1'){
@@ -1982,34 +1951,8 @@ const startReview = async (b) => {
               tableDataChange(sourceDataList,'price')
               await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList])
             }
-
-            // he算单子表
-            let jiesuans:any={}
-            jiesuans.iyear=list[i].iyear
-            jiesuans.lineCode=list[i].lineCode
-            jiesuans.ddate=list[i].ddate
-            jiesuans.ccode=jsNewNum
-            jiesuans.ccodeRuku=sourceDataList2.ccode
-            jiesuans.ccodeDaohuo=list[i].ccode
-            jiesuans.cinvode=list[i].cinvode
-            jiesuans.cgUnitId=JsonTool.parseObj(list[i].unitInfo.detail).filter(a=>a.isMain=='true')[0]?.id
-            jiesuans.quantityRuku=list[i].baseQuantity
-            jiesuans.priceJs=parseFloat(sourceDataList2.icost)/parseFloat(sourceDataList2.baseQuantity)
-
-            let icostJs:any=parseFloat(list[i].baseQuantity)*parseFloat(jiesuans.priceJs)
-            jiesuans.icostJs=parseFloat(icostJs).toFixed(4)
-
-            jiesuans.priceZg=parseFloat(list[i].icost)/parseFloat(list[i].baseQuantity)
-
-            let icostZg:any=parseFloat(list[i].baseQuantity)*parseFloat(jiesuans.priceZg)
-            jiesuans.icostZg=parseFloat(icostZg).toFixed(4)
-
-            jiesuans.ccodeLy=list[i].sourcetype
-            jiesuans.quantityDaohuo=jiesuans.quantityRuku
-            jiesuansList.push(jiesuans)
           }
           await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(list)
-          await useRouteApi(saveJiesuansPojo, {schemaName: dynamicTenantId})(jiesuansList)
         }
         // 等于本月直接修改入库单价
         else{
@@ -2017,14 +1960,74 @@ const startReview = async (b) => {
             let sourceDataList2=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
             // 修改入库单价
             sourceDataList2.price=list[i].price
+            sourceDataList2.icost=list[i].icost
+            sourceDataList2.taxprice=list[i].taxprice
+            sourceDataList2.isum=list[i].isum
             await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
           }
         }
-      }else if(dynamicTenant.value.target?.kcEstimated=='2'){ // 2单到补差
+      }
+      else if(dynamicTenant.value.target?.kcEstimated=='2'){ // 2单到补差
 
       }else if(dynamicTenant.value.target?.kcEstimated=='3'){ // 3月初回冲
 
       }
+
+      // ------------------------- 生成核算单 -------------------------
+      // 结算单据新编码
+      let jsNewNum=await useRouteApi(getNewStockJiesuanNum, {schemaName: dynamicTenantId})({})
+      jsNewNum='JS-'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,7).replace("T"," ").replace("-","")+'-'+jsNewNum
+      let jieSuanData:any={}
+      jieSuanData.ccode=jsNewNum
+      jieSuanData.cmaker=a
+      jieSuanData.bdocumStyle=titleValue.value
+      jieSuanData.iyear=formItems.value.iyear
+      jieSuanData.cvencode=formItems.value.cvencode
+      jieSuanData.cvencodeJs=formItems.value.cvencodeJs
+      jieSuanData.cdepcode=formItems.value.cdepcode
+      jieSuanData.cpersoncode=formItems.value.cpersoncode
+      jieSuanData.ccodeRuku=formItems.value.ccode
+      jieSuanData.ddate=new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,10).replace("T"," ")
+      // 增加 结算单主表
+      await useRouteApi(saveJiesuanPojo, {schemaName: dynamicTenantId})(jieSuanData)
+      // 添加下游表
+      let xy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:formItems.value.ccode,ccodeDate:formItems.value.ddate,xyBillStyle:'CGJSD',xyccode:jsNewNum,xyccodeDate:formItems.value.ddate}
+      await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
+      // ------------------------- 生成核算单子表 -------------------------
+      let jiesuansList:any=[]
+      for (let i = 0; i < list.length; i++) {
+        let sourceDataList2=await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(list[i].sourcedetailId)
+        // 修改累计核算数量
+        sourceDataList2.isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(sourceDataList2.isumJiesuan)
+        list[i].isumJiesuan=parseFloat(list[i].baseQuantity)+parseFloat(list[i].isumJiesuan)
+        await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})([sourceDataList2])
+
+        let jiesuans:any={}
+        jiesuans.iyear=list[i].iyear
+        jiesuans.lineCode=list[i].lineCode
+        jiesuans.ddate=list[i].ddate
+        jiesuans.ccode=jsNewNum
+        jiesuans.ccodeRuku=sourceDataList2.ccode
+        jiesuans.ccodeDaohuo=list[i].ccode
+        jiesuans.cinvode=list[i].cinvode
+        jiesuans.cgUnitId=JsonTool.parseObj(list[i].unitInfo.detail).filter(a=>a.isMain=='true')[0]?.id
+        jiesuans.quantityRuku=list[i].baseQuantity
+
+        jiesuans.priceJs= parseFloat(list[i].icost)/parseFloat(list[i].baseQuantity)
+        let icostJs:any=parseFloat(list[i].baseQuantity)*parseFloat(jiesuans.priceJs)
+        jiesuans.icostJs=parseFloat(icostJs).toFixed(4)
+
+        jiesuans.priceZg=parseFloat(sourceDataList2.icost)/parseFloat(sourceDataList2.baseQuantity)
+        let icostZg:any=parseFloat(sourceDataList2.baseQuantity)*parseFloat(jiesuans.priceZg)
+        jiesuans.icostZg=parseFloat(icostZg).toFixed(4)
+
+        jiesuans.ccodeLy=list[i].sourcetype
+        jiesuans.quantityDaohuo=jiesuans.quantityRuku
+        jiesuansList.push(jiesuans)
+      }
+      await useRouteApi(saveJiesuansPojo, {schemaName: dynamicTenantId})(jiesuansList)
+      await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(list)
+      // ------------------------- 生成核算单END -------------------------
 
       loadMark.value=false
       pageParameter.type='CGDHD'
@@ -2228,7 +2231,7 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 
 //数据保存
-async function saveData() {
+async function  saveData() {
   if(hasBlank(formFuns.value.getFormValue().cvencode)||hasBlank(formFuns.value.getFormValue().cwhcode)){
     return message.error('表头供应商和仓库不能为空!!')
   }
@@ -2299,6 +2302,10 @@ async function saveData() {
           sourceData.isumDaohuo=parseFloat(hasBlank(sourceData.isumDaohuo)?0:sourceData.isumDaohuo)+(parseFloat(o.baseQuantity)-parseFloat(o.oldBaseQuantity))
         }
         symxList.push(sourceData)
+
+        if(o.sourcetype=='CGRKD'){
+          o.isumRuku=o.baseQuantity
+        }
       }
     }
     formItems.value.entryList = JsonTool.json(list)
@@ -3173,7 +3180,12 @@ const slChange0 = (r) => {
       r.tempSubQuantity2 = r.subQuantity2
       r.tempSubQuantity2 = r.baseQuantity
     }
-    tableDataChange(r,'taxprice')
+    if(canzhao.value){
+      // 参照入库单，重新计算单价
+      tableDataChange(r,'price')
+    }else{
+      tableDataChange(r,'taxprice')
+    }
   }
 }
 const chChange = async (record) => {
@@ -3858,6 +3870,7 @@ function referData(type) {
     cvencode:formFuns.value.getFormValue().cvencode,
     iyear:formFuns.value.getFormValue().ddate.split('-')[0],
     titleValue:titleValue.value,
+    ddate:formFuns.value.getFormValue().ddate,
     referType:type
   })
 }
@@ -3876,7 +3889,6 @@ async function referThrowData(data) {
     b.isumDaohuo='0'
     b.itaxrate=formFuns.value.getFormValue().rate
     slChange0(b)
-    tableDataChange(b,'taxprice')
   }
   for (let i = data.list.length; i < 50; i++) {
     data.list.push({})
@@ -3886,26 +3898,6 @@ async function referThrowData(data) {
     setTableData(data.list)
     loadMark.value=false
   },800)
-  // setTimeout(()=>{
-  //   getDataSource().forEach(async (b)=>{
-  //     findByUnitList(b)
-  //     // 重新计算金额
-  //     tableDataChange(b,'taxprice')
-  //     let o:any = assetsCardList.value.filter(it => (it.stockNum == b.cinvode))[0]
-  //     b.cinvodeInfo = o
-  //     b.tempCnumber=b.cnumber
-  //     b.isumRuku='0'
-  //     b.isumDaohuo='0'
-  //     b.itaxrate=formFuns.value.getFormValue().rate
-  //     slChange0(b)
-  //   })
-  //   let list=getDataSource().filter(c=>!hasBlank(c.id))
-  //   calculateTotal()
-  //   for (let i = list.length; i < 50; i++) {
-  //     list.push({})
-  //   }
-  //   setTableData(list)
-  // },300)
 }
 
 // 复制

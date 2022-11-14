@@ -25,14 +25,14 @@
           <!-- 未审核 -->
           <span v-else>
               <span v-if="status < 3">
-                <Popover placement="bottom">
-                  <template #content>
-                    <Button class="actod-btn">采购入库单</Button>
-                    <Button class="actod-btn">采购到货单</Button><br/>
-                    <Button class="actod-btn">采购退货单</Button><br/>
-                  </template>
-                  <Button class="actod-btn">参照</Button>
-                </Popover>
+<!--                <Popover placement="bottom">-->
+<!--                  <template #content>-->
+<!--                    <Button class="actod-btn">采购入库单</Button>-->
+<!--                    <Button class="actod-btn">采购到货单</Button><br/>-->
+<!--                    <Button class="actod-btn">采购退货单</Button><br/>-->
+<!--                  </template>-->
+<!--                  <Button class="actod-btn">参照</Button>-->
+<!--                </Popover>-->
 
               <Button class="actod-btn" @click="saveData">保存</Button>
               <Button class="actod-btn" @click="giveUp">放弃</Button>

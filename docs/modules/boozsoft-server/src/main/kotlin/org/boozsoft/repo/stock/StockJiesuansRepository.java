@@ -15,7 +15,7 @@ public interface StockJiesuansRepository extends ReactiveCrudRepository<StockJie
     @Query("select sj.*\n" +
             "from stock_jiesuan sj\n" +
             "         left join stock_jiesuans sjs on sjs.ccode = sj.ccode\n" +
-            "where sjs.ccode_daohuo =:ccode ")
+            "where (sjs.ccode_daohuo =:ccode or sjs.ccode_ruku =:ccode )")
     Flux<StockJiesuan> findAllByCcodeDaoHuo(String ccode);
 }
 

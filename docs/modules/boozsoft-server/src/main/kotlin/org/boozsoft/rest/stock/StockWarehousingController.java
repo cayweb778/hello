@@ -866,9 +866,6 @@ public class StockWarehousingController {
         if(StrUtil.isNotBlank(cwhcode)){
             sb.append("and sw.cwhcode='"+cwhcode+"' ");
         }
-        if(StrUtil.isNotBlank(searchMap.get("value"))){
-            sb.append("and sw.ccode like '%"+cwhcode+"%' ");
-        }
 
         String sql="select temp.* from ((select (select sum(cast(sws.base_quantity as float))\n" +
                 "        from stock_warehousings sws\n" +
@@ -941,6 +938,17 @@ public class StockWarehousingController {
             // 不是到货单  需排序 期初到货单
             if(!"CGDHD".equals(type)){
                 listVo=listVo.stream().filter(a->!a.getBillStyle().equals("QC")).collect(Collectors.toList());
+            }
+            if(StrUtil.isNotBlank(searchMap.get("value"))){
+                if(searchMap.get("requirement").equals("ccode")){
+                    listVo=listVo.stream().filter(tx->tx.getCcode().contains(searchMap.get("value"))).collect(Collectors.toList());
+                }else if(searchMap.get("requirement").equals("dname")){
+                    listVo=listVo.stream().filter(tx->tx.getDname().contains(searchMap.get("value"))).collect(Collectors.toList());
+                }else if(searchMap.get("requirement").equals("buname")){
+                    listVo=listVo.stream().filter(tx->tx.getBuname().contains(searchMap.get("value"))).collect(Collectors.toList());
+                }else if(searchMap.get("requirement").equals("cmakerName")){
+                    listVo=listVo.stream().filter(tx->tx.getCmakerName().contains(searchMap.get("value"))).collect(Collectors.toList());
+                }
             }
             return Mono.just(listVo);
         })

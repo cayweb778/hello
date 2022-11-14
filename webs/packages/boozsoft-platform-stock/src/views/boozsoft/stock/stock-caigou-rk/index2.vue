@@ -2734,6 +2734,7 @@ async function referData(type) {
       cvencode:formFuns.value.getFormValue().cvencode,
       iyear:formFuns.value.getFormValue().ddate.split('-')[0],
       titleValue:titleValue.value,
+      ddate:formFuns.value.getFormValue().ddate,
       referType:type
     })
   }else{
@@ -2744,6 +2745,7 @@ async function referData(type) {
       cvencode:formFuns.value.getFormValue().cvencode,
       iyear:formFuns.value.getFormValue().ddate.split('-')[0],
       titleValue:titleValue.value,
+      ddate:formFuns.value.getFormValue().ddate,
       referType:type
     })
   }
@@ -2789,7 +2791,7 @@ async function resetCanzhaoPrice(record) {
   let sourceUnitRate:any=record.unitList.filter(f=>f.value==sourceData.cgUnitId)[0]?.conversionRate
   let unitRate:any=record.unitList.filter(f=>f.value==record.cgUnitId)[0]?.conversionRate
   // 入库单参照到货单单价=（来源单据无税单价 除 来源单据计量单位换算率） 乘 入库单据计量单位换算率
-  let price=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
+  let price:any=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
   record.tempNine=parseFloat(price).toFixed(10)
   record.price=record.tempNine
   tableDataChange(record,'price')

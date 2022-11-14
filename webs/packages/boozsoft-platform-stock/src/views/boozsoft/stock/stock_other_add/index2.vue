@@ -2908,6 +2908,7 @@ async function openReferPop(type) {
   openReferPage(true, {
     dynamicTenantId:dynamicTenantId.value,
     iyear:dynamicYear.value,
+    ddate:formFuns.value.getFormValue().ddate,
     referType:type
   })
 }
