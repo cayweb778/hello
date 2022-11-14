@@ -4,13 +4,13 @@
 
       <div class="app-container-head">
         <div class="container-head-title" style="float: left;">
-          <b class="noneSpan" style="font-size: 60px;"><BarChartOutlined /></b>
+          <b class="noneSpan" style="font-size: 60px;margin-left: -16px;"><BarChartOutlined /></b>
         </div>
         <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
           <b class="noneSpan" style="font-size: 26px;">存货有效期预警表</b><br><br><br><br>
-          <span style="font-size: 14px;color: #666666">正常：有效日期大于今天15天&emsp;临近：有效日期大于今天0-15天&emsp;失效：有效日期小于今天</span>
+          <span style="font-size: 14px;color: #666666"><b>正常：</b>有效日期大于今天15天&emsp;<b>临近：</b>有效日期大于今天0-15天&emsp;<b>失效：</b>有效日期小于今天</span>
         </div>
-        <div class="ant-btn-group" style="float: right">
+        <div class="ant-btn-group" style="float: right;margin-right: 5px;">
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -34,14 +34,14 @@
       </div>
 
       <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;">
+      <div style="margin-top: -30px;margin-left: 50px;">
         <div style="display: inline-block;float: left;margin-left: 1%;margin-top: -20px;text-align: left;">
           <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/><br>
 <!--          <label style="margin-left: 15px;">仓库：</label>-->
 <!--          {{ ckList.filter(a=>a.cangkuId==formItems.ckId).length>0?ckList.filter(a=>a.cangkuId==formItems.ckId)[0].cangkuName:'' }}-->
         </div>
 
-        <div style="float: right; margin-left: 10px">
+        <div style="float: right;margin-right: 5px;">
           <Button class="ant-btn-me" @click="getStockXCL">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -63,7 +63,7 @@
           </Popover>
         </div>
         <div style="float: right; position: relative">
-          <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+          <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;" class="special_select">
             <SelectOption style="font-size: 12px;" value="stockNum">存货编码</SelectOption>
             <SelectOption style="font-size: 12px;" value="stockName">存货名称</SelectOption>
             <SelectOption style="font-size: 12px;" value="stateVal">状态</SelectOption>
@@ -72,7 +72,7 @@
           <InputSearch
             v-model:value="formItems.selectVal"
             placeholder=""
-            style="width: 200px; border-radius: 4px"
+            style="width: 150px; border-radius: 4px"
             @search="getStockXCL"
           />
         </div>
@@ -629,7 +629,7 @@ function excelData() {
   margin-bottom: 20px;
 }
 
-:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
+:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
 

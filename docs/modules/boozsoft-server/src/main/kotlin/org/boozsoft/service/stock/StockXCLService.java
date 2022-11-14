@@ -38,8 +38,9 @@ public class StockXCLService {
 
         String bcheck1="";
         String bcheck2="";
+        String ztrkSql="";
         // 入库：0 查已审核的
-        if(StrUtil.isBlank(rkBcheck)||rkBcheck.equals("0")){ bcheck1=" and s.bcheck='1' "; }
+        if(StrUtil.isBlank(rkBcheck)||rkBcheck.equals("0")){ bcheck1=" and s.bcheck='1' ";ztrkSql=" and sws.bcheck='1' "; }
         // 出库  0 查已审核的
         if(StrUtil.isBlank(ckBcheck)||ckBcheck.equals("0")){ bcheck2=" and s.bcheck='1' "; }
 
@@ -48,6 +49,7 @@ public class StockXCLService {
 
         String finalBcheck = bcheck1;
         String finalBcheck1 = bcheck2;
+        String finalZtrkSql = ztrkSql;
         return client.sql(qcsql).fetch().all().collectList()
         .flatMap(qclist->{
             List<StockCurrentLackVo> newqclist= JSON.parseArray(JSON.toJSONString(qclist), StockCurrentLackVo.class);
@@ -122,7 +124,7 @@ public class StockXCLService {
                                .flatMapMany(dhlist->Flux.fromIterable(dhlist)).collectList();
 
                        // 在途入库
-                       Mono<List<StockCurrentLackVo>> rukuMidWay = findByRukuMidWay(t.getStockNum(), iyear,endDate)
+                       Mono<List<StockCurrentLackVo>> rukuMidWay = findByRukuMidWay(t.getStockNum(), iyear,endDate, finalZtrkSql)
                                .flatMapMany(dhlist->Flux.fromIterable(dhlist)).collectList();
 
                        // 在途销货
@@ -229,7 +231,7 @@ public class StockXCLService {
                 .map(a->a);
     }
     // 在途入库
-    public Mono<List<StockCurrentLackVo>> findByRukuMidWay(String cinvode,String iyear,String endDate){
+    public Mono<List<StockCurrentLackVo>> findByRukuMidWay(String cinvode,String iyear,String endDate,String finalZtrkSql){
         String sqla=StrUtil.isNotBlank(endDate)?" and sws.ddate between '"+endDate.substring(0,4)+"-01-01"+"' and '"+endDate+"' ":"";
         String sql="select sws.cinvode,\n" +
                 "       sws.cwhcode,\n" +
@@ -240,7 +242,7 @@ public class StockXCLService {
                 "from stock_warehousings sws\n" +
                 "where sws.bill_style in ('CGRKD','QTRKD')\n" +
                 "  and sws.iyear = '"+iyear+"'\n" +
-                "  and sws.cinvode = '"+cinvode+"' and sws.bcheck='0' "+sqla+" ";
+                "  and sws.cinvode = '"+cinvode+"' "+finalZtrkSql+" "+sqla+" ";
         return client.sql(sql).fetch().all().collectList()
                 .flatMapMany(skList-> Flux.fromIterable(JSON.parseArray(JSON.toJSONString(skList), StockCurrentLackVo.class)))
                 .collectList();

@@ -70,13 +70,14 @@ public class StockCurrentsController {
         String ckBcheck=map.get("ckBcheck")==null?"0":map.get("ckBcheck").toString();
         String iyear=map.get("iyear").toString();
 
-        String bcheck1="";String bcheck2="";
+        String bcheck1="";String bcheck2="";String ztrkSql="";
         // 入库：0 查已审核的
-        if(StrUtil.isBlank(rkBcheck)||rkBcheck.equals("0")){ bcheck1=" and s.bcheck='1' "; }
+        if(StrUtil.isBlank(rkBcheck)||rkBcheck.equals("0")){ bcheck1=" and s.bcheck='1' "; ztrkSql=" and sws.bcheck='1' ";}
         // 出库  0 查已审核的
         if(StrUtil.isBlank(ckBcheck)||ckBcheck.equals("0")){ bcheck2=" and s.bcheck='1' "; }
         String finalBcheck = bcheck1;
         String finalBcheck1 = bcheck2;
+        String finalZtrkSql = ztrkSql;
 
         String qcsql="select coalesce(cast(s.base_quantity as float), '0') base_quantity,s.iyear,s.stock_id as cinvode,s.batch_number as batch_id," +
                 "s.dpdate,s.dvdate,s.stock_cangku_id as cwhcode from stock_begin_balance s where s.bcheck = '1' and s.iyear='"+iyear+"' ";
@@ -149,7 +150,7 @@ public class StockCurrentsController {
                             .flatMapMany(dhlist->Flux.fromIterable(dhlist)).collectList();
 
                     // 在途入库
-                    Mono<List<StockCurrentLackVo>> rukuMidWay = stockXCLService.findByRukuMidWay(cinvode, iyear,"")
+                    Mono<List<StockCurrentLackVo>> rukuMidWay = stockXCLService.findByRukuMidWay(cinvode, iyear,"",finalZtrkSql)
                             .flatMapMany(dhlist->Flux.fromIterable(dhlist)).collectList();
 
                     // 在途销货

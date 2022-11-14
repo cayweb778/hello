@@ -95,7 +95,7 @@ const defaultRows = () => {
     {
       columnType: '1',
       field: 'rate',
-      label: '税率%',
+      label: '采购税率%',
       component: 'InputNumber',
       componentProps: null,
       required: false,

@@ -1662,7 +1662,7 @@ function toThousandFilter(num: any) {
     >div:nth-of-type(2){margin-top: 14px;}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
+    width: 40%;text-align: right;margin-right: 8px;
     >div:nth-of-type(2){
       display: inline-flex;justify-content: space-between;margin-top: 14px;
     }

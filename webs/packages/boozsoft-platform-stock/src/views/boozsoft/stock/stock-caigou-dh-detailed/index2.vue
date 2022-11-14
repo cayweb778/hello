@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <BarChartOutlined style="color: #0096c7;font-size: 50px;"/>
         </div>
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
@@ -171,7 +171,7 @@ import {useModal} from '/@/components/Modal'
 import {onMounted, reactive, ref} from 'vue'
 import {
   CheckOutlined,
-  ProfileOutlined,
+  BarChartOutlined,
   SettingFilled,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -1262,8 +1262,7 @@ function randomString(length) {
     >div:nth-of-type(2){margin-top: 14px;}
   }
   >div:nth-of-type(3){
-    width: 40%;text-align: right;
-
+    width: 40%;text-align: right;margin-right: 8px;
     >div:nth-of-type(1){
       .ant-btn-me {
         color: #0096c7;

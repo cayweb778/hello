@@ -3,9 +3,9 @@
     <div class="app-container">
       <div class="app-container-head">
         <div class="container-head-title" style="float: left;">
-          <b class="noneSpan" style="font-size: 60px;"><BarChartOutlined /></b>
+          <b class="noneSpan" style="font-size: 60px;margin-left: -16px;"><BarChartOutlined /></b>
         </div>
-        <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
+        <div class="container-head-title" style="padding-left: 40%;text-align: center;margin-top: 20px;">
           <b class="noneSpan" style="font-size: 26px;">存货现存量查询</b>
           <div style="font-size: 14px;text-align: center;margin-top: 30px;">
             <span style="font-size: 14px;font-weight: bold;">
@@ -13,7 +13,7 @@
             </span>
           </div>
         </div>
-        <div class="ant-btn-group" style="float: right">
+        <div class="ant-btn-group" style="float: right;margin-right: 5px;">
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -37,11 +37,11 @@
         </div>
       </div>
       <div style="clear: none"/>
-      <div style="margin-top: -30px;margin-left: 80px;text-align: left;">
+      <div style="margin-top: -30px;margin-left: 50px;text-align: left;">
         <div style="display: inline-block;float: left;margin-left: 1%;margin-top: -20px;">
           <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/>
         </div>
-        <div style="float: right; margin-left: 10px">
+        <div style="float: right; margin-right: 5px">
           <Button class="ant-btn-me" @click="getStockXCL">
             <SyncOutlined :style="{ fontSize: '14px' }"/>
           </Button>
@@ -63,7 +63,7 @@
           </Popover>
         </div>
         <div style="float: right; position: relative">
-          <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;" class="special_select">
+          <Select v-model:value="formItems.selectType" style="width: 150px;font-size: 12px;" class="special_select">
             <SelectOption style="font-size: 12px;" value="stockNum">存货编码</SelectOption>
             <SelectOption style="font-size: 12px;" value="stockName">存货名称</SelectOption>
           </Select>
@@ -71,7 +71,7 @@
           <InputSearch
             v-model:value="formItems.selectVal"
             placeholder=""
-            style="width: 200px; border-radius: 4px"
+            style="width: 150px; border-radius: 4px"
             @search="getStockXCL"
           />
         </div>
@@ -993,55 +993,8 @@ function excelData() {
   margin-bottom: 20px;
 }
 
-:deep(.ant-input), :deep(.ant-select), :deep(.ant-btn) {
+:deep(.ant-btn) {
   border: 1px solid #c9c9c9;
-}
-
-.lcr-theme-div {
-  display: inline-flex;
-  justify-content: space-between;
-  width: 99%;
-  height: 100px;
-
-  > div:nth-of-type(1) {
-    width: 40%;
-
-    > div:nth-of-type(1) {
-      width: 64px;
-      display: inline-block;
-      text-align: center;
-      vertical-align: super;
-    }
-
-    > div:nth-of-type(2) {
-      width: calc(100% - 64px);
-      display: inline-block;
-
-      > div:nth-of-type(2) {
-        margin-top: 14px;
-      }
-    }
-  }
-
-  > div:nth-of-type(2) {
-    width: 20%;
-    text-align: center;
-
-    > div:nth-of-type(2) {
-      margin-top: 14px;
-    }
-  }
-
-  > div:nth-of-type(3) {
-    width: 40%;
-    text-align: right;
-
-    > div:nth-of-type(2) {
-      display: inline-flex;
-      justify-content: space-between;
-      margin-top: 14px;
-    }
-  }
 }
 
 .tableUStyle {
