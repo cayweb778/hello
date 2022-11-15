@@ -22,10 +22,12 @@ function createdComponentData(componentInstance) {
         code:1051,
         message:'取消了选择'
       }
+      window.$wujie.bus.$emit('setCurrentPluginName', '')
       isBak.value = true
     },
     onOk(e) {
       data.value = e
+      window.$wujie.bus.$emit('setCurrentPluginName', '')
       isBak.value = true
     },
     fnOpen() {

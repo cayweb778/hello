@@ -10,13 +10,15 @@ export const useGlobalStore = defineStore({
         currentPluginName:'',
         ncModals: '',
         ncPrintFn:'',
-        loginDate:''
+        loginDate:'',
+        ncDataExport:''
     }),
     getters: {
         getCurrentPluginName:(state)=>state.currentPluginName,
         getPluginShadow:(state)=>state.pluginShadow,
         getLoginDate:(state)=>state.loginDate,
         getNcModals: (state) => state.ncModals,
+        getNcDataExport: (state) => state.ncPrintFn,
     },
     actions: {
         setCurrentPluginName(e){

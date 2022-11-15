@@ -6,7 +6,7 @@
        <Col :span="8">
         <div style="width:100%;font-size: 14px;padding-top:3px;padding-left:5px;color:#c2ccdc;">
           &emsp;&emsp;
-          <Badge :count="4" :number-style="{ backgroundColor: '#52c41a' }">
+          <Badge @click="goPrint()" :count="4" :number-style="{ backgroundColor: '#52c41a' }">
            <span class="hoverSvg">
               <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -144,8 +144,15 @@ const changeOpenStatus = () => {
 
 async function goMessage(){
   let useNcModalData=useGlobalStoreWidthOut().getNcModals
-  const ddddd=await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
-  console.log(ddddd)
+  const data=await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
+  console.log(data)
+}
+
+async function goPrint(){
+  let useNcDataExport=useGlobalStoreWidthOut().getNcDataExport
+  debugger
+  const data=await useNcDataExport(({To}) => To.Print, {})
+  console.log(data)
 }
 const outSystemBefore = async () => {
   window.localStorage.clear()
