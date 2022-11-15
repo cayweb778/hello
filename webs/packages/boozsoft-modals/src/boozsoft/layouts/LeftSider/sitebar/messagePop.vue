@@ -147,7 +147,7 @@ const TabPane = Tabs.TabPane
 const AStatisticCountdown = AStatistic.Countdown;
 const AFormItem = AForm.Item;
 const { createErrorModal } = useMessage()
-const emit=defineEmits(['register']);
+const emit=defineEmits(['register','close']);
 const database = ref(getCurrentAccountName(true));
 const accId = ref('');
 const loading = ref(true);
@@ -272,14 +272,17 @@ const [registerSavePage, { openModal: openSavePage }] = useModal();
 // 这是示例组件
 
 
-const [registerTable, { reload,getSelectRows,getDataSource,setTableData,setColumns }] = useTable({
-  api: findAll,
-  columns: CrudApi.columns,
-  loading: loading.value,
-  bordered: true,
-  pagination:{ pageSize: 50,showSizeChanger: true, pageSizeOptions: ['50','100'],showTotal: t => `总共${t}条数据` },
-  searchInfo: pageParameter
-});
+// const [registerTable, { reload,getSelectRows,getDataSource,setTableData,setColumns }] = useTable({
+//   api: findAll,
+//   columns: CrudApi.columns,
+//   loading: loading.value,
+//   bordered: true,
+//   pagination:{ pageSize: 50,showSizeChanger: true, pageSizeOptions: ['50','100'],showTotal: t => `总共${t}条数据` },
+//   searchInfo: pageParameter
+// });
+function reload(){
+
+}
 const [register, { closeModal }] = useModalInner( async (data) => {
   database.value=data.database
   reload()
@@ -299,8 +302,9 @@ const [register, { closeModal }] = useModalInner( async (data) => {
 async function handleOk() {
   if(selectedRowData.value!==''){
     emit('throwData', unref(selectedRowData.value[0]));
-    closeModal();
   }
+  emit('close')
+  closeModal();
 }
 
 function rowDbClick(data) {

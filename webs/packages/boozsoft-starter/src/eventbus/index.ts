@@ -19,16 +19,19 @@ function ncPrint(){
 
 function ncMdodals(){
     bus.$on("registerNcModals",function (e){
-        function useNcModal(){
-            useGlobalStoreWidthOut().setCurrentPluginName("ncModals")
-            return e
-        }
-        useGlobalStoreWidthOut().setNcModals(useNcModal)
+        // function useNcModal(){
+        //     useGlobalStoreWidthOut().setCurrentPluginName("ncModals")
+        //     return e
+        // }
+        useGlobalStoreWidthOut().setNcModals(e)
     })
 }
 function setShowPluginShadow(){
-    bus.$on('setShowPluginShadow',function(e){
-        useGlobalStoreWidthOut().setShowPluginShadow(e)
+    bus.$on('closePluginShadow',function(e){
+        useGlobalStoreWidthOut().setCurrentPluginName('')
+    })
+    bus.$on('setCurrentPluginName',function(e){
+        useGlobalStoreWidthOut().setCurrentPluginName(e)
     })
 }
 

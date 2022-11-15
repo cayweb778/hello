@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <MessagePop @throwData="modalData" @register="registerModalPopPage" />
+    <MessagePop @close="closeFn" @throwData="modalData" @register="registerModalPopPage" />
   </div>
 </template>
 <script setup>
@@ -11,12 +11,23 @@ import {onMounted} from "vue";
 const [registerModalPopPage, { openModal: openMoalPopPage }] = useModal();
 // 弹选回调
 const modalData = async (data) => {
+  emit('ok')
   console.log(data)
 }
 onMounted(()=>{
-  openMoalPopPage(true, {
-    database: ''
-  });
+
 })
 
+function open(){
+openMoalPopPage(true, {
+    database: ''
+  });
+}
+const emit=defineEmits(['cancel'])
+function closeFn(){
+  emit('cancel')
+  // window.$wujie.bus.$emit('closePluginShadow')
+}
+
+defineExpose({open})
 </script>

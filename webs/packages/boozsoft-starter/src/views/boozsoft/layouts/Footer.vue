@@ -142,9 +142,10 @@ const changeOpenStatus = () => {
   showOpen.value = !showOpen.value
 }
 
-function goMessage(){
-  let aaaa=useGlobalStoreWidthOut().getNcModals
-  aaaa().openNotifyMessageModal()
+async function goMessage(){
+  let useNcModalData=useGlobalStoreWidthOut().getNcModals
+  const ddddd=await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
+  console.log(ddddd)
 }
 const outSystemBefore = async () => {
   window.localStorage.clear()
