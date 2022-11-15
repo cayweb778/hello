@@ -370,7 +370,9 @@
               <InputNumber v-model:value="record.tempItaxrate"
                            class="itaxrate"
                            :min="0"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           :max="100"
+                           :formatter="value => `${value}%`"
+                           :parser="value => value.replace('%', '')"
                            style="width: 82%;"
                            @keyup.enter="focusNext(record,'itaxrate');"/>
               <CheckOutlined
@@ -379,9 +381,7 @@
             <template v-else>
               <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
-                    <span class="a-table-font-arial">{{
-                        (record.itaxrate == null ? '' : parseFloat(record.itaxrate).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }}</span>
+                <span class="a-table-font-arial" v-if="!hasBlank(record.itaxrate)">{{ parseFloat(record.itaxrate).toFixed(2) }}%</span>
               </div>
             </template>
           </template>

@@ -80,7 +80,9 @@
         </Select>
       </template>
       <template #rate="{ model, field }">
-        <InputNumber v-model:value="model[field]" :min="0" ref="rateRef"/>
+        <InputNumber v-model:value="model[field]" :min="0" :max="100" ref="rateRef" :formatter="value => `${value}%`"
+                     :parser="value => value.replace('%', '')"
+        />
       </template>
       <template #ddate="{ model, field }">
         <DatePicker :disabled="props.biandong=='1'" v-model:value="model[field]" ref="ddateRef" @change="dateChange" style="width: 100%;"></DatePicker>

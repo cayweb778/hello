@@ -364,6 +364,8 @@
               <InputNumber v-model:value="record.tempItaxrate" class="itaxrate"
                            :min="0"
                            :max="100"
+                           :formatter="value => `${value}%`"
+                           :parser="value => value.replace('%', '')"
                            style="width: 82%;"
                            @click="getColumnRate(record)"
                            @keyup.enter="focusNext(record,'itaxrate')"/>
@@ -373,7 +375,7 @@
             <template v-else>
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
-                    <span class="a-table-font-arial">{{ record.itaxrate }}</span>
+                    <span class="a-table-font-arial" v-if="!hasBlank(record.itaxrate)">{{ parseFloat(record.itaxrate).toFixed(2) }}%</span>
               </div>
             </template>
           </template>

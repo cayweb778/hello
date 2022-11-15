@@ -5,7 +5,7 @@
     <div class="app-container-top lcr-theme-div" style="background-color: rgb(41 150 199)">
       <div>
         <div>
-          <CopyOutlined style="color: white;font-size: 50px;"/>
+          <CopyOutlined style="color: white;font-size: 60px;"/>
         </div>
         <div>  <AccountPicker theme="three" :readonly="status>1" :dataFun="accountPickerFuns" @reloadTable="dynamicAdReload"/></div>
       </div>
@@ -432,9 +432,7 @@
             <template v-else>
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempTaxprice=record.taxprice,record.editTaxprice = true;">
-                    <span class="a-table-font-arial">{{
-                        (record.taxprice == null ? '' : parseFloat(record.taxprice).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }}</span>
+                <span class="a-table-font-arial" v-if="!hasBlank(record.itaxrate)">{{ parseFloat(record.itaxrate).toFixed(2) }}%</span>
               </div>
             </template>
           </template>

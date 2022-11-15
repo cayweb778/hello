@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <BarChartOutlined style="color: #0096c7;font-size: 50px;"/>
+          <BarChartOutlined style="color: #0096c7;font-size: 60px;"/>
         </div>
         <div>
           <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>

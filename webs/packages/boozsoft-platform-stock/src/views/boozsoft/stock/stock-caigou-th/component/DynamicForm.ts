@@ -52,7 +52,7 @@ const defaultRows = () => {
       columnType: '1',
       field: 'rate',
       label: '采购税率%',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: null,
       required: true,
       readonly: false,

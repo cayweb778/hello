@@ -34,7 +34,11 @@
         </Select>
       </template>
       <template #rate="{ model, field }">
-        <InputNumber v-model:value="model[field]" :min="0" ref="rateRef"/>
+        <InputNumber v-model:value="model[field]" :min="0" :max="100" ref="rateRef"
+                     :formatter="value => `${value}%`"
+                     :parser="value => value.replace('%', '')"
+        />
+<!--        <Input ref="rateRef" placeholder="输入" :min="0" v-model:value="model[field]" @focus="uninputRate(model,field,model[field])" @blur="inputRate(model,field,model[field])"  />-->
       </template>
       <template #ddate="{ model, field }">
         <DatePicker v-model:value="model[field]" ref="ddateRef" @change="dateChange"></DatePicker>
@@ -141,12 +145,26 @@ const cmemoRef = ref(null)
 const uninputMoney  = (model,field,val) => {
   return model[field]=val.replace(/\$\s?|(,*)/g, '')
 }
+
 // 失去焦点金额格式化
 const inputMoney   = (model,field,val) => {
   if(parseFloat(val)<0){
     return model[field]=''
   }
   return model[field]=parseFloat(val).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+// 获得焦点金额去掉格式
+const uninputRate  = (model,field,val) => {
+  let temp=val.replace('%', '')
+  return model[field]=temp.replace(/\$\s?|(,*)/g, '')
+}
+// 失去焦点金额格式化
+const inputRate   = (model,field,val) => {
+  if(parseFloat(val)<0){
+    return model[field]=''
+  }
+  let temp=parseFloat(val).toFixed(2)
+  return model[field]=(temp)+'%'
 }
 
 async function testOpenGysModal(model){

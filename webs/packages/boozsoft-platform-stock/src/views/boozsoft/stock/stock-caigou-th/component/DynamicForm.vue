@@ -75,7 +75,10 @@
         </Select>
       </template>
       <template #rate="{ model, field }">
-        <Input v-model:value="model[field]" @blur="temp123(model[field],model, field)" ref="rateRef"/>
+        <InputNumber v-model:value="model[field]" :min="0" :max="100" ref="rateRef"
+                     :formatter="value => `${value}%`"
+                     :parser="value => value.replace('%', '')"
+        />
       </template>
       <template #ddate="{ model, field }">
         <DatePicker v-model:value="model[field]" ref="ddateRef" @change="dateChange"></DatePicker>
@@ -90,7 +93,7 @@ import {findStockCaiGouList,} from "/@/api/record/stock/stock-caigou";
 import localeCn from 'ant-design-vue/es/date-picker/locale/zh_CN';
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {SearchOutlined} from '@ant-design/icons-vue';
-import {Select, Input, message} from "ant-design-vue";
+import {Select, Input, message,InputNumber} from "ant-design-vue";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
 import {findByStockPeriodIsClose} from "/@/api/record/stock/stock-ruku";
 import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerReferences";
