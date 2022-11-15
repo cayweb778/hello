@@ -12,7 +12,7 @@ const defaultRows = () => {
       component: 'Input',
       componentProps: null,
       required: true,
-      readonly: false,
+      readonly: true,
       serial: 1,
       isShow: true
     }, {

@@ -1409,6 +1409,7 @@ function editFun() {
     message.error("只能选择一条数据修改！")
     return false
   }
+  
   let dataTable=dataType.value=='0'?getDataSource1():getDataSourceMX()
   let data=dataTable.filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1)
   if(parseFloat(data[0].squantity)<0){

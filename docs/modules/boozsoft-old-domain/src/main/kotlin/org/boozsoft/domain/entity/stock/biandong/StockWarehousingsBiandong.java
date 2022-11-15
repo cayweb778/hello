@@ -330,4 +330,6 @@ public class StockWarehousingsBiandong  implements Serializable {
 	private String cmakerTime;
 	@ApiModelProperty(value = "费用金额",hidden = true)
 	private String feiyongMoney;
+	@ApiModelProperty(value = "累计凭证金额",hidden = true)
+	private String isumPzMoney;
 }

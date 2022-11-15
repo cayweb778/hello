@@ -77,8 +77,8 @@ const dynamicColumnAndDataModel = reactive({
       width: 150,
       max: 200,
       min: 80,
-    }
-    , {
+    },
+    {
       key: '2',
       name: '存货编码',
       nameNew: '存货编码',
@@ -88,8 +88,8 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100,
       align: 'left'
-    }
-    , {
+    },
+    {
       key: '3',
       name: '存货名称',
       nameNew: '存货名称',
@@ -99,7 +99,8 @@ const dynamicColumnAndDataModel = reactive({
       max: 250,
       min: 100,
       align: 'left'
-    }, {
+    },
+    {
       key: '4',
       name: '规格型号',
       nameNew: '规格型号',
@@ -123,35 +124,36 @@ const dynamicColumnAndDataModel = reactive({
     },
     {
       key: '6',
-      name: '未结算数量',
-      nameNew: '未结算数量',
+      name: '数量',
+      nameNew: '数量',
       check: true,
       isFixed: true,
       width: 100,
       max: 200,
       min: 100,
       align: 'left'
-    }
-    , {
+    },
+    {
       key: '7',
       name: '主计量',
       nameNew: '主计量',
-      check: false,
+      check: true,
       width: 60,
       max: 150,
       min: 60,
       align: 'center'
-    }
-    ,{
+    },
+    {
       key: '8',
       name: '主数量',
       nameNew: '主数量',
-      check: false,
+      check: true,
       width: 120,
       max: 150,
       min: 100,
       align: 'center'
-    }, {
+    },
+    {
       key: '9',
       name: "无税单价",
       nameNew: "无税单价",
@@ -160,7 +162,8 @@ const dynamicColumnAndDataModel = reactive({
       max: 250,
       min: 100,
       align: 'right'
-    }, {
+    },
+    {
       key: '10',
       name: "无税金额",
       nameNew: "无税金额",
@@ -172,67 +175,6 @@ const dynamicColumnAndDataModel = reactive({
     },
     {
       key: '11',
-      name: "税额",
-      nameNew: "税额",
-      check: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },
-    {
-      key: '12',
-      name: "税率%",
-      nameNew: "税率%",
-      check: false,
-      isFixed: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },
-    {
-      key: '13',
-      name: "含税单价",
-      nameNew: "含税单价",
-      check: false,
-      isFixed: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },{
-      key: '14',
-      name: "价税合计",
-      nameNew: "价税合计",
-      check: false,
-      isFixed: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },
-   {
-      key: '15',
-      name: "累计入库数量",
-      nameNew: "累计入库数量",
-      check: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },{
-      key: '16',
-      name: "累计开票数量",
-      nameNew: "累计开票数量",
-      check: false,
-      width: 150,
-      max: 250,
-      min: 100,
-      align: 'right'
-    },
-    {
-      key: '17',
       name: "批号",
       nameNew: "批号",
       check: true,
@@ -241,7 +183,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,align: 'left'
     },
     {
-      key: '18',
+      key: '12',
       name: "生产日期",
       nameNew: "生产日期",
       check: true,
@@ -250,7 +192,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,align: 'left'
     },
     {
-      key: '19',
+      key: '13',
       name: "失效日期",
       nameNew: "失效日期",
       check: true,
@@ -259,7 +201,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,align: 'left'
     },
     {
-      key: '20',
+      key: '14',
       name: "备注",
       nameNew: "备注",
       check: true,
@@ -268,13 +210,54 @@ const dynamicColumnAndDataModel = reactive({
       min: 10,align: 'left'
     },
     {
-      key: '21',
-      name: "项目",
-      nameNew: "项目",
-      check: false,
-      width: 100,
-      max: 120,
-      min: 80,align: 'left'
+      key: '15',
+      name: "累计核算主数量",
+      nameNew: "累计核算主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '16',
+      name: "累计到货主数量",
+      nameNew: "累计到货主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '17',
+      name: "累计开票主数量",
+      nameNew: "累计开票主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '18',
+      name: "来源单号",
+      nameNew: "来源单号",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '19',
+      name: "来源单据日期",
+      nameNew: "来源单据日期",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'left'
     }
   ]
 })

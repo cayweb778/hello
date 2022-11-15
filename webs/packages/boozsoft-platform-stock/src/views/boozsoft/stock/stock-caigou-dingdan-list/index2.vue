@@ -290,6 +290,7 @@ import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record"
 import {
   delRuKu,
   findAllMainList,
+  getAllCcodeArr,
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx
@@ -1226,7 +1227,19 @@ async function editFun() {
     message.error("只能选择一条数据修改！")
     return false
   }
+
   let data=dataType.value=='0'?getDataSource1().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1):getDataSourceMX().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1)
+  if(data[0].bcheck=='1'){
+    message.error("单据已审核,不能修改！")
+    return false
+  }
+  // 执行操作前判断单据是否存在
+  let ccodeArr=await useRouteApi(getAllCcodeArr, { schemaName: dynamicTenantId })({billStyle:'CGDD'})
+  let temp=ccodeArr.filter(t=>t.indexOf(data[0].ccode)!=-1)
+  if(temp.length==0){
+    message.error("单据列表已发生变化,请刷新当前单据！")
+    return false
+  }
   await closeToFullPaths('/cg-dingdan')
   setTimeout(()=>{
     router.push({path: 'cg-dingdan',query: {type:'edit',ccode:data[0].ccode,co: databaseCo.value}})
@@ -1281,6 +1294,17 @@ async function delFun() {
   if(list.length>0){
     return message.error('提示：已经审核，不能删除，请弃审单据后重试！！')
   }
+
+  // 执行操作前判断单据是否存在
+  let ccodeArr=await useRouteApi(getAllCcodeArr, { schemaName: dynamicTenantId })({billStyle:'CGDD'})
+  for (let i = 0; i < getSelectRows1().length; i++) {
+    let temp=ccodeArr.filter(t=>t.indexOf(getSelectRows1()[i].ccode)!=-1)
+    if(temp.length==0){
+      message.error("单据列表已发生变化,请刷新当前单据！")
+      return
+    }
+  }
+
   createConfirm({
     iconType: 'warning',
     title: '采购订单删除',

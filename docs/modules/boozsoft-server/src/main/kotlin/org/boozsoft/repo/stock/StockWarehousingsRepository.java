@@ -232,6 +232,9 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
 
     @Query("delete from stock_warehousings where sourcecode=:sourcecode and bill_style in ('HZHCD','LZHCD')  ")
     Mono<Void> delByHCD(String sourcecode);
+
+    @Query(" select ccode from stock_warehousings where bill_style=:billStyle ")
+    Flux<String> getAllCcodeArr(String billStyle);
 }
 
 

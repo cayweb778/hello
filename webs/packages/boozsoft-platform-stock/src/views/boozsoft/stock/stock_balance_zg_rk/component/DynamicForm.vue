@@ -68,9 +68,7 @@
       <template #rate="{ model, field }">
         <Input v-model:value="model[field]" @blur="temp123(model[field],model, field)" ref="rateRef"/>
       </template>
-      <template #ccode="{ model, field }">
-        <Input placeholder="单据编号" v-model:value="model[field]" @blur="verifyCcode(model[field],model, field)" ref="ccodeRef"/>
-      </template>
+
       <template #ddate="{ model, field }">
         <DatePicker v-model:value="model[field]" ref="ddateRef" @change="dateChange(model[field],model, field)"></DatePicker>
       </template>
@@ -87,15 +85,14 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {SearchOutlined} from '@ant-design/icons-vue';
 import {Select, Input, message,DatePicker} from "ant-design-vue";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {findByStockPeriodIsClose,findAllByCcodeAndBillStyle} from "/@/api/record/stock/stock-ruku";
 import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerReferences";
 import dayjs from "dayjs";
+import {findBillCode, findBillCode2} from "/@/api/record/stock/stock-ruku";
 
 const emit = defineEmits(['register', 'open']);
 const props = defineProps(['datasource', 'formDataFun', 'accId', 'readOnly','canzhao','sourceType','dynamicTenant'])
 const { proxy } = getCurrentInstance()
 const formElRef = ref(null)
-const ccodeRef = ref(null)
 const ddateRef = ref(null)
 const cwhcodeRef = ref(null)
 const cdepcodeRef = ref(null)
@@ -118,9 +115,21 @@ async function dateChange(data,val) {
   let b=data
   if(!b.isBefore(a)){
     message.error('单据日期不能大于账套启用期间！')
+    val.ccode=null
     val.ddate=null
+    return
   }
+
+  let tempDate=formatTimer(b)
+  val.ccode=await generateCode(tempDate.substring(0,tempDate.length-3))
 }
+
+async function generateCode(date) {
+  return await useRouteApi(findBillCode2, {schemaName: props.accId})({
+    type: "ZG", iyear: date.split('-')[0], time: date
+  })
+}
+
 function formatTimer(value) {
   let date:any = new Date(value);
   let y = date.getFullYear();
@@ -137,10 +146,6 @@ function formatTimer(value) {
   return y + "-" + MM + "-" + d;
 }
 
-async function verifyCcode(val) {
-  let ccode=await useRouteApi(findAllByCcodeAndBillStyle, {schemaName: props.accId})({ccode:val,billStyle:'QT'})
-  console.log(ccode.length)
-}
 function temp123(val,a) {
   if(!isFinite(val)){
     message.error('税率不是正整数！')
@@ -170,7 +175,7 @@ function createItem(it) {
     componentProps: (it['component'] == 'DatePicker' ? {locale: localeCn,disabled: true} : it['component'] == 'Select'?{
       options: it['list'],
     }:it['component'] == 'Input'?{readonly: it['readonly']}:{}),
-    slot: it['component'] == 'Select' || it['field'] == 'rate' || it['field'] == 'ddate'|| it['field'] == 'ccode' ? it['field'] : null,
+    slot: it['component'] == 'Select' || it['field'] == 'rate' || it['field'] == 'ddate' ? it['field'] : null,
     show: it['isShow']
   }
 }
@@ -222,7 +227,7 @@ const focusNext = (t) => {
 </script>
 <style lang="less" scoped="scoped">
 .dynamic-form{
-  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper),:deep(#form_item_rate),:deep(.ant-input){
+  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper),:deep(#form_item_rate){
     border: none;
     border-bottom: 1px solid #c9c9c9;
     background-color: white;
