@@ -66,18 +66,15 @@ public class StockSFCController {
             sb2.append(" and sk.stock_class in ("+idStr+") ");
         }
 
-        String sql="select distinct temp.*,sk.stock_num,sk.stock_name,sk.stock_ggxh,sk.stock_class,sk.stock_unit_name as unit_name,sk.stock_unit_name1 as unit_name1,sk.stock_unit_name2 as unit_name2,\n" +
+        String sql="select distinct temp.*,sk.stock_num,sk.stock_name,sk.stock_ggxh,sk.stock_class,sk.stock_unit_name as unit_name,sk.stock_unit_name1 as unit_name1,sk.stock_unit_name2 as unit_name2," +
+                "                coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=sk.stock_unit_id),'0') rate,\n" +
+                "                coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=sk.stock_unit_id1),'0') rate1,\n" +
+                "                coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=sk.stock_unit_id2),'0') rate2,"+
                 "(select coalesce(sum(cast(coalesce(sws.base_quantity, '0') as decimal)), '0') from stock_begin_balance sws where sws.stock_id = sk.stock_num and sws.bcheck='1' "+sb0+") qichu,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity1, '0') as decimal)), '0') from stock_begin_balance sws where sws.stock_id = sk.stock_num and sws.bcheck='1' "+sb0+") qichu1,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity2, '0') as decimal)), '0') from stock_begin_balance sws where sws.stock_id = sk.stock_num and sws.bcheck='1' "+sb0+") qichu2,\n" +
                 " (select coalesce(sum(cast(coalesce(sws.icost, '0') as decimal)), '0') from stock_begin_balance sws where sws.stock_id = sk.stock_num and sws.bcheck='1') qcicost,\n" +
                 " (select coalesce(sum(cast(coalesce(sws.base_quantity, '0') as decimal)), '0') from stock_warehousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('CGRKD', 'QTRKD', 'DBRKD', 'PDRKD', 'XTZHRKD')) rk,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity1, '0') as decimal)), '0') from stock_warehousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('CGRKD', 'QTRKD', 'DBRKD', 'PDRKD', 'XTZHRKD')) rk1,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity2, '0') as decimal)), '0') from stock_warehousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('CGRKD', 'QTRKD', 'DBRKD', 'PDRKD', 'XTZHRKD')) rk2,\n" +
                 " (select coalesce(sum(cast(coalesce(sws.icost, '0') as decimal)), '0')+coalesce(sum(cast(coalesce(sws.thmoney, '0') as decimal)), '0') from stock_warehousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('CGRKD', 'QTRKD', 'DBRKD', 'PDRKD', 'XTZHRKD', 'RKTZD')) rkicost,\n" +
                 " (select coalesce(sum(cast(coalesce(sws.base_quantity, '0') as decimal)), '0') from stock_saleousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('QTCKD', 'DBCKD', 'PDCKD', 'XTZHCKD', 'XSCKD','CLLYD'))  ck,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity1, '0') as decimal)), '0') from stock_saleousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('QTCKD', 'DBCKD', 'PDCKD', 'XTZHCKD', 'XSCKD','CLLYD'))  ck1,\n" +
-                " (select coalesce(sum(cast(coalesce(sws.sub_quantity2, '0') as decimal)), '0') from stock_saleousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('QTCKD', 'DBCKD', 'PDCKD', 'XTZHCKD', 'XSCKD','CLLYD'))  ck2,\n" +
                 " (select coalesce(sum(cast(coalesce(sws.icost, '0') as decimal)), '0')+coalesce(sum(cast(coalesce(sws.thmoney, '0') as decimal)), '0') from stock_saleousings sws where sws.cinvode = sk.stock_num "+sb1+" and sws.bill_style in ('QTCKD', 'DBCKD', 'PDCKD', 'XTZHCKD', 'XSCKD','CLLYD','CKTZD'))   ckicost\n" +
                 "from (\n" +
                 "  select xcl.stock_id as cinvode from stock_begin_balance xcl left join stock sk on sk.stock_num=xcl.stock_id group by xcl.stock_id,sk.stock_unit_id union all\n" +

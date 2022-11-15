@@ -300,29 +300,33 @@ async function getStockXCL() {
       temp.forEach(async (a)=>{
         a.stockCangkuName=ckName.value
 
-        let qimo=(parseFloat(a.qichu)+parseFloat(a.rk))-parseFloat(a.ck)
-        let qimo2=(parseFloat(a.qcicost)+parseFloat(a.rkicost))-parseFloat(a.ckicost)
-        let qimo1=parseFloat(qimo2/qimo)==0?0:toThousandFilter(qimo2/qimo)
-        a.qimo=toThousandFilter(qimo)
-        a.qmprice=parseFloat(a.qmprice)<=0?null:toThousandFilter(qimo1)
-        a.qmicost=toThousandFilter(qimo2)
+        a.qcprice=a.qcicost/a.qichu
+        a.rkicost=a.rkicost/a.rk
+        a.ckprice=a.ckicost/a.ck
 
-        let qcprice=parseFloat(a.qcicost)==0 || parseFloat(a.qichu)==0?0:toThousandFilter(a.qcicost/a.qichu)
-        a.qcprice=parseFloat(a.qcprice)<=0?null:toThousandFilter(qcprice)
-        a.qcicost=toThousandFilter(a.qcicost)
-        a.qichu=toThousandFilter(a.qichu)
-
-        let rkprice=parseFloat(a.rkicost)==0 || parseFloat(a.rk)==0?0:toThousandFilter(a.rkicost/a.rk)
-        a.rkprice=parseFloat(rkprice)<=0?null:toThousandFilter(rkprice)
-        a.rkicost=toThousandFilter(a.rkicost)
-        a.rk=toThousandFilter(a.rk)
-
-        let ckprice=parseFloat(a.ckicost)==0 || parseFloat(a.ck)==0?0:toThousandFilter(a.ckicost/a.ck)
-        a.ckprice=parseFloat(ckprice)<=0?null:toThousandFilter(ckprice)
-        a.ckicost=toThousandFilter(a.ckicost)
-        a.ck=toThousandFilter(a.ck)
+        let qimo:any=(parseFloat(a.qichu)+parseFloat(a.rk))-parseFloat(a.ck)
+        let qmicost:any=(parseFloat(a.qcicost)+parseFloat(a.rkicost))-parseFloat(a.ckicost)
+        let qmprice:any=parseFloat(qmicost)/parseFloat(qimo)
+        a.qimo=qimo
+        a.qmicost=qmicost
+        a.qmprice=qmprice
       })
       assembleTotal(temp)
+      temp.map(a=>{
+        a.qimo=toThousandFilter(a.qimo);
+        a.qmicost=toThousandFilter(a.qmicost);
+        a.qmprice=toThousandFilter(a.qmprice);
+        a.qichu=toThousandFilter(a.qichu);
+        a.qcprice=toThousandFilter(a.qcprice);
+        a.qcicost=toThousandFilter(a.qcicost);
+        a.rk=toThousandFilter(a.rk);
+        a.rkicost=toThousandFilter(a.rkicost);
+        a.rkicost=toThousandFilter(a.rkicost);
+        a.ck=toThousandFilter(a.ck);
+        a.ckprice=toThousandFilter(a.ckprice);
+        a.ckicost=toThousandFilter(a.ckicost);
+        return a;
+      })
       let len = temp.length
       if(len<50){
         for (let i =  len; i < 50; i++) {
@@ -346,14 +350,14 @@ const assembleTotal = (list) => {
   let ckicost = 0
 
   for (let o of list) {
-    qimo += parseFloat(o.qimo.replace(/\$\s?|(,*)/g, '') || '0')
-    qichu += parseFloat(o.qichu.replace(/\$\s?|(,*)/g, '') || '0')
-    rk += parseFloat(o.rk.replace(/\$\s?|(,*)/g, '') || '0')
-    ck += parseFloat(o.ck.replace(/\$\s?|(,*)/g, '') || '0')
-    qmicost += parseFloat(o.qmicost.replace(/\$\s?|(,*)/g, '') || '0')
-    qcicost += parseFloat(o.qcicost.replace(/\$\s?|(,*)/g, '') || '0')
-    rkicost += parseFloat(o.rkicost.replace(/\$\s?|(,*)/g, '') || '0')
-    ckicost += parseFloat(o.ckicost.replace(/\$\s?|(,*)/g, '') || '0')
+    qimo += parseFloat(o.qimo || '0')
+    qichu += parseFloat(o.qichu || '0')
+    rk += parseFloat(o.rk || '0')
+    ck += parseFloat(o.ck || '0')
+    qmicost += parseFloat(o.qmicost || '0')
+    qcicost += parseFloat(o.qcicost || '0')
+    rkicost += parseFloat(o.rkicost || '0')
+    ckicost += parseFloat(o.ckicost || '0')
   }
   summaryTotals.value=
     {
@@ -390,13 +394,6 @@ const [registerTable, {
     simple:true
   },
 })
-
-function removeMoneyTransition(val) {
-  if (hasBlank(val)) {
-    return ''
-  }
-  return  val.replace(/\$\s?|(,*)/g, '')
-}
 
 //选中内容
 const state = reactive<{
@@ -633,7 +630,7 @@ const dynamicAdReload = async (obj) => {
  * @param num
  */
 function toThousandFilter(num: any) {
-  if (num == '' || num == null) {
+  if (num == '' || num == null || parseFloat(num)==0 || isNaN(num)) {
     return ''
   }
   return (+num || 0).toFixed(2).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')

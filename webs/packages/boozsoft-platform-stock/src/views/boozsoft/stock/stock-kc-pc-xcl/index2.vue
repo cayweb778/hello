@@ -115,89 +115,6 @@
             </TableSummaryRow>
           </TableSummary>
         </template>
-<!--        <template #summary>-->
-<!--          <TableSummary fixed>-->
-<!--            <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">-->
-<!--              <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;">合</TableSummaryCell>-->
-<!--              <TableSummaryCell class="nc-summary" :index="1" :align="'center'" style="border-right: none;">计</TableSummaryCell>-->
-<!--              <TableSummaryCell class="nc-summary" :index="2" :colSpan="10" :align="'center'"/>-->
-<!--              <TableSummaryCell :index="2" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.baseQuantity }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="2" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.subQuantity1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.subQuantity2 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.keyong }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.keyong1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.keyong2 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.ztrkQuantityCgdh }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.cgdh1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.cgdh2 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.ztrkQuantityCgrk }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.cgrk1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.cgrk2 }}-->
-<!--              </TableSummaryCell>-->
-
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.ztckQuantityXhd }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.xhd1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.xhd2 }}-->
-<!--              </TableSummaryCell>-->
-
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.ztrkQuantityQtck }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.qtck1 }}-->
-<!--              </TableSummaryCell>-->
-<!--              <TableSummaryCell :index="3" :align="'right'"-->
-<!--                                style="background-color: #cccccc;font-weight: bold;border-right: none;">-->
-<!--                {{ summaryTotals.qtck2 }}-->
-<!--              </TableSummaryCell>-->
-<!--            </TableSummaryRow>-->
-<!--          </TableSummary>-->
-<!--        </template>-->
       </BasicTable>
       <div class="pagination-text" v-show="showPaginationText">
         {{`共 ${paginationNumber}条记录&emsp;每页 1000 条`}}
@@ -385,62 +302,24 @@ async function getStockXCL() {
       a.cwhcodeName = cangkuJoinName[0].cangkuRecordJoinName
     }
 
-    let keyong1=0
-    let keyong2=0
-
     a.baseQuantity=a.xcl
-    a.subQuantity1=parseFloat(a.rate1)==0?0:parseFloat(a.xcl/a.rate1).toFixed(2)
-    a.subQuantity1=parseFloat(a.subQuantity1)
-
-    a.subQuantity2=parseFloat(a.rate2)==0?0:parseFloat(a.xcl/a.rate2).toFixed(2)
-    a.subQuantity2=parseFloat(a.subQuantity2)
-
-    keyong1+=hasBlank(a.subQuantity1)?0:parseFloat(a.subQuantity1)
-    keyong2+=hasBlank(a.subQuantity2)?0:parseFloat(a.subQuantity2)
-
     a.ztrkQuantityCgdh=a.midWayDh
-    a.cgdh1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayDh/a.rate1).toFixed(2)
-    a.cgdh1=parseFloat(a.cgdh1)
-
-    a.cgdh2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayDh/a.rate2).toFixed(2)
-    a.cgdh2=parseFloat(a.cgdh2)
-
-    keyong1+=hasBlank(a.cgdh1)?0:parseFloat(a.cgdh1)
-    keyong2+=hasBlank(a.cgdh2)?0:parseFloat(a.cgdh2)
-
     a.ztrkQuantityCgrk=a.midWayRk
-    a.cgrk1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayRk/a.rate1).toFixed(2)
-    a.cgrk1=parseFloat(a.cgrk1)
-
-    a.cgrk2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayRk/a.rate2).toFixed(2)
-    a.cgrk2=parseFloat(a.cgrk2)
-
-    keyong1+=hasBlank(a.cgrk1)?0:parseFloat(a.cgrk1)
-    keyong2+=hasBlank(a.cgrk2)?0:parseFloat(a.cgrk2)
-
     a.ztckQuantityXhd=a.midWayXh
-    a.xhd1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayXh/a.rate1).toFixed(2)
-    a.xhd1=parseFloat(a.xhd1)
-
-    a.xhd2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayXh/a.rate2).toFixed(2)
-    a.xhd2=parseFloat(a.xhd2)
-
-    keyong1-=hasBlank(a.xhd1)?0:parseFloat(a.xhd1)
-    keyong2-=hasBlank(a.xhd2)?0:parseFloat(a.xhd2)
-
     a.ztrkQuantityQtck=a.midWayCk
-    a.qtck1=parseFloat(a.rate1)==0?0:parseFloat(a.midWayCk/a.rate1).toFixed(2)
-    a.qtck1=parseFloat(a.qtck1)
 
-    a.qtck2=parseFloat(a.rate2)==0?0:parseFloat(a.midWayCk/a.rate2).toFixed(2)
-    a.qtck2=parseFloat(a.qtck2)
-
-    keyong1-=hasBlank(a.qtck1)?0:parseFloat(a.qtck1)
-    keyong2-=hasBlank(a.qtck2)?0:parseFloat(a.qtck2)
-
-    a.keyong1 = parseFloat(keyong1)
-    a.keyong2 = parseFloat(keyong2)
-    a.keyong = (a.xcl + a.midWayDh + a.midWayRk) - (a.midWayXh + a.midWayCk)
+    a.subQuantity1=parseFloat(a.rate1)==0?null:parseFloat(String(a.xcl/a.rate1))
+    a.subQuantity2=parseFloat(a.rate2)==0?null:parseFloat(String(a.xcl/a.rate2))
+    a.cgdh1=parseFloat(a.rate1)==0?0:parseFloat(String(a.midWayDh/a.rate1))
+    a.cgdh2=parseFloat(a.rate2)==0?0:parseFloat(String(a.midWayDh/a.rate2))
+    a.cgrk1=parseFloat(a.rate1)==0?0:parseFloat(String(a.midWayRk/a.rate1))
+    a.cgrk2=parseFloat(a.rate2)==0?0:parseFloat(String(a.midWayRk/a.rate2))
+    a.xhd1=parseFloat(a.rate1)==0?0:parseFloat(String(a.midWayXh/a.rate1))
+    a.xhd2=parseFloat(a.rate2)==0?0:parseFloat(String(a.midWayXh/a.rate2))
+    a.qtck1=parseFloat(a.rate1)==0?0:parseFloat(String(a.midWayCk/a.rate1))
+    a.qtck2=parseFloat(a.rate2)==0?0:parseFloat(String(a.midWayCk/a.rate2))
+    a.keyong1=parseFloat(a.rate1)==0?0:parseFloat(String(a.keyong/a.rate1))
+    a.keyong2=parseFloat(a.rate2)==0?0:parseFloat(String(a.keyong/a.rate2))
   })
   let len = temp.length
   paginationNumber.value=len

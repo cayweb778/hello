@@ -29,18 +29,14 @@ public class StockSFCNumberVo implements Serializable {
 	private String stockMeasurementType;
 	private String stockMeasurementUnit;
 	private BigDecimal qichu;
-	private BigDecimal qichu1;
-	private BigDecimal qichu2;
 	private BigDecimal rk;
-	private BigDecimal rk1;
-	private BigDecimal rk2;
 	private BigDecimal ck;
-	private BigDecimal ck1;
-	private BigDecimal ck2;
 	private BigDecimal qimo;
-	private BigDecimal qimo1;
-	private BigDecimal qimo2;
+	private BigDecimal rate;
+	private BigDecimal rate1;
+	private BigDecimal rate2;
 
+	// 金额汇总表用到
 	private BigDecimal qcprice;
 	private BigDecimal qcicost;
 	private BigDecimal rkprice;
