@@ -2,24 +2,25 @@
     <BasicModal
       width="900px"
       v-bind="$attrs"
-      title="应收单"
+      title="收款单"
       @ok="handleOk()"
       @cancel="handleOk()"
       wrapClassName="head-title"
       @register="register"
     >
       <template #title>
-        <div style="display: flex;height:30px;margin-left: 10px;margin-top: 10px;" class="vben-basic-title">
-          <span style="font-size: 24px;line-height:30px;">
-            <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;应收单
-          </span>
+        <div style="display: flex;height:30px;" class="vben-basic-title">
+        <span style="font-size: 24px;line-height:30px;">
+          <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
+        </span>
         </div>
       </template>
-      <div class="nc-open-content" style="margin-top: 10px;">
+      <div class="nc-open-content" style="margin:0;padding:0;">
         <div class="open-content-up" style="margin:0;padding:0;">
           <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;color: #ffffff;font-weight: bold">
             <div class="a1">
               <a-select v-model:value="formItems.selectType" style="width: 120px;font-size: 14px;" class="special_select">
+                <a-select-option value="ddate">单据日期</a-select-option>
                 <a-select-option value="ccode">单据编号</a-select-option>
                 <a-select-option value="cdepcode">部门</a-select-option>
                 <a-select-option value="cpersoncode">业务员</a-select-option>
@@ -56,7 +57,7 @@
                 :dataSource="tableData"
                 class="tables"
               >
-                <template #billStyle="{ record }">{{formatHxStyle(record.billStyle)}}</template>
+                <template #billStyle="{ record }">{{formatBillStyle(record.billStyle)}}</template>
                 <template #isum="{ record }">{{toThousandFilter(record.isum)}}</template>
                 <template #whxIsum="{ record }">{{toThousandFilter(sub(record.isum==null?'0':record.isum,record.hxIsum==null?'0':record.hxIsum))}}</template>
               </BasicTable>
@@ -88,8 +89,9 @@ import {useMessage} from "/@/hooks/web/useMessage";
 import {BasicTable, useTable} from "/@/components/Table";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {findBySkWhxXhd} from "/@/api/record/system/hexiao";
-import {add, sub, toThousandFilter} from "../../YingShouKuanQiChuYuE/calculation";
+import {sub, toThousandFilter} from "../../YingShouKuanQiChuYuE/calculation";
 import {findByCvencode} from "/@/api/record/system/arBeginBalance";
+import {add} from "/@/views/platforms/YingShouZhang/YingShouKuanQiChuYuE/calculation";
 
 const {
   createErrorModal,
@@ -103,7 +105,7 @@ const formItems: any = ref({
   selectType: '',
   selectValue: ''
 })
-
+const accountList: any = ref([])
 const dynamicTenantId = ref('')
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
@@ -165,26 +167,31 @@ const columns = [
   },
 ]
 
-function formatHxStyle(hxStyle){
-  let str = hxStyle
-  if (hxStyle=='XHD'){
+function formatBillStyle(billStyle){
+  let str = billStyle
+  //XHD销货单、PLXHD批量销货单、XSCKD销售出库单、QTCKD其他出库单、DBCKD调拨出库单、XTZHCKD形态转换出库单、JYJCD借用借出单
+  if (billStyle=='XHD'){
     str = '销货单'
-  } else if (hxStyle=='YSD'){
-    str = '应收单'
-  } else if (hxStyle=='XSFP'){
+  } else if (billStyle=='PLXHD'){
+    str = '批量销货单'
+  } else if (billStyle=='XSCKD'){
+    str = '销售出库单'
+  } else if (billStyle=='QTCKD'){
+    str = '其他出库单'
+  } else if (billStyle=='DBCKD'){
+    str = '调拨出库单'
+  } else if (billStyle=='XTZHCKD'){
+    str = '形态转换出库单'
+  } else if (billStyle=='JYJCD'){
+    str = '借用借出单'
+  } else if (billStyle=='XSFP'){
     str = '销售发票'
-  } else if (hxStyle=='QCXHD'){
-    str = '期初销货单'
-  } else if (hxStyle=='QCYSD'){
-    str = '期初应收单'
-  } else if (hxStyle=='QCXSFP'){
-    str = '期初销售发票'
   }
   return str
 }
 
 // 这是示例组件
-const [registerTable, {reload,getColumns,setTableData,setPagination}] = useTable({
+const [registerTable, {reload,getColumns,setPagination}] = useTable({
   columns: columns,
   bordered: true,
   showIndexColumn: false,
@@ -195,62 +202,76 @@ const [registerTable, {reload,getColumns,setTableData,setPagination}] = useTable
   }
 })
 
-const saleousingList:any = ref([])
-const arBeginBalanceList:any = ref([])
+const xhdList:any = ref([])
+const qcysdList:any = ref([])
 const thisCheckKey:any = ref('')
 async function reloadList(){
-  tableData.value = []
   tableDataAll.value = []
-  const qcList = await useRouteApi(findByCvencode,{schemaName: dynamicTenantId})({cvencode:cvencode.value,iyear:year.value})
+  let qcList = await useRouteApi(findByCvencode,{schemaName: dynamicTenantId})({cvencode:formItems.value.cvencode,iyear:year.value})
   if (arSourceFlag.value!='1') {
-    arBeginBalanceList.value = qcList.filter(item => item.busStyle == 'YSD' && item.ysIsumBenbi!='0')
+    qcysdList.value = qcList.filter(item => item.busStyle == 'YSD' && item.arIsumBenbi > 0)
   } else {
-    arBeginBalanceList.value = qcList.filter(item => item.arStyle == 'YSD' && item.ysIsumBenbi!='0')
+    qcysdList.value = qcList.filter(item => item.arStyle == 'YSD' && item.arIsumBenbi > 0)
   }
-  tableDataAll.value.push(...saleousingList.value.map(item => {
-    item.hxStyle = item.arStyle
-    item.hxCcode = item.ccode
-    item.cvencode = item.cvencodeJs
-    item.isum = item.arIsumBenbi
-    if (item.hxIsum!=null && item.hxIsum !='') {
-      item.whxIsum = sub(item.isum, item.hxIsum)
-    } else {
-      item.whxIsum = item.isum
-    }
+  tableDataAll.value.push(...qcysdList.value.map(item=>{
+    item.cvencode = item.cvencodeJS
+    item.isum = item.ysIsumBenbi
+    item.whxIsum = sub(item.isum,item.hxIsum==null?'0':item.hxIsum)
+    item.ljhxIsum = add(item.hxIsum==null?'0':item.hxIsum,item.hxMoney==null?'0':item.hxMoney)
     item.type = 'YUE'
     return item
   }))
-  const saleList = await useRouteApi(findBySkWhxXhd, {schemaName: dynamicTenantId})({
-    year: year.value,
-    cvencode: cvencode.value
-  })
+  const res:any = await useRouteApi(findBySkWhxXhd,{schemaName: dynamicTenantId})({year:year.value,cvencode:cvencode.value})
+  xhdList.value = res.filter(item => item.bdocumStyle!='1')
+  // console.log(thisCheckKey.value)
   if (arSourceFlag.value=='1') {
-    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1' && item.isum!='0')
+    tableData.value.push(...xhdList.value.filter(item => item.busStyle !='XHD' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
+      item.hxStyle = item.billStyle
+      item.hxCcode = item.ccode
+      if (item.hxIsum!=null && item.hxIsum !='') {
+        item.whxIsum = sub(item.isum, item.hxIsum)
+      } else {
+        item.whxIsum = item.isum
+      }
+      item.type = 'XHD'
+      return item
+    }))
   } else {
     if(arCheckFlag=='1'){
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.bworkable=='1' && item.isum!='0')
+      tableData.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bworkable=='1' && item.bdocumStyle!='1').map(item=>{
+        item.hxStyle = item.billStyle
+        item.hxCcode = item.ccode
+        if (item.hxIsum!=null && item.hxIsum !='') {
+          item.whxIsum = sub(item.isum, item.hxIsum)
+        } else {
+          item.whxIsum = item.isum
+        }
+        item.type = 'XHD'
+        return item
+      }))
     } else {
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.isum!='0')
+      tableData.value.push(...xhdList.value.filter(item => item.busStyle != 'XSFP' && item.bdocumStyle!='1').map(item=>{
+        item.hxStyle = item.billStyle
+        item.hxCcode = item.ccode
+        if (item.hxIsum!=null && item.hxIsum !='') {
+          item.whxIsum = sub(item.isum, item.hxIsum)
+        } else {
+          item.whxIsum = item.isum
+        }
+        item.type = 'XHD'
+        return item
+      }))
     }
   }
-  tableDataAll.value.push(...saleousingList.value.map(item => {
-    item.hxStyle = item.billStyle
-    item.hxCcode = item.ccode
-    if (item.hxIsum!=null && item.hxIsum !='') {
-      item.whxIsum = sub(item.isum, item.hxIsum)
-    } else {
-      item.whxIsum = item.isum
-    }
-    item.type = 'XHD'
-    return item
-  }))
   tableData.value = tableDataAll.value.filter(item =>{
     if (hxmxList.value.length>0){
-      return hxmxList.value.map(aa => aa.sourcecode).indexOf(item.ccode) == -1
+      return hxmxList.value.map(aa => aa.hxCcode).indexOf(item.ccode) == -1
     }
     return item
   })
-  setTableData(tableData.value)
+  await setPagination({
+    total: tableData.value.length
+  })
 }
 
 onMounted(async () => {

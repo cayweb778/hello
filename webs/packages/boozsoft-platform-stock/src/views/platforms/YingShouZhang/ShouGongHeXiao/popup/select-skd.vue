@@ -2,16 +2,16 @@
     <BasicModal
       width="900px"
       v-bind="$attrs"
-      title="应收单"
+      title="收款单"
       @ok="handleOk()"
       @cancel="handleOk()"
       wrapClassName="head-title"
       @register="register"
     >
       <template #title>
-        <div style="display: flex;height:30px;margin-left: 10px;margin-top: 10px;" class="vben-basic-title">
-          <span style="font-size: 24px;line-height:30px;">
-            <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;应收单
+        <div style="display: flex;height:30px;" class="vben-basic-title">
+          <span style="font-size: 24px;line-height:30px;margin-left: 10px;margin-top: 10px;">
+            <SearchOutlined style="font-size: 28px;font-weight: bold"/>&nbsp;&nbsp;收款单
           </span>
         </div>
       </template>
@@ -20,6 +20,7 @@
           <div style="background:#0096c7;padding:10px;border-radius: 2px;margin-bottom:10px;display: flex;justify-content : space-between;color: #ffffff;font-weight: bold">
             <div class="a1">
               <a-select v-model:value="formItems.selectType" style="width: 120px;font-size: 14px;" class="special_select">
+                <a-select-option value="ddate">单据日期</a-select-option>
                 <a-select-option value="ccode">单据编号</a-select-option>
                 <a-select-option value="cdepcode">部门</a-select-option>
                 <a-select-option value="cpersoncode">业务员</a-select-option>
@@ -33,10 +34,8 @@
               &emsp;&emsp;
               <span>单据类型：</span>
               <a-select v-model:value="formItems.billStyle" style="width: 120px;font-size: 14px;" placeholder="单据类型" class="special_select">
-                <a-select-option value="XHD">销货单</a-select-option>
-                <a-select-option value="SXFP">销售发票</a-select-option>
-                <a-select-option value="YSD">应收单</a-select-option>
-                <a-select-option value="QCYSD">期初应收单</a-select-option>
+                <a-select-option value="SKD">收款单</a-select-option>
+                <a-select-option value="QCSKD">期初收款单</a-select-option>
               </a-select>
             </div>
             <div class="a2">
@@ -56,7 +55,7 @@
                 :dataSource="tableData"
                 class="tables"
               >
-                <template #billStyle="{ record }">{{formatHxStyle(record.billStyle)}}</template>
+                <template #sourcetype="{ record }">{{formatBillStyle(record.sourcetype)}}</template>
                 <template #isum="{ record }">{{toThousandFilter(record.isum)}}</template>
                 <template #whxIsum="{ record }">{{toThousandFilter(sub(record.isum==null?'0':record.isum,record.hxIsum==null?'0':record.hxIsum))}}</template>
               </BasicTable>
@@ -90,6 +89,7 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {findBySkWhxXhd} from "/@/api/record/system/hexiao";
 import {add, sub, toThousandFilter} from "../../YingShouKuanQiChuYuE/calculation";
 import {findByCvencode} from "/@/api/record/system/arBeginBalance";
+import {findWhxskd} from "/@/api/record/system/arApYsyf";
 
 const {
   createErrorModal,
@@ -103,7 +103,7 @@ const formItems: any = ref({
   selectType: '',
   selectValue: ''
 })
-
+const accountList: any = ref([])
 const dynamicTenantId = ref('')
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
@@ -129,10 +129,10 @@ const [register, {closeModal,setModalProps}] = useModalInner(async(data) => {
 const columns = [
   {
     title: '单据类型',
-    dataIndex: 'billStyle',
+    dataIndex: 'sourcetype',
     ellipsis: true,
     width: 100,
-    slots: {customRender: 'billStyle'}
+    slots: {customRender: 'sourcetype'}
   },
   {
     title: '单据日期',
@@ -165,26 +165,18 @@ const columns = [
   },
 ]
 
-function formatHxStyle(hxStyle){
-  let str = hxStyle
-  if (hxStyle=='XHD'){
-    str = '销货单'
-  } else if (hxStyle=='YSD'){
-    str = '应收单'
-  } else if (hxStyle=='XSFP'){
-    str = '销售发票'
-  } else if (hxStyle=='QCXHD'){
-    str = '期初销货单'
-  } else if (hxStyle=='QCYSD'){
-    str = '期初应收单'
-  } else if (hxStyle=='QCXSFP'){
-    str = '期初销售发票'
+function formatBillStyle(billStyle){
+  let str = billStyle
+  if (billStyle=='YSK'){
+    str = '应收款'
+  } else if (billStyle=='PTSK'){
+    str = '普通收款'
   }
   return str
 }
 
 // 这是示例组件
-const [registerTable, {reload,getColumns,setTableData,setPagination}] = useTable({
+const [registerTable, {reload,getColumns,setPagination}] = useTable({
   columns: columns,
   bordered: true,
   showIndexColumn: false,
@@ -195,62 +187,42 @@ const [registerTable, {reload,getColumns,setTableData,setPagination}] = useTable
   }
 })
 
-const saleousingList:any = ref([])
-const arBeginBalanceList:any = ref([])
+const xhdList:any = ref([])
+const qcysdList:any = ref([])
 const thisCheckKey:any = ref('')
 async function reloadList(){
-  tableData.value = []
   tableDataAll.value = []
-  const qcList = await useRouteApi(findByCvencode,{schemaName: dynamicTenantId})({cvencode:cvencode.value,iyear:year.value})
-  if (arSourceFlag.value!='1') {
-    arBeginBalanceList.value = qcList.filter(item => item.busStyle == 'YSD' && item.ysIsumBenbi!='0')
-  } else {
-    arBeginBalanceList.value = qcList.filter(item => item.arStyle == 'YSD' && item.ysIsumBenbi!='0')
-  }
-  tableDataAll.value.push(...saleousingList.value.map(item => {
-    item.hxStyle = item.arStyle
-    item.hxCcode = item.ccode
-    item.cvencode = item.cvencodeJs
-    item.isum = item.arIsumBenbi
-    if (item.hxIsum!=null && item.hxIsum !='') {
-      item.whxIsum = sub(item.isum, item.hxIsum)
-    } else {
-      item.whxIsum = item.isum
-    }
+  let qcList = await useRouteApi(findByCvencode,{schemaName: dynamicTenantId})({cvencode:cvencode.value,iyear:year.value})
+  qcysdList.value = qcList.filter(item => item.busStyle == 'SKD' && item.arIsumBenbi != 0)
+  tableDataAll.value.push(...qcysdList.value.map(item=>{
+    item.cvencode = item.cvencodeJS
+    item.isum = item.ysIsumBenbi
+    item.whxIsum = sub(item.isum,item.hxIsum==null?'0':item.hxIsum)
+    // item.hxMoney = item.whxIsum
+    // item.tempOne = item.whxIsum
+    item.ljhxIsum = add(item.hxIsum==null?'0':item.hxIsum,item.hxMoney==null?'0':item.hxMoney)
     item.type = 'YUE'
     return item
   }))
-  const saleList = await useRouteApi(findBySkWhxXhd, {schemaName: dynamicTenantId})({
-    year: year.value,
-    cvencode: cvencode.value
-  })
-  if (arSourceFlag.value=='1') {
-    saleousingList.value = saleList.filter(item => item.busStyle !='XHD' && item.busStyle !='QCXHD' && item.bworkable=='1' && item.isum!='0')
-  } else {
-    if(arCheckFlag=='1'){
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.bworkable=='1' && item.isum!='0')
-    } else {
-      saleousingList.value = saleList.filter(item => item.busStyle !='XSFP' && item.busStyle !='QCXSFP' && item.isum!='0')
-    }
-  }
-  tableDataAll.value.push(...saleousingList.value.map(item => {
-    item.hxStyle = item.billStyle
-    item.hxCcode = item.ccode
-    if (item.hxIsum!=null && item.hxIsum !='') {
-      item.whxIsum = sub(item.isum, item.hxIsum)
-    } else {
-      item.whxIsum = item.isum
-    }
-    item.type = 'XHD'
+  const res:any = await useRouteApi(findWhxskd,{schemaName: dynamicTenantId})({year:year.value,cvencode:cvencode.value})
+  xhdList.value = res.filter(item => item.isum!='0').map(item => {
+    item.whxIsum = sub(item.isum,item.hxIsum==null?'0':item.hxIsum)
+    // item.hxMoney = item.whxIsum
+    // item.tempOne = item.whxIsum
+    item.ljhxIsum = add(item.hxIsum==null?'0':item.hxIsum,item.hxMoney==null?'0':item.hxMoney)
+    item.type = 'SKD'
     return item
-  }))
+  })
+  tableDataAll.value.push(...xhdList.value)
   tableData.value = tableDataAll.value.filter(item =>{
     if (hxmxList.value.length>0){
-      return hxmxList.value.map(aa => aa.sourcecode).indexOf(item.ccode) == -1
+      return hxmxList.value.map(aa => aa.hxCcode).indexOf(item.ccode) == -1
     }
     return item
   })
-  setTableData(tableData.value)
+  await setPagination({
+    total: tableData.value.length
+  })
 }
 
 onMounted(async () => {
