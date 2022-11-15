@@ -76,6 +76,8 @@ public class StockTakings  implements Serializable{
 	private String cwhcode5;
 	@ApiModelProperty(value = "仓库级次六名称",hidden = true)
 	private String cwhcode6;
+	@ApiModelProperty(value = "无税单价",hidden = true)
+	private String price;
 	@ApiModelProperty(value = "本币无税金额（4位小数点）",hidden = true)
 	private String icost;
 	@ApiModelProperty(value = "批次号",hidden = true)
@@ -97,11 +99,9 @@ public class StockTakings  implements Serializable{
 	@ApiModelProperty(value = "",hidden = true)
 	private String cfree5;
 
-
 	@Transient
 	private String uimtype;
 	@Transient
 	private String uimid;
-	@Transient
-	private String price;
+
 }

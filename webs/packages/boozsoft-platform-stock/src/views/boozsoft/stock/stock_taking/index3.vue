@@ -98,7 +98,7 @@
             <span  class="ap-text">{{fomartStyle(routemsg.bstyle)}}</span>
           </div>
           <div>
-            <a-select v-model:value="selectSearchValue" style="width: 150px;font-size: 12px;font-weight: bold;" class="special_select">
+            <a-select v-model:value="selectSearchValue" style="width: 150px;font-size: 12px;font-weight: bold;text-align:left;" class="special_select">
               <a-select-option value="ccode">存货编码</a-select-option>
               <a-select-option value="ccodeName">存货名称</a-select-option>
             </a-select>
@@ -217,7 +217,7 @@
       </div>
     </div>
 
-    <div class="app-container" :style="{height: (windowHeight)+'px',display: 'inline',width: showCatalog?'calc( 100% - 300px )':'calc( 100% - 22px )',float: 'right',marginTop: '0px'}">
+    <div class="app-container" :style="{height: (windowHeight)+'px',display: 'inline',width: showCatalog?'calc( 100% - 310px )':'calc( 100% - 22px )',float: 'right',marginTop: '0px'}">
 
       <BasicTable
         ref="tableRef"
@@ -462,7 +462,7 @@
         </template>
       </BasicTable>
 
-      <div style="position: absolute;  bottom: 2%; right: 12%; font-size: 13px; color: black; z-index: 99999999;" >
+      <div style="position: absolute;  bottom: 2%; right: 12%; font-size: 13px; color: black; z-index: 99999999;" v-show="showPaginationText">
         {{`共 ${paginationNumber} 条记录   &nbsp;&nbsp;每页 200 条`}}
       </div>
       <ImprotExcel @save="reloadProjects" @register="registerImportPage"/>
@@ -540,7 +540,7 @@ import {
   delLine,
   getFwList,
   autoPd,
-  audit, auditBack, getUnitsList, getUnitList, auditCheck
+  audit, auditBack, getUnitsList, getUnitList, auditCheck,findByXyCcode
 } from '/@/api/record/stock/stock_taking';
 import {onMounted, ref, reactive} from 'vue';
 import ImprotExcel from './popup/improtExcel.vue';
@@ -616,6 +616,7 @@ const ncnumLj2 = ref('');
 const nfratLj = ref('');
 const nfratLj2 = ref('');
 const nfratflgLj = ref(false);
+const showPaginationText = ref(false)
 
 // 弹框2状态
 const carryDownModal = ref(false);
@@ -841,7 +842,7 @@ const [registerCodePopPage, {openModal: openCodePopPage}] = useModal();
 
 const tableRef = ref(null)
 const windowWidth = (window.innerWidth)
-const windowHeight = (window.innerHeight - (300))
+const windowHeight = (window.innerHeight - (320))
 const totalColumnWidth = ref(0)
 const [registerTable, {
   reload,
@@ -1031,7 +1032,7 @@ const saveData = async (data: any) => {
 const formItems: any = ref({})
 // 获取list
 const findAllInitialBalance = async () => {
-
+  showPaginationText.value = false
   tableData.value = []
   tableDataAll.value = []
   loading.value = true;
@@ -1093,6 +1094,7 @@ const findAllInitialBalance = async () => {
   paginationNumber.value = len
   tableData.value =  replenishTrs(tableDataAll.value)
   loading.value = false;
+  showPaginationText.value = true
 };
 const replenishTrs = (list) =>{
   let l = list.length
@@ -1436,7 +1438,23 @@ const dbSave = async (o) => {
       return
     }
   }*/
-
+  //获取成本单价
+  console.log(routemsg.value)
+  useRouteApi(getCkPriceList,{schemaName: databaseTrue})({
+    stockCostAccRo:JSON.stringify([{
+      stockNum :o.cinvode,
+      stockCangku :o.cwhcode,
+      batchId: o.batchId,
+    }]),
+    ddate :routemsg.value.ddate,
+    year : routemsg.value.iyear,
+    rkBcheck: routemsg.value?.kcCgrkCheck,
+    ckBcheck:  routemsg.value?.kcXsckCheck,
+  }).then(res=>{
+    if (null != res && res.length > 0){
+      o.price = res[0].price
+    }
+  })
   //修改
   o.ccode = routemsg.value.ccode
   await useRouteApi(saveMx,{schemaName: databaseTrue})(o).then(v=>{
@@ -1885,11 +1903,12 @@ const delLines = () => {
   }
 };
 
+const userName = useUserStoreWidthOut().getUserInfo.username
 const toAudit = async () => {
-    if(routemsg.value.bcheck === '1'){
-      message.error("已审核请勿重复审核！")
-      return
-    }
+  if(routemsg.value.bcheck === '1'){
+    message.error("已审核请勿重复审核！")
+    return
+  }
 
   compState.loading = true
   //新增校验
@@ -1916,11 +1935,14 @@ const toAudit = async () => {
     return message.error('提示：当前存在库字单据正在进行操作，不能进行单据盘点操作，请销后再试！')
   }
 
-    await useRouteApi(audit,{schemaName: databaseTrue})(routemsg.value.ccode)
-    routemsg.value.bcheck = '1'
-    saveLogData('审核')
-    message.success("操作成功")
-    findAllInitialBalance()
+  await useRouteApi(audit,{schemaName: databaseTrue})({
+    ccode: routemsg.value.ccode,
+    user:userName
+  })
+  routemsg.value.bcheck = '1'
+  saveLogData('审核')
+  message.success("操作成功")
+  findAllInitialBalance()
 
 }
 async function saveLogData(optAction) {
@@ -1937,6 +1959,8 @@ async function saveLogData(optAction) {
   }
   await saveLog(logmap)
 }
+
+const dynamicTenant:any = ref('')
 const toAuditBack = async () => {
   if(routemsg.value.bcheck != '1'){
     message.error("未审核不能弃审！")
@@ -1966,7 +1990,12 @@ const toAuditBack = async () => {
     compState.loading = false
     return message.error('提示：当前存在库字单据正在进行操作，不能进行单据盘点操作，请销后再试！')
   }
-  let a = await useRouteApi(auditCheck,{schemaName: databaseTrue})({ccode:routemsg.value.ccode,type:'qs'})
+  let a = await useRouteApi(auditCheck,{schemaName: databaseTrue})({
+    ccode:routemsg.value.ccode,
+    rkBcheck: routemsg.value?.kcCgrkCheck,
+    ckBcheck:  routemsg.value?.kcXsckCheck,
+    type:'qs'
+  })
   console.log(a)
   if(!a){
     compState.loading = false
@@ -1984,25 +2013,35 @@ const databaseCo=ref('')
 const gotoPy = async () => {
   let dataBaseInfo=await findByStockAccId(databaseTrue.value.substring(0,databaseTrue.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
-  await closeToFullPaths('/kc-inventory-mx')
-
-  //获取下游表的信息 
-  setTimeout(()=>{
-    router.push({path: 'CaigouQTRk',query: {type:'info',ccode:routemsg.value.ccode,co: databaseCo.value}});
-  },1000)
+  await closeToFullPaths('/kc-transfer')
+  await useRouteApi(findByXyCcode, {schemaName: databaseTrue})({ccode:routemsg.value.ccode,year: '2022',type:'QTRKD'})
+    .then((t)=>{
+      if(t != '0') {
+        //获取下游表的信息
+        setTimeout(()=>{
+          router.push({path: 'kc-qtDepot',query: {type:'info',ccode:t,co: databaseCo.value}});
+        },1000)
+      }else{
+        message.error("不存在其他入库单")
+      }
+    })
 }
 
 const gotoPk = async () => {
-  router.push({
-    path: '/kc-out-qtDepot',
-    query: {
-      ccode: routemsg.value.ccode,
-      cname: routemsg.value.cname,
-      cwhcode: routemsg.value.cwhcode,
-      accId: databaseTrue.value,
-      iyear: routemsg.value.iyear,
-    },
-  });
+  let dataBaseInfo=await findByStockAccId(databaseTrue.value.substring(0,databaseTrue.value.length-5))
+  databaseCo.value=dataBaseInfo?.coCode
+  await closeToFullPaths('/kc-transfer')
+  await useRouteApi(findByXyCcode, {schemaName: databaseTrue})({ccode:routemsg.value.ccode,year: '2022',type:'QTCKD'})
+    .then((t)=>{
+      if(t != '0') {
+        //获取下游表的信息
+        setTimeout(()=>{
+          router.push({path: 'kc-out-qtDepot',query: {type:'info',ccode:t,co: databaseCo.value}});
+        },1000)
+      }else{
+        message.error("不存在其他出库单")
+      }
+    })
 }
 
 const exportExcelNow = async () => {
@@ -2141,6 +2180,7 @@ import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {findByStockPeriodIsClose} from "/@/api/record/stock/stock-ruku";
 import {findByIyearAndCaozuoModule, getByStockBalanceTask} from "/@/api/record/stock/stock_balance";
 import {findByStockAccId} from "/@/api/record/system/stock-account";
+import {getCkPriceList} from "/@/api/record/stock/stock_cost";
 
 const loadingRef = ref(false);
 const compState = reactive({
@@ -2155,7 +2195,7 @@ function openLoading(absolute: boolean) {
   compState.absolute = absolute;
   compState.loading = true;
 }
-const userName = useUserStoreWidthOut().getUserInfo.username
+
 const loadPrint = (obj) => {
   loading.value = true
   openCompFullLoading()

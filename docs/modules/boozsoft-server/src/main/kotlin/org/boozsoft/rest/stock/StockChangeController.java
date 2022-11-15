@@ -484,7 +484,7 @@ public class StockChangeController {
                             .collectList()
                             .flatMap(slist->{
                                 //期初
-                                return  stockBeginBalanceRepository.findAllByIyearAndCk(ck,year)
+                                return  stockBeginBalanceRepository.findAllByIyearAndCk(year,ck)
                                         .collectList()
                                         .map(wl->{
                                             skl.addAll(wl);
@@ -493,7 +493,7 @@ public class StockChangeController {
                             })
                             .flatMap(slist->{
                                 //入库
-                                return stockWarehousingsRepository.findAllByIyearAndCk(ck,year)
+                                return stockWarehousingsRepository.findAllByIyearAndCk(year,ck)
                                         .filter(v-> {
                                             if(rkBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());
@@ -509,7 +509,7 @@ public class StockChangeController {
                             })
                             .flatMap(slist->{
                                 //出库
-                                return stockSaleousingsRepository.findAllByIyearAndCk(ck,year)
+                                return stockSaleousingsRepository.findAllByIyearAndCk(year,ck)
                                         .filter(v-> {
                                             if(ckBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());

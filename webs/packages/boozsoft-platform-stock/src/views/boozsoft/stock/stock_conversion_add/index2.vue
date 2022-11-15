@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/xs-dhList')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/kc-shape-list')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" @click="startEdit('edit')" v-if="status == 3 && formItems.bcheck != '1'">修改</Button>
           <Button class="actod-btn" @click="saveData" v-if="status == 1 || status == 2">保存</Button>
@@ -2188,7 +2188,7 @@ const findByUnitList = async (record) => {
 async function verifyRowXCLData(r) {
   // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
   await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
-    queryType:'keyong',
+    queryType:'xcl',
     cinvode:r.cinvode,
     cwhcode:r.cwhcode,
     batchId:r.batchId,

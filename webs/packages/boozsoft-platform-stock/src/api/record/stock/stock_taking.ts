@@ -234,9 +234,9 @@ export const auditBack = defRouteApi( async (ccode)=>{
     timeout: 10000000,
   }
 })
-export const auditCheck = defRouteApi( async ({ccode,type})=>{
+export const auditCheck = defRouteApi( async ({ccode,rkBcheck,ckBcheck,type})=>{
   return  {
-    url: '/stockTaking/auditCheck?ccode='+ccode+'&type='+type,
+    url: '/stockTaking/auditCheck/'+ccode+'/'+rkBcheck+'/'+ckBcheck+'/'+type,
     method: 'GET',
     timeout: 10000000,
   }
@@ -369,5 +369,12 @@ export const getCkPriceList = defRouteApi((params:any)=> {
     method: 'POST',
     timeout: 10000000,
     params
+  }
+})
+export const findByXyCcode = defRouteApi( async ({ccode,year,type})=>{
+  return  {
+    url: '/stockTaking/findByXyCcode/'+ccode+'/'+year+'/'+type,
+    method: 'GET',
+    timeout: 10000000,
   }
 })
