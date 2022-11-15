@@ -112,8 +112,30 @@ const dynamicColumnAndDataModel = reactive({
       max: 120,
       min: 80,
       align: 'center'
-    }, {
+    },
+    {
       key: '7',
+      name: '主计量',
+      nameNew: '主计量',
+      check: true,
+      isFixed: true,
+      width: 80,
+      max: 120,
+      min: 80,
+      align: 'center'
+    },
+    {
+      key: '8',
+      name: '主数量',
+      nameNew: '主数量',
+      check: true,
+      isFixed: true,
+      width: 80,
+      max: 120,
+      min: 80,
+      align: 'center'
+    }, {
+      key: '9',
       name: '累计出库数量',
       nameNew: '累计出库数量',
       check: true,
@@ -123,7 +145,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 150,
       align: 'left'
     },{
-      key: '8',
+      key: '10',
       name: '累计开票数量',
       nameNew: '累计开票数量',
       check: true,
@@ -132,28 +154,19 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100,
       align: 'left'
+    },{
+      key: '11',
+      name: '累计退货数量',
+      nameNew: '累计退货数量',
+      check: true,
+      isFixed: true,
+      width: 130,
+      max: 200,
+      min: 100,
+      align: 'left'
     },
     {
-      key: '9',
-      name: '主计量',
-      nameNew: '主计量',
-      check: false,
-      width: 80,
-      max: 120,
-      min: 80,
-      align: 'center'
-    },
-    ,{
-      key: '10',
-      name: '主数量',
-      nameNew: '主数量',
-      check: false,
-      width: 80,
-      max: 120,
-      min: 80,
-      align: 'center'
-    },  {
-      key: '11',
+      key: '12',
       name: '计量一',
       nameNew: '计量1',
       check: false,
@@ -162,9 +175,8 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'center'
     },
-
     {
-      key: '12',
+      key: '13',
       name: '数量一',
       nameNew: '数量1',
       check: false,
@@ -173,7 +185,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'center'
     },{
-      key: '13',
+      key: '14',
       name: '计量二',
       nameNew: '计量2',
       check: false,
@@ -183,7 +195,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     } ,
     {
-      key: '14',
+      key: '15',
       name: '数量二',
       nameNew: '数量2',
       check: false,
@@ -192,7 +204,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'center'
     },{
-      key: '15',
+      key: '16',
       name: "批号",
       nameNew: "批号",
       check: true,
@@ -200,7 +212,7 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100, align: 'center'
     }, {
-      key: '16',
+      key: '17',
       name: "无税单价",
       nameNew: "无税单价",
       check: false,
@@ -209,7 +221,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     }, {
-      key: '17',
+      key: '18',
       name: "无税金额",
       nameNew: "无税金额",
       check: false,
@@ -218,7 +230,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     },  {
-      key: '18',
+      key: '19',
       name: "税额",
       nameNew: "税额",
       check: false,
@@ -228,7 +240,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'right'
     },
     {
-      key: '19',
+      key: '20',
       name: "含税单价",
       nameNew: "含税单价",
       check: false,
@@ -237,7 +249,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     },{
-      key: '20',
+      key: '21',
       name: "税率",
       nameNew: "税率",
       check: false,
@@ -246,7 +258,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'center'
     },{
-      key: '21',
+      key: '22',
       name: "价税合计",
       nameNew: "价税合计",
       check: true,
@@ -255,7 +267,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     },  {
-      key: '22',
+      key: '23',
       name: '累计核销金额',
       nameNew: '累计核销金额',
       check: true,
@@ -266,7 +278,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left'
     },
     {
-      key: '23',
+      key: '24',
       name: "赠品",
       nameNew: "赠品",
       check: true,
@@ -276,7 +288,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
-      key: '24',
+      key: '25',
       name: "生产日期",
       nameNew: "生产日期",
       check: false,
@@ -285,7 +297,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,      align: 'center'
     },
     {
-      key: '25',
+      key: '26',
       name: "失效日期",
       nameNew: "失效日期",
       check: false,
@@ -294,7 +306,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,      align: 'center'
     },
     {
-      key: '26',
+      key: '27',
       name: "审核人",
       nameNew: "审核人",
       check: true,
@@ -303,7 +315,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,      align: 'center'
     },
     {
-      key: '27',
+      key: '28',
       name: "来源单据类型",
       nameNew: "来源单据类型",
       check: true,
@@ -311,7 +323,7 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100,      align: 'left'
     }, {
-      key: '28',
+      key: '29',
       name: "来源单据编码",
       nameNew: "来源单据编码",
       check: true,
@@ -320,7 +332,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,      align: 'left'
     },
     {
-      key: '29',
+      key: '30',
       name: "备注",
       nameNew: "备注",
       check: true,

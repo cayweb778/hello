@@ -446,7 +446,7 @@
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
                     <span class="a-table-font-arial">{{
-                        (record.itaxrate == null ? '' : parseFloat(record.itaxrate).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        (record.itaxrate == null ? '' : (parseFloat(record.itaxrate).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'%')
                       }}</span>
               </div>
             </template>

@@ -154,6 +154,8 @@ public class StockSaleousingController {
                 xhEntity.setTuihuoStatus(b?"1":null);
             }
             Mono<String> xy = stockXyCsourceRepository.save(new StockXyCsource().setIyear(db.getIyear()).setCcode(xhEntity.getCcode()).setCcodeDate(xhEntity.getDdate()).setBillStyle(xhEntity.getBillStyle()).setXyccode(db.getCcode()).setXyccodeDate(db.getDdate()).setXyBillStyle(db.getBillStyle())).flatMap(z -> Mono.just(""));
+            if (sub.get(0).getSourcetype().equals("XSCKD"))
+                for (StockSaleousings stockSaleousings : sub) stockSaleousings.setIsumChuku(stockSaleousings.getBaseQuantity());
             return saleousingRepository.save(xhEntity).flatMap(e->saleousingsRepository.saveAll(list).collectList().flatMap(s->xy).flatMap(s->Mono.just("")));
         });
         return saleousingsRepository.saveAll(sub).collectList().thenReturn(db).flatMap(z -> undateMone.flatMap(a -> Mono.just("")));
@@ -212,6 +214,8 @@ public class StockSaleousingController {
                 }else {
                     xhEntity.setTuihuoStatus(b?"1":null);
                 }
+                if (sub.get(0).getSourcetype().equals("XSCKD"))
+                    for (StockSaleousings stockSaleousings : sub) stockSaleousings.setIsumChuku(stockSaleousings.getBaseQuantity());
                 return saleousingRepository.save(xhEntity).flatMap(e->saleousingsRepository.saveAll(list).collectList().thenReturn(new ArrayList<>()));
             });
             return relifeMone.flatMap(d -> saleousingsRepository.deleteAll(dblist).thenReturn("").flatMap(c -> saleousingsRepository.saveAll(sub).collectList().thenReturn("")));

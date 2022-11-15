@@ -1,7 +1,4 @@
-import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
-import {findStockColumnList} from "/@/api/record/stock/stock-caigou";
-
-const defaultRows = () => {
+export const defaultRows = () => {
   return [
     {
       columnType: '1',
@@ -34,7 +31,7 @@ const defaultRows = () => {
       readonly: true,
       serial: 3,
       isShow: true
-    },,
+    },
     {
       columnType: '1',
       field: 'cvencodeJs',
@@ -123,36 +120,4 @@ const defaultRows = () => {
       isShow: true
     }
   ]
-}
-export const lanMuData = {
-  'menuName': '销货单表头栏目',
-  objects: '',
-}
-export async function GenerateDynamicColumn(schemaName) {
-  let list = defaultRows()
-  let res = await useRouteApi(findStockColumnList, {schemaName: schemaName})(lanMuData)
-  if (res.length != 0) { // 新账套
-    let arr1 = res.filter(it => it.columnType == '1')
-    if (arr1.length > 0) { // 修改默认
-      list = list.map(it1 => {
-        let vrr = arr1.filter(it => it.field == it1.field)
-        if (vrr.length > 0) {
-          it1['label'] = vrr[0]['label']
-          it1['required'] = vrr[0]['required'] =='true'?true:false
-          it1['isShow'] = vrr[0]['isShow'] == 'true'?true:false
-          it1['serial'] = vrr[0]['serial']
-        }
-        return it1
-      })
-    }
-    let arr2 = res.filter(it => it.columnType == '2').map(it=>{
-      it['required'] = it['required'] =='true'?true:false
-      it['isShow'] = it['isShow'] == 'true'?true:false
-      return it
-    })
-    if (arr2.length > 0) list.push(...arr2)
-    // 排序
-    list.sort((a, b)=>a.serial - b.serial)
-  }
-  return list
 }

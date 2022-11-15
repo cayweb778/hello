@@ -13,21 +13,6 @@
           <Button class="actod-btn" @click="router.push('/xs-dhList')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" @click="startEdit('edit')" v-if="status == 3 && formItems.bcheck != '1'" :disabled="ymPeriod">修改</Button>
-<!--          <Popover placement="bottom" v-if="status == 3 && formItems.bcheck == '1'">
-            <template #content>
-              <Button v-if="!ymPeriod" style="width: 120px;margin-bottom: 2px"  @click="startEdit('change')" :disabled="ymPeriod">变更</Button><br/>
-              <Button style="width: 120px;margin-bottom: 2px" v-if="formItems.biandong=='1'" @click="openItems">变更清单</Button>
-            </template>
-            <Button class="actod-btn">变更</Button>
-          </Popover>-->
-          <Popover placement="bottom" v-if="status == 1">
-            <template #content>
-              <Button @click="referData('XSDD')">销售订单</Button><br/>
-              <Button @click="referData('XSFP')">销售发票</Button><br/>
-              <Button @click="referData('XSCKD')">销售出库单</Button>
-            </template>
-            <Button class="actod-btn">参照</Button>
-          </Popover>
           <Button class="actod-btn" @click="biandong?saveChanges():saveData()" v-if="status == 1 || status == 2">保存</Button>
           <Button class="actod-btn" @click="giveUp" v-if="status == 1 || status == 2">放弃</Button>
           <Button class="actod-btn" @click="tableAdd" v-if="status == 1 || status == 2">插行</Button>
@@ -63,10 +48,6 @@
             </template>
             <Button class="actod-btn" v-if="status == 3">更多</Button>
           </Popover>
-          <!--          <PrintTest></PrintTest>
-                    <Hello></Hello>-->
-          <!--          <Button v-if="status == 3" class="actod-btn" @click="exportExcel()">导出</Button>
-                    <Button v-if="status == 3" class="actod-btn" @click="printData()">打印</Button>-->
           <Button class="actod-btn actod-btn-last" @click="outBefore">退出</Button>
         </div>
         <div :class="status != 3?'status-look':''">
@@ -366,6 +347,27 @@
             </template>
           </template>
 
+          <template #isumTuiHuo="{ record }">
+            <template v-if="record?.editIsumTuiHuo">
+              <InputNumber v-model:value="record.tempIsumTuiHuo"
+                           class="isumTuiHuo"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumTuiHuo')"/>
+              <CheckOutlined @click="record.editIsumTuiHuo = null;record.isumTuiHuo=record.tempIsumTuiHuo;tableDataChange(record,'isumTuiHuo')"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumTuiHuo=record.isumTuiHuo,record.editIsumTuiHuo = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumTuiHuo == null ? '' : parseFloat(record.isumTuiHuo).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+
+
           <template #cunitid="{ record }">
             <div>
               <span>{{cunitFormat(record.unitList,record.cunitid)}}</span>
@@ -487,7 +489,7 @@
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
                     <span class="a-table-font-arial">{{
-                        (record.itaxrate == null ? '' : parseFloat(record.itaxrate).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                        (record.itaxrate == null ? '' : parseFloat(record.itaxrate).toFixed(2) .replace(/\B(?=(\d{3})+(?!\d))/g, ',')+'%')
                       }}</span>
               </div>
             </template>
@@ -545,13 +547,12 @@
           <template #batchId="{ record }">
             <template v-if="record?.editTwelve && record.isBatch　 &&　!biandong">
               <Input v-model:value="record.tempTwelve"
-                     style="width: 82%;" class="batchId" readonly
-                     @keyup.enter="openSelectContent(record,'batchId')">
+                     style="width: 82%;" class="batchId"
+                     @keyup.enter=" focusNext(record,'batchId')">
                 <template #suffix>
-                  <FileSearchOutlined @click="openSelectContent(record,'batchId')"/>
                 </template>
               </Input>
-              <!--         focusNext(record,'batchId')     <CheckOutlined @click="record.editTwelve = null;record.batchId=record.tempTwelve;"/>-->
+              <CheckOutlined @click="record.editTwelve = null;record.batchId=record.tempTwelve;"/>
             </template>
             <template v-else>
               <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
@@ -574,8 +575,24 @@
               </div>
             </template>
           </template>
+
+          <template #dpdate="{ record }">
+            <template v-if="record?.editDpdate">
+              <DatePicker v-model:value="record.tempDpdate" value-format="YYYY-MM-DD"
+                          class="dpdate"
+                          format="YYYY-MM-DD" style="width: 82%;"
+                          @openChange="(b)=>null!=record.tempDpdate && !b?focusNext(record,'dpdate'):null"/>
+              <CheckOutlined @click="record.editDpdate = null;record.dpdate=record.tempDpdate;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempDpdate=record.dpdate,record.editDpdate = true;">
+                <span class="a-table-font-arial">{{ record.dpdate }}</span>
+              </div>
+            </template>
+          </template>
           <template #dvdate="{ record }">
-            <template v-if="record?.editFifteen　 &&　!biandong">
+            <template v-if="record?.editFifteen">
               <DatePicker v-model:value="record.tempFifteen" value-format="YYYY-MM-DD"
                           class="dvdate"
                           format="YYYY-MM-DD" style="width: 82%;"
@@ -583,13 +600,14 @@
               <CheckOutlined @click="record.editFifteen = null;record.dvdate=record.tempFifteen;"/>
             </template>
             <template v-else>
-              <!--              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
-                                 @click="record.tempFifteen=record.dvdate,record.editFifteen = true;">-->
-              <div>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempFifteen=record.dvdate,record.editFifteen = true;">
                 <span class="a-table-font-arial">{{ record.dvdate }}</span>
               </div>
             </template>
           </template>
+
+
           <template #bcheck="{ record }">
             {{ formatUniqueOperator(record.bcheckUser)}}
           </template>
@@ -647,7 +665,7 @@ import {
   Tabs,
   Tag
 } from "ant-design-vue";
-import Query from "./popup/query.vue";
+import Query from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicHeadColumn.vue";
 import BatchSelector from "/@/views/boozsoft/stock/stock_sales_add/component/BatchNumberSelector.vue";
 import Import from "./popup/import.vue";
 import XySource from '/@/views/boozsoft/stock/stock_sales_add/popup/xySource.vue';
@@ -690,7 +708,7 @@ import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/Dyn
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn";
 import { findByFunctionModule, hasBlank} from "/@/api/task-api/tast-bus-api";
 import {usePlatformsStore} from "/@/store/modules/platforms";
-import {GenerateDynamicColumn} from "./component/DynamicForm";
+import {GenerateDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicForm";
 import SupperModalPop from "/@/views/boozsoft/global/popup/customer_info/modalPop.vue";
 import DeptModalPop from "/@/views/boozsoft/global/popup/dept/select-dept.vue";
 import StockCangKuModalPop
@@ -724,6 +742,7 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import Print from '/@/views/boozsoft/stock/stock_sales_add/popup/print.vue'
 import {verifySyLineCodeExistXyData} from "/@/api/record/stock/stock-xy-source";
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
+import {defaultRows} from "./component/DynamicForm";
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 const InputSearch = Input.Search
@@ -793,7 +812,7 @@ const formFuns = ref({
   }
 })
 const columnReload = async () => {
-  dynamicFormModel.value = await GenerateDynamicColumn(dynamicTenantId.value) || []
+  dynamicFormModel.value = await GenerateDynamicColumn(dynamicTenantId.value,router.currentRoute?.value?.meta?.title,defaultRows()) || []
   formRowNum.value = Math.ceil((dynamicFormModel.value.filter(it=>it.isShow).length/4))-1
 }
 const route = useRoute();
@@ -819,7 +838,14 @@ async function reloadList() {
   //  ckListOptions.value = (await useRouteApi(cangKuAll, {schemaName: dynamicTenantId})({ckIsDuli: '1'}))?.items
   assetsCardList.value = (await useRouteApi(findCunHuoAllList, {schemaName: dynamicTenantId})({date: useCompanyOperateStoreWidthOut().getLoginDate}))
   stockPriceList.value = (await useRouteApi(findAllPrice, {schemaName: dynamicTenantId})({stockClass: '0'}))
+  nextTick(()=>{
+    ckListOptions.value = formFuns.value.getSelectMap()['warehouse']
+    operatorList.value = formFuns.value.getSelectMap()['operator']
+    custList.value = formFuns.value.getSelectMap()['cust']
+    userList.value = formFuns.value.getSelectMap()['user']
+  })
 }
+
 
 async function contentSwitch(action) {
   loadMark.value = true
@@ -913,16 +939,6 @@ const CrudApi = {
       dataIndex: 'quantity',
       slots: {customRender: 'quantity'},
       ellipsis: true,
-    },{
-      title: '累计出库数量',
-      dataIndex: 'isumChuku',
-      slots: {customRender: 'isumChuku'},
-      ellipsis: true,
-    },{
-      title: '累计开票数量',
-      dataIndex: 'isumFapiao',
-      slots: {customRender: 'isumFapiao'},
-      ellipsis: true,
     },
     {
       title: '主计量',
@@ -933,6 +949,21 @@ const CrudApi = {
       title: '主数量',
       dataIndex: 'baseQuantity',
       slots: {customRender: 'baseQuantity'},
+      ellipsis: true,
+    },{
+      title: '累计出库数量',
+      dataIndex: 'isumChuku',
+      slots: {customRender: 'isumChuku'},
+      ellipsis: true,
+    },{
+      title: '累计开票数量',
+      dataIndex: 'isumFapiao',
+      slots: {customRender: 'isumFapiao'},
+      ellipsis: true,
+    },{
+      title: '累计退货数量',
+      dataIndex: 'isumTuiHuo',
+      slots: {customRender: 'isumTuiHuo'},
       ellipsis: true,
     },
     {
@@ -1014,6 +1045,7 @@ const CrudApi = {
       title: '生产日期',
       dataIndex: 'dpdate',
       ellipsis: true,
+      slots: {customRender: 'dpdate'},
     },
     {
       title: '失效日期',
@@ -1147,7 +1179,7 @@ const startEdit = async (type) => {
   let maxR = 20
   if (type === 'add') {
     status.value = 1
-    let busDate = useCompanyOperateStoreWidthOut().getLoginDate;
+    let busDate = (DateTool().offsetToStr(new Date(dynamicTenant.value?.target?.startDate + '-01'),(1000 * 60 * 60 * 24)*-1))?.substring(0,10);
     if (await checkBusDate(busDate)){
       formItems.value.ccode = await generateCode(busDate) // 生成编码
       formItems.value.xsRate = (dynamicTenant.value.target.xsRate || 0) // 获取账套汇率
@@ -1486,9 +1518,9 @@ async function saveData() {
         }
       }
     })
-    if (!(await stockCheck(list,formItems.value))) {
+   /* if (!(await stockCheck(list,formItems.value))) {
       return false
-    }
+    }*/
     formItems.value.entryList = JsonTool.json(merge(list))
     if (formItems.value?.id == null)
       formItems.value.ccode = await generateCode(formItems.value.ddate)
@@ -1728,7 +1760,7 @@ function initTableWidth(thisCs) {
 }
 
 const openSetting = () => {
-  openQueryPageM(true, {schemaName: dynamicTenantId.value})
+  openQueryPageM(true, {schemaName: dynamicTenantId.value,title: router.currentRoute?.value?.meta?.title,rows: defaultRows()})
 }
 /*栏目设置end*/
 const formEtcData = ref({
@@ -2305,7 +2337,7 @@ const focusNext =  (r, c) => {
   tableDataChange(r, c)
   // 查找下一个
   let list = getDataSource();
-  let filters = ['isGive', 'bcheck', 'cinvodeType', 'cunitid', 'cinvodeName','cinvodeBarcode', 'cunitidF1', 'cunitidF2', 'baseQuantity','subQuantity1', 'subQuantity2', 'dvdate', 'dpdate', 'itaxprice',/*'itaxrate','price','icost'*/,'sourcetype','sourcecode']
+  let filters = ['isGive', 'bcheck', 'cinvodeType', 'cunitid', 'cinvodeName','cinvodeBarcode', 'cunitidF1', 'cunitidF2', 'baseQuantity','subQuantity1', 'subQuantity2',/* 'dvdate', 'dpdate',*/ 'itaxprice',/*'itaxrate','price','icost'*/,'sourcetype','sourcecode']
   if (!r.isBatch) filters.push('batchId') //要求填批号才填写
   // if (false) filters.push('price') //参数控制单价不准输入
   let cols = getColumns().filter(it => it.title != '序号' && filters.indexOf(it.dataIndex) == -1 && it.ifShow)
@@ -2343,8 +2375,8 @@ const getNextMark = (c,b) => {
     baseQuantity: 'Six',
     batchId: 'Twelve',
     price: 'Nine',
-    icost: 'Ten',/*dvdate:'Fifteen',*/
-    cmemo: 'Thirteen', taxprice: 'Taxprice', itaxrate: 'Itaxrate', isum: 'Isum',xsUnitId:'Cunit',quantity:'Quantity',isumFapiao: 'IsumFapiao',isumChuku: 'IsumChuku',hxIsum: 'HxIsum'
+    icost: 'Ten',dvdate:'Fifteen',dpdate: 'Dpdate',
+    cmemo: 'Thirteen', taxprice: 'Taxprice', itaxrate: 'Itaxrate', isum: 'Isum',xsUnitId:'Cunit',quantity:'Quantity',isumFapiao: 'IsumFapiao',isumTuiHuo: 'IsumTuiHuo',isumChuku: 'IsumChuku',hxIsum: 'HxIsum'
   }
   if (b) {
     // 获取下一个

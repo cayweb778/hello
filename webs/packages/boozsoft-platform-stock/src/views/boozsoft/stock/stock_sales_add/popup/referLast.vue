@@ -26,10 +26,11 @@
           <a-input-search placeholder="" v-model:value="pageParameter.searchConditon.value" style="width: 200px; border-radius: 4px" @search="pageSearch"/>
         </div>
         <div style="float: right;margin-right: 5px;">
-          <label style="color: white;font-weight: bold;">日期区间：</label>
-          <DatePicker v-model:value="pageParameter.dates[0]" :disabled-date="disabledDate" style="width: 114px;"  format="YYYY-MM-DD"  valueFormat="YYYY-MM-DD" />      <span>~  </span>
+          <label style="color: white;font-weight: bold;">截至日期：{{pageParameter.dates[1]}}</label>&emsp;
+<!--          <DatePicker v-model:value="pageParameter.dates[0]" :disabled-date="disabledDate" style="width: 114px;"  format="YYYY-MM-DD"  valueFormat="YYYY-MM-DD" />      <span>~  </span>
           <DatePicker v-model:value="pageParameter.dates[1]" :disabled-date="disabledDate" style="width: 114px;"  format="YYYY-MM-DD"  valueFormat="YYYY-MM-DD" />&emsp;
-          <Button @click="findByTable">选单</Button>
+        -->
+          <Button @click="findByTable">刷新</Button>
         </div>
       </div>
       <div class="content-body">
@@ -269,11 +270,9 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (data) => {
   nextTick(async ()=>{
     let busDate = useCompanyOperateStoreWidthOut().getLoginDate;
     let ym = data.dynamicTenant?.target?.startDate
-    let date = DateTool().offsetToStr(new Date(busDate),(24 * 60 * 60 * 1000) * -30).substring(0,10)
-    iyear.value=date.substring(0,4)
-    startYm.value = iyear.value+'-01'
-    if (null != ym && ym.indexOf( iyear.value)!=-1)startYm.value = ym
-    pageParameter.dates = [date,busDate]
+    iyear.value=busDate.substring(0,4)
+    if (null != ym && ym.indexOf( iyear.value)!=-1)startYm.value = ym+'-01'
+    pageParameter.dates = [  ym+'-01',busDate]
     findByTable()
     let temp:any=[]
     for (let i = 0; i < 10; i++) {
