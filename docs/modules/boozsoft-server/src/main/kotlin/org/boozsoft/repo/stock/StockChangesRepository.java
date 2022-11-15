@@ -12,7 +12,7 @@ public interface StockChangesRepository extends ReactiveCrudRepository<StockChan
 
     Flux<StockChanges> findAllByBillStyleAndCcodeAndFlgsOrderByDdateAscCcodeAscLineIdAsc(String type, String code, String flgs);
     Flux<StockChanges> findAllByBillStyleAndIyearOrderByDdateAscCcodeAscLineIdAsc(String type, String iyear);
-    Flux<StockChanges> findAllByCcodeAndBillStyle(String ccode, String type);
+    Flux<StockChanges> findAllByCcodeAndFlgs(String ccode, String type);
 
     @Query("delete from stock_warehousings where sourcecode=:sourcecode and sourcetype=:billStyle ")
     Mono<Void> deleteBySourcecodeAndSourcetype(String sourcecode, String billStyle);

@@ -362,6 +362,8 @@ public class StockChangeController {
                                                                 sas.setCmakerTime(LocalDateTime.now().toString());
                                                                 sas.setXsUnitId(v.getCunitid());
                                                                 sas.setQuantity(sas.getBaseQuantity());
+                                                                sas.setCwhcode1(v.getCwhcode());
+
                                                                 sas.setBcheck("1");
                                                                 sas.setBcheckTime(LocalDate.now().toString());
                                                                 sas.setBcheckUser(userId);
@@ -396,6 +398,7 @@ public class StockChangeController {
                                                     stockWarehousings.setCmakerTime(LocalDateTime.now().toString());
                                                     stockWarehousings.setCgUnitId(v.getCunitid());
                                                     stockWarehousings.setCnumber(v.getCnumber());
+                                                    stockWarehousings.setCwhcode1(v.getCwhcode());
                                                     stockWarehousings.setBcheck("1");
                                                     stockWarehousings.setBcheckTime(LocalDate.now().toString());
                                                     stockWarehousings.setBcheckUser(userId);
@@ -459,12 +462,19 @@ public class StockChangeController {
         ).map(R::ok);
     }
 
-    @GetMapping("auditCheck")
-    public Mono<R> auditCheck(String ccode) {
+    @GetMapping("/auditCheck/{ccode}/{rkBcheck}/{ckBcheck}/{flg}/{type}")
+    public Mono<R> auditCheck(@PathVariable String ccode,@PathVariable String rkBcheck,@PathVariable String ckBcheck,@PathVariable String flg,@PathVariable String type) {
+        // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
+        rkBcheck=ObjectUtil.isEmpty(rkBcheck)?"0":rkBcheck;
+        ckBcheck=ObjectUtil.isEmpty(ckBcheck)?"0":ckBcheck;
         //审核弃审前校验现存量
+        String finalRkBcheck = rkBcheck;
+        String finalCkBcheck = ckBcheck;
+        //type 0转换前 1转换后  审核验证转换前后现存量 弃审验证转换后现存量
         return warehousingRepository.findByCcode(ccode)
                 .flatMap(st->{
-                    return warehousingsRepository.findAllByCcodeAndBillStyle(ccode,"XTZHD")
+                    //转换前
+                    return warehousingsRepository.findAllByCcodeAndFlgs(ccode,type)
                             .collectList()
                             .map(stsList->{
                                 st.setStsList(stsList);
@@ -473,18 +483,16 @@ public class StockChangeController {
                 })
                 .flatMap(st->{
                     //入库单 需要验证现存量
-                    String ck = "";//st.getCwhcode();
                     String year = st.getIyear();
-                    // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
-                    String rkBcheck="0";//map.get("rkBcheck")==null?"0":map.get("rkBcheck").toString();
-                    String ckBcheck="0";//map.get("rkBcheck")==null?"0":map.get("ckBcheck").toString();
                     List<StockAccSheetVo> skl = new ArrayList<>();
                     List<StockVo> sv = new ArrayList<>();
-                    return stockRepository.findAllByXcl()
+                    List<StockChanges> stsList1 = st.getStsList();
+                    List<String> cinvodeList = stsList1.stream().map(v -> v.getCinvode()).collect(Collectors.toList());
+                    return stockRepository.findAllByXcl2(cinvodeList)
                             .collectList()
                             .flatMap(slist->{
                                 //期初
-                                return  stockBeginBalanceRepository.findAllByIyearAndCk(year,ck)
+                                return stockBeginBalanceRepository.findAllByIyearAndStockList(year,cinvodeList)
                                         .collectList()
                                         .map(wl->{
                                             skl.addAll(wl);
@@ -492,34 +500,60 @@ public class StockChangeController {
                                         });
                             })
                             .flatMap(slist->{
-                                //入库
-                                return stockWarehousingsRepository.findAllByIyearAndCk(year,ck)
+                                //入库(其他 采购 领用)+到货单(采购到货单数量-累计入库数量)
+                                return stockWarehousingsRepository.findAllByIyearAndList(year,cinvodeList)
                                         .filter(v-> {
-                                            if(rkBcheck.equals("0")){
+                                            if(finalRkBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());
                                             }else{
-                                                return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
+                                                return  true;
                                             }
                                         })
                                         .collectList()
                                         .map(wl->{
-                                            skl.addAll(wl);
+                                            if("XCL".equals(flg)){
+                                                List<StockAccSheetVo> li = wl.stream().filter(v -> !"CGDHD".equals(v.getBillStyle()))
+                                                        .collect(Collectors.toList());
+                                                skl.addAll(li);
+                                            }else{
+                                                wl.stream().filter(v -> "CGDHD".equals(v.getBillStyle()))
+                                                        .forEach(v->{
+                                                            //采购到货单数量-累计入库数量
+                                                            BigDecimal subtract = new BigDecimal(v.getBq()).subtract(new BigDecimal(v.getIsum()));
+                                                            v.setBq(subtract.toString());
+                                                            v.setTypes("3");
+                                                        });
+                                                skl.addAll(wl);
+                                            }
                                             return slist;
                                         });
                             })
                             .flatMap(slist->{
-                                //出库
-                                return stockSaleousingsRepository.findAllByIyearAndCk(year,ck)
+                                //出库(销售 其他 领用)+销货单(销货单数量-累计销售出库数量)
+                                return stockSaleousingsRepository.findAllByIyearAndList(year,cinvodeList)
                                         .filter(v-> {
-                                            if(ckBcheck.equals("0")){
+                                            if(finalCkBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());
                                             }else{
-                                                return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
+                                                return  true;
                                             }
                                         })
                                         .collectList()
                                         .map(sl->{
-                                            skl.addAll(sl);
+                                            if("XCL".equals(flg)){
+                                                List<StockAccSheetVo> li = sl.stream().filter(v -> !"XHD".equals(v.getBillStyle()))
+                                                        .collect(Collectors.toList());
+                                                skl.addAll(li);
+                                            }else{
+                                                sl.stream().filter(v -> "XHD".equals(v.getBillStyle()))
+                                                        .forEach(v->{
+                                                            //采购到货单数量-累计入库数量
+                                                            BigDecimal subtract = new BigDecimal(v.getBq()).subtract(new BigDecimal(v.getIsum()));
+                                                            v.setBq(subtract.toString());
+                                                            v.setTypes("4");
+                                                        });
+                                                skl.addAll(sl);
+                                            }
                                             return slist;
                                         });
                             })
@@ -530,13 +564,7 @@ public class StockChangeController {
                                         .collect(Collectors.groupingBy(v->{
                                             String str = v.getCinvode();
                                             if(Objects.nonNull(v.getBatchid())){
-                                                str+=v.getBatchid();
-                                                if(Objects.nonNull(v.getDpdate())){
-                                                    str+=v.getDpdate();
-                                                }
-                                                if(Objects.nonNull(v.getDvdate())){
-                                                    str+=v.getDvdate();
-                                                }
+                                                str+="_"+v.getBatchid();
                                             }
                                             return str;
                                         }));
@@ -548,44 +576,69 @@ public class StockChangeController {
 
                                 //计算现存量 合并存货数据
                                 map2.forEach((k, value) -> {
+                                    List<StockChanges> stsList = st.getStsList();
+                                    stsList.stream().forEach(obj->{
+                                        //筛选仓库 计算现存量
+                                        //入库+期初
+                                        List<StockAccSheetVo> ckList = value.stream().filter(o ->    "0".equals(o.getTypes()) ||  "1".equals(o.getTypes()))
+                                                .filter(o-> o.getCwhcode().equals(obj.getCwhcode()))
+                                                .collect(Collectors.toList());
+                                        //出库
+                                        List<StockAccSheetVo> rkList = value.stream().filter(o ->   "2".equals(o.getTypes()))
+                                                .filter(o-> o.getCwhcode().equals(obj.getCwhcode()))
+                                                .collect(Collectors.toList());
 
-                                    //入库+期初
-                                    List<StockAccSheetVo> ckList = value.stream().filter(o ->    !"2".equals(o.getTypes())).collect(Collectors.toList());
-                                    //出库
-                                    List<StockAccSheetVo> rkList = value.stream().filter(o ->   "2".equals(o.getTypes())).collect(Collectors.toList());
+                                        double sumBq = ckList.stream().mapToDouble(v -> {
+                                            if (Objects.isNull(v.getBq())) return 0.00d;
+                                            return Double.parseDouble(v.getBq().toString());
+                                        }).sum();
 
-                                    double sumBq = ckList.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getBq())) return 0.00d;
-                                        return Double.parseDouble(v.getBq().toString());
-                                    }).sum();
+                                        double sumBqrk = rkList.stream().mapToDouble(v -> {
+                                            if (Objects.isNull(v.getBq())) return 0.00d;
+                                            return Double.parseDouble(v.getBq().toString());
+                                        }).sum();
 
-                                    double sumBqrk = rkList.stream().mapToDouble(v -> {
-                                        if (Objects.isNull(v.getBq())) return 0.00d;
-                                        return Double.parseDouble(v.getBq().toString());
-                                    }).sum();
+                                        BigDecimal subtract = BigDecimal.ZERO;
+                                        if("XCL".equals(flg)){
+                                            //现存量  期初+入库-出库
+                                            subtract =  new BigDecimal(sumBq).subtract(new BigDecimal(sumBqrk));
+                                        }else{
+                                            //可用量 = 现存量：（期初+入库-出库） +  在途量： （到货单(采购到货单数量-累计入库数量)）- （销货单(销货单数量-累计销售出库数量)）
+                                            //到货单
+                                            List<StockAccSheetVo> dhList = value.stream().filter(o ->   "3".equals(o.getTypes())).collect(Collectors.toList());
+                                            //销货单
+                                            List<StockAccSheetVo> xhList = value.stream().filter(o ->   "4".equals(o.getTypes())).collect(Collectors.toList());
+                                            double sumBqdh = dhList.stream().mapToDouble(v -> {
+                                                if (Objects.isNull(v.getBq())) return 0.00d;
+                                                return Double.parseDouble(v.getBq().toString());
+                                            }).sum();
 
-                                    //现存量  期初+入库-出库
-                                    BigDecimal subtract = new BigDecimal(sumBq).subtract(new BigDecimal(sumBqrk));
+                                            double sumBqxh = xhList.stream().mapToDouble(v -> {
+                                                if (Objects.isNull(v.getBq())) return 0.00d;
+                                                return Double.parseDouble(v.getBq().toString());
+                                            }).sum();
+                                            subtract =  new BigDecimal(sumBq).subtract(new BigDecimal(sumBqrk)).add(new BigDecimal(sumBqdh)).subtract(new BigDecimal(sumBqxh));
+                                        }
 
-                                    //匹配存货的信息
-                                    Optional<StockVo> first = list.stream().filter(v -> v.getStockNum().equals(value.get(0).getCinvode())).findFirst();
-                                    //现存量存在 并且不等于0的
-                                    if(first.isPresent() && subtract.compareTo(BigDecimal.ZERO) != 0){
-                                        first.get().setXcl(subtract);
-                                        //批号
-                                        first.get().setBatchId(value.get(0).getBatchid());
-                                        first.get().setDpdate(value.get(0).getDpdate());
-                                        first.get().setDvdate(value.get(0).getDvdate());
-                                        sv.add(first.get());
-                                    }
+                                        //现存量存在 并且不等于0的
+                                        if(subtract.compareTo(BigDecimal.ZERO) != 0){
+                                            StockVo stockVo = new StockVo();
+                                            stockVo.setStockNum(value.get(0).getCinvode());
+                                            stockVo.setXcl(subtract);
+                                            //批号
+                                            stockVo.setBatchId(value.get(0).getBatchid());
+                                            stockVo.setDpdate(value.get(0).getDpdate());
+                                            stockVo.setDvdate(value.get(0).getDvdate());
+                                            sv.add(stockVo);
+                                        }
+                                    });
                                 });
                                 return sv;
                             })
                             .map(list->{
                                 AtomicReference<Boolean> b = new AtomicReference<>(false);
-                                List<StockChanges> stsList = st.getStsList();
                                 //审核弃审 判断现存量
-                                List<StockChanges> rkList = stsList;
+                                List<StockChanges> rkList = st.getStsList();
                                 //获取显存量的存货数据 然后比对对应的存货数据
                                 rkList.stream().forEach(v->{
                                     Optional<StockVo> first = list.stream().filter(o -> o.getStockNum().equals(v.getCinvode()) &&  (Objects.nonNull(v.getBatchId())? o.getBatchId().equals(v.getBatchId()) :true)).findFirst();
@@ -598,7 +651,6 @@ public class StockChangeController {
                             });
                 })
                 .map(a -> R.ok().setResult(a));
-
     }
 
     @PostMapping("auditCheckBcheck")

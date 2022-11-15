@@ -199,6 +199,7 @@
 
 
     <div class="bg-white" :style="{height: (windowHeight+50)+'px',marginLeft:'10px',display: 'inline',width: showCatalog?'280px':'20px',float: 'left',marginTop: '1px',overflow:showCatalog?'auto':'hidden',overflowY:'hidden'}" >
+      <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
       <div v-show="showCatalog" style="width: 100%; height: 26px;text-align: center;background-color: rgb(216 216 216);">
         <label style="font-size: 14px;font-weight: bold;">存货分类</label>
       </div>
@@ -1942,6 +1943,7 @@ const toAudit = async () => {
   routemsg.value.bcheck = '1'
   saveLogData('审核')
   message.success("操作成功")
+  compState.loading = false
   findAllInitialBalance()
 
 }
@@ -2006,6 +2008,7 @@ const toAuditBack = async () => {
   routemsg.value.bcheck = '0'
   saveLogData('弃审')
   message.success("操作成功")
+  compState.loading = false
   findAllInitialBalance()
 
 }

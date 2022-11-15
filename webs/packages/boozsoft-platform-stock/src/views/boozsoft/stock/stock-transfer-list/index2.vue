@@ -1156,7 +1156,7 @@ const toAudit = async () => {
       rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
       ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
       flg:'XCL',
-  })
+    })
     console.log(b)
     if(!b){
       compState.loading = false

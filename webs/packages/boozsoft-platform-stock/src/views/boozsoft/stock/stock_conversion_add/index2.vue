@@ -453,6 +453,7 @@
     <LySource @register="registerlySourcePage"/>
     <StockInfiModalPop @register="registerStockInfoModalPage" @throwData="modalData"/>
     <BatchSelector @register="registerBatchSelectorPage" @throwData="modalData"/>
+    <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
   </div>
 </template>
 
@@ -1129,14 +1130,27 @@ const startReview = async (b) => {
           compState.loading = false
           return message.error('现存量不足不能审核！！！')
         }
+
+        list.forEach(v=>{
+          let num = verifyRowKylData(v)
+          if(num < v.baseQuantity){
+            isCheck = false
+            return
+          }
+        })
+        if(!isCheck){
+          compState.loading = false
+          return message.error('可用量不足不能审核！！！')
+        }
+
       }else{
-        //弃审 4 校验下有单据是否存在审核
-        let bcheck= await useRouteApi(auditCheckBcheck, { schemaName: dynamicTenantId })({ccode:formItems.value.ccode})
+        //弃审 4 校验下有单据是否存在审核 
+        /*let bcheck= await useRouteApi(auditCheckBcheck, { schemaName: dynamicTenantId })({ccode:formItems.value.ccode})
         console.log(bcheck)
         if(bcheck == true){
           compState.loading = false
           return message.error('下游单据未弃审，请弃审下游单据后操作！')
-        }
+        }*/
 
         //弃审校验入库
         let isCheck = true
@@ -1153,8 +1167,20 @@ const startReview = async (b) => {
           compState.loading = false
           return message.error('现存量不足不能审核！！！')
         }
-      }
 
+        list.forEach(v=>{
+          let num = verifyRowKylData(v)
+          if(num < v.baseQuantity){
+            isCheck = false
+            return
+          }
+        })
+        if(!isCheck){
+          compState.loading = false
+          return message.error('可用量不足不能审核！！！')
+        }
+
+      }
       let isAuto =  dynamicTenant.value.target.xsShXkd == '1'
       let res = await useRouteApi(reviewRuKu, {schemaName: dynamicTenantId})({
         id: formItems.value.id,
@@ -1168,6 +1194,7 @@ const startReview = async (b) => {
       saveLogData(`${b?'审核':'弃审'}`)
       /************** 记录操作日志 ****************/
       message.success(`${b?'审核':'弃审'}成功！`)
+      compState.loading = false
       await pageReload()
       if (b && isAuto && res != null){
 
@@ -1274,6 +1301,7 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 //数据保存
 async function saveData() {
+
   let id = (status.value == 1?null:formItems.value.id)
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
@@ -2202,6 +2230,25 @@ async function verifyRowXCLData(r) {
       r.xcl=parseFloat(t/conversionRate).toFixed(2)
     })
 }
+
+// 按行校验存货现存量
+async function verifyRowKylData(r) {
+  // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'keyong',
+    cinvode:r.cinvode,
+    cwhcode:r.cwhcode,
+    batchId:r.batchId,
+    dpdate:r.dpdate,
+    dvdate:r.dpdate,
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
+    .then((t)=>{
+      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+    })
+}
 // 存货成本单价
 async function findByStockPrice(data) {
   let price=await useRouteApi(getCkPrice, {schemaName: dynamicTenantId})({
@@ -2260,8 +2307,28 @@ const focusNext =  (r, c) => {
   tableDataChange(r, c)
   // 查找下一个
   let list = getDataSource();
-  let filters = [ 'bcheck', 'cinvodeType','cunitid','cinvodeName','cinvodeBarcode','baseQuantity','itaxprice','itaxrate','price','icost']
-  // 要求填批号才填写
+  let filters = [ 'bcheck', 'cinvodeType','cunitid','cinvodeName','cinvodeBarcode','baseQuantity','xcl','itaxprice','itaxrate','price','icost']
+
+/*  columns: [
+    {
+      title: '无税单价',
+      dataIndex: 'price',
+      ellipsis: true,
+      slots: {customRender: 'price'},
+      width: 120,
+    },
+    {
+      title: '无税金额',
+      dataIndex: 'icost',
+      slots: {customRender: 'icost'},
+      ellipsis: true,
+      width: 120,
+      align: 'right'
+    },
+
+  ],*/
+
+    // 要求填批号才填写
   console.log(r.isBatch)
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')

@@ -181,8 +181,7 @@
       </div>
 
       <div class="acb-centent">
-        <!--  针对过滤框显示添加的内容高度 :class="status == 3?'status-look':''"  -->
-        <!--       :rowKey="r=>r.assetsCode"-->
+        <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
         <BasicTable
           ref="tableRef"
           :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
@@ -1128,7 +1127,9 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    compState.loading = true
     if (formItems.value.bcheck == '1') {
+      compState.loading = false
       return message.error('提示：当前入库单已经审核，不能删除，请弃审单据后重试！！')
     }
     // 有无 整理现存量 任务
@@ -1138,6 +1139,7 @@ const startDel = async () => {
       method: '整理现存量'
     })
     if (!hasBlank(xclTaskData)) {
+      compState.loading = false
       return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
     }
     // 结账操作
@@ -1147,6 +1149,7 @@ const startDel = async () => {
       method: '月末结账'
     })
     if (!hasBlank(jzMethod)) {
+      compState.loading = false
       return message.error('提示：操作员' + jzMethod.caozuoName + '正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     // 任务
@@ -1160,6 +1163,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if (taskData[i]?.caozuoUnique !== useUserStoreWidthOut().getUserInfo.id) {
+          compState.loading = false
           return createWarningModal({content: taskData[i]?.username + '正在' + taskData[i]?.method + '调拨单,不能同时进行操作！'});
         }
         await useRouteApi(stockBalanceTaskEditNewTime, {schemaName: dynamicTenantId})(taskData[i]?.id)
@@ -1173,6 +1177,7 @@ const startDel = async () => {
       onOk: async () => {
         // 删除前校验
         if (formItems.value.isGenerate) {
+          compState.loading = false
           createWarningModal({title: '温馨提示', content: '当前单据已经生成出库单不能进行删除操作！'})
         } else {
           await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
@@ -1180,6 +1185,7 @@ const startDel = async () => {
           saveLogData('删除',formItems.value.ccode)
           message.success('删除成功！')
           formItems.value.id = ''
+          compState.loading = false
           await contentSwitch('tail')
         }
       }
@@ -1257,7 +1263,7 @@ const startReview = async (b) => {
         })
         formItems.value.bcheck = '0'
       }
-
+      compState.loading = false
       message.success("操作成功")
     }
   } else {
@@ -1396,6 +1402,7 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 //数据保存
 async function saveData() {
+  compState.loading = true
   let id = (status.value == 1?null:formItems.value.id)
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
@@ -1434,6 +1441,7 @@ async function saveData() {
     saveLogData(status.value==1?'新增':'修改',formItems.value.ccode)
     /************** 记录操作日志 ****************/
     message.success('保存成功！')
+    compState.loading = false
     routeData.type = ''
     await pageReload()
     status.value = 3
