@@ -91,8 +91,18 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'center'
     },
-    ,{
+    {
       key: '5',
+      name: '现存量',
+      nameNew: '现存量',
+      check: false,
+      width: 100,
+      max: 120,
+      min: 80,
+      align: 'center'
+    },
+    {
+      key: '6',
       name: '数量',
       nameNew: '数量',
       check: true,
@@ -102,7 +112,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
      {
-      key: '6',
+      key: '7',
       name: '主计量',
       nameNew: '主计量',
       check: true,
@@ -112,7 +122,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     ,{
-      key: '7',
+      key: '8',
       name: '主数量',
       nameNew: '主数量',
       check: true,
@@ -121,7 +131,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'center'
     }, ,{
-      key: '8',
+      key: '9',
       name: "批号",
       nameNew: "批号",
       check: true,
@@ -129,7 +139,7 @@ const dynamicColumnAndDataModel = reactive({
       max: 200,
       min: 100, align: 'center'
     }, {
-      key: '9',
+      key: '10',
       name: "无税单价",
       nameNew: "无税单价",
       check: true,
@@ -138,7 +148,7 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'right'
     }, {
-      key: '10',
+      key: '11',
       name: "无税金额",
       nameNew: "无税金额",
       check: true,
@@ -148,7 +158,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'right'
     },
     {
-      key: '11',
+      key: '12',
       name: "生产日期",
       nameNew: "生产日期",
       check: true,
@@ -158,7 +168,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
-      key: '12',
+      key: '13',
       name: "失效日期",
       nameNew: "失效日期",
       check: true,
@@ -168,7 +178,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
-      key: '13',
+      key: '14',
       name: "审核人",
       nameNew: "审核人",
       check: true,
@@ -178,7 +188,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
-      key: '14',
+      key: '15',
       name: "备注",
       nameNew: "备注",
       check: true,
@@ -188,7 +198,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'left'
     },
     {
-      key: '15',
+      key: '16',
       name: "项目",
       nameNew: "项目",
       check: false,

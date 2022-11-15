@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-            <Button class="actod-btn" @click="router.push('/xs-dhList')">查询</Button>
+            <Button class="actod-btn" @click="router.push('/kc-dbd-list')">查询</Button>
             <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
             <Button class="actod-btn" @click="startEdit('edit')" v-if="status == 3 && formItems.bcheck != '1'">修改</Button>
             <Button class="actod-btn" @click="saveData" v-if="status == 1 || status == 2">保存</Button>
@@ -181,8 +181,7 @@
       </div>
 
       <div class="acb-centent">
-        <!--  针对过滤框显示添加的内容高度 :class="status == 3?'status-look':''"  -->
-        <!--       :rowKey="r=>r.assetsCode"-->
+        <Loading :loading="compState.loading" :absolute="compState.absolute" :tip="compState.tip" />
         <BasicTable
           ref="tableRef"
           :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
@@ -500,7 +499,11 @@
               </div>
             </template>
           </template>
-
+          <template #xcl="{ record }">
+            <span class="a-table-font-arial">{{
+                (record.xcl == null ? '' : parseFloat(record.xcl).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }}</span>
+          </template>
           <template #summary>
             <TableSummary fixed>
               <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">
@@ -827,7 +830,15 @@ const CrudApi = {
       ellipsis: true,
       slots: {customRender: 'cgUnitId'},
       width: 120
-    },{
+    },
+    {
+      title: '现存量',
+      dataIndex: 'xcl',
+      slots: {customRender: 'xcl'},
+      ellipsis: true,
+      width: 80,
+    },
+    {
       title: '数量',
       dataIndex: 'cnumber',
       ellipsis: true,
@@ -1016,7 +1027,6 @@ async function checkBusDate(date) {
 }
 const startEdit = async (type) => {
   let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
-
   //  1 日期是否已结账
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
   console.log('入库单操作：1--->日期是否已结账-->'+temp)
@@ -1035,7 +1045,7 @@ const startEdit = async (type) => {
   if(pd>0){
     return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
   }
-
+  showAvailability(true)
   let maxR = 50
   if (type === 'add') {
     status.value = 1
@@ -1085,7 +1095,10 @@ const startEdit = async (type) => {
   }
 
 }
-
+const showAvailability = (b) => {
+  if (titleValue.value == 0)
+    setColumns(getColumns().map(it=>{if (it.dataIndex == 'xcl')it.ifShow = b;return it;}))
+}
 async function generateCode(date) {
   return await useRouteApi(findBillCode, {schemaName: dynamicTenantId})({
     type: pageParameter.type,
@@ -1114,7 +1127,9 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    compState.loading = true
     if (formItems.value.bcheck == '1') {
+      compState.loading = false
       return message.error('提示：当前入库单已经审核，不能删除，请弃审单据后重试！！')
     }
     // 有无 整理现存量 任务
@@ -1124,6 +1139,7 @@ const startDel = async () => {
       method: '整理现存量'
     })
     if (!hasBlank(xclTaskData)) {
+      compState.loading = false
       return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
     }
     // 结账操作
@@ -1133,6 +1149,7 @@ const startDel = async () => {
       method: '月末结账'
     })
     if (!hasBlank(jzMethod)) {
+      compState.loading = false
       return message.error('提示：操作员' + jzMethod.caozuoName + '正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     // 任务
@@ -1146,6 +1163,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if (taskData[i]?.caozuoUnique !== useUserStoreWidthOut().getUserInfo.id) {
+          compState.loading = false
           return createWarningModal({content: taskData[i]?.username + '正在' + taskData[i]?.method + '调拨单,不能同时进行操作！'});
         }
         await useRouteApi(stockBalanceTaskEditNewTime, {schemaName: dynamicTenantId})(taskData[i]?.id)
@@ -1159,6 +1177,7 @@ const startDel = async () => {
       onOk: async () => {
         // 删除前校验
         if (formItems.value.isGenerate) {
+          compState.loading = false
           createWarningModal({title: '温馨提示', content: '当前单据已经生成出库单不能进行删除操作！'})
         } else {
           await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
@@ -1166,6 +1185,7 @@ const startDel = async () => {
           saveLogData('删除',formItems.value.ccode)
           message.success('删除成功！')
           formItems.value.id = ''
+          compState.loading = false
           await contentSwitch('tail')
         }
       }
@@ -1243,7 +1263,7 @@ const startReview = async (b) => {
         })
         formItems.value.bcheck = '0'
       }
-
+      compState.loading = false
       message.success("操作成功")
     }
   } else {
@@ -1382,6 +1402,7 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 //数据保存
 async function saveData() {
+  compState.loading = true
   let id = (status.value == 1?null:formItems.value.id)
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
@@ -1410,15 +1431,17 @@ async function saveData() {
       return false
     }
     formItems.value.entryList = JsonTool.json(merge(list))
-    console.log(formItems.value)
-    if (formItems.value?.id == null)
+    if (formItems.value?.id == null){
       formItems.value.ccode = await generateCode(formItems.value.ddate)
+      showAvailability(false)
+    }
     await useRouteApi(saveXhd, {schemaName: dynamicTenantId})(formItems.value)
     tempTaskDel(taskInfo.value?.id)
     /************** 记录操作日志 ****************/
     saveLogData(status.value==1?'新增':'修改',formItems.value.ccode)
     /************** 记录操作日志 ****************/
     message.success('保存成功！')
+    compState.loading = false
     routeData.type = ''
     await pageReload()
     status.value = 3
@@ -1442,6 +1465,7 @@ async function giveUp() {
   setTableData([])
   if (status.value == 1) {
     await contentSwitch('first')
+    showAvailability(false)
   } else if (status.value == 2) {
     await contentSwitch('curr')
   }
@@ -1841,6 +1865,8 @@ const modalData = (o) => {
     if (thisEditType.value == 'cinvode') {
       thisEditObj.value['tempTwo'] = o[0].stockNum
       thisEditObj.value['cinvodeInfo'] = o[0]
+      thisEditObj.value['xcl'] = o[0].xcl
+      console.log(o[0].xcl)
       focusNext(thisEditObj.value,thisEditType.value)
 
     } else if (thisEditType.value == 'batchId') {
@@ -2284,7 +2310,7 @@ const focusNext =  (r, c) => {
 
   // 查找下一个
   let list = getDataSource();
-  let filters = ['isGive', 'bcheck', 'cinvodeType', 'cunitid', 'baseQuantity','cinvodeName','cinvodeBarcode',  'dvdate', 'dpdate', 'itaxprice','availability','price','icost']
+  let filters = ['isGive', 'bcheck', 'cinvodeType', 'cunitid', 'xcl','baseQuantity','cinvodeName','cinvodeBarcode', 'dvdate', 'dpdate', 'itaxprice','availability','price','icost']
   // 要求填批号才填写
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
@@ -2822,18 +2848,21 @@ async function cgUnitIdChange(record) {
 
 // 按行校验存货现存量
 async function verifyRowXCLData(r) {
-  if(titleValue.value==1){
-    await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({queryType:'xcl',cinvode:r.cinvode,cwhcode:r.cwhcode,iyear:dynamicYear.value,rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
-      .then((t)=>{
-        console.log(t)
-        let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-        r.showNumber=parseFloat(t/conversionRate).toFixed(2)
-        // oldShowNumber 是红字 选择批次弹框回调携带参数
-        if(!hasBlank(r.oldShowNumber)){
-          r.showNumber=r.oldShowNumber
-        }
-      })
-  }
+  // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'xcl',
+    cinvode:r.cinvode,
+    cwhcode:r.cwhcode,
+    batchId:r.batchId,
+    dpdate:r.dpdate,
+    dvdate:r.dpdate,
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
+    .then((t)=>{
+      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+    })
 }
 const cunitFormat = (list,id) => {
   if (null == list || hasBlank(id)) return id;

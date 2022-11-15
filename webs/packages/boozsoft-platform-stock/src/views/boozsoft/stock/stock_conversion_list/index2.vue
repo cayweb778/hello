@@ -256,7 +256,7 @@ import {
 } from "/@/api/record/stock/stock-ruku";
 
 import {
-  findAllMainList, audit, deleteSettModes, auditCheckBcheck
+  findAllMainList, audit, deleteSettModes, auditCheck
 } from "/@/api/record/stock/stock-xtzhd";
 import {
   delCGDHDverifyZTRKSum,
@@ -508,7 +508,7 @@ async function saveQuery(data) {
   }
   pageParameter.strDate = strDate.value
   pageParameter.endDate = endDate.value
-
+  dynamicTenant.value = data.obj
   pageParameter.ccode =  data.ccode
   pageParameter.dataType =   data.dataType
   pageParameter.user =  data.user
@@ -971,6 +971,7 @@ const compState = reactive({
 });
 const iyear = ref('2022')
 
+const dynamicTenant:any = ref('')
 const toAudit = async () => {
   if (checkRow.value.length == 1) {
     if(checkRow.value[0].bcheck === '1'){
@@ -1004,6 +1005,33 @@ const toAudit = async () => {
     }
 
     //校验现存量
+    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'XCL',
+      type:'0'
+    })
+    console.log(b)
+    if(!b){
+      compState.loading = false
+      return message.error('现存量不足不能审核！！！')
+    }
+
+    //校验可用量
+    let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'KYL',
+      type:'0'
+    })
+    console.log(kyl)
+    if(!kyl){
+      compState.loading = false
+      return message.error('可用量不足不能审核！！！')
+    }
+
     let a = useUserStoreWidthOut().getUserInfo.id
     await useRouteApi(audit,{schemaName: dynamicTenantId})({
       id:  checkRow.value[0].id,
@@ -1057,6 +1085,32 @@ const toAuditBack = async () => {
     }
 
     //校验现存量
+    let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'XCL',
+      type:'1'
+    })
+    console.log(b)
+    if(!b){
+      compState.loading = false
+      return message.error('现存量不足不能审核！！！')
+    }
+
+    //校验可用量
+    let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+      ccode: checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      flg:'KYL',
+      type:'1'
+    })
+    console.log(kyl)
+    if(!kyl){
+      compState.loading = false
+      return message.error('可用量不足不能审核！！！')
+    }
     let a = useUserStoreWidthOut().getUserInfo.id
     await useRouteApi(audit,{schemaName: dynamicTenantId})({
       id:  checkRow.value[0].id,

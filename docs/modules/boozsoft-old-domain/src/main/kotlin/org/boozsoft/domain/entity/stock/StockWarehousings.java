@@ -214,6 +214,9 @@ public class StockWarehousings {
 	@ApiModelProperty(value = "费用金额",hidden = true)
 	private String feiyongMoney;
 
+	@ApiModelProperty(value = "累计凭证金额",hidden = true)
+	private String isumPzMoney;
+
 	@ApiModelProperty(value = "",hidden = true)
 	private String cfree1;
 	@ApiModelProperty(value = "",hidden = true)

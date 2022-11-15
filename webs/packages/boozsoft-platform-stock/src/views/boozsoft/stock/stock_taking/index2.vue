@@ -278,7 +278,7 @@ const CrudApi = {
     },
 
     {
-      title: '单据编码',
+      title: '单据编号',
       dataIndex: 'ccode',
       width: '20%',
       align: 'left',
@@ -707,7 +707,7 @@ const openPrint = () => {
     data: {
       dynamicTenantId: dynamicTenantId.value,
       defaultAdName: useCompanyOperateStoreWidthOut().getSchemaName,
-      year: '2021',
+      year: '2022',
     }
   })
 }
@@ -895,7 +895,10 @@ const toMxPage = (data) => {
       bcheck: data.bcheck,
       dpdate: data.startDate,
       dvdate: data.stopDate,
+      kcCgrkCheck: dynamicTenant.value?.target?.kcCgrkCheck,
+      kcXsckCheck: dynamicTenant.value?.target?.kcXsckCheck,
       iyear: iyear.value,
+      ddate: data.ddate,
       dname: data.dname,
       puname: data.puname,
       kuname: data.kuname,
@@ -936,7 +939,7 @@ const toAudit = async () => {
 
     await useRouteApi(audit,{schemaName: database})({
       ccode:checkRow.value[0].ccode,
-      userName:userName
+      user:userName
     })
     saveLogData('审核',checkRow.value[0].ccode)
     message.success("操作成功")
@@ -950,6 +953,9 @@ const toAudit = async () => {
     })
   }
 }
+
+const dynamicTenant:any = ref('')
+
 const toAuditBack = async () => {
   //判断范围
   if (checkRow.value.length == 1) {
@@ -983,7 +989,12 @@ const toAuditBack = async () => {
     }
 
     //弃核前校验
-    let a = await useRouteApi(auditCheck,{schemaName: database})({ccode:checkRow.value[0].ccode,type:'qs'})
+    let a = await useRouteApi(auditCheck,{schemaName: database})({
+      ccode:checkRow.value[0].ccode,
+      rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+      ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+      type:'qs'
+    })
     console.log(a)
     if(!a){
       compState.loading = false
@@ -1023,6 +1034,7 @@ async function saveQuery(data) {
     strDate.value=data.strDate.replaceAll('-','.')
     endDate.value=data.endDate.replaceAll('-','.')
   }
+  dynamicTenant.value = data.obj
   pageParameter.strDate = strDate.value
   pageParameter.endDate = endDate.value
   database.value  = data.database

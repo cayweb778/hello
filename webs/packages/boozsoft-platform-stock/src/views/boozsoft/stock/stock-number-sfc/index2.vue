@@ -280,27 +280,33 @@ async function getStockXCL() {
     temp.forEach(async (a)=>{
       a.stockCangkuName=ckName.value
 
-      let qimo=(parseFloat(a.qichu)+parseFloat(a.rk))-parseFloat(a.ck)
-      let qimo1=(parseFloat(a.qichu1)+parseFloat(a.rk1))-parseFloat(a.ck1)
-      let qimo2=(parseFloat(a.qichu2)+parseFloat(a.rk2))-parseFloat(a.ck2)
-      a.qimo=qimo==0?null:toThousandFilter(qimo)
-      a.qimo1=qimo1==0?null:toThousandFilter(qimo1)
-      a.qimo2=qimo2==0?null:toThousandFilter(qimo2)
+      a.qimo=(parseFloat(a.qichu)+parseFloat(a.rk))-parseFloat(a.ck)
+      a.qimo1=parseFloat(a.rate1)==0?null:parseFloat(a.qimo/a.rate1)
+      a.qimo2=parseFloat(a.rate2)==0?null:parseFloat(a.qimo/a.rate2)
 
-      // a.qichu1=a.qichu1==0?null:toThousandFilter(parseFloat(a.qichu)/parseFloat(a.qichu1))
-      // a.qichu2=a.qichu2==0?null:toThousandFilter(parseFloat(a.qichu)/parseFloat(a.qichu2))
-      a.qichu1=a.qichu1==0?null:toThousandFilter(a.qichu1)
-      a.qichu2=a.qichu2==0?null:toThousandFilter(a.qichu2)
-
-      a.qichu=a.qichu==0?null:toThousandFilter(a.qichu)
-      a.rk=a.rk==0?null:toThousandFilter(a.rk)
-      a.rk1=a.rk1==0?null:toThousandFilter(a.rk1)
-      a.rk2=a.rk2==0?null:toThousandFilter(a.rk2)
-      a.ck=a.ck==0?null:toThousandFilter(a.ck)
-      a.ck1=a.ck1==0?null:toThousandFilter(a.ck1)
-      a.ck2=a.ck2==0?null:toThousandFilter(a.ck2)
+      a.qichu1=parseFloat(a.rate1)==0?null:parseFloat(a.qichu/a.rate1)
+      a.qichu2=parseFloat(a.rate2)==0?null:parseFloat(a.qichu/a.rate2)
+      a.rk1=parseFloat(a.rate1)==0?null:parseFloat(a.rk/a.rate1)
+      a.rk2=parseFloat(a.rate2)==0?null:parseFloat(a.rk/a.rate2)
+      a.ck1=parseFloat(a.rate1)==0?null:parseFloat(a.ck/a.rate1)
+      a.ck2=parseFloat(a.rate2)==0?null:parseFloat(a.ck/a.rate2)
     })
     assembleTotal(temp)
+    temp.map(a=>{
+      a.qimo=toThousandFilter(a.qimo);
+      a.qimo1=toThousandFilter(a.qimo1);
+      a.qimo2=toThousandFilter(a.qimo2);
+      a.qichu=toThousandFilter(a.qichu);
+      a.qichu1=toThousandFilter(a.qichu1);
+      a.qichu2=toThousandFilter(a.qichu2);
+      a.rk=toThousandFilter(a.rk);
+      a.rk1=toThousandFilter(a.rk1);
+      a.rk2=toThousandFilter(a.rk2);
+      a.ck=toThousandFilter(a.ck);
+      a.ck1=toThousandFilter(a.ck1);
+      a.ck2=toThousandFilter(a.ck2);
+      return a;
+    })
     let len = temp.length
     if(len<50){
       for (let i =  len; i < 50; i++) {
@@ -328,33 +334,33 @@ const assembleTotal = (list) => {
   let qimo2 = 0
 
   for (let o of list) {
-    qichu += parseFloat(!hasBlank(o.qichu)?o.qichu.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    qichu1 +=parseFloat(!hasBlank(o.qichu1)?o.qichu1.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    qichu2 += parseFloat(!hasBlank(o.qichu2)?o.qichu2.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    rk += parseFloat(!hasBlank(o.rk)?o.rk.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    rk1 += parseFloat(!hasBlank(o.rk1)?o.rk1.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    rk2 += parseFloat(!hasBlank(o.rk2)?o.rk2.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    ck += parseFloat(!hasBlank(o.ck)?o.ck.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    ck1 += parseFloat(!hasBlank(o.ck1)?o.ck1.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    ck2 += parseFloat(!hasBlank(o.ck2)?o.ck2.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    qimo += parseFloat(!hasBlank(o.qimo)?o.qimo.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    qimo1 += parseFloat(!hasBlank(o.qimo1)?o.qimo1.replace(/\$\s?|(,*)/g, ''):'0' || '0')
-    qimo2 += parseFloat(!hasBlank(o.qimo2)?o.qimo2.replace(/\$\s?|(,*)/g, ''):'0' || '0')
+    qichu += parseFloat(o.qichu || '0')
+    qichu1 +=parseFloat(o.qichu1 || '0')
+    qichu2 += parseFloat(o.qichu2 || '0')
+    rk += parseFloat(o.rk || '0')
+    rk1 += parseFloat(o.rk1 || '0')
+    rk2 += parseFloat(o.rk2 || '0')
+    ck += parseFloat(o.ck || '0')
+    ck1 += parseFloat(o.ck1 || '0')
+    ck2 += parseFloat(o.ck2 || '0')
+    qimo += parseFloat(o.qimo || '0')
+    qimo1 += parseFloat(o.qimo1 || '0')
+    qimo2 += parseFloat(o.qimo2 || '0')
   }
   summaryTotals.value=
     {
-      qichu: qichu==0?'':parseFloat(qichu).toFixed(2),
-      qichu1: qichu1==0?'':parseFloat(qichu1).toFixed(2),
-      qichu2: qichu2==0?'':parseFloat(qichu2).toFixed(2),
-      rk: rk==0?'':parseFloat(rk).toFixed(2),
-      rk1: rk1==0?'':parseFloat(rk1).toFixed(2),
-      rk2: rk2==0?'':parseFloat(rk2).toFixed(2),
-      ck: ck==0?'':parseFloat(ck).toFixed(2),
-      ck1: ck1==0?'':parseFloat(ck).toFixed(2),
-      ck2: ck2==0?'':parseFloat(ck2).toFixed(2),
-      qimo: qimo==0?'':parseFloat(qimo).toFixed(2),
-      qimo1: qimo1==0?'':parseFloat(qimo1).toFixed(2),
-      qimo2: qimo2==0?'':parseFloat(qimo2).toFixed(2),
+      qichu: toThousandFilter(qichu),
+      qichu1: toThousandFilter(qichu1),
+      qichu2: toThousandFilter(qichu2),
+      rk: toThousandFilter(rk),
+      rk1: toThousandFilter(rk1),
+      rk2: toThousandFilter(rk2),
+      ck: toThousandFilter(ck),
+      ck1: toThousandFilter(ck1),
+      ck2: toThousandFilter(ck2),
+      qimo: toThousandFilter(qimo),
+      qimo1: toThousandFilter(qimo1),
+      qimo2: toThousandFilter(qimo2),
     }
 }
 
@@ -588,10 +594,10 @@ function initTableWidth(thisCs) {
   if (total > windowWidth) {
     let f = 0
     totalColumnWidth.value = Number(windowWidth) - f
-    tableRef.value.$el.style.setProperty('width', (windowWidth + 52 - f) + 'px')
+    // tableRef.value.$el.style.setProperty('width', (windowWidth + 52 - f) + 'px')
   } else {
     totalColumnWidth.value = total
-    tableRef.value.$el.style.setProperty('width', (total + 52) + 'px')
+    // tableRef.value.$el.style.setProperty('width', (total + 52) + 'px')
   }
 }
 const initTable = ()=>{
@@ -626,7 +632,7 @@ const dynamicAdReload = async (obj) => {
  * @param num
  */
 function toThousandFilter(num: any) {
-  if (num == '' || num == null) {
+  if (num == '' || num == null || parseFloat(num)==0) {
     return ''
   }
   return (+num || 0).toFixed(2).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')

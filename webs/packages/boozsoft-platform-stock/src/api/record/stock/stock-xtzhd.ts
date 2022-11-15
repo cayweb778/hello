@@ -180,3 +180,10 @@ export const findByXyCcode = defRouteApi( async ({ccode,year,type})=>{
     timeout: 10000000,
   }
 })
+export const auditCheck = defRouteApi( async ({ccode,rkBcheck,ckBcheck,flg,type})=>{
+  return  {
+    url: '/stock/change/auditCheck/'+ccode+'/'+rkBcheck+'/'+ckBcheck+'/'+flg+'/'+type,
+    method: 'GET',
+    timeout: 10000000,
+  }
+})

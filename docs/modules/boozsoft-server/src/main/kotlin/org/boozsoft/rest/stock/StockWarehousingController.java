@@ -1777,5 +1777,9 @@ public class StockWarehousingController {
         String ccode=map.get("ccode").toString();
         return xyCsourceRepository.delXyHCD(ccode).then(Mono.just(R.ok()));
     }
-
+    @PostMapping("getAllCcodeArr")
+    public Mono<R> getAllCcodeArr(@RequestBody Map map){
+        String billStyle=map.get("billStyle").toString();
+        return warehousingsRepository.getAllCcodeArr(billStyle).collectList().map(R::ok);
+    }
 }

@@ -77,8 +77,15 @@ public interface StockSaleousingsRepository extends ReactiveCrudRepository<Stock
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost,  sbb.bcheck," +
             " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '2' as types, sbb.isum_xiaohuo as isum " +
             " from stock_saleousings sbb  " +
-            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.cinvode in (:list) and sbb.bill_style in ('XSCKD', 'QTCKD','CLLYCKD')")
+            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.cinvode in (:list) and sbb.bill_style in ('XSCKD', 'QTCKD','LYCKD')")
     Flux<StockAccSheetVo> findAllByIyearAndCkAndList(String iyear,String ck,List<String> list);
+
+    @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
+            " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost,  sbb.bcheck," +
+            " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '2' as types, sbb.isum_xiaohuo as isum " +
+            " from stock_saleousings sbb  " +
+            " where sbb.iyear=:iyear and sbb.cinvode in (:list) and sbb.bill_style in ('XSCKD', 'QTCKD','LYCKD')")
+    Flux<StockAccSheetVo> findAllByIyearAndList(String iyear,List<String> list);
 
     @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost, " +
@@ -127,7 +134,7 @@ public interface StockSaleousingsRepository extends ReactiveCrudRepository<Stock
             " left join stock s on sc.cinvode = s.stock_num " +
             " left join supplier sup on sup.id=sc.cvencode " +
             " left join customer cus on cus.id=sc.cvencode_js " +
-            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('XSCKD', 'DBCKD', 'QTCKD', 'PKCKD', 'XTZHCKD','CLLYCKD')")
+            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('XSCKD', 'QTCKD','LYCKD')")
     Flux<StockKctzVo> findAllByCinvodeAndDateAndPc(String ch,  String pc,String strDate, String endDate);
 
     Mono<Void> deleteByLineCodeIn(List<String> dels);

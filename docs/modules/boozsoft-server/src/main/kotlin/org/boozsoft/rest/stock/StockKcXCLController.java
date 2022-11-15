@@ -127,8 +127,8 @@ public class StockKcXCLController {
                 "                ck.stock_unit_name,\n" +
                 "                ck.stock_unit_name1,\n" +
                 "                ck.stock_unit_name2," +
-                "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id) rate,\n" +
-                "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1) rate1,\n" +
+                "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id),'0') rate,\n" +
+                "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1),'0') rate1,\n" +
                 "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id2),'0') rate2 " +
                 " from (select sbb.stock_id as cinvode, sbb.stock_cangku_id as cwhcode, sbb.batch_number as batch_id, sbb.dpdate, sbb.dvdate\n" +
                 "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode, sws.cwhcode, sws.batch_id, sws.dpdate, sws.dvdate from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' "+sb5+" union all \n" +
@@ -148,8 +148,8 @@ public class StockKcXCLController {
                 "                ck.stock_unit_name,\n" +
                 "                ck.stock_unit_name1,\n" +
                 "                ck.stock_unit_name2," +
-                "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id) rate,\n" +
-                "(select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1) rate1,\n" +
+                "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id),'0') rate,\n" +
+                "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id1),'0') rate1,\n" +
                 "coalesce((select mx.conversion_rate from sys_unit_of_mea_list mx where mx.id=ck.stock_unit_id2),'0') rate2 " +
                 " from (select sbb.stock_id as cinvode "+cwhcodeColumn+" \n" +
                 "               from stock_begin_balance sbb " + sb1 + " union all select distinct sws.cinvode "+cwhcodeColumn1+" from stock_warehousings sws where 1 = 1 and sws.bill_style = 'QC' "+sb5+" union all \n" +

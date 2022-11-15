@@ -127,7 +127,7 @@
                 已到货
               </Tag>
               <Tag v-if="stockWareData.swsIsumJiesuan>0" :color="'volcano' ">
-                已结算
+                已核算
               </Tag>
               <Tag :color="'volcano'" v-if="stockWareData.swsIsumFapiao >0 ">
                 已开票
@@ -355,75 +355,6 @@
               </div>
             </template>
           </template>
-          <!-- 税率-->
-          <template #itaxrate="{ record }">
-            <template v-if="!canzhao&&record?.editItaxrate">
-              <InputNumber v-model:value="record.tempItaxrate" class="itaxrate"
-                           :min="0"
-                           :max="100"
-                           style="width: 82%;"
-                           @click="getColumnRate(record)"
-                           @keyup.enter="focusNext(record,'itaxrate')"/>
-              <CheckOutlined
-                @click="record.editItaxrate = null;record.itaxrate=record.tempItaxrate;tableDataChange(record,'itaxrate')"/>
-            </template>
-            <template v-else>
-              <div :class="status == 3?'status-look':'suspended-div'"
-                   @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
-                <span class="a-table-font-arial">{{
-                    record.itaxrate == 0 ? '' : record.itaxrate
-                  }}</span>
-              </div>
-            </template>
-          </template>
-          <!-- 含税单价-->
-          <template #taxprice="{ record }">
-            <template v-if="!canzhao&&record?.editTaxprice">
-              <InputNumber v-model:value="record.tempTaxprice" class="taxprice"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @keyup.enter="focusNext(record,'taxprice')"/>
-              <CheckOutlined
-                @click="record.editTaxprice = null;record.taxprice=record.tempTaxprice;tableDataChange(record,'taxprice')"/>
-            </template>
-            <template v-else>
-              <div :class="status == 3?'status-look':'suspended-div'"
-                   @click="record.tempTaxprice=record.taxprice,record.editTaxprice = true;">
-                    <span class="a-table-font-arial">{{
-                        (record.taxprice == null ? '' : parseFloat(record.taxprice).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                      }}</span>
-              </div>
-            </template>
-          </template>
-          <!-- 税额 -->
-          <template #itaxprice="{ record }">
-            <span class="a-table-font-arial">{{
-                (record.itaxprice == null ? '' : parseFloat(record.itaxprice).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              }}
-             </span>
-          </template>
-          <!-- 价税合计 -->
-          <template #isum="{ record }">
-            <template v-if="!canzhao&&record?.editIsum">
-              <InputNumber v-model:value="record.tempIsum" class="isum"
-                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
-                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;"
-                           @keyup.enter="focusNext(record,'isum')"/>
-              <CheckOutlined
-                @click="record.editIsum = null;record.isum=record.tempIsum;tableDataChange(record,'isum')"/>
-            </template>
-            <template v-else>
-              <div :class="status == 3?'status-look':'suspended-div'"
-                   @click="record.tempIsum=record.isum,record.editIsum = true;">
-          <span class="a-table-font-arial">{{
-              (record.isum == null ? '' : parseFloat(record.isum).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }}</span>
-              </div>
-            </template>
-          </template>
-
           <template #batchId="{ record }">
             <template v-if="record?.editTwelve">
               <Input v-model:value="record.tempTwelve"
@@ -482,8 +413,99 @@
               </div>
             </template>
           </template>
-          <template #bcheck="{ record }">
-            {{ formatUniqueOperator(record.bcheckUser) }}
+
+          <!--累计核算数量-->
+          <template #isumJiesuan="{ record }">
+            <template v-if="record?.editIsumJiesuan">
+              <InputNumber v-model:value="record.tempIsumJiesuan"
+                           class="isumJiesuan"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumJiesuan');"/>
+              <CheckOutlined
+                @click="record.editIsumJiesuan = null;record.isumJiesuan=record.tempIsumJiesuan;tableDataChange(record,'isumJiesuan');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumJiesuan=record.isumJiesuan,record.editIsumJiesuan = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumJiesuan == null ? '' : parseFloat(record.isumJiesuan).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+          <!--累计到货数量-->
+          <template #isumDaohuo="{ record }">
+            <template v-if="record?.editIsumDaohuo">
+              <InputNumber v-model:value="record.tempIsumDaohuo"
+                           class="isumDaohuo"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumDaohuo');"/>
+              <CheckOutlined
+                @click="record.editIsumDaohuo = null;record.isumDaohuo=record.tempIsumDaohuo;tableDataChange(record,'isumDaohuo');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumDaohuo=record.isumDaohuo,record.editIsumDaohuo = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumDaohuo == null ? '' : parseFloat(record.isumDaohuo).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+          <!--累计开票数量-->
+          <template #isumFapiao="{ record }">
+            <template v-if="record?.editIsumFapiao">
+              <InputNumber v-model:value="record.tempIsumFapiao"
+                           class="isumFapiao"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumFapiao');"/>
+              <CheckOutlined
+                @click="record.editIsumFapiao = null;record.isumFapiao=record.tempIsumFapiao;tableDataChange(record,'isumFapiao');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumFapiao=record.isumFapiao,record.editIsumFapiao = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumFapiao == null ? '' : parseFloat(record.isumFapiao).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+          <!--来源单号-->
+          <template #sourcecode="{ record }">
+            <template v-if="record?.editSourcecode">
+              <Input v-model:value="record.tempSourcecode"
+                     style="width: 82%;" class="sourcecode"
+                     @keyup.enter="focusNext(record,'sourcecode')"/>
+              <CheckOutlined @click="record.editSourcecode = null;record.sourcecode=record.tempSourcecode;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempSourcecode=record.sourcecode,record.editSourcecode = true;">
+                <span class="a-table-font-arial">{{ record.sourcecode }}</span>
+              </div>
+            </template>
+          </template>
+          <!--来源单据日期-->
+          <template #sourcedate="{ record }">
+            <template v-if="record?.editSourcedate">
+              <Input v-model:value="record.tempSourcedate"
+                     style="width: 82%;" class="sourcedate"
+                     @keyup.enter="focusNext(record,'sourcedate')"/>
+              <CheckOutlined @click="record.editSourcedate = null;record.sourcedate=record.tempSourcedate;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempSourcedate=record.sourcedate,record.editSourcedate = true;">
+                <span class="a-table-font-arial">{{ record.sourcedate }}</span>
+              </div>
+            </template>
           </template>
           <template #summary>
             <TableSummary fixed>
@@ -694,16 +716,6 @@ function toThousandFilter(num: any) {
     return ''
   }
   return (+num || 0).toFixed(2).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')
-}
-
-/**
- * 获取表头税率
- * @param r
- */
-function getColumnRate(r) {
-  if (hasBlank(r['tempItaxrate'])) {
-    r['tempItaxrate'] = formFuns.value.getFormValue()?.rate
-  }
 }
 
 let num = 0
@@ -1008,14 +1020,16 @@ const CrudApi = {
       ellipsis: true,
       slots: {customRender: 'cinvodeType'},
       width: 120
-    }, {
+    },
+    {
       title: '计量单位',
       dataIndex: 'cgUnitId',
       ellipsis: true,
       slots: {customRender: 'cgUnitId'},
       width: 120
-    }, {
-      title: '未结算数量',
+    },
+    {
+      title: '数量',
       dataIndex: 'cnumber',
       ellipsis: true,
       slots: {customRender: 'cnumber'},
@@ -1028,7 +1042,8 @@ const CrudApi = {
       align: 'left',
       slots: {customRender: 'cunitid'},
       width: 100
-    }, {
+    },
+    {
       title: '主数量',
       dataIndex: 'baseQuantity',
       slots: {customRender: 'baseQuantity'},
@@ -1046,53 +1061,6 @@ const CrudApi = {
       title: '无税金额',
       dataIndex: 'icost',
       slots: {customRender: 'icost'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '税额',
-      dataIndex: 'itaxprice',
-      slots: {customRender: 'itaxprice'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '税率%',
-      dataIndex: 'itaxrate',
-      slots: {customRender: 'itaxrate'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '含税单价',
-      dataIndex: 'taxprice',
-      slots: {customRender: 'taxprice'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '价税合计',
-      dataIndex: 'isum',
-      slots: {customRender: 'isum'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-    {
-      title: '累计入库数量',
-      dataIndex: 'isumRuku',
-      slots: {customRender: 'isumRuku'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    }, {
-      title: '累计开票数量',
-      dataIndex: 'isumFapiao',
-      slots: {customRender: 'isumFapiao'},
       ellipsis: true,
       width: 120,
       align: 'right'
@@ -1126,11 +1094,45 @@ const CrudApi = {
       slots: {customRender: 'cmemo'},
     },
     {
-      title: '项目',
-      dataIndex: 'citemcode',
+      title: '累计核算主数量',
+      dataIndex: 'isumJiesuan',
+      slots: {customRender: 'isumJiesuan'},
       ellipsis: true,
       width: 120,
+      align: 'right'
     },
+    {
+      title: '累计到货主数量',
+      dataIndex: 'isumDaohuo',
+      slots: {customRender: 'isumDaohuo'},
+      ellipsis: true,
+      width: 120,
+      align: 'right'
+    },
+    {
+      title: '累计开票主数量',
+      dataIndex: 'isumFapiao',
+      slots: {customRender: 'isumFapiao'},
+      ellipsis: true,
+      width: 120,
+      align: 'right'
+    },
+    {
+      title: '来源单号',
+      dataIndex: 'sourcecode',
+      slots: {customRender: 'sourcecode'},
+      ellipsis: true,
+      width: 120,
+      align: 'left'
+    },
+    {
+      title: '来源单据日期',
+      dataIndex: 'sourcedate',
+      slots: {customRender: 'sourcedate'},
+      ellipsis: true,
+      width: 120,
+      align: 'left'
+    }
   ]
 }
 // 这是示例组件
@@ -1186,20 +1188,19 @@ const tableDel = async () => {
   }
 }
 
-async function getNewCode() {
-  let startDate = dynamicTenant.value.target.startDate + "-31"
-  let date1: any = formatTimer(dayjs(startDate).subtract(1, "month"))
+async function getNewCode(ddate) {
+  let date1: any = ddate.substring(0,ddate.length-3)
 // 获取最新
   return await useRouteApi(findBillCode2, {schemaName: dynamicTenantId})({
-    type: "QCZGRKD", iyear: dynamicYear.value, time: date1
+    type: "ZG", iyear: dynamicYear.value, time: date1
   })
 }
 
 const startEdit = async (type) => {
   let startDate = dynamicTenant.value.target.startDate + "-31"
   let date1: any = formatTimer(dayjs(startDate).subtract(1, "month"))
-  let ccode: any = await getNewCode()
-  let maxR = 20
+  let ccode: any = await getNewCode(date1)
+  let maxR = 50
   if (type === 'add') {
     canzhao.value = false
     stockWareData.value = ''
@@ -1483,7 +1484,7 @@ async function saveData() {
 
     formItems.value.entryList = JsonTool.json(list)
     if (formItems.value?.id == null) {
-      formItems.value.ccode = await getNewCode()
+      formItems.value.ccode = await getNewCode(formatTimer(formItems.value.ddate))
     }
     await useRouteApi(saveRuKu, {schemaName: dynamicTenantId})(formItems.value)
     tempTaskDel(taskInfo.value?.id)
@@ -1906,6 +1907,57 @@ const tableDataChange = async (r, c) => {
   }
   r.itaxrate = isNaN(r.itaxrate) ? null : r.itaxrate
   switch (c) {
+    case 'isumJiesuan':
+      if(titleValue.value==0&&!hasBlank(r.isumJiesuan)){
+        if(parseFloat(r.isumJiesuan)<0){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能小于0')
+        }else if(parseFloat(r.isumJiesuan)>parseFloat(r.baseQuantity)){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能大于主数量')
+        }
+      }else if(titleValue.value==1){
+        r.isumJiesuan=parseFloat(r.isumJiesuan)>0?parseFloat(r.isumJiesuan)*-1:parseFloat(r.isumJiesuan)
+        if(parseFloat(r.isumJiesuan)!=0&&parseFloat(r.isumJiesuan)<parseFloat(r.baseQuantity)){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能小于主数量')
+        }
+      }
+      break;
+    case 'isumDaohuo':
+      if(titleValue.value==0&&!hasBlank(r.isumDaohuo)){
+        if(parseFloat(r.isumDaohuo)<0){
+          r.isumDaohuo=0
+          return message.error('累计到货主数量不能小于0')
+        }else if(parseFloat(r.isumDaohuo)>parseFloat(r.baseQuantity)){
+          r.isumDaohuo=0
+          return message.error('累计到货主数量不能大于主数量')
+        }
+      }else if(titleValue.value==1){
+        r.isumDaohuo=parseFloat(r.isumDaohuo)>0?parseFloat(r.isumDaohuo)*-1:parseFloat(r.isumDaohuo)
+        if(parseFloat(r.isumDaohuo)!=0&&parseFloat(r.isumDaohuo)<parseFloat(r.baseQuantity)){
+          r.isumDaohuo=0
+          return message.error('累计到货主数量不能小于主数量')
+        }
+      }
+      break;
+    case 'isumFapiao':
+      if(titleValue.value==0&&!hasBlank(r.isumFapiao)){
+        if(parseFloat(r.isumFapiao)<0){
+          r.isumFapiao=0
+          return message.error('累计开票主数量不能小于0')
+        }else if(parseFloat(r.isumFapiao)>parseFloat(r.baseQuantity)){
+          r.isumFapiao=0
+          return message.error('累计开票主数量不能大于主数量')
+        }
+      }else if(titleValue.value==1){
+        r.isumFapiao=parseFloat(r.isumFapiao)>0?parseFloat(r.isumFapiao)*-1:parseFloat(r.isumFapiao)
+        if(parseFloat(r.isumFapiao)!=0&&parseFloat(r.isumFapiao)<parseFloat(r.baseQuantity)){
+          r.isumFapiao=0
+          return message.error('累计开票主数量不能小于主数量')
+        }
+      }
+      break;
     case 'cnumber':
       let o: any = assetsCardList.value.filter(it => tempType.value == 'one' ? (it.stockNum == r.cinvode) : tempType.value == 'three' ? (it.stockBarcode == r.bcheck1) : (it.stockName == r.cinvodeName))[0]
       r.cinvodeInfo = o
@@ -2252,7 +2304,7 @@ const focusNext = async (r, c) => {
   tableDataChange(r, c)
   // 查找下一个
   let list = getDataSource();
-  let filters: any = ['bcheck1', 'cinvodeType', 'cinvodeName', 'itaxprice', 'baseQuantity', 'cunitid', 'showNumber']
+  let filters: any = ['bcheck1', 'cinvodeType', 'cinvodeName', 'itaxprice', 'baseQuantity', 'cunitid']
   // 要求填批号才填写
   if (!r.isBatch) filters.push('batchId')
   if (!r.isIndate) filters.push('dpdate'), filters.push('dvdate')
@@ -2270,7 +2322,6 @@ const focusNext = async (r, c) => {
       let nextMark = getNextMark(nextC, false)
       r[`edit${nextMark}`] = true;
       r[`temp${nextMark}`] = r[`${nextC}`];
-      getColumnRate(r)
     } else { //之后一列时换行
       nextC = cols[0]?.dataIndex
       let nextMark = getNextMark(nextC, false)
@@ -2280,13 +2331,19 @@ const focusNext = async (r, c) => {
       setTableData(list)
     }
     nextTick(() => {
-      let doms: any = nextC == 'batchId' || nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
+      // input
+      let arr=['batchId','cmemo','sourcecode','sourcedate']
+      let temp=arr.includes(nextC)
+      let doms: any = temp ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
       if (null != doms) doms.focus()
     })
   }
 }
+
 const getNextMark = (c, b) => {
   let model = {
+    sourcecode: 'Sourcecode',
+    sourcedate: 'Sourcedate',
     cnumber: 'Cnumber',
     cgUnitId: 'CgUnitId',
     cwhcode: 'One',
@@ -2297,7 +2354,9 @@ const getNextMark = (c, b) => {
     dpdate: 'Dpdate',
     dvdate: 'Fifteen',
     cmemo: 'Thirteen',
-    baseQuantity: 'Six'
+    isumJiesuan: 'IsumJiesuan',
+    isumDaohuo: 'IsumDaohuo',
+    isumFapiao: 'IsumFapiao',
   }
   return model[c]
 }

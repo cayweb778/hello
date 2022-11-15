@@ -60,13 +60,19 @@ public interface StockBeginBalanceRepository extends ReactiveCrudRepository<Stoc
             "where  sbb.bcheck = '1' and sbb.iyear=:iyear and sbb.stock_cangku_id=:ck ")
     Flux<StockAccSheetVo> findAllByIyearAndCk(String iyear, String ck);
 
-
     @Query("select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.stock_cangku_id as cwhcode, " +
             " sbb.cunitid_type as cunitidType, sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid, sbb.price, sbb.icost, sbb.bcheck," +
             " sbb.stock_id as cinvode, sbb.batch_number as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '0' as types " +
             " from stock_begin_balance sbb  left join stock st on st.stock_num = sbb.stock_id " +
             " where  sbb.bcheck = '1' and sbb.iyear=:iyear and sbb.stock_cangku_id=:ck and sbb.stock_id in (:list) ")
     Flux<StockAccSheetVo> findAllByIyearAndCkAndStockList(String iyear, String ck,List<String> list);
+
+    @Query("select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.stock_cangku_id as cwhcode, " +
+            " sbb.cunitid_type as cunitidType, sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid, sbb.price, sbb.icost, sbb.bcheck," +
+            " sbb.stock_id as cinvode, sbb.batch_number as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '0' as types " +
+            " from stock_begin_balance sbb  left join stock st on st.stock_num = sbb.stock_id " +
+            " where  sbb.bcheck = '1' and sbb.iyear=:iyear and sbb.stock_id in (:list) ")
+    Flux<StockAccSheetVo> findAllByIyearAndStockList(String iyear,List<String> list);
 
     @Query("select sbb.stock_id as cinvode, sbb.batch_number as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.sub_quantity2 bq2, '0' as types " +
             " from stock_begin_balance sbb " +

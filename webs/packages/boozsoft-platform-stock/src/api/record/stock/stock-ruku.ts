@@ -276,3 +276,10 @@ export const delXyHCD = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const getAllCcodeArr = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/warehousing/getAllCcodeArr',
+    method: 'POST',
+    params,
+  };
+});

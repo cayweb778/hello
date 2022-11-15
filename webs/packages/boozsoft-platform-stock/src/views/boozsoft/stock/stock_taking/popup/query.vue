@@ -329,7 +329,8 @@ async function handleOk() {
     coCode:coCode.value,
     companyName:companyName.value,
     iyear: iyear.value,
-    type:'PDD'
+    type:'PDD',
+    obj:dynamicTenant.value
   }
   emit('save', map);
   closeModal()
@@ -347,7 +348,9 @@ const dynamicAccId = ref('')
 const iyear = ref('2022')
 const coCode = ref('')
 const companyName = ref('')
+const dynamicTenant:any = ref('')
 const dynamicAdReload = async (obj) =>{
+  dynamicTenant.value = obj
   cangku.value = ''
   dept.value = ''
   formItems.value.flgs = '2'

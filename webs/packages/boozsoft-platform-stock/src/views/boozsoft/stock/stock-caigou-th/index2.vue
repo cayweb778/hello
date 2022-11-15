@@ -336,7 +336,7 @@
             <template v-else>
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
-                    <span class="a-table-font-arial">{{ record.itaxrate }}</span>
+                <span class="a-table-font-arial" v-if="!hasBlank(record.itaxrate)">{{ parseFloat(record.itaxrate).toFixed(2) }}%</span>
               </div>
             </template>
           </template>

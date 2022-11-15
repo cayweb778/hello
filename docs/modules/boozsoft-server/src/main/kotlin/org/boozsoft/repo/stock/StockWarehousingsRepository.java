@@ -103,8 +103,15 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost, sbb.bcheck," +
             " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.sub_quantity2 bq2, sbb.dpdate, sbb.dvdate, '1' as types, sbb.isum_chuku  as isum " +
             " from stock_warehousings sbb " +
-            " where sbb.iyear=:iyear and sbb.cwhcode=:ck and sbb.cinvode in (:list) and sbb.bill_style in ('CGRKD', 'QTRKD','CLLYRKD','CGDHD')  ")
+            " where sbb.iyear=:iyear and sbb.cwhcode=:ck and sbb.cinvode in (:list) and sbb.bill_style in ('CGRKD', 'QTRKD','CGDHD')  ")
     Flux<StockAccSheetVo> findAllByIyearAndCkAndList(String iyear,String ck,List<String> list);
+
+    @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
+            " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost, sbb.bcheck," +
+            " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.sub_quantity2 bq2, sbb.dpdate, sbb.dvdate, '1' as types, sbb.isum_chuku  as isum " +
+            " from stock_warehousings sbb " +
+            " where sbb.iyear=:iyear and sbb.cinvode in (:list) and sbb.bill_style in ('CGRKD', 'QTRKD','CGDHD')  ")
+    Flux<StockAccSheetVo> findAllByIyearAndList(String iyear,List<String> list);
 
     @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost, " +
@@ -159,7 +166,7 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
             " left join stock s on sc.cinvode = s.stock_num " +
             " left join supplier sup on sup.id=sc.cvencode " +
             " left join customer cus on cus.id=sc.cvencode " +
-            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('CGRKD', 'DBRKD', 'XTZHRKD', 'QTRKD', 'PYRKD','CLLYRKD')")
+            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('CGRKD', 'RKTZD' 'QTRKD')")
     Flux<StockKctzVo> findAllByCinvodeAndDateAndPc(String ch, String pc, String strDate, String endDate);
 
     @Query("select temp.* from (select  (case\n" +
@@ -225,6 +232,9 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
 
     @Query("delete from stock_warehousings where sourcecode=:sourcecode and bill_style in ('HZHCD','LZHCD')  ")
     Mono<Void> delByHCD(String sourcecode);
+
+    @Query(" select ccode from stock_warehousings where bill_style=:billStyle ")
+    Flux<String> getAllCcodeArr(String billStyle);
 }
 
 

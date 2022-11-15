@@ -365,7 +365,7 @@
             <template v-else>
               <div :class="record.isGive ||  status == 3?'status-look':'suspended-div'"
                    @click="record.tempItaxrate=record.itaxrate,record.editItaxrate = true;">
-                <span class="a-table-font-arial">{{ record.itaxrate==0?'':record.itaxrate }}</span>
+                <span class="a-table-font-arial" v-if="!hasBlank(record.itaxrate)">{{ parseFloat(record.itaxrate).toFixed(2) }}%</span>
               </div>
             </template>
           </template>
@@ -416,10 +416,6 @@
             }}</span>
               </div>
             </template>
-          </template>
-          <template #isGive="{ record }">
-            <Switch v-model:checked="record.isGive" :disabled="canzhao||status == 3 || biandong=='1'" size="small"
-                    @change="isGiveChange(record)"/>
           </template>
           <template #batchId="{ record }">
             <template v-if="biandong=='0'&&record?.editTwelve/* && record.isBatch*/">
@@ -478,15 +474,107 @@
               </div>
             </template>
           </template>
-          <template #bcheck="{ record }">
-            {{ formatUniqueOperator(record.bcheckUser)}}
+
+          <!--累计核算数量-->
+          <template #isumJiesuan="{ record }">
+            <template v-if="record?.editIsumJiesuan">
+              <InputNumber v-model:value="record.tempIsumJiesuan"
+                           class="isumJiesuan"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumJiesuan');"/>
+              <CheckOutlined
+                @click="record.editIsumJiesuan = null;record.isumJiesuan=record.tempIsumJiesuan;tableDataChange(record,'isumJiesuan');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumJiesuan=record.isumJiesuan,record.editIsumJiesuan = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumJiesuan == null ? '' : parseFloat(record.isumJiesuan).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
           </template>
+          <!--累计累计核销金额-->
+          <template #hxIsum="{ record }">
+            <template v-if="record?.editHxIsum">
+              <InputNumber v-model:value="record.tempHxIsum"
+                           class="hxIsum"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'hxIsum');"/>
+              <CheckOutlined
+                @click="record.editHxIsum = null;record.hxIsum=record.tempHxIsum;tableDataChange(record,'hxIsum');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempHxIsum=record.hxIsum,record.editHxIsum = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.hxIsum == null ? '' : parseFloat(record.hxIsum).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+          <!--累计凭证金额-->
+          <template #isumPzMoney="{ record }">
+            <template v-if="record?.editIsumPzMoney">
+              <InputNumber v-model:value="record.tempIsumPzMoney"
+                           class="isumPzMoney"
+                           :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+                           :parser="value => value.replace(/\$\s?|(,*)/g, '')"
+                           style="width: 82%;"
+                           @keyup.enter="focusNext(record,'isumPzMoney');"/>
+              <CheckOutlined
+                @click="record.editIsumPzMoney = null;record.isumPzMoney=record.tempIsumPzMoney;tableDataChange(record,'isumPzMoney');"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempIsumPzMoney=record.isumPzMoney,record.editIsumPzMoney = true;">
+                    <span class="a-table-font-arial">{{
+                        (record.isumPzMoney == null ? '' : parseFloat(record.isumPzMoney).toFixed(2) + '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      }}</span>
+              </div>
+            </template>
+          </template>
+          <!--来源单号-->
+          <template #sourcecode="{ record }">
+            <template v-if="record?.editSourcecode">
+              <Input v-model:value="record.tempSourcecode"
+                     style="width: 82%;" class="sourcecode"
+                     @keyup.enter="focusNext(record,'sourcecode')"/>
+              <CheckOutlined @click="record.editSourcecode = null;record.sourcecode=record.tempSourcecode;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempSourcecode=record.sourcecode,record.editSourcecode = true;">
+                <span class="a-table-font-arial">{{ record.sourcecode }}</span>
+              </div>
+            </template>
+          </template>
+          <!--来源单据日期-->
+          <template #sourcedate="{ record }">
+            <template v-if="record?.editSourcedate">
+              <Input v-model:value="record.tempSourcedate"
+                     style="width: 82%;" class="sourcedate"
+                     @keyup.enter="focusNext(record,'sourcedate')"/>
+              <CheckOutlined @click="record.editSourcedate = null;record.sourcedate=record.tempSourcedate;"/>
+            </template>
+            <template v-else>
+              <div :class="status == 1 || status == 2?'suspended-div':'status-look'"
+                   @click="record.tempSourcedate=record.sourcedate,record.editSourcedate = true;">
+                <span class="a-table-font-arial">{{ record.sourcedate }}</span>
+              </div>
+            </template>
+          </template>
+
           <template #summary>
             <TableSummary fixed>
               <TableSummaryRow style="background-color: #cccccc;font-weight: bold;">
                 <TableSummaryCell class="nc-summary" :index="0" :align="'center'">合</TableSummaryCell>
                 <TableSummaryCell class="nc-summary" :index="1" :align="'center'">计</TableSummaryCell>
-                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summary[cell.dataIndex]?'':summary[cell.dataIndex].toFixed(2)}}</span></TableSummaryCell>
+                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summary[cell.dataIndex]?'':summary[cell.dataIndex]}}</span></TableSummaryCell>
               </TableSummaryRow>
             </TableSummary>
           </template>
@@ -1049,17 +1137,45 @@ const CrudApi = {
       slots: {customRender: 'cmemo'},
     },
     {
-      title: '项目',
-      dataIndex: 'citemcode',
+      title: '累计核销金额',
+      dataIndex: 'hxIsum',
+      slots: {customRender: 'hxIsum'},
       ellipsis: true,
       width: 120,
-    },{
-      title: '赠品',
-      dataIndex: 'isGive',
-      ellipsis: true,
-      width: 120,
-      slots: {customRender: 'isGive'},
+      align: 'right'
     },
+    {
+      title: '累计核算数量',
+      dataIndex: 'isumJiesuan',
+      slots: {customRender: 'isumJiesuan'},
+      ellipsis: true,
+      width: 120,
+      align: 'right'
+    },
+    {
+      title: '累计凭证金额',
+      dataIndex: 'isumPzMoney',
+      slots: {customRender: 'isumPzMoney'},
+      ellipsis: true,
+      width: 120,
+      align: 'right'
+    },
+    {
+      title: '来源单号',
+      dataIndex: 'sourcecode',
+      slots: {customRender: 'sourcecode'},
+      ellipsis: true,
+      width: 120,
+      align: 'left'
+    },
+    {
+      title: '来源单据日期',
+      dataIndex: 'sourcedate',
+      slots: {customRender: 'sourcedate'},
+      ellipsis: true,
+      width: 120,
+      align: 'left'
+    }
   ]
 }
 // 这是示例组件
@@ -1786,6 +1902,58 @@ const tableDataChange =  async (r,c) => {
   }
   r.itaxrate=isNaN(r.itaxrate)?null:r.itaxrate
   switch (c) {
+    case 'isumJiesuan':
+      if(titleValue.value==0&&!hasBlank(r.isumJiesuan)){
+        if(parseFloat(r.isumJiesuan)<0){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能小于0')
+        }else if(parseFloat(r.isumJiesuan)>parseFloat(r.baseQuantity)){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能大于主数量')
+        }
+      }else if(titleValue.value==1){
+        r.isumJiesuan=parseFloat(r.isumJiesuan)>0?parseFloat(r.isumJiesuan)*-1:parseFloat(r.isumJiesuan)
+        if(parseFloat(r.isumJiesuan)!=0&&parseFloat(r.isumJiesuan)<parseFloat(r.baseQuantity)){
+          r.isumJiesuan=0
+          return message.error('累计核算主数量不能小于主数量')
+        }
+      }
+      break;
+    case 'hxIsum':
+      if(titleValue.value==0&&!hasBlank(r.hxIsum)){
+        if(parseFloat(r.hxIsum)<0){
+          r.hxIsum=0
+          return message.error('累计核销金额不能小于0')
+        }else if(parseFloat(r.hxIsum)>parseFloat(r.isum)){
+          r.hxIsum=0
+          return message.error('累计核销金额不能大于价税合计')
+        }
+      }else if(titleValue.value==1){
+        r.hxIsum=parseFloat(r.hxIsum)>0?parseFloat(r.hxIsum)*-1:parseFloat(r.hxIsum)
+        if(parseFloat(r.hxIsum)!=0&&parseFloat(r.hxIsum)<parseFloat(r.isum)){
+          r.hxIsum=0
+          return message.error('累计核销金额不能小于价税合计')
+        }
+      }
+      break;
+    case 'isumPzMoney':
+      if(titleValue.value==0&&!hasBlank(r.isumPzMoney)){
+        if(parseFloat(r.isumPzMoney)<0){
+          r.isumPzMoney=0
+          return message.error('累计凭证金额不能小于0')
+        }else if(parseFloat(r.isumPzMoney)>parseFloat(r.isum)){
+          r.isumPzMoney=0
+          return message.error('累计凭证金额不能大于价税合计')
+        }
+      }else if(titleValue.value==1){
+        r.isumPzMoney=parseFloat(r.isumPzMoney)>0?parseFloat(r.isumPzMoney)*-1:parseFloat(r.isumPzMoney)
+        if(parseFloat(r.isumPzMoney)!=0&&parseFloat(r.isumPzMoney)<parseFloat(r.isum)){
+          r.isumPzMoney=0
+          return message.error('累计凭证金额不能小于价税合计')
+        }
+      }
+      break;
+
     case 'cgUnitId':
       if(!hasBlank(r.cgUnitId)) biandongOper.value=true
       break;
@@ -2098,7 +2266,7 @@ const focusNext =  async (r, c) => {
   tableDataChange(r,c)
   // 查找下一个
   let list = getDataSource();
-  let filters:any = ['bcheck1','isGive','cinvodeType','cinvodeName','cunitid','cunitidF1','cunitidF2','itaxprice','baseQuantity','subQuantity1', 'subQuantity2']
+  let filters:any = ['bcheck1','cinvodeType','cinvodeName','cunitid','itaxprice','baseQuantity']
   // 要求填批号才填写
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
@@ -2129,13 +2297,22 @@ const focusNext =  async (r, c) => {
       setTableData(list)
     }
     nextTick(() => {
-      let doms:any = nextC == 'batchId' || nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
+      // input
+      let arr=['batchId','cmemo','sourcecode','sourcedate']
+      let temp=arr.includes(nextC)
+      let doms: any = temp ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
       if (null != doms) doms.focus()
     })
   }
 }
 const getNextMark = (c,b) => {
-  let model = {cnumber:'Cnumber',cgUnitId:'CgUnitId',cwhcode:'One',cinvode:'Two',price:'Nine',icost:'Ten',taxprice:'Taxprice',itaxrate:'Itaxrate',isum:'Isum',batchId:'Twelve',dpdate:'Dpdate',dvdate:'Fifteen',cmemo:'Thirteen'}
+  let model = {cnumber:'Cnumber',cgUnitId:'CgUnitId',cwhcode:'One',cinvode:'Two',price:'Nine',icost:'Ten',taxprice:'Taxprice',itaxrate:'Itaxrate',isum:'Isum',batchId:'Twelve',dpdate:'Dpdate',dvdate:'Fifteen',cmemo:'Thirteen',
+    sourcecode: 'Sourcecode',
+    sourcedate: 'Sourcedate',
+    isumJiesuan: 'IsumJiesuan',
+    isumDaohuo: 'IsumDaohuo',
+    isumFapiao: 'IsumFapiao'
+  }
   if (b){
     // 获取下一个
     let keys= Object.keys(model)

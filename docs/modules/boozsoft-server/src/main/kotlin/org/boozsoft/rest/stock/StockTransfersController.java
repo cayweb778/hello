@@ -463,7 +463,7 @@ public class StockTransfersController {
                         sa.setXsUnitId(v.getCunitid());
                         sa.setQuantity(sa.getBaseQuantity());
                         sa.setCwhcode(cwhcode.get());
-
+                        sa.setCwhcode1(cwhcode.get());
                         sa.setBcheck("1");
                         sa.setBcheckTime(LocalDate.now().toString());
                         sa.setBcheckUser(userId);
@@ -504,6 +504,8 @@ public class StockTransfersController {
                         sw.setCgUnitId(v.getCunitid());
                         sw.setCnumber(sw.getBaseQuantity());
                         sw.setCwhcode(cwhcoderk.get());
+                        sw.setCwhcode1(cwhcoderk.get());
+
                         sw.setBcheck("1");
                         sw.setBcheckTime(LocalDate.now().toString());
                         sw.setBcheckUser(userId);
@@ -886,9 +888,6 @@ public class StockTransfersController {
                                         }).sum();
                                         subtract =  new BigDecimal(sumBq).subtract(new BigDecimal(sumBqrk)).add(new BigDecimal(sumBqdh)).subtract(new BigDecimal(sumBqxh));
                                     }
-
-                                    //匹配存货的信息
-                                   // Optional<StockVo> first = list.stream().filter(v -> v.getStockNum().equals(value.get(0).getCinvode())).findFirst();
 
                                     //现存量存在 并且不等于0的
                                     if(subtract.compareTo(BigDecimal.ZERO) != 0){

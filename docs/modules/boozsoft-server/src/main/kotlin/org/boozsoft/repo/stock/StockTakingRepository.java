@@ -20,7 +20,7 @@ public interface StockTakingRepository extends ReactiveCrudRepository<StockTakin
             " left join sys_psn sp3 on st.bcheck_user = sp3.unique_code " +
             " left join sys_department sd on st.cdepcode = sd.unique_code " +
             " left join stock_cangku sc on st.cwhcode = sc.id " +
-            " where st.start_date between  :strDate and :endDate ")
+            " where st.start_date between  :strDate and :endDate order by st.ddate desc, st.ccode desc")
     Flux<StockTakingVo> findAllByOrderById(String strDate,String endDate);
 
     @Query("select max(ccode) from stock_taking ")

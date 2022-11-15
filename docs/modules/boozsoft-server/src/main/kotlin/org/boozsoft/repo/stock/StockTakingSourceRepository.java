@@ -2,6 +2,7 @@ package org.boozsoft.repo.stock;
 
 import org.boozsoft.domain.entity.stock.StockTaking;
 import org.boozsoft.domain.entity.stock.StockTakingSource;
+import org.boozsoft.domain.entity.stock.StockTransferSource;
 import org.boozsoft.domain.vo.stock.StockTakingVo;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
@@ -15,6 +16,9 @@ public interface StockTakingSourceRepository extends ReactiveCrudRepository<Stoc
     Mono<Object> deleteByCcode(String ccode);
 
     Flux<StockTakingSource> findALLByCcode(String ccode);
+
+    Flux<StockTakingSource> findAllByCcodeAndIyear(String xyCode, String iyear);
+
 }
 
 
