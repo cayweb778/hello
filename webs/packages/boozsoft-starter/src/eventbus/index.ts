@@ -17,6 +17,17 @@ function ncPrint(){
     })
 }
 
+function ncMenu(){
+    bus.$on("registerNcMenu",function (e){
+        // function useNcPrint(){
+        //     useGlobalStoreWidthOut().setCurrentPluginName("ncPrint")
+        //     return e
+        // }
+        // useGlobalStoreWidthOut().setNcPrintFn(e)
+    })
+}
+
+
 function ncMdodals(){
     bus.$on("registerNcModals",function (e){
         // function useNcModal(){
