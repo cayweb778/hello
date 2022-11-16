@@ -282,7 +282,7 @@ import {
   findAllMainList,
   findStockWareByCcode,
   reviewSetCGRKG,
-  reviewSetCGRKGMx, verifySyCsourceByXyCode, xyCsourceSave
+  reviewSetCGRKGMx, verifyDataState, verifySyCsourceByXyCode, xyCsourceSave
 } from "/@/api/record/stock/stock-ruku";
 import {exportExcel3} from "/@/api/record/generalLedger/excelExport";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
@@ -1203,17 +1203,40 @@ const dynamicAdReload = async (obj) => {
 }
 
 async function toRouter(data,type) {
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'rowEdit',list:[data].map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
   await closeToFullPaths('/kc-cgDepot')
   setTimeout(()=>{
     router.push({path: 'kc-cgDepot',query: {type:'info',ccode:data.ccode,co: databaseCo.value}});
   },1000)
 }
 async function editFun() {
-  if(state.selectedRowKeys.length!==1){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length!==1){
     message.error("只能选择一条数据修改！")
     return false
   }
-  let data=dataType.value=='0'?getDataSource1().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1):getDataSourceMX().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1)
+  // 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'采购入库单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'采购入库单,不能同时进行操作！')
+        }
+      }
+    }
+  }
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
   await closeToFullPaths('/kc-cgDepot')
   setTimeout(()=>{
     router.push({path: 'kc-cgDepot',query: {type:'edit',ccode:data[0].ccode,co: databaseCo.value}});
@@ -1223,9 +1246,16 @@ async function editFun() {
 const [registerLackPage, {openModal: openLackPage}] = useModal()
 const newDate=ref(new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
 const startReview = async (b) => {
-  if(getSelectRows1().length==0){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length==0){
     return message.error("至少选择一条数据审核！")
   }
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){
@@ -1241,7 +1271,7 @@ const startReview = async (b) => {
   if(pd>0){
     return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
   }
-  let list=getSelectRows1().filter(a=>b?a.bcheck!='1':a.bcheck=='1')
+  let list=data.filter(a=>b?a.bcheck!='1':a.bcheck=='1')
   if(b){
     for (let i = 0; i < list.length; i++) {
       tempTaskSave(b?'审核':'弃审',list[i].ccode)
@@ -1285,7 +1315,7 @@ const startReview = async (b) => {
           jiesuans.cgUnitId=tx.cgUnitId
           jiesuans.quantityRuku=tx.baseQuantity
           jiesuans.priceJs=sourceData.price
-          let icostJs=parseFloat(tx.baseQuantity)*parseFloat(sourceData.price)
+          let icostJs:any=parseFloat(tx.baseQuantity)*parseFloat(sourceData.price)
           jiesuans.icostJs=parseFloat(icostJs).toFixed(2)
           jiesuans.priceZg=tx.price
           jiesuans.icostZg=tx.icost
@@ -1384,6 +1414,13 @@ async function delFun() {
   if(list.length>0){
     return message.error('提示：已经审核，不能删除，请弃审单据后重试！！')
   }
+
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'del',list:list.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){

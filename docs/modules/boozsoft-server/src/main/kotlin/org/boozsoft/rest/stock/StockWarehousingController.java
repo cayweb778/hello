@@ -13,10 +13,7 @@ import org.boozsoft.domain.vo.stock.StockCurrentstockVo;
 import org.boozsoft.domain.vo.stock.StockWarehousingVo;
 import org.boozsoft.repo.ReportEncodingRulesRepository;
 import org.boozsoft.repo.group.GroupStockPeriodRepository;
-import org.boozsoft.repo.stock.StockCurrentstockRepository;
-import org.boozsoft.repo.stock.StockWarehousingRepository;
-import org.boozsoft.repo.stock.StockWarehousingsRepository;
-import org.boozsoft.repo.stock.StockXyCsourceRepository;
+import org.boozsoft.repo.stock.*;
 import org.springbooz.core.launch.constant.AppConstant;
 import org.springbooz.core.tool.result.R;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,9 @@ public class StockWarehousingController {
     GroupStockPeriodRepository stockPeriodRepository;
     @Autowired
     DatabaseClient client;
+
+    @Autowired
+    StockSaleousingsRepository saleousingsRepository;
 
     @PostMapping("findAllByCcodeAndBillStyle")
     public Mono<R> findAllByCcodeAndBillStyle(String ccode,String billStyle){
@@ -1777,9 +1777,42 @@ public class StockWarehousingController {
         String ccode=map.get("ccode").toString();
         return xyCsourceRepository.delXyHCD(ccode).then(Mono.just(R.ok()));
     }
-    @PostMapping("getAllCcodeArr")
-    public Mono<R> getAllCcodeArr(@RequestBody Map map){
-        String billStyle=map.get("billStyle").toString();
-        return warehousingsRepository.getAllCcodeArr(billStyle).collectList().map(R::ok);
+
+    /**
+     * @description: 单据、列表操作前判断单据状态
+     * @author: miao
+     * @date: 2022/11/16 9:16
+     * @param: [map]
+     * @return: Mono<R>
+     **/
+    @PostMapping("verifyDataState")
+    public Mono<R> verifyDataState(@RequestBody Map map){
+        // cg/xh
+        String dataType=map.get("dataType").toString();
+        // 操作类型【rowEdit（列表点击行跳转）,edit：修改,del：删除,audit：审核】
+        String operation=map.get("operation").toString();
+        // 单号>>>审核状态
+        List<String> list= (List<String>) map.get("list");
+        Mono<List<StockWarehousings>> cg = warehousingsRepository.findAll().collectList();
+        Mono<List<StockSaleousings>> xh = saleousingsRepository.findAll().collectList();
+
+        return Mono.zip(cg,xh).flatMap(temp->{
+            List<StockWarehousings> cglist = temp.getT1();
+            List<StockSaleousings> xhlist = temp.getT2();
+            String txt="1";
+            for (int i = 0; i < list.size(); i++) {
+                String ccode=list.get(i).split(">>>")[0];
+                String bcheck=list.get(i).split(">>>")[1];
+                long count=1;
+                if(dataType.equals("cg")){
+                    count = cglist.stream().filter(t -> operation.equals("rowEdit")?t.getCcode().equals(ccode):t.getCcode().equals(ccode)&&t.getBcheck().equals(bcheck)).count();
+                    if (count==0){txt="";break;}
+                }else if(dataType.equals("xh")){
+                    count = xhlist.stream().filter(t -> operation.equals("rowEdit")?t.getCcode().equals(ccode):t.getCcode().equals(ccode)&&t.getBcheck().equals(bcheck)).count();
+                    if (count==0){txt="";break;}
+                }
+            }
+            return Mono.just(txt);
+        }).map(R::ok);
     }
 }

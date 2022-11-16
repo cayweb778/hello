@@ -617,7 +617,7 @@ import {
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu,
+  saveRuKu, verifyDataState,
   verifySyCsourceByXyCode,
   xyCsourceSave,
 } from "/@/api/record/stock/stock-ruku";
@@ -1315,8 +1315,12 @@ const startEdit = async (type) => {
     setTableData(list)
   }
   else {
-    if(formItems.value.bcheck==undefined){
-      return message.error('没有单据,不能修改！')
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购入库单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
@@ -1367,9 +1371,13 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    if(formItems.value.bcheck=='1'){
-      return message.error('提示：当前入库单已经审核，不能删除，请弃审单据后重试！！')
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
+
     // 有无 整理现存量 任务
     let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
     if(!hasBlank(xclTaskData)){
@@ -1422,6 +1430,8 @@ const startDel = async () => {
     if(currData.length>0){
       return  openLackPage(true,{data:currData,queryType:dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong',dynamicTenantId:dynamicTenantId.value})
     }
+
+    tempTaskSave('删除')
     createConfirm({
       iconType: 'warning',
       title: '采购入库单删除',
@@ -1442,7 +1452,6 @@ const startDel = async () => {
             await useRouteApi(stockWarehListSave, {schemaName: dynamicTenantId})([sourceData])
           }
         }
-        tempTaskSave('删除')
         await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
@@ -1450,11 +1459,22 @@ const startDel = async () => {
         formItems.value.czId = ''
         await contentSwitch('tail','')
       }
+      ,onCancel: () => {
+        tempTaskDel(taskInfo.value?.id)
+        return false
+      }
     });
   }
 }
 
 const startReview = async (b) => {
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
+  }
+
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){
@@ -1466,14 +1486,6 @@ const startReview = async (b) => {
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
 
-  if(formItems.value.bcheck=='1'&&b){
-    message.error('此单据已审核！')
-    return false
-  }
-  if(formItems.value.bcheck=='0'&&!b){
-    message.error('此单据没有审核！')
-    return false
-  }
   // 盘点处理
   let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
   console.log('入库单蓝字操作：--->盘点处理-->'+pd)

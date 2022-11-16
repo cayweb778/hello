@@ -504,6 +504,7 @@ import {
 import ReceiptSearch from "/@/views/boozsoft/stock/stock_sales_add/component/ReceiptSearch.vue";
 import {getUnitRate} from "/@/api/record/system/stock-wareh";
 import {
+  verifyDataState,
   delStockAd,
   findAllStockAd,
   getNewStockAdNum, getStockAdsUnitRate, getXyQTRKD_And_QTCKD,
@@ -997,6 +998,13 @@ const startEdit = async (type) => {
     setTableData(list)
   }
   else {
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'组装拆卸单',method:'修改'})
     if(taskData==''){
@@ -1045,6 +1053,13 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'del',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
    // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
     if(!hasBlank(jzMethod)){
@@ -1073,15 +1088,20 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         await contentSwitch('tail','')
+      },onCancel: () => {
+        tempTaskDel(taskInfo.value?.id)
+        return false
       }
     });
   }
 }
 
 const startReview = async (b) => {
-  if(formItems.value.bcheck=='1'&&b){
-    message.error('此单据已审核！')
-    return false
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})

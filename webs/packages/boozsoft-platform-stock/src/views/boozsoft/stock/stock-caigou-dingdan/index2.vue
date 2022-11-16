@@ -565,7 +565,7 @@ import {
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu, verifySyCsourceByXyCode,
+  saveRuKu, verifyDataState, verifySyCsourceByXyCode,
   verifyXyCsourceByXyCode, xyCsourceSave,
 } from "/@/api/record/stock/stock-ruku";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
@@ -1088,14 +1088,16 @@ const startEdit = async (type) => {
     tempTaskSave('新增')
   }
   else if(type=='edit'){
-    let rukuMainData=await useRouteApi(verifyXyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,code:formItems.value.ccode,xyCode:'CGRKD'})
-    if(rukuMainData!=='' ){
-      message.error('已经生成采购入库单【编码'+rukuMainData.xyccode+'】,不能变更！')
-      return false;
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
 
     // 任务
-    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购订单',method:'修改'})
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购订单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
       tempTaskSave('修改')
     }else{
@@ -1155,10 +1157,25 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    if(formItems.value.bcheck=='1'){
-      message.error('到货单已经审核，不能删除，请弃审单据后重试！')
-      return false
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
+
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购订单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！' });
+        }
+        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
+      }
+    }
+
     tempTaskSave('删除')
     createConfirm({
       iconType: 'warning',
@@ -1180,9 +1197,11 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
-  if(formItems.value.bcheck=='1'&&b){
-    message.error('此单据已审核！')
-    return false
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 弃审
   if(!b){

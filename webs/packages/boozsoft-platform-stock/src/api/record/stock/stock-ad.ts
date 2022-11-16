@@ -70,6 +70,14 @@ export const getStockAdsUnitRate = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const verifyDataState = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock_ad/verifyDataState',
+    timeout: 10000000,
+    method: 'POST',
+    params,
+  };
+});
 
 
 ////////////////////////// 列表

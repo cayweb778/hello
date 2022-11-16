@@ -681,7 +681,7 @@ import {
   findXyCsourceByXyStyleAndXyCodeAndIyear,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu, verifySyCsourceByXyCode,
+  saveRuKu, verifyDataState, verifySyCsourceByXyCode,
   verifyXyCsourceByXyCode, xyCsourceSave,
 } from "/@/api/record/stock/stock-ruku";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
@@ -1357,6 +1357,14 @@ const startEdit = async (type) => {
     tempTaskSave('新增')
   }
   else if(type=='edit'){
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'期初到货单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
@@ -1469,9 +1477,13 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    if(formItems.value.bcheck=='1'){
-      return message.error('提示：当前到货单已经审核，不能删除，请弃审单据后重试！！')
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
+
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'期初到货单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(!hasBlank(taskData)){
@@ -1511,13 +1523,12 @@ const startDel = async () => {
         return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
       }
     }
-
+    tempTaskSave('删除')
     createConfirm({
       iconType: 'warning',
       title: '期初到货单删除',
       content: '您确定要进行期初到货单删除吗!',
       onOk: async () => {
-        tempTaskSave('删除')
         await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
@@ -1533,13 +1544,11 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
-  if(formItems.value.bcheck=='1'&&b){
-    message.error('此单据已审核！')
-    return false
-  }
-  if(formItems.value.bcheck=='0'&&!b){
-    message.error('此单据没有审核！')
-    return false
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
   }
 
   // 结账操作

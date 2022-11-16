@@ -254,15 +254,15 @@ import {BasicTable, useTable} from '/@/components/Table'
 import {useModal} from '/@/components/Modal'
 import {onMounted, reactive, ref} from 'vue'
 import {
+  CheckOutlined,
   PicLeftOutlined,
   PrinterOutlined,
-  UsbOutlined,
-  CheckOutlined,
   ProfileOutlined,
   SettingFilled,
   SortAscendingOutlined,
   SortDescendingOutlined,
-  SyncOutlined
+  SyncOutlined,
+  UsbOutlined
 } from '@ant-design/icons-vue'
 import {Button, Input, message, Popover, Radio as ARadio, Select, Table, Tag,} from 'ant-design-vue'
 import {useMessage} from "/@/hooks/web/useMessage";
@@ -272,12 +272,7 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {
-  findAllByCcodeAndBillStyle,
-  findAllByStockWarehListCcode, findAllStockWarehTongjiMX_CGDHD,
-  findCangkuAllList,
-  findStockAllList
-} from "/@/api/record/system/stock-wareh";
+import {findCangkuAllList, findStockAllList} from "/@/api/record/system/stock-wareh";
 import {getPsnList} from "/@/api/record/system/psn";
 import {findAllByFlag} from "/@/api/record/supplier_data/supplier";
 import {findAll} from "/@/api/caozuoyuan/caozuoyuan";
@@ -285,13 +280,6 @@ import Query from './popup/query.vue'
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {initDynamics} from "./data1";
 import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record";
-import {
-  delRuKu,
-  findAllMainList,
-  findStockWareByCcode,
-  reviewSetCGRKG,
-  reviewSetCGRKGMx
-} from "/@/api/record/stock/stock-ruku";
 import {exportExcel3} from "/@/api/record/generalLedger/excelExport";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
@@ -299,12 +287,17 @@ import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock-caigou-fp-list/data1";
-import {deleteByMethodAndRecordNum, stockBalanceTaskSave} from "/@/api/record/stock/stock_balance";
+import {
+  deleteByMethodAndRecordNum,
+  getByStockBalanceTask,
+  stockBalanceTaskSave
+} from "/@/api/record/stock/stock_balance";
 import {findByStockAccId} from "/@/api/record/system/stock-account";
 import {
   delStockAdZip,
   findByStockAdMXTableList,
-  findByStockAdTableList
+  findByStockAdTableList,
+  verifyDataState
 } from "/@/api/record/stock/stock-ad";
 
 const InputSearch = Input.Search
@@ -1285,18 +1278,41 @@ const dynamicAdReload = async (obj) => {
 }
 
 async function toRouter(data,type) {
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'rowEdit',list:[data].map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
   await closeToFullPaths('/stock-assem-assemble')
   setTimeout(()=>{
     router.push({path: 'stock-assem-assemble',query: {type:'info',ccode:data.ccode,co: databaseCo.value}})
   },1000)
 }
 async function editFun() {
-  if(state.selectedRowKeys.length!==1){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length!==1){
     message.error("只能选择一条数据修改！")
     return false
   }
-
-  let data=dataType.value=='0'?getDataSource1().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1):getDataSourceMX().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1)
+// 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'组装拆卸单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'组装拆卸单,不能同时进行操作！')
+        }
+      }
+    }
+  }
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'edit',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
   await closeToFullPaths('/stock-assem-assemble')
   setTimeout(()=>{
     router.push({path: 'stock-assem-assemble',query: {type:'edit',ccode:data[0].ccode,co: databaseCo.value}})
@@ -1306,8 +1322,37 @@ async function editFun() {
 const [registerLackPage, {openModal: openLackPage}] = useModal()
 const newDate=ref(new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
 async function delFun() {
-  if(getSelectRows1().length==0){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length==0){
     return message.error("至少选择一条数据删除！")
+  }
+  let list=data.filter(a=>a.bcheck=='1')
+  if(list.length>0){
+    return message.error('提示：已经审核，不能删除，请弃审单据后重试！！')
+  }
+  // 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'组装拆卸单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'组装拆卸单,不能同时进行操作！')
+        }
+      }
+    }
+  }
+
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'del',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
+  // 增加任务
+  for (let i = 0; i < data.length; i++) {
+    tempTaskSave('删除',data[i].ccode)
   }
   createConfirm({
     iconType: 'warning',
@@ -1316,7 +1361,6 @@ async function delFun() {
     onOk: async () => {
       loadMark.value=true
       for (let i = 0; i < getSelectRows1().length; i++) {
-        tempTaskSave('删除',getSelectRows1()[i].ccode)
         await useRouteApi(delStockAdZip, {schemaName: dynamicTenantId})({ccode: getSelectRows1()[i].ccode})
       }
       message.success('删除成功！')
@@ -1325,6 +1369,10 @@ async function delFun() {
       clearSelectedRowKeys1()
     },
     onCancel: async () => {
+      // 删除任务
+      for (let i = 0; i < data.length; i++) {
+        await useRouteApi(deleteByMethodAndRecordNum, {schemaName: dynamicTenantId})({method:'删除',ccode: data[i].ccode})
+      }
       loadMark.value=false
       reloadTable()
       clearSelectedRowKeys1()

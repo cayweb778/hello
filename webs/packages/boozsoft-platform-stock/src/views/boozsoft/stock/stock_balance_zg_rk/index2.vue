@@ -619,7 +619,7 @@ import {
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu,
+  saveRuKu, verifyDataState,
   verifySyCsourceByXyCode,
 } from "/@/api/record/stock/stock-ruku";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
@@ -1225,6 +1225,13 @@ const startEdit = async (type) => {
     tempTaskSave('新增')
     setTableData(list)
   } else {
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
     // 任务
     let taskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
       iyear: dynamicYear.value,
@@ -1280,8 +1287,11 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    if (formItems.value.bcheck == '1') {
-      return message.error('提示：当前期初暂估入库已经审核，不能删除，请弃审单据后重试！！')
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'del',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
     }
     // 任务
     let taskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
@@ -1298,24 +1308,33 @@ const startDel = async () => {
         }
       }
     }
+    tempTaskSave('删除')
     createConfirm({
       iconType: 'warning',
       title: '期初暂估入库单删除',
       content: '您确定要进行期初暂估入库单删除吗!',
       onOk: async () => {
-        tempTaskSave('删除')
         await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
         await contentSwitch('tail', '')
+      },onCancel: () => {
+        tempTaskDel(taskInfo.value?.id)
+        return false
       }
     });
   }
 }
 
 const startReview = async (b) => {
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
+  }
   if (!b) {
     let findByRukuData = await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({
       year: formItems.value.iyear,

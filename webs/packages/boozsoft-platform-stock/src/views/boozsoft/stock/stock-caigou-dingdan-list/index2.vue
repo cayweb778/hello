@@ -44,7 +44,7 @@
         </div>
         <div>
           <div>
-            <Select v-if="dataType=='0'" v-model:value="pageSearch.selectType" class="acttdrd-search-select" style="font-size: 12px;">
+            <Select v-if="dataType=='0'" v-model:value="pageSearch.selectType" class="acttdrd-search-select" style="font-size: 12px;width: 150px;text-align: left;">
                 <SelectOption style="font-size: 12px;" value="ccode">单据编号</SelectOption>
                 <SelectOption style="font-size: 12px;" value="custCode">供应商编码</SelectOption>
                 <SelectOption style="font-size: 12px;" value="custName">供应商简称</SelectOption>
@@ -52,7 +52,7 @@
                 <SelectOption style="font-size: 12px;" value="personName">业务员</SelectOption>
                 <SelectOption style="font-size: 12px;" value="cmakerName">制单人</SelectOption>
             </Select>
-            <Select v-if="dataType=='1'" v-model:value="pageSearch.selectType" class="acttdrd-search-select" style="font-size: 12px;">
+            <Select v-if="dataType=='1'" v-model:value="pageSearch.selectType" class="acttdrd-search-select" style="font-size: 12px;width: 150px;text-align: left;">
                 <SelectOption style="font-size: 12px;" value="ccode">单据编号</SelectOption>
                 <SelectOption style="font-size: 12px;" value="cvencode">供应商编码</SelectOption>
                 <SelectOption style="font-size: 12px;" value="cvencodeName">供应商简称</SelectOption>
@@ -65,7 +65,7 @@
             <InputSearch
               v-model:value="pageSearch.selectValue"
               class="acttdrd-search-input"
-              style="width: 140px;"
+              style="width: 150px;text-align: left;"
               @search="reloadTable"
             />
             <Button>
@@ -290,7 +290,7 @@ import {findCangkuJoinName} from "/@/api/record/stock/stock-cangku-level-record"
 import {
   delRuKu,
   findAllMainList,
-  getAllCcodeArr,
+  verifyDataState,
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx
@@ -302,8 +302,13 @@ import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock-caigou-dingdan-list/data1";
-import {deleteByMethodAndRecordNum, stockBalanceTaskSave} from "/@/api/record/stock/stock_balance";
+import {
+  deleteByMethodAndRecordNum,
+  getByStockBalanceTask, stockBalanceTaskEditNewTime,
+  stockBalanceTaskSave
+} from "/@/api/record/stock/stock_balance";
 import {findByStockAccId} from "/@/api/record/system/stock-account";
+import {error} from "/@/utils/log";
 
 
 const InputSearch = Input.Search
@@ -1217,29 +1222,42 @@ const dynamicAdReload = async (obj) => {
 }
 
 async function toRouter(data,type) {
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'rowEdit',list:[data].map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
   await closeToFullPaths('/cg-dingdan')
   setTimeout(()=>{
     router.push({path: 'cg-dingdan',query: {type:'info',ccode:data.ccode,co: databaseCo.value}})
   },1000)
 }
 async function editFun() {
-  if(state.selectedRowKeys.length!==1){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length!==1){
     message.error("只能选择一条数据修改！")
     return false
   }
 
-  let data=dataType.value=='0'?getDataSource1().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1):getDataSourceMX().filter(g=>state.selectedRowKeys.indexOf(g.key)!=-1)
-  if(data[0].bcheck=='1'){
-    message.error("单据已审核,不能修改！")
-    return false
+  // 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'采购订单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！')
+        }
+      }
+    }
   }
   // 执行操作前判断单据是否存在
-  let ccodeArr=await useRouteApi(getAllCcodeArr, { schemaName: dynamicTenantId })({billStyle:'CGDD'})
-  let temp=ccodeArr.filter(t=>t.indexOf(data[0].ccode)!=-1)
-  if(temp.length==0){
-    message.error("单据列表已发生变化,请刷新当前单据！")
-    return false
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'edit',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
   }
+
   await closeToFullPaths('/cg-dingdan')
   setTimeout(()=>{
     router.push({path: 'cg-dingdan',query: {type:'edit',ccode:data[0].ccode,co: databaseCo.value}})
@@ -1249,11 +1267,31 @@ async function editFun() {
 const [registerLackPage, {openModal: openLackPage}] = useModal()
 const newDate=ref(new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
 const startReview = async (b) => {
-  if(getSelectRows1().length==0){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length==0){
     return message.error("至少选择一条数据审核！")
   }
+  // 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'采购订单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！')
+        }
+      }
+    }
+  }
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
   loadMark.value=true
-  let list=getSelectRows1().filter(a=>b?a.bcheck!='1':a.bcheck=='1')
+  let list=data.filter(a=>b?a.bcheck!='1':a.bcheck=='1')
   for (let i = 0; i < list.length; i++) {
     tempTaskSave(b?'审核':'弃审',list[i].ccode)
     let res=await useRouteApi(findStockWareByCcode, { schemaName: dynamicTenantId })(list[i].ccode)
@@ -1275,7 +1313,7 @@ const startReview = async (b) => {
       tx.biandong=!b?'0':tx.biandong
 
       // 修改本单据的 累计入库数量
-      tx.isumRuku=res.sourcetype!=='CGRKD'&&pageParameter.thisAdInfo.target?.cgShDhd=='1'?tx.baseQuantity:tx.isumRuku
+      // tx.isumRuku=res.sourcetype!=='CGRKD'&&pageParameter.thisAdInfo.target?.cgShDhd=='1'?tx.baseQuantity:tx.isumRuku
     })
     await useRouteApi(reviewSetCGRKGMx, {schemaName: dynamicTenantId})(mx)
     saveLogData(b?'审核':'弃审',JSON.stringify(list[i].ccode))
@@ -1287,40 +1325,59 @@ const startReview = async (b) => {
   await clearSelectedRowKeys1()
 }
 async function delFun() {
-  if(getSelectRows1().length==0){
+  let data=dataType.value=='0'?getSelectRows1():getSelectRowsMX()
+  if(data.length==0){
     return message.error("至少选择一条数据删除！")
   }
-  let list=getSelectRows1().filter(a=>a.bcheck=='1')
+
+  let list=data.filter(a=>a.bcheck=='1')
   if(list.length>0){
     return message.error('提示：已经审核，不能删除，请弃审单据后重试！！')
   }
-
-  // 执行操作前判断单据是否存在
-  let ccodeArr=await useRouteApi(getAllCcodeArr, { schemaName: dynamicTenantId })({billStyle:'CGDD'})
-  for (let i = 0; i < getSelectRows1().length; i++) {
-    let temp=ccodeArr.filter(t=>t.indexOf(getSelectRows1()[i].ccode)!=-1)
-    if(temp.length==0){
-      message.error("单据列表已发生变化,请刷新当前单据！")
-      return
+  // 判断任务锁定表
+  for (let i = 0; i < data.length; i++) {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:strDate.value.split('.')[0],name:'采购订单',method:'修改,审核,删除',recordNum:data[i].ccode})
+    if(!hasBlank(taskData)){
+      for (let i = 0; i < taskData.length; i++) {
+        // 任务不是当前操作员的
+        if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return message.error(taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！')
+        }
+      }
     }
   }
 
+  // 执行操作前判断单据是否存在
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'del',list:data.map(t=>{t.ccodeBcheck=t.ccode+'>>>'+t.bcheck;return t;}).map(t=>t.ccodeBcheck)})
+  if(hasBlank(msg)){
+    return message.error("单据列表已发生变化,请刷新当前列表！")
+  }
+
+  // 增加任务
+  for (let i = 0; i < data.length; i++) {
+    tempTaskSave('删除',data[i].ccode)
+  }
   createConfirm({
     iconType: 'warning',
     title: '采购订单删除',
     content: '您确定要进行采购订单删除吗!',
     onOk: async () => {
-      loadMark.value=true
-      for (let i = 0; i < getSelectRows1().length; i++) {
-        tempTaskSave('删除',getSelectRows1()[i].ccode)
-        await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: getSelectRows1()[i].id})
+      // 增加任务
+      for (let i = 0; i < data.length; i++) {
+        await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: data[i].id})
       }
+      loadMark.value=true
       message.success('删除成功！')
       loadMark.value=false
       reloadTable()
       clearSelectedRowKeys1()
     },
     onCancel: async () => {
+      // 删除任务
+      for (let i = 0; i < data.length; i++) {
+        await useRouteApi(deleteByMethodAndRecordNum, {schemaName: dynamicTenantId})({method:'删除',ccode: data[i].ccode})
+      }
       loadMark.value=false
       reloadTable()
       clearSelectedRowKeys1()

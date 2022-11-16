@@ -383,4 +383,23 @@ public class StockBorrowController {
         String ccode=map.get("ccode").toString();
         return borrowsRepository.findAllByCcode(ccode).collectList().map(a->R.ok().setResult(a));
     }
+
+    @PostMapping("verifyDataState")
+    public Mono<R> verifyDataState(@RequestBody Map map){
+        // 操作类型【rowEdit（列表点击行跳转）,edit：修改,del：删除,audit：审核】
+        String operation=map.get("operation").toString();
+        // 单号>>>审核状态
+        List<String> list= (List<String>) map.get("list");
+        return borrowRepository.findAll().collectList()
+        .flatMap(datalist->{
+            String txt="1";
+            for (int i = 0; i < list.size(); i++) {
+                String ccode = list.get(i).split(">>>")[0];
+                String bcheck = list.get(i).split(">>>")[1];
+                long count = datalist.stream().filter(t -> operation.equals("rowEdit")?t.getCcode().equals(ccode):t.getCcode().equals(ccode)&&t.getBcheck().equals(bcheck)).count();
+                if (count==0){txt="";break;}
+            }
+            return Mono.just(txt);
+        }).map(R::ok);
+    }
 }

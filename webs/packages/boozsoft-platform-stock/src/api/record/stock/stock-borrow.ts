@@ -83,7 +83,14 @@ export const findByStockBorrowCcode = defRouteApi(async (params: any) => {
     params,
   };
 });
-
+export const verifyDataState = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock_borrow/verifyDataState',
+    timeout: 10000000,
+    method: 'POST',
+    params,
+  };
+});
 
 
 

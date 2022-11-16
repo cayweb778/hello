@@ -6,7 +6,7 @@ import MainView from './index2.vue'
 import {defineComponent} from "vue";
 
 export default defineComponent({
-  name: 'CaiGouFaPiao',
+  name: 'StockBalanceCGFP',
   components: {
     MainView
   },

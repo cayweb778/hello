@@ -276,9 +276,9 @@ export const delXyHCD = defRouteApi(async (params: any) => {
     params,
   };
 });
-export const getAllCcodeArr = defRouteApi(async (params: any) => {
+export const verifyDataState = defRouteApi(async (params: any) => {
   return {
-    url: '/stock/warehousing/getAllCcodeArr',
+    url: '/stock/warehousing/verifyDataState',
     method: 'POST',
     params,
   };

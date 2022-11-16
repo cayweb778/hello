@@ -565,7 +565,7 @@ import {
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu,
+  saveRuKu, verifyDataState,
   verifyXyCsourceByXyCode, xyCsourceSave,
 } from "/@/api/record/stock/stock-ruku";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
@@ -1205,12 +1205,6 @@ function setNewColunm() {
   }
 }
 const startEdit = async (type) => {
-  // 获取入库单-收发方式
-  let tempecName= await useRouteApi(findByLikeEcName, { schemaName: dynamicTenantId })("其他入库")
-  if(hasBlank(tempecName)){
-    return message.error('其他入库收发方式未设置,无法新增！')
-  }
-  formItems.value.bstyle=tempecName.ecCode
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){
@@ -1257,6 +1251,14 @@ const startEdit = async (type) => {
     setTableData(list)
   }
   else {
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
     loadMark.value=true
     isEdit.value=stockWareData.value.bstyle=='其他入库'?false:true
     if(stockWareData.value.bstyle=='组装入库'||stockWareData.value.bstyle=='拆卸入库'){
@@ -1269,7 +1271,7 @@ const startEdit = async (type) => {
     }
 
     // 任务
-    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'其他入库单',method:'修改'})
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'其他入库单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
       tempTaskSave('修改')
     }else{
@@ -1318,6 +1320,13 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
     if(stockWareData.value.bstyle=='调拨入库'||stockWareData.value.bstyle=='转换入库'||stockWareData.value.bstyle=='盘盈入库'){
       message.error('当前单据由关联单据生成,不能直接删除单据，弃审来源单据时将自动删除！')
       return false
@@ -1393,14 +1402,20 @@ const startDel = async () => {
         formItems.value.czId = ''
         await contentSwitch('tail','')
       }
+      ,onCancel: () => {
+        tempTaskDel(taskInfo.value?.id)
+        return false
+      }
     });
   }
 }
 
 const startReview = async (b) => {
-  if(formItems.value.bcheck=='1'&&b){
-    message.error('此单据已审核！')
-    return false
+  // 执行操作前判断单据是否存在
+  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+  if(hasBlank(msg)){
+    return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})

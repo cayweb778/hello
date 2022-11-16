@@ -669,7 +669,7 @@ import {
   findStockWareByCcode,
   reviewSetCGRKG,
   reviewSetCGRKGMx,
-  saveRuKu,
+  saveRuKu, verifyDataState,
   verifyXyCsourceByXyCode,
   xyCsourceSave,
 } from "/@/api/record/stock/stock-ruku";
@@ -1290,6 +1290,14 @@ const startEdit = async (type) => {
     tempTaskSave('新增')
   }
   else if(type=='edit'){
+    if(formItems.value.ccode==undefined){return }
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购发票',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
@@ -1355,6 +1363,13 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    // 执行操作前判断单据是否存在
+    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
+    if(hasBlank(msg)){
+      return message.error("单据已发生变化,请刷新当前单据！")
+    }
+
     tempTaskSave('删除')
     createConfirm({
       iconType: 'warning',
