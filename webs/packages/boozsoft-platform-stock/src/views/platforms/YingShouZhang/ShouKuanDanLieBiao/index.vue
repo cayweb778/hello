@@ -895,43 +895,105 @@ async function delList(){
       }
     }
     if (num == 0) {
-      for (let i = 0; i < checkRow.value.length; i++) {
-        const item = checkRow.value[i]
-        if(item.bdocumStyle!='1'){
-          let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'收款单',method:'修改,删除,审核,弃审',recordNum:item.ccode})
-          if(taskData.length==0){
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'收款单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
-          } else {
-            // 任务不是当前操作员的
-            if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-              return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'收款单,不能同时进行操作！' });
-            }else{
-              await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'收款单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
+      createConfirm({
+        iconType: 'error',
+        title: '警告',
+        content: '删除后数据将不能恢复，你确认要删除吗?',
+        onOk: async () => {
+          for (let i = 0; i < checkRow.value.length; i++) {
+            const item = checkRow.value[i]
+            if (item.bdocumStyle != '1') {
+              let taskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
+                iyear: pageParameter.year,
+                name: '收款单',
+                method: '修改,删除,审核,弃审',
+                recordNum: item.ccode
+              })
+              if (taskData.length == 0) {
+                await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                  iyear: pageParameter.year,
+                  caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                  functionModule: '收款单',
+                  method: '删除',
+                  recordNum: item.ccode,
+                  caozuoModule: 'ar'
+                })
+              } else {
+                // 任务不是当前操作员的
+                if (String(taskData[0]?.caozuoUnique) !== String(useUserStoreWidthOut().getUserInfo.id)) {
+                  return createWarningModal({content: taskData[0]?.username + '正在' + taskData[0]?.method + '收款单,不能同时进行操作！'});
+                } else {
+                  await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                    id: taskData[0]?.id,
+                    iyear: pageParameter.year,
+                    caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                    functionModule: '收款单',
+                    method: '删除',
+                    recordNum: item.ccode,
+                    caozuoModule: 'ar'
+                  })
+                }
+              }
+            } else {
+              let taskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
+                iyear: pageParameter.year,
+                name: '退款单',
+                method: '修改,删除,审核,弃审',
+                recordNum: item.ccode
+              })
+              if (taskData.length == 0) {
+                await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                  iyear: pageParameter.year,
+                  caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                  functionModule: '退款单',
+                  method: '删除',
+                  recordNum: item.ccode,
+                  caozuoModule: 'ar'
+                })
+              } else {
+                // 任务不是当前操作员的
+                if (String(taskData[0]?.caozuoUnique) !== String(useUserStoreWidthOut().getUserInfo.id)) {
+                  return createWarningModal({content: taskData[0]?.username + '正在' + taskData[0]?.method + '退款单,不能同时进行操作！'});
+                } else {
+                  await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                    id: taskData[0]?.id,
+                    iyear: pageParameter.year,
+                    caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                    functionModule: '退款单',
+                    method: '删除',
+                    recordNum: item.ccode,
+                    caozuoModule: 'ar'
+                  })
+                }
+              }
+            }
+            await useRouteApi(deleteArApYsyfById, {schemaName: dynamicTenantId})(item.id)
+            await useRouteApi(deleteArApYsyfsByCcode, {schemaName: dynamicTenantId})(item.ccode)
+            if (item.bdocumStyle != '1') {
+              //删除任务锁定
+              await useRouteApi(stockBalanceTaskDelByUserName, {schemaName: dynamicTenantId})({
+                iyear: pageParameter.year,
+                userName: useUserStoreWidthOut().getUserInfo.id,
+                functionModule: '收款单',
+                method: '删除',
+                recordNum: item.ccode
+              })
+            } else {
+              //删除任务锁定
+              await useRouteApi(stockBalanceTaskDelByUserName, {schemaName: dynamicTenantId})({
+                iyear: pageParameter.year,
+                userName: useUserStoreWidthOut().getUserInfo.id,
+                functionModule: '退款单',
+                method: '删除',
+                recordNum: item.ccode
+              })
             }
           }
-        } else {
-          let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'退款单',method:'修改,删除,审核,弃审',recordNum:item.ccode})
-          if(taskData.length==0){
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'退款单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
-          } else {
-            // 任务不是当前操作员的
-            if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-              return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'退款单,不能同时进行操作！' });
-            }else{
-              await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'退款单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
-            }
-          }
+        },
+        onCancel: () => {
+          return false
         }
-        await useRouteApi(deleteArApYsyfById,{schemaName: dynamicTenantId})(item.id)
-        await useRouteApi(deleteArApYsyfsByCcode,{schemaName: dynamicTenantId})(item.ccode)
-        if(item.bdocumStyle!='1'){
-          //删除任务锁定
-          await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'收款单',method:'删除',recordNum:item.ccode})
-        } else {
-          //删除任务锁定
-          await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'退款单',method:'删除',recordNum:item.ccode})
-        }
-      }
+      })
     }
     state.selectedRowKeys = []
     checkRow.value = []

@@ -810,24 +810,63 @@ async function delList(){
       }
     }
     if (num == 0) {
-      for (let i = 0; i < checkRow.value.length; i++) {
-        const item = checkRow.value[i]
-        let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'应收单',method:'修改,删除,复核,弃复',recordNum:item.ccode})
-        if(taskData.length==0){
-          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
-        } else {
-          // 任务不是当前操作员的
-          if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-            return createWarningModal({ content: taskData[0]?.username+'正在'+taskData[0]?.method+'应收单,不能同时进行操作！' });
-          }else{
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
+      createConfirm({
+        iconType: 'error',
+        title: '警告',
+        content: '删除后数据将不能恢复，你确认要删除吗?',
+        onOk: async () => {
+          for (let i = 0; i < checkRow.value.length; i++) {
+            const item = checkRow.value[i]
+            let taskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
+              iyear: pageParameter.year,
+              name: '应收单',
+              method: '修改,删除,复核,弃复',
+              recordNum: item.ccode
+            })
+            if (taskData.length == 0) {
+              await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                iyear: pageParameter.year,
+                caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                functionModule: '应收单',
+                method: '删除',
+                recordNum: item.ccode,
+                caozuoModule: 'ar'
+              })
+            } else {
+              // 任务不是当前操作员的
+              if (String(taskData[0]?.caozuoUnique) !== String(useUserStoreWidthOut().getUserInfo.id)) {
+                return createWarningModal({content: taskData[0]?.username + '正在' + taskData[0]?.method + '应收单,不能同时进行操作！'});
+              } else {
+                await useRouteApi(saveTaskApi, {schemaName: dynamicTenantId})({
+                  id: taskData[0]?.id,
+                  iyear: pageParameter.year,
+                  caozuoUnique: useUserStoreWidthOut().getUserInfo.id,
+                  functionModule: '应收单',
+                  method: '删除',
+                  recordNum: item.ccode,
+                  caozuoModule: 'ar'
+                })
+              }
+            }
+            await useRouteApi(deleteSaleousingById, {schemaName: dynamicTenantId})(item.id)
+            await useRouteApi(deleteSaleousingsByCcode, {schemaName: dynamicTenantId})({
+              ccode: item.ccode,
+              billStyle: item.billStyle
+            })
+            //删除任务锁定
+            await useRouteApi(stockBalanceTaskDelByUserName, {schemaName: dynamicTenantId})({
+              iyear: pageParameter.year,
+              userName: useUserStoreWidthOut().getUserInfo.id,
+              functionModule: '应收单',
+              method: '删除',
+              recordNum: item.ccode
+            })
           }
+        },
+        onCancel: () => {
+          return false
         }
-        await useRouteApi(deleteSaleousingById,{schemaName: dynamicTenantId})(item.id)
-        await useRouteApi(deleteSaleousingsByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
-        //删除任务锁定
-        await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'删除',recordNum:item.ccode})
-      }
+      })
     }
     state.selectedRowKeys = []
     checkRow.value = []
