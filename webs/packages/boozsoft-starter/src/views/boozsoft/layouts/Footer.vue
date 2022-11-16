@@ -155,9 +155,9 @@ async function goPrint(){
 }
 import { appLocalDataDir } from '@tauri-apps/api/path';
 const outSystemBefore = async () => {
-  console.log(await appLocalDataDir())
-  // window.localStorage.clear()
-  // router.push("/login");
+  // console.log(await appLocalDataDir())
+  window.localStorage.clear()
+  router.push("/login");
   // const Document=await readDir('', { dir: BaseDirectory. Document});
   // const Download=await readDir('', { dir: BaseDirectory. Download, });
   // const Executable=await readDir('', { dir: BaseDirectory. Executable, });
