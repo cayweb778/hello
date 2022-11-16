@@ -133,8 +133,8 @@ const windowHeight = (window.innerHeight - (325))
 
 const showFooter=computed(()=>useCounterStoreWidthOut().showFooterShow)
 // import { appDataDir } from '@tauri-apps/api/path';
-import { window as window2 } from '@tauri-apps/api';
-import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
+// import { window as window2 } from '@tauri-apps/api';
+// import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import router from "../../../router";
 import {useGlobalStoreWidthOut} from "../../../store/modules/global";
 
