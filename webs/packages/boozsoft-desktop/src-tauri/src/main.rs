@@ -24,7 +24,7 @@ fn hasFilenameExist(path: &str, filename: &str) -> bool {
 }
 
 fn getTxt(path: &str, filename: &str) -> String {
-    let filepath = format!("{}{}", path, filename);
+    let filepath = format!("{}/{}", path, filename);
     println!("{}", filepath);
     let mut file = std::fs::File::open(filepath).unwrap();
     let mut contents = String::new();
