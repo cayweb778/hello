@@ -4,7 +4,7 @@
       v-bind="$attrs"
       title="应收单"
       @ok="handleOk()"
-      @cancel="handleOk()"
+      @cancel="closeModal()"
       wrapClassName="head-title"
       @register="register"
     >
@@ -207,7 +207,7 @@ async function reloadList(){
   } else {
     arBeginBalanceList.value = qcList.filter(item => item.arStyle == 'YSD' && item.ysIsumBenbi!='0')
   }
-  tableDataAll.value.push(...saleousingList.value.map(item => {
+  tableDataAll.value.push(...arBeginBalanceList.value.map(item => {
     item.hxStyle = item.arStyle
     item.hxCcode = item.ccode
     item.cvencode = item.cvencodeJs
@@ -246,7 +246,7 @@ async function reloadList(){
   }))
   tableData.value = tableDataAll.value.filter(item =>{
     if (hxmxList.value.length>0){
-      return hxmxList.value.map(aa => aa.sourcecode).indexOf(item.ccode) == -1
+      return hxmxList.value.map(aa => aa.sourcecode).indexOf(item.ccode) != -1
     }
     return item
   })

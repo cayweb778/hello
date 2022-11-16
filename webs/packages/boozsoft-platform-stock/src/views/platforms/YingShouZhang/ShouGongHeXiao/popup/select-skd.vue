@@ -4,7 +4,7 @@
       v-bind="$attrs"
       title="收款单"
       @ok="handleOk()"
-      @cancel="handleOk()"
+      @cancel="closeModal()"
       wrapClassName="head-title"
       @register="register"
     >
@@ -216,7 +216,7 @@ async function reloadList(){
   tableDataAll.value.push(...xhdList.value)
   tableData.value = tableDataAll.value.filter(item =>{
     if (hxmxList.value.length>0){
-      return hxmxList.value.map(aa => aa.hxCcode).indexOf(item.ccode) == -1
+      return hxmxList.value.map(aa => aa.hxCcode).indexOf(item.ccode) != -1
     }
     return item
   })

@@ -1547,7 +1547,7 @@ async function saveData(){
     return false
   }
   //自动分配
-  const list = checkRow.value.filter(item=>item.hxMoney!=null && item.hxMoney!='')
+  const list = getDataSource().filter(item=>item.hxMoney!=null && item.hxMoney!='')
   const list1 = getDataSource1().filter(item=>(item.hxMoney!=null && item.hxMoney!='')||(item.idiscount!=null && item.idiscount!=''))
   const list2 = getDataSource1().filter(item=>(item.hxMoney!=null && item.hxMoney!='')||(item.idiscount!=null && item.idiscount!=''))
   for (let i = 0; i < list.length; i++) {
@@ -1867,7 +1867,7 @@ const openSelectXhd = () => {
       dynamicTenantId: dynamicTenantId.value,
       year: pageParameter.year,
       cvencode: cvencode.value,
-      list: getDataSource1(),
+      list: getDataSource1().filter(item=>item.id!=null && item.id!=''),
       arHexiaoAuto: arHexiaoAuto.value,
       arSourceFlag: arSourceFlag.value,
       arCheckFlag: arCheckFlag.value,
@@ -1900,6 +1900,7 @@ async function saveSelectXhd(data){
       tableData1.value.push({})
     }
   }
+  countTable()
 }
 </script>
 <style src="./global-menu-index.less" lang="less" scoped="scoped"></style>
