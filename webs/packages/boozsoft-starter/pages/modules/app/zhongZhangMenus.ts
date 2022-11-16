@@ -144,7 +144,7 @@ export const menus = [
     createPlatformMenu({id: 8960, path: 'handle-transfer', component: '', parentId: 8809, name: '业务处理'}),
     createPlatformMenu({id: 8961, path: 'manage-transfer', component: '', parentId: 8809, name: '模版设置'}),
 
-    createPlatformMenu({id: 8970, path: 'ends-amort-with', component: '', parentId: 8810, name: '业务处理'}),
+    // createPlatformMenu({id: 8970, path: 'ends-amort-with', component: '', parentId: 8810, name: '业务处理'}),
     createPlatformMenu({id: 8971, path: 'ends-em-bill', component: '', parentId: 8810, name: '结账'}),
     createPlatformMenu({id: 8972, path: 'ends-synthesize', component: '', parentId: 8810, name: '综合'}),
 
@@ -808,7 +808,7 @@ export const menus = [
         name: '自定义模板',
     }),
 
-    createPlatformMenu({
+ /*   createPlatformMenu({
         id: 9131,
         path: 'cost-amortize',
         component: '/boozsoft/system/blocktable/index',
@@ -822,7 +822,7 @@ export const menus = [
         parentId: 8970,
         name: '费用预提',
     }),
-
+*/
 
     createPlatformMenu({
         id: 9133,

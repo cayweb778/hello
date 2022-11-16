@@ -2,13 +2,13 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://127.0.0.1:1420",
-    "distDir":  "http://127.0.0.1:1420",
-    "withGlobalTauri": true
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist",
+    "withGlobalTauri": false
   },
   "package": {
-    "productName": "财税达",
-    "version": "1.0.0"
+    "productName": "tauri-app",
+    "version": "0.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -73,7 +73,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "org.boozsoft.ncapp",
+      "identifier": "com.tauri.dev",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -82,16 +82,12 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": ["dist"],
+      "resources": [],
       "shortDescription": "",
       "targets": "all",
-
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "wix": {
-          "language": "zh-CN"
-        },
         "timestampUrl": ""
       }
     },
@@ -102,6 +98,7 @@
       "active": false
     },
     "windows": [
+
     ]
   }
 }

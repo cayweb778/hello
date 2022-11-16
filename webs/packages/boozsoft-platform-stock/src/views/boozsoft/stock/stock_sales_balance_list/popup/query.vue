@@ -27,7 +27,7 @@
       <div class="open-content-up">
         <div style="display: block;text-align: center;">
           <SearchOutlined style="font-size: 26px;color: #0096c7;"/>
-          <span style="font-size: 30px;color: #0096c7;font-weight: bold;">&ensp;销货单列表</span>
+          <span style="font-size: 30px;color: #0096c7;font-weight: bold;">&ensp;期初销货单列表</span>
         </div>
         <ul>
           <li>

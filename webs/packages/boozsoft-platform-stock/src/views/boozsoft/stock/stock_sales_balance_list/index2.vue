@@ -3,12 +3,12 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <ProfileOutlined />
         </div>
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">期初销货单列表</b></div>
+        <div>  <b class="noneSpan" style="font-size: 24px;color: #0096c7;">期初销货单列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -2276,7 +2276,7 @@ const calculateTotal = (t) => {
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
-  font-size: 12px !important;
+  font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #cccccc !important;
   font-weight: bold;
@@ -2293,8 +2293,7 @@ const calculateTotal = (t) => {
 }
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
-  margin: 10px 10px 5px;
+  padding: 10px;
 }
 
 .app-container:nth-of-type(2) {
@@ -2355,17 +2354,25 @@ const calculateTotal = (t) => {
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-  position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    position: relative;
+    >div:nth-of-type(1){
+      width: 64px;display: inline-block;text-align: center;    top: 10px;
+      position: inherit;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
     }
     >div:nth-of-type(2){
-      width: calc( 100% - 64px);display: inline-block;
+      width: calc(100% - 64px);
+      position: inherit;
+      display: inline-block;
+      top: -8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;

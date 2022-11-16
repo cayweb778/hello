@@ -37,8 +37,10 @@ use std::fmt::format;
 use std::fs::File;
 
 fn usepathInfo() -> HashMap<String, String> {
+    let ddd=api::path::data_dir().unwrap();
+    let ccc=ddd.as_path().to_str().unwrap();
     let mut scores = HashMap::new();
-    scores.insert(String::from("dirpath"), String::from(std::env::temp_dir().display().to_string()));
+    scores.insert(String::from("dirpath"), String::from(ccc.to_string()));
     scores.insert(String::from("filename"), String::from("NcServerAddr.txt"));
     return scores;
 }
@@ -96,7 +98,7 @@ fn generate(name: String) -> String {
     let filename = pathInfo.get("filename").unwrap();
     println!("无敌：{}", dirpath);
     println!("无敌：{}", filename);
-    let mut file = std::fs::File::create(format!("{}{}", dirpath, filename)).expect("create failed");
+    let mut file = std::fs::File::create(format!("{}/{}", dirpath, filename)).expect("create failed");
     file.write_all(name.as_bytes()).expect("write failed");
     return format!("{}::{}::{}", dirpath, filename, dirpath);
 }
@@ -117,7 +119,7 @@ fn goApp(name: String, window: Window) -> String {
 
 
 
-use tauri::{App, AppHandle, Builder, Manager, Wry};
+use tauri::{App, AppHandle, Builder, Manager, Wry,api};
 use printers::{get_printers, print};
 
 fn createNew() {

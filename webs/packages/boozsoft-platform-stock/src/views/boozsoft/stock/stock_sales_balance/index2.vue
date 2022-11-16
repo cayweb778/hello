@@ -65,16 +65,6 @@
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
 
-            <Popover placement="bottom">
-              <template #content>
-                <Button style="width: 120px;margin-bottom: 2px" @click="openPrint">打印单据</Button>
-                <br/>
-                <Button style="width: 120px;margin-bottom: 2px" @click="toPrintPage">模版设置</Button>
-              </template>
-              <Button class="acttdrd-btn">
-                <PrinterOutlined :style="{ fontSize: '14px' }"/>
-              </Button>
-            </Popover>
             <Popover placement="bottom"  v-model:visible="visible">
               <template #content>
                 <Button style="width: 120px;margin-bottom: 2px" @click="openSetting">表头栏目设置</Button>
@@ -1097,6 +1087,7 @@ const [registerTable, {
   columns: CrudApi.columns,
   bordered: true,
   showIndexColumn: true,
+  indexColumnProps: {width: 60, fixed: 'left', title: '序号'},
   pagination: {
     pageSize: 50,
     hideOnSinglePage: true,

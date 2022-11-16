@@ -102,10 +102,10 @@ export const defaultRows = () => {
       columnType: '1',
       field: 'xsRate',
       label: '销售税率',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: null,
       required: false,
-      readonly: true,
+      readonly: false,
       serial: 10,
       isShow: true
     },{
