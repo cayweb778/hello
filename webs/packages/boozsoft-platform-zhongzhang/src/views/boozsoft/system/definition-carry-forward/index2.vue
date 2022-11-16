@@ -1,572 +1,634 @@
 <template>
   <div class="app-container">
-    <div class="app-container-top">
-      <div class="app-container-head">
-        <div class="container-head-title" style="padding-left: 46%; text-align: center">
-          <b class="noneSpan">期间损益结转</b>
-          <div style="font-size: 14px; text-align: center; margin-top: 20px">
-            <span style="color: black; font-size: 14px"> 期间：{{ pageParameter.yearMonth }} </span>
+    <div class="app-container-top lcr-theme-div" style="background-color: rgb(41 150 199)">
+      <div>
+        <div>
+          <CopyOutlined style="color: white;font-size: 50px;"/>
+        </div>
+        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload"/></div>
+      </div>
+      <div></div>
+      <div>
+        <div>
+          <Button class="actod-btn actod-btn-last" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')">退出</Button>
+        </div>
+        <div>
+          <div class="acttd-right-d-btns" v-if="status==3">
+            <Button class="acttdrd-btn">
+              <SyncOutlined :style="{ fontSize: '14px' }"/>
+            </Button>
+            <Popover placement="bottom" v-model:visible="visible3">
+              <template #content>
+                <DynamicColumn :defaultData="initDynamics()['DATA']" :dynamicData="dynamicColumnData" :lanmuInfo="lanMuData" @reload="reloadColumns"/>
+                <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
+                      :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
+                  v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
+                <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
+                      :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                <SortAscendingOutlined/>&nbsp;小号字体&ensp;<CheckOutlined
+                  v-if="pageParameter.showRulesSize==='MIN'"/></span>
+              </template>
+              <Button class="acttdrd-btn">
+                <SettingFilled  :style="{ fontSize: '14px' }"/>
+              </Button>
+            </Popover>
+          </div>
+          <div class="acttd-right-d-btns" v-else>
+            <Button v-if="status<3" class="acttdrd-btn" >
+              <BarcodeOutlined :style="{ fontSize: '20px',display:'inline-flex' }"/>
+            </Button>
           </div>
         </div>
-        <div class="ant-btn-group">
-          <button
-            type="button"
-            class="ant-btn"
-            ant-click-animating-without-extra-node="false"
-            @click="openQueryFrame(0)"
-            ><span>条件查询</span></button
-          >
-          <button
-            type="button"
-            class="ant-btn"
-            ant-click-animating-without-extra-node="false"
-            @click="setAccVocher"
-            ><span>生成凭证</span></button
-          >
-          <button type="button" class="ant-btn"><span>退出</span></button>
-        </div>
-      </div>
-      <div class="app-container-neck">
-        <div style="display: inline-flex; font-size: 14px; float: left; line-height: 32px">
-          <AccountPicker v-if="showChome" readonly="" theme="one" />
-        </div>
-        <div style="margin-left: 5px">
-          <a-button class="ant-btn-me" @click="pageReload">
-            <SyncOutlined :style="{ fontSize: '14px' }" />
-          </a-button>
-          <a-popover placement="bottom">
-            <a-button>
-              <SettingFilled :style="{ fontSize: '14px' }" />
-            </a-button>
-          </a-popover>
-          <a-popover placement="bottom">
-            <a-button>
-              <PicLeftOutlined :style="{ fontSize: '14px' }" />
-            </a-button>
-          </a-popover>
-
-          <a-button>
-            <EditFilled :style="{ fontSize: '14px' }" />
-          </a-button>
-
-          <a-button>
-            <PieChartFilled :style="{ fontSize: '14px' }" />
-          </a-button>
-          <a-button>
-            <FilterFilled :style="{ fontSize: '14px' }" />
-          </a-button>
-        </div>
-        <div style="float: right; position: relative">
-          <!-- 搜索 -->
-          <a-select
-            v-model:value="pageParameter.searchConditon.requirement"
-            style="width: 120px"
-            class="special_select"
-          >
-            <!--   .slice(1)       -->
-            <template v-for="item in searchlist">
-              <a-select-option :value="item.dataIndex">
-                {{ item.title }}
-              </a-select-option>
-            </template>
-          </a-select>
-          <a-input-search
-            placeholder=""
-            v-model:value="pageParameter.searchConditon.value"
-            @search="pageSearch"
-            style="width: 200px; border-radius: 4px"
-          />
-        </div>
       </div>
     </div>
-    <div class="app-container-bottom">
-      <BasicTable
-        v-if="tableShow"
-        :class="'a-table-font-size-12'"
-        @row-click="clearSelectedRowKeys()"
-        @register="registerTable"
-      >
-        <template #chamd="{ record }">
-          <span style="float: right" v-if="record.childrenflag == '0'">{{
-            moneyformat(record.chamd)
-          }}</span>
-          <span style="float: right" v-if="record.childrenflag == '1'">{{
-            moneyformat(record.chamd)
-          }}</span>
-        </template>
-        <template #chamc="{ record }">
-          <span style="float: right" v-if="record.childrenflag == '0'">{{
-            moneyformat(record.chamc)
-          }}</span>
-          <span style="float: right" v-if="record.childrenflag == '1'">{{
-            moneyformat(record.chamc)
-          }}</span>
-        </template>
-      </BasicTable>
-      <Query @save="loadPage" @register="registerQueryPage" />
-      <!--      <PingzhengIndex @register="registerPingZhengModal"></PingzhengIndex>-->
+    <div class="app-container-bottom" :style="{height: (windowHeight+70)+'px'}">
+      <div class="acb-head">
+        <div class="acbgead-one">
+          <div class="acbgead-one-triangle">
+            <div></div>
+            <div>
+              <span
+                style="color: white;">{{
+                  status == 0 ? '暂存' : status == 1 ? '新增' : status == 2 ? '编辑' : '查看'
+                }}</span>
+            </div>
+          </div>
+          <span style="font-size: 22px;font-weight: bold;margin-right: 300px;" :style="{color:'#0096c7'}">{{ titleContents[0] }}</span>
+        </div>
+        <div class="acbgead-two dynamic-form">
+          <DynamicForm :datasource="dynamicFormModel" :formDataFun="formFuns" :accId="dynamicTenantId" :dynamicTenant="dynamicTenant"/>
+        </div>
+      </div>
+      <div class="acb-centent">
+        <BasicTable
+          ref="tableRef"
+          :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
+          :clickToRowSelect="false"
+          :loading="loadMark"
+          :row-selection="{ type: 'checkbox',selectedRowKeys: tableSelectedRowKeys, onChange: onSelectChange }"
+          :scroll="{ x: totalColumnWidth,y: windowHeight-(100)}"
+          size="small"
+          @register="registerTable"
+        >
+
+        </BasicTable>
+      </div>
     </div>
+
   </div>
 </template>
-<script setup="props, { emit }" lang="ts">
-  import { BasicTable, useTable } from '/@/components/Table';
-  import { onMounted, ref, reactive } from 'vue';
-  import { getCurrentAccountName, getThisIndexImg } from '/@/api/task-api/tast-bus-api';
-  import {
-    SettingFilled,
-    SyncOutlined,
-    PicLeftOutlined,
-    EditFilled,
-    PieChartFilled,
-    FilterFilled,
-    UnorderedListOutlined,
-  } from '@ant-design/icons-vue';
 
-  import { Select as ASelect, Input as AInput, Popover as APopover } from 'ant-design-vue';
-  import AccountPicker from '/@/boozsoft/components/AccountPicker/AccountPicker.vue';
-  import { useModal } from '/@/components/Modal';
-  import Query from '/@/views/boozsoft/system/definition-carry-forward/popup/query.vue';
-  import { useRouteApi } from '/@/utils/boozsoft/datasource/datasourceUtil';
-  import { findAll, setPingZhengSave, getLastDayOfMonth } from '/@/api/record/system/losses-gain';
-  import { useMessage } from '/@/hooks/web/useMessage';
+<script setup="props, {emit}" lang="ts">
+import {Button, Input, Popover, Radio, Select, Tabs,} from "ant-design-vue";
+import DynamicColumn from "./component/DynamicColumn.vue";
+import {
+  BarcodeOutlined,
+  CheckOutlined,
+  CopyOutlined,
+  SettingFilled,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+  SyncOutlined
+} from '@ant-design/icons-vue';
+import {reactive, ref} from "vue";
+import {useMessage} from "/@/hooks/web/useMessage";
+import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker.vue";
+import {useTabs} from "/@/hooks/web/useTabs";
+import router from "/@/router";
+import {BasicTable, useTable} from '/@/components/Table'
+import {useModal} from '/@/components/Modal'
+import {useUserStoreWidthOut} from "/@/store/modules/user";
+import {assemblyDynamicColumn, initDynamics} from "./data";
+import DynamicForm from './component/DynamicForm.vue';
+import {GenerateDynamicColumn} from "./component/ts/DynamicForm";
 
-  const { createConfirm, createWarningModal, createMessage } = useMessage();
-  const ASelectOption = ASelect.Option;
-  const AInputSearch = AInput.Search;
-  const showChome = ref(true);
-  const tableShow = ref(false);
-  const dynamicTenantId = ref(getCurrentAccountName(true));
-  const searchlist = [
-    {
-      title: '凭证摘要',
-      dataIndex: 'digest',
-      ellipsis: true,
-      align: 'left',
-    },
-    {
-      title: '科目编码',
-      dataIndex: 'ccode',
-      ellipsis: true,
-      align: 'left',
-    },
-    {
-      title: '科目名称',
-      dataIndex: 'ccodeName',
-      ellipsis: true,
-      align: 'left',
-    },
-    {
-      title: '方向',
-      dataIndex: 'bprogerty',
-      ellipsis: true,
-      width: 100,
-    },
-  ];
-  const CrudApi: any = {
-    list: findAll,
-    columns: [
-      {
-        title: '凭证摘要',
-        dataIndex: 'digest',
-        ellipsis: true,
-        align: 'left',
-      },
-      {
-        title: '损益科目编码',
-        dataIndex: 'ccode',
-        ellipsis: true,
-        align: 'left',
-      },
-      {
-        title: '损益科目名称',
-        dataIndex: 'ccodeName',
-        ellipsis: true,
-        align: 'left',
-      },
-      {
-        title: '辅助项',
-        dataIndex: 'fuzhuName',
-        ellipsis: true,
-        align: 'left',
-      },
-      {
-        title: '方向',
-        dataIndex: 'bprogerty',
-        ellipsis: true,
-        width: 100,
-        format: function (value) {
-          return value == '0' ? '贷' : '借';
-        },
-      },
-      {
-        title: '借方余额',
-        dataIndex: 'chamd',
-        ellipsis: true,
-        align: 'right',
-        slots: { customRender: 'chamd' },
-      },
-      {
-        title: '贷方余额',
-        dataIndex: 'chamc',
-        ellipsis: true,
-        align: 'right',
-        slots: { customRender: 'chamc' },
-        // format: function (value) {
-        //   return value == '0' ? "贷" : ''
-        // }
-      },
-      {
-        title: '本年利润科目',
-        dataIndex: 'profitCcode',
-        ellipsis: true,
-        align: 'left',
-      },
-    ],
-  };
-  const pageParameter = reactive({
-    yearMonth: '', // 期间
-    searchConditon: {
-      value: '',
-      requirement: 'ccode',
-    },
-    pzType: '',
-    codeJici: '',
-    codeType: '',
-    liRunCode: '',
-    lrCodeBprogerty: '',
-    digest: '',
-    bz: '',
-    ishaveRjz: '',
-    styleList: '',
-    codeLevelFirst: '',
-  });
-  const rowSelection = {
-    getCheckboxProps: (record) => ({
-      disabled: record.lossCcode === null || record.childrenflag == '1',
-      name: record.lossCcode,
-    }),
-  };
-  // 这是示例组件
-  const [
-    registerTable,
-    { reload, getSelectRows, getDataSource, clearSelectedRowKeys, setLoading },
-  ] = useTable({
-    api: useRouteApi(CrudApi.list, { schemaName: dynamicTenantId }),
-    columns: CrudApi.columns,
-    // showIndexColumn: false, //显示序号列
-    isTreeTable: true,
-    indexColumnProps: { width: 100, fixed: 'left' },
-    searchInfo: pageParameter,
-    rowSelection: { type: 'checkbox', getCheckboxProps: rowSelection.getCheckboxProps },
-    pagination: {
-      pageSize: 200,
-      showSizeChanger: true,
-      pageSizeOptions: ['50', '100', '200'],
-      showTotal: (t) => `总共${t}条数据`,
-    },
-  });
 
-  const [registerQueryPage, { openModal: openQueryPageM }] = useModal();
-  const openVal = ref({
-    openOne: 0,
-    total: 0,
-  });
+const RadioButton = Radio.Button
+const RadioGroup = Radio.Group
+const InputSearch = Input.Search
+const SelectOption = Select.Option
+const TabPane = Tabs.TabPane
+const {createErrorModal, createConfirm, createWarningModal} = useMessage()
+const {closeCurrent} = useTabs(router);
+const [registerQueryPage, {openModal: openQueryPageM}] = useModal()
+const [registerImportPage, {openModal: openImportPageM}] = useModal()
+const [registerPrintPage, {openModal: openPrintPage}] = useModal()
+const [registerLackPage, {openModal: openLackPage}] = useModal()
+const [registerItemsPage, {openModal: openItemsSourcePage}] = useModal()
 
-  // 金额格式化
-  function moneyformat(data: any) {
-    let str = '';
-    if (data) {
-      // 千分位保留2位小数
-      var source = String(data.toFixed(2)).split('.'); //按小数点分成2部分
-      source[0] = source[0].replace(new RegExp('(\\d)(?=(\\d{3})+$)', 'ig'), '$1,'); //只将整数部分进行都好分割
-      str = source.join('.'); //再将小数部分合并进来
-    }
-    return str;
+const windowHeight = (window.innerHeight - 300)
+const dynamicTenantId = ref('')
+const dynamicTenant:any = ref(null)
+const dynamicAccId = ref('')
+const dynamicYear = ref('')
+const titleContents = ['期间损益结转']
+const pageParameter:any = reactive({
+  showRulesSize: 'MIN',
+  searchConditon: {
+    requirement: '',
+    value: '',
+  },
+  type: 'CGFP'
+})
+const iyearPeriodList = ['202201','202202','202203']
+const visible3:any = ref(false)
+const tableSelectedRowKeys = ref([])
+const tableSelectedRowObjs = ref([])
+const onSelectChange = (k, o) => {
+  tableSelectedRowKeys.value=[]
+  tableSelectedRowObjs.value=[]
+
+  tableSelectedRowKeys.value = k
+  tableSelectedRowObjs.value = o
+}
+const dynamicFormModel:any = ref([])
+const formRowNum = ref(1)
+const loadMark = ref(false)
+const windowWidth = (window.innerWidth - (70))
+// 0 暂存 1 新建 2编辑 3查看
+const status = ref(3)
+const formFuns:any = ref({
+  getFormValue: () => {
+  }, setFormValue: () => {
+  }, getSelectMap: () => {
   }
-  onMounted(async () => {
-    openQueryFrame(1);
-  });
-  const openQueryFrame = (i) => {
-    openVal.value.openOne = i;
-    openQueryPageM(true, {
-      data: openVal.value,
-      dynamicTenantId: dynamicTenantId.value,
-    });
-  };
-  const loadPage = (condition) => {
-    dynamicTenantId.value = condition.constant.tenantId;
-    pageParameter.yearMonth = condition.variable.period;
-    pageParameter.pzType = condition.variable.voucherType;
-    pageParameter.codeJici = condition.variable.carryOverlevel; // 0末级，1一级
-    pageParameter.liRunCode = condition.variable.yearProfitCode;
-    pageParameter.digest = condition.variable.period.split('-')[1] + '月' + condition.digest;
-    pageParameter.bz = '全部';
-    pageParameter.ishaveRjz = condition.ishaveRjz;
-    pageParameter.styleList = condition.styleList;
-    pageParameter.lrCodeBprogerty = condition.lrCodeBprogerty;
-    pageParameter.codeLevelFirst = condition.codeLevelFirst.split('-')[0];
+})
 
-    // 加载数据
-    pageReload();
-  };
-  const pageReload = () => {
-    tableShow.value = true;
-    openVal.value.total = 1;
-    reload({
-      searchInfo: pageParameter,
-    });
-    // setTimeout(()=>{
-    //   if(getDataSource().length==1){
-    //     createConfirmPop('【'+pageParameter.yearMonth+'】期间损益结转没有余额')
-    //   }
-    // },200)
-  };
-  const pageSearch = () => {
-    reload();
-  };
-  function createConfirmPop(text) {
-    createConfirm({
-      iconType: 'warning',
-      title: '警告',
-      content: text,
-      onOk: async () => {},
-    });
-  }
-  //********************************************** 生成凭证 ***************************************************
-  import PingzhengIndex from '/@/components/pingzheng-fillin/index.vue';
-  import { usePingZhengModal } from '/@/components/pingzheng-fillin/components/Modal/usePingzhengModal';
-  import { finByMonthMaxInoId } from '/@/api/record/system/accvoucher';
-  import { useUserStoreWidthOut } from '/@/store/modules/user';
-  const pingzhengModalContainerRef: any = ref([]);
-  const { registerPingZhengModal, openPingzhengModal } = usePingZhengModal(
-    pingzhengModalContainerRef,
-  );
 
-  function randomString(length) {
-    var str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    var result = '';
-    for (var i = length; i > 0; --i) result += str[Math.floor(Math.random() * str.length)];
-    return result;
-  }
-  // 生成凭证
-  const setAccVocher = async () => {
-    if (getSelectRows().length === 0) {
-      createConfirmPop('至少选择一条损益科目,进行期间损益结转！');
-      return false;
+
+
+
+
+const dynamicAdReload = async (obj) => {
+  visible3.value = true
+  console.log('当前时间：'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
+  dynamicTenant.value = obj
+  dynamicTenantId.value = obj.accountMode
+  dynamicAccId.value = obj.accId
+  dynamicYear.value = obj.stockYear
+  lanMuData.value.accId=obj.accountMode
+  await columnReload()
+  lanMuData.value.changeNumber+=1
+}
+
+const CrudApi = {
+  columns: [
+    {
+      title: '费用科目编码',
+      dataIndex: 'cwhcode',
+      ellipsis: true,
+      slots: {customRender: 'cwhcode'},
+      width: 120
+    },
+    {
+      title: '费用科目名称',
+      dataIndex: 'bcheck1',
+      ellipsis: true,
+      width: 120,slots: {customRender: 'bcheck1'},
+    },
+    {
+      title: '本年利润科目编码',
+      dataIndex: 'cinvode',
+      ellipsis: true,
+      slots: {customRender: 'cinvode'},
+      width: 120
+    },
+    {
+      title: '本年利润科目名称',
+      dataIndex: 'cinvodeName',
+      ellipsis: true,
+      slots: {customRender: 'cinvodeName'},
+      width: 200
     }
-    setLoading(true)
-    // 指定月最后一天
-    let lastDay = await useRouteApi(getLastDayOfMonth, { schemaName: dynamicTenantId })(
-      pageParameter.yearMonth,
-    );
-    // 已经加 1 了
-    let maxInoId = await useRouteApi(finByMonthMaxInoId, { schemaName: dynamicTenantId })(
-      pageParameter.yearMonth.split('-')[1],
-    );
-    let accvoucherUnique = randomString(20);
-    const apiData: any = [];
-    let lr_inid = 0;
-    getSelectRows().forEach((v, index) => {
-      if (v.yuemx !== null && v.yuemx.length > 0) {
-        v.yuemx.forEach((a, index2) => {
-          if (a.chamd !== 0 || a.chamc !== 0) {
-            lr_inid = pageParameter.codeJici == '2' ? index + 1 : index2 + 1;
-            let accvoucher = {
-              uniqueCode: accvoucherUnique,
-              csign: '记',
-              iyear: pageParameter.yearMonth.split('-')[0],
-              imonth: pageParameter.yearMonth.split('-')[1],
-              iyperiod: pageParameter.yearMonth.replace('-', ''),
-              cdigest: pageParameter.digest,
-              dbillDate: lastDay,
-              inoId: maxInoId,
-              inid: pageParameter.codeJici == '2' ? index + 1 : index2 + 1,
-              ccode: a.ccode,
-              ccodeName: a.ccodeName,
-              md: a.chamd,
-              mc: a.chamc,
-              cbill: useUserStoreWidthOut().getUserInfo.username,
-              ifrag: '0',
-              iperiod: pageParameter.yearMonth.split('-')[1],
-              vouchUnCode: randomString(20),
-              fuzhu: '',
-            };
-            apiData.push(accvoucher);
-          }
-        });
-      }
-      if (v.children !== null && v.children.length > 0) {
-        v.children.forEach((a, index2) => {
-          if (a.chamd !== 0 || a.chamc !== 0) {
-            lr_inid = pageParameter.codeJici == '2' ? index + 1 : index2 + 1;
-            let accvoucher = {
-              uniqueCode: accvoucherUnique,
-              csign: '记',
-              iyear: pageParameter.yearMonth.split('-')[0],
-              imonth: pageParameter.yearMonth.split('-')[1],
-              iyperiod: pageParameter.yearMonth.replace('-', ''),
-              cdigest: pageParameter.digest,
-              dbillDate: lastDay,
-              inoId: maxInoId,
-              inid: pageParameter.codeJici == '2' ? index + 1 : index2 + 1,
-              ccode: a.ccode,
-              ccodeName: a.ccodeName,
-              md: a.chamd,
-              mc: a.chamc,
-              cbill: useUserStoreWidthOut().getUserInfo.username,
-              ifrag: '0',
-              iperiod: pageParameter.yearMonth.split('-')[1],
-              vouchUnCode: randomString(20),
-              cdeptId: a.cdeptId,
-              cpersonId: a.cpersonId,
-              ccusId: a.ccusId,
-              csupId: a.csupId,
-              projectId: a.projectId,
-              cdfine1: a.cdfine1,
-              cdfine2: a.cdfine2,
-              cdfine3: a.cdfine3,
-              cdfine4: a.cdfine4,
-              cdfine5: a.cdfine5,
-              cdfine6: a.cdfine6,
-              cdfine7: a.cdfine7,
-              cdfine8: a.cdfine8,
-              cdfine9: a.cdfine9,
-              cdfine10: a.cdfine10,
-              cdfine11: a.cdfine11,
-              cdfine12: a.cdfine12,
-              cdfine13: a.cdfine13,
-              cdfine14: a.cdfine14,
-              cdfine15: a.cdfine15,
-              cdfine16: a.cdfine16,
-              cdfine17: a.cdfine17,
-              cdfine18: a.cdfine18,
-              cdfine19: a.cdfine19,
-              cdfine20: a.cdfine20,
-              cdfine21: a.cdfine21,
-              cdfine22: a.cdfine22,
-              cdfine23: a.cdfine23,
-              cdfine24: a.cdfine24,
-              cdfine25: a.cdfine25,
-              cdfine26: a.cdfine26,
-              cdfine27: a.cdfine27,
-              cdfine28: a.cdfine28,
-              cdfine29: a.cdfine29,
-              cdfine30: a.cdfine30,
-            };
-            apiData.push(accvoucher);
-          }
-        });
-      }
-      if (v.children2 !== null && v.children2.length > 0) {
-        v.children2.forEach((a, index2) => {
-          if (a.chamd !== 0 || a.chamc !== 0) {
-            lr_inid = pageParameter.codeJici == '2' ? index + 1 : index2 + 1;
-            let accvoucher = {
-              uniqueCode: accvoucherUnique,
-              csign: '记',
-              iyear: pageParameter.yearMonth.split('-')[0],
-              imonth: pageParameter.yearMonth.split('-')[1],
-              iyperiod: pageParameter.yearMonth.replace('-', ''),
-              cdigest: pageParameter.digest,
-              dbillDate: lastDay,
-              inoId: maxInoId,
-              inid: pageParameter.codeJici == '2' ? index + 1 : index2 + 1,
-              ccode: a.ccode,
-              ccodeName: a.ccodeName,
-              md: a.chamd,
-              mc: a.chamc,
-              cbill: useUserStoreWidthOut().getUserInfo.username,
-              ifrag: '0',
-              iperiod: pageParameter.yearMonth.split('-')[1],
-              vouchUnCode: randomString(20),
-              cdeptId: a.cdeptId,
-              cpersonId: a.cpersonId,
-              ccusId: a.ccusId,
-              csupId: a.csupId,
-              projectId: a.projectId,
-              cdfine1: a.cdfine1,
-              cdfine2: a.cdfine2,
-              cdfine3: a.cdfine3,
-              cdfine4: a.cdfine4,
-              cdfine5: a.cdfine5,
-              cdfine6: a.cdfine6,
-              cdfine7: a.cdfine7,
-              cdfine8: a.cdfine8,
-              cdfine9: a.cdfine9,
-              cdfine10: a.cdfine10,
-              cdfine11: a.cdfine11,
-              cdfine12: a.cdfine12,
-              cdfine13: a.cdfine13,
-              cdfine14: a.cdfine14,
-              cdfine15: a.cdfine15,
-              cdfine16: a.cdfine16,
-              cdfine17: a.cdfine17,
-              cdfine18: a.cdfine18,
-              cdfine19: a.cdfine19,
-              cdfine20: a.cdfine20,
-              cdfine21: a.cdfine21,
-              cdfine22: a.cdfine22,
-              cdfine23: a.cdfine23,
-              cdfine24: a.cdfine24,
-              cdfine25: a.cdfine25,
-              cdfine26: a.cdfine26,
-              cdfine27: a.cdfine27,
-              cdfine28: a.cdfine28,
-              cdfine29: a.cdfine29,
-              cdfine30: a.cdfine30,
-            };
-            apiData.push(accvoucher);
-          }
-        });
-      }
-    });
-    const mdSum: any =
-      apiData.length == 0 ? '0' : apiData.map((item) => item.md).reduce((n, m) => n + m);
-    const mcSum: any =
-      apiData.length == 0 ? '0' : apiData.map((item) => item.mc).reduce((n, m) => n + m);
-    let lrmd: any = 0;
-    let lrmc: any = 0;
+  ]
+}
+// 这是示例组件
+const [registerTable, {
+  reload,
+  getDataSource,
+  setTableData,
+  setPagination,
+  getPaginationRef,
+  getColumns,
+  setColumns
+}] = useTable({
+  columns: CrudApi.columns,
+  bordered: true,
+  showIndexColumn: true,
+  indexColumnProps:{ fixed:true },
+  pagination: false
+})
 
-    if (pageParameter.lrCodeBprogerty === '0') {
-      lrmd = mcSum - mdSum;
-    } else {
-      lrmc = mdSum - mcSum;
-    }
-    let accvoucher = {
-      uniqueCode: accvoucherUnique,
-      csign: '记',
-      iyear: pageParameter.yearMonth.split('-')[0],
-      imonth: pageParameter.yearMonth.split('-')[1],
-      iyperiod: pageParameter.yearMonth.replace('-', ''),
-      cdigest: pageParameter.digest,
-      dbillDate: lastDay,
-      inoId: maxInoId,
-      inid: lr_inid + 1,
-      ccode: pageParameter.liRunCode.split('-')[0],
-      ccodeName: pageParameter.liRunCode.split('-')[1],
-      md: parseFloat(lrmd).toFixed(2),
-      mc: parseFloat(lrmc).toFixed(2),
-      cbill: useUserStoreWidthOut().getUserInfo.username,
-      ifrag: '0',
-      iperiod: pageParameter.yearMonth.split('-')[1],
-      vouchUnCode: randomString(20),
-    };
-    apiData.push(accvoucher);
-    await useRouteApi(setPingZhengSave, { schemaName: dynamicTenantId })(apiData).then((a) => {
-      createConfirmPop('已成功生成' + pageParameter.yearMonth.split('-')[1] + '期间损益结转');
-      pageReload();
-    });
-  };
+
+/*栏目设置*/
+const totalColumnWidth = ref(0)
+const dynamicColumnData = ref({value:[]})
+const tableRef:any = ref(null)
+const lanMuData = ref({
+  accId: 'postgres',
+  menuName: '采购发票',
+  type: '列表',
+  objects: '',
+  username: useUserStoreWidthOut().getUserInfo.username,
+  changeNumber:0
+})
+const reloadColumns = () => {
+  let newA = JSON.parse(JSON.stringify(CrudApi.columns))
+  newA = assemblyDynamicColumn(dynamicColumnData.value.value, newA)
+  setColumns(newA)
+  initTableWidth(newA)
+}
+
+function initTableWidth(thisCs) {
+  let total = 60
+  thisCs.forEach(item => {
+    if (item.ifShow == null || item.ifShow)
+      total += parseInt(item.width)
+  })
+  if (total > windowWidth) {
+    let f = 0
+    if (visible3.value) f = 260
+    totalColumnWidth.value = Number(windowWidth) - f
+    tableRef.value.$el.style.setProperty('width', (windowWidth + 40 - f) + 'px')
+  } else {
+    if (visible3.value && (windowWidth - 260) < total) total -= (total - (windowWidth - 260))
+    totalColumnWidth.value = total
+    tableRef.value.$el.style.setProperty('width', (total + 40) + 'px')
+  }
+}
+/*栏目设置end*/
+
+const columnReload = async () => {
+  dynamicFormModel.value = await GenerateDynamicColumn() || []
+  formRowNum.value = Math.ceil((dynamicFormModel.value.filter(it=>it.isShow).length/4))-1
+}
+
+//金额格式化
+function toThousandFilter(num:any) {
+  if (num=='' || num==null){
+    return ''
+  }
+  return (+num || 0).toFixed(2).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')
+}
+// 时间格式化
+function formatTimer(value) {
+  let date: any = new Date(value);
+  let y = date.getFullYear();
+  let MM = date.getMonth() + 1;
+  MM = MM < 10 ? "0" + MM : MM;
+  let d = date.getDate();
+  d = d < 10 ? "0" + d : d;
+  let h = date.getHours();
+  h = h < 10 ? "0" + h : h;
+  let m = date.getMinutes();
+  m = m < 10 ? "0" + m : m;
+  let s = date.getSeconds();
+  s = s < 10 ? "0" + s : s;
+  return y + "-" + MM + "-" + d;
+}
 </script>
-<style src="../../../../assets/styles/global-menu-index.less" lang="less"></style>
 <style lang="less" scoped="scoped">
-  .app-container {
-    padding: 0px;
-    margin: 10px 10px 5px;
+@Global-Border-Color: #c9c9c9; // 全局下划线颜色
+@Global-Label-Color: #666666; // 全局#c9c9c9颜色
+@Global-Comm-BcOrText-Color: #0096c7; // 全局#c9c9c9颜色
+.app-container {
+  padding: 10px;
+  background-color: #b4c8e3;
+  margin: 0;
+
+  .app-container-top {
+    background-color: #f1f1f1;
+    border-radius: 5px 5px 0 0;
+    padding: 10px;
+
+    > div {
+      width: 100%;
+      display: inline-flex;
+      justify-content: space-between;
+    }
+
+    .app-container-top-one {
+      line-height: 40px;
+
+      .act-one-d-img {
+        width: 42px;
+      }
+
+      .act-one-d-left {
+
+      }
+
+      .act-one-d-title {
+        .acto-d-title-span {
+          color: @Global-Comm-BcOrText-Color;
+          font-weight: bold;
+          font-size: 24px;
+        }
+      }
+
+      .act-one-d-btn-group {
+        text-align: right;
+
+        .actod-btn {
+          color: @Global-Comm-BcOrText-Color;
+          font-size: 14px;
+          border-color: @Global-Border-Color;
+          border-right: none;
+        }
+
+        .actod-btn-last {
+          border-right: 1px solid @Global-Border-Color;
+        }
+
+        .actod-btn:hover {
+          background-color: @Global-Comm-BcOrText-Color;
+          color: white;
+        }
+      }
+    }
+
+    .app-container-top-two {
+      font-size: 14px;
+      line-height: 32px;
+
+      .act-two-d-left {
+
+      }
+
+      .act-two-d-center {
+        .acttdrd-search-select {
+          width: 120px;
+
+          :deep(.ant-select-selector) {
+            border-color: @Global-Border-Color;
+            border-radius: 2px 0 0 2px;
+          }
+        }
+      }
+
+      .act-two-d-right {
+        display: inline-flex;
+        justify-content: space-between;
+
+        .acttd-right-d-search {
+          .acttdrd-search-select {
+            width: 120px;
+
+            :deep(.ant-select-selector) {
+              border-color: @Global-Border-Color;
+              border-radius: 2px 0 0 2px;
+            }
+          }
+
+          .acttdrd-search-input {
+            width: 180px;
+            border-radius: 0 2px 2px 0;
+            border-color: @Global-Border-Color;
+            border-left: none;
+          }
+        }
+
+        .acttd-right-d-btns {
+          margin-left: 10px;
+
+          .acttdrd-btn {
+            border-color: @Global-Border-Color;
+            margin-left: 2px;
+          }
+        }
+      }
+    }
   }
-  .a-table-font-size-12 :deep(td),
-  .a-table-font-size-12 :deep(th) {
-    font-size: 14px !important;
-    padding: 2px 8px !important;
+
+  .app-container-bottom {
+    background-color: white;
+
+    .acb-head {
+      .acbgead-one {
+        text-align: center;
+        height: 60px;
+        line-height: 60px;
+
+        .acbgead-one-triangle {
+          > div:nth-of-type(1) {
+            width: 0px;
+            height: 0px;
+            border-top: 60px solid #5141d7;
+            border-right: 70px solid transparent;
+            position: absolute;
+          }
+
+          > div:nth-of-type(2) {
+            width: max-content;
+            color: #fff;
+            transform: rotate(-45deg) translateY(-2px) translateX(10px);
+            position: absolute;
+          }
+        }
+
+        .acbgead-one-changes {
+          > span {
+            cursor: pointer;
+          }
+
+          > span:hover {
+            color: black;
+          }
+        }
+
+        > div:nth-of-type(2) {
+          display: inline-block;
+          float: left;
+          margin-left: 4%;
+          font-weight: bold;
+          font-size: 24px;
+          color: #666666;
+        }
+      }
+
+      .acbgead-two {
+        margin: 0 5rem;
+      }
+    }
+
+    .acb-centent {
+      margin: 0 4%;
+    }
   }
+
+  .status-look {
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+.lanmu-table{
+  :deep(.ant-table-content){
+    .ant-table-thead{
+      tr{
+        th{
+          padding: 5px 8px !important;
+          text-align: center !important;
+        }
+      }
+    }
+    .ant-table-tbody{
+      tr{
+        td{
+          padding:0 5px !important;
+          font-size: 12px !important;
+          .ant-radio-button-wrapper{
+            font-size: 12px;
+          }
+        }
+      }
+
+    }
+  }
+}
+.suspended-div {
+  width: 100%;
+  height: 22px;
+
+  .anticon-form {
+    float: right;
+    line-height: 22px;
+    display: none;
+  }
+}
+.suspended-div:hover {
+  cursor: text;
+  background-color: #e4e7e7;
+  .anticon-form {
+    display: block;
+  }
+}
+</style>
+<style lang="less" scoped>
+@import '/@/assets/styles/global-menu-index1.less';
+.lcr-theme-div{
+  display: inline-flex;justify-content: space-between;width: 100%;height: 100px;
+  >div:nth-of-type(1){
+    width: 40%;
+    position: relative;
+    display: block;
+    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
+      position: inherit
+    }
+    >div:nth-of-type(2){
+
+      width: calc( 100% - 64px);display: inline-block;
+      :deep(.account-picker){
+        .ap-title,.thisNameSpan{
+          color: white !important;
+        }
+      }
+    }
+  }
+  >div:nth-of-type(2){
+    width: 20%;text-align:center;
+    >div:nth-of-type(2){margin-top: 14px;}
+  }
+  >div:nth-of-type(3){
+    width: 43%;text-align: right;
+    display: block;
+    >div:nth-of-type(1){
+      .actod-btn {
+        color: @Global-Comm-BcOrText-Color;
+        font-size: 14px;
+        margin: 0 1px 0 0;
+      }
+
+      .actod-btn-last {
+        border-right: 1px solid @Global-Border-Color;
+      }
+
+      .actod-btn:hover {
+        background-color: @Global-Comm-BcOrText-Color;
+        color: white;
+        font-weight: bold;
+        border: 1px solid white;
+      }
+    }
+    >div:nth-of-type(2){
+      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      .acttd-right-d-search {
+        .acttdrd-search-select {
+          width: 120px;
+
+          :deep(.ant-select-selector) {
+            border-color: @Global-Border-Color;
+            border-radius: 2px 0 0 2px;
+          }
+        }
+
+        .acttdrd-search-input {
+          width: 180px;
+          border-radius: 0 2px 2px 0;
+          border-color: @Global-Border-Color;
+          border-left: none;
+        }
+      }
+
+      .acttd-right-d-btns {
+        margin-left: 10px;
+
+        .acttdrd-btn {
+          color: @Global-Comm-BcOrText-Color;
+          margin-left: 2px;
+        }
+        .acttdrd-btn:hover{
+          border-color: #ffffff;
+          color: #ffffff;
+          background-color: @Global-Comm-BcOrText-Color;
+        }
+      }
+    }
+  }
+}
+.dynamic-form{
+  .span{
+    color: #666666;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper){
+    border: none;
+    border-bottom: 1px solid #c9c9c9;
+    background-color: white;
+    color: black;
+    .ant-picker-input {
+      > input {
+        color: black;
+      }
+    }
+  }
+  :deep(.ant-input-number){
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #c9c9c9;
+    background-color: white;
+    color: black;
+  }
+  :deep(.ant-col){
+    margin-left: 1em;
+    .ant-form-item-label{
+      text-align: left;
+      .ant-form-item-no-colon{
+        font-weight: bold;
+        color: #666666;
+      }
+    }
+
+    .ant-form-item:not(.ant-form-item-with-help) {
+      margin-bottom: 5px;
+    }
+  }
+  :deep(.ant-col-4){
+    display: none;
+  }
+}
 </style>

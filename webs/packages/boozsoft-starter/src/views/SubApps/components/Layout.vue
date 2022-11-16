@@ -12,7 +12,7 @@ import {ref} from 'vue'
 import ErrorPage from './ErrorPage.vue'
 const props=defineProps(['wujieAttrs'])
 
-const showModuleError=ref(true)
+const showModuleError=ref(false)
 fetch(props.wujieAttrs.url).then(e=>{
   showModuleError.value=false
 }).catch(e=>{
@@ -27,7 +27,7 @@ function abc(){
 
   socket.onerror=()=>{
 
-    showServerError.value=true
+    // showServerError.value=true
   }
 }
 if(props.wujieAttrs.socketAddr==null){

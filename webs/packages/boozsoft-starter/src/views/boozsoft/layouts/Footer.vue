@@ -1,9 +1,9 @@
 <template>
   <div
-       style="position:fixed;height:30px;width:100%;background:#8da6c7;font-weight:900;color:white;bottom:0;z-index:100;"
-       class="thisBottom">
+      style="position:fixed;height:30px;width:100%;background:#8da6c7;font-weight:900;color:white;bottom:0;z-index:100;"
+      class="thisBottom">
     <Row style="font-size:17px;">
-       <Col :span="8">
+      <Col :span="8">
         <div style="width:100%;font-size: 14px;padding-top:3px;padding-left:5px;color:#c2ccdc;">
           &emsp;&emsp;
           <Badge @click="goPrint()" :count="4" :number-style="{ backgroundColor: '#52c41a' }">
@@ -44,13 +44,13 @@
       </Col>
       <Col :span="8">
         <div style="position: absolute;left: calc((100% - 184px) / 2);">
-          <div style="width:184px;margin:0 auto;padding-top:2px">
+          <div style="margin:0 auto;padding-top:2px">
             <span style="font-size: 14px;">业务日期：</span>
             <!--    @blur="changeOpenStatus(false)"      -->
-            <DatePicker size="small" :value="loginDate" @change="dateChange" :showToday="false" :allowClear="false"
-                        :inputReadOnly="true" :open="showOpen" @focus="changeOpenStatus(true)"
-                        style="padding:0;width:100px;text-align-last: center;"
-                        :popup-style="{top: (windowHeight-420)+'px'}" value-format="YYYY-MM-DD"
+            <DatePicker :value="loginDate" @change="dateChange" :showToday="false" :allowClear="false"
+                        :inputReadOnly="true"
+                        style="padding:2px 4px 0;width:114px;text-align-last: center;"
+                        value-format="YYYY-MM-DD"
                         format="YYYY-MM-DD">
               <template #renderExtraFooter>
                 <div style="display: inline-flex;justify-content: space-between;width: 100%;">
@@ -65,8 +65,8 @@
           </div>
         </div>
       </Col>
-      <Col :span="7"></Col>
-      <Col :span="1">
+      <Col :span="6"></Col>
+      <Col :span="2">
 
         <!--        <div style="min-width:57px;padding-top:1px;text-align:center;color:white;font-size:14px;background:black">财务版</div>-->
 
@@ -99,39 +99,49 @@
                   </span>
               </div>-->
         <!--        <CustomizeInfo style="min-width:90px;" />-->
-        <span class="hoverSvg" style="min-width:100px;padding-top:4px;position: relative;" @click="outSystemBefore">
-        <LogoutOutlined style="font-size: 18px"/>
-        <span style="font-size: 12px;">退出系统</span>
-      </span>
+        <Row >
+          <Col :span="10"></Col>
+          <Col :span="14">
+              <Row @click="outSystemBefore">
+                <Col :span="7" style="padding-top:3px" >
+                  <LogoutOutlined style="font-size: 15px;cursor:pointer"/>
+                </Col>
+                <Col  :span="15" style="cursor:pointer;padding-top:1px"><span style="font-size: 12px;padding-right:0px;">退出系统</span></Col>
+              </Row>
+          </Col>
+        </Row>
+
+
       </Col>
     </Row>
   </div>
 </template>
 <script setup>
 import {computed, ref, watch} from "vue"
-import {Row,Col} from "ant-design-vue"
+import {Row, Col} from "ant-design-vue"
 import {useCounterStoreWidthOut} from "/@/store/modules/counter"
 import {LogoutOutlined} from '@ant-design/icons-vue'
 import {useMessage} from "../../../hooks/web/useMessage"
-import {Badge,DatePicker,Button} from 'ant-design-vue'
+import {Badge, DatePicker, Button} from 'ant-design-vue'
+
 const {createConfirm} = useMessage();
 let mark = false;
-const loginDate=ref()
-const loginDateCompoted=computed(()=>useGlobalStoreWidthOut().getLoginDate)
-watch(()=>  loginDateCompoted.value,(e)=>{
-  loginDate.value=e
-},{immediate:true})
+const loginDate = ref()
+const loginDateCompoted = computed(() => useGlobalStoreWidthOut().getLoginDate)
+watch(() => loginDateCompoted.value, (e) => {
+  loginDate.value = e
+}, {immediate: true})
 const dateChange = async (v) => {
   useGlobalStoreWidthOut().setLoginDate(v)
-  window.localStorage.setItem('loginDate',v)
+  window.localStorage.setItem('loginDate', v)
 
 }
 
-const  showOpen=ref(false)
+const showOpen = ref(false)
 const windowWidth = document.documentElement.clientWidth - 170;
 const windowHeight = (window.innerHeight - (325))
 
-const showFooter=computed(()=>useCounterStoreWidthOut().showFooterShow)
+const showFooter = computed(() => useCounterStoreWidthOut().showFooterShow)
 // import { appDataDir } from '@tauri-apps/api/path';
 // import { window as window2 } from '@tauri-apps/api';
 // import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
@@ -142,22 +152,24 @@ const changeOpenStatus = () => {
   showOpen.value = !showOpen.value
 }
 
-async function goMessage(){
-  let useNcModalData=useGlobalStoreWidthOut().getNcModals
-  const data=await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
+async function goMessage() {
+  let useNcModalData = useGlobalStoreWidthOut().getNcModals
+  const data = await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
   console.log(data)
 }
 
-async function goPrint(){
-  let useNcDataExport=useGlobalStoreWidthOut().getNcDataExport
-  const data=await useNcDataExport(({To}) => To.Print, {})
+async function goPrint() {
+  let useNcDataExport = useGlobalStoreWidthOut().getNcDataExport
+  const data = await useNcDataExport(({To}) => To.Print, {})
   console.log(data)
 }
-import { appLocalDataDir } from '@tauri-apps/api/path';
+
+import {appLocalDataDir} from '@tauri-apps/api/path';
+
 const outSystemBefore = async () => {
-  console.log(await appLocalDataDir())
-  // window.localStorage.clear()
-  // router.push("/login");
+  // console.log(await appLocalDataDir())
+  window.localStorage.clear()
+  router.push("/login");
   // const Document=await readDir('', { dir: BaseDirectory. Document});
   // const Download=await readDir('', { dir: BaseDirectory. Download, });
   // const Executable=await readDir('', { dir: BaseDirectory. Executable, });
