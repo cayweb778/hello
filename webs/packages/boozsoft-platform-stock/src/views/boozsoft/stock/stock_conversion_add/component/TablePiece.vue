@@ -54,7 +54,7 @@
             :show-arrow="false"
             :filter-option="false"
             :not-found-content="null"
-            :options="props.cardListOptions"
+            :options="cardListOptions"
             @search="value=>handleSearch(value,'one')"
             @keyup.enter="chFocus = 'one';tempType='one';focusNext(record,'cinvode')"
           ></Select>
@@ -391,7 +391,7 @@ const InputSearch = Input.Search
 const SelectOption = Select.Option
 const TabPane = Tabs.TabPane
 const {createErrorModal, createConfirm, createWarningModal} = useMessage()
-const props = defineProps(['modelValue', 'exportData','seachData','accId','dynamicAccId','dynamicYear','status','dynamicTenant','formFuns'])
+const props = defineProps(['modelValue', 'exportData','seachData','accId','dynamicAccId','dynamicYear','status','dynamicTenant','formFuns','cardListOptions'])
 const targetKeys = ref([])
 
 const pageParameter = reactive({
@@ -861,27 +861,7 @@ const onSelectChange = (k, o) => {
   tableSelectedRowObjs.value = o
 }
 
-const rowDataGrab = async (rowObj, type: string) => {
-  let arr = assetsCardList.value.filter(it => (type == 'one' ? (it.sysId == rowObj.sysId) : type == 'two' ? (it.assetsCode == rowObj.assetsCode) : (it.assetsName == rowObj.assetsName)))
-  if (arr.length > 0 && rowObj['assetsUniqueCode'] != arr[0].assetsUniqueCode) {
-    rowObj['assetsUniqueCode'] = arr[0].assetsUniqueCode
-    rowObj['sysId'] = arr[0].sysId
-    rowObj['assetsCode'] = arr[0].assetsCode
-    rowObj['assetsName'] = arr[0].assetsName
-    // 初始化其他参数
-    let res = await useRouteApi(findFaAssetInfoByCode, {schemaName: props.accId})({code: arr[0].assetsUniqueCode}) || []
-    if (null != res && res.length > 0) {
-      rowObj['speciType'] = res[0].speciType
-      rowObj['bookAmount'] = res[0].bookAmount
-      rowObj['measureUnit'] = res[0].measureUnit
-      rowObj['yuanzhi'] = res[0].yuanzhi
-      rowObj['jtBy'] = res[0].jtBy
-      rowObj['zjLj'] = res[0].zjLj
-      rowObj['jingzhi'] = res[0].jingzhi
-    }
-    cardListOptions.value = []
-  }
-}
+
 
 let timeout: any;
 let currentValue = '';
@@ -889,7 +869,7 @@ const handleSearch = async (val: string, type: string) => {
   if (!hasBlank(val)) {
     // 排除已存在到存货
     let filterList = getDataSource()
-    await fetchs(val, type, filterList, (d: any[]) => (props.cardListOptions = d));
+    await fetchs(val, type, filterList, (d: any[]) => (cardListOptions.value = d));
   }
 };
 
@@ -932,11 +912,13 @@ function formatData(data:any){
   return str;
 }
 function sumIcost(a,b){
-  if(hasBlank(a)){
+  console.log(a)
+  console.log(b)
+  if(hasBlank(a) || a == undefined){
     a = 0
   }
-  if(hasBlank(b)){
-    a = 0
+  if(hasBlank(b) || b == undefined){
+    b = 0
   }
   return doadd(a,b) ==0?'':doadd(a,b);
 }

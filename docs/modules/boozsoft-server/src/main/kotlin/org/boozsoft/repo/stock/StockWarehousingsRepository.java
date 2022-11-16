@@ -166,7 +166,7 @@ public interface StockWarehousingsRepository extends ReactiveCrudRepository<Stoc
             " left join stock s on sc.cinvode = s.stock_num " +
             " left join supplier sup on sup.id=sc.cvencode " +
             " left join customer cus on cus.id=sc.cvencode " +
-            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('CGRKD', 'RKTZD' 'QTRKD')")
+            " where s.stock_num =:ch and sc.batch_id =:pc and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('CGRKD', 'RKTZD','QTRKD')")
     Flux<StockKctzVo> findAllByCinvodeAndDateAndPc(String ch, String pc, String strDate, String endDate);
 
     @Query("select temp.* from (select  (case\n" +
