@@ -28,7 +28,7 @@ const NcProvider = inject('NcProvider')
 const wujieAttrs = ref({
 
   globalData:useCounterStoreWidthOut(),
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncmodal' : '//localhost:5001',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncmodals666' : '//localhost:5001',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: {
     NcProvider,
