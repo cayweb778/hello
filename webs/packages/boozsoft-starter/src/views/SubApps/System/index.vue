@@ -26,7 +26,7 @@ const NcProvider = inject('NcProvider')
 
 const wujieAttrs = ref({
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncbak' : '//localhost:3103',
-  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc/newsystem'+'/newsystem':"ws://localhost:8087",
+  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newsystem':"ws://localhost:8087",
   props: useGlobalStoreWidthOut().defineWujieProps({
     NcProvider,
     goSystem: (attrs: any) => {

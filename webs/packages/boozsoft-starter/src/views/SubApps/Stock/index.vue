@@ -33,7 +33,7 @@ const wujieAttrs = ref({
 
   globalData:useCounterStoreWidthOut(),
   url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncstock' : '//localhost:3500',
-  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc/newstock'+'/newstock':"ws://localhost:8085/newstock",
+  socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: useGlobalStoreWidthOut().defineWujieProps({
     NcModals:{
       // async openDeptModal(params2){
