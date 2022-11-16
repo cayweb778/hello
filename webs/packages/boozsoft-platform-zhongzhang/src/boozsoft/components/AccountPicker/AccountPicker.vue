@@ -37,10 +37,10 @@
       <template v-slot:default="{fun,info}">
         <div style="margin-left:0px">
           <div style="margin-left: 1%;font-size: 14px;">
-            <span style="color: #666666;font-weight: bold">账套代码：</span>
+            <span class="ap-title" style="color: #666666;font-weight: bold">账套代码：</span>
             <span v-if="props.readonly==''" style="font-weight: bold;color: black;padding: 6px 10px;border-radius: 5px;background-color: #f2f2f2;">{{ info.coCode }}</span>
             <span v-else :ref="fun.one"></span>
-            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #666666;font-weight: bold">账套名称：</span> <span :ref="fun.two" style="font-weight: bold"/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="ap-title" style="color: #666666;font-weight: bold">账套名称：</span> <span :ref="fun.two" style="font-weight: bold"/>
           </div>
         </div>
       </template>
