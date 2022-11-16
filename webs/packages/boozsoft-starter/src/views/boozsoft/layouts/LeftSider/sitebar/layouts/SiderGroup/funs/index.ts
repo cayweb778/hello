@@ -1,6 +1,6 @@
 import WujieVue from "wujie-vue3";
-import router from "@/router";
-import {useCounterStoreWidthOut} from "@/store/modules/counter";
+import router from "/@/router";
+import {useCounterStoreWidthOut} from "/@/store/modules/counter";
 const {bus}=WujieVue
 
 export function goHome(id : any){

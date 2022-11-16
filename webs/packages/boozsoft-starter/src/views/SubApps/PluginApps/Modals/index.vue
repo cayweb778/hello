@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import {ref, inject} from 'vue'
 import Layout from '../layout/Layout.vue'
-import {isProdMode} from "@/utils/env";
+import {isProdMode} from "/@/utils/env";
 const wujieVueRef = ref()
 import {modules} from "../../../../../pages/menuData";
 import {useCounterStoreWidthOut} from "../../../../store/modules/counter";

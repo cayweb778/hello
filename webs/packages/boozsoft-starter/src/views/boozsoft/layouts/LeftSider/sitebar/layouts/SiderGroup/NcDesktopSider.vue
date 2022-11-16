@@ -21,7 +21,7 @@
 <script setup lang="ts">
 
 import {HomeOutlined} from '@ant-design/icons-vue';
-import {goHome, goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
+import {goHome, goPlatformById} from "/@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
 function toGoPlatformById(){
   goHome()
 }

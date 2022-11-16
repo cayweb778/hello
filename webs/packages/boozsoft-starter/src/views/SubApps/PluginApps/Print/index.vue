@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import {ref, inject} from 'vue'
 import Layout from '../layout/Layout.vue'
-// import {defineNcModals} from "@/views/boozsoft/global/funs";
-import {isProdMode} from "@/utils/env";
+// import {defineNcModals} from "/@/views/boozsoft/global/funs";
+import {isProdMode} from "/@/utils/env";
 // import abc1 from '../../../views/boozsoft/global/abc1.vue'
 const wujieVueRef = ref()
 import {modules} from "../../../../../pages/menuData";

@@ -110,7 +110,7 @@
 <script setup>
 import {computed, ref, watch} from "vue"
 import {Row,Col} from "ant-design-vue"
-import {useCounterStoreWidthOut} from "@/store/modules/counter"
+import {useCounterStoreWidthOut} from "/@/store/modules/counter"
 import {LogoutOutlined} from '@ant-design/icons-vue'
 import {useMessage} from "../../../hooks/web/useMessage"
 import {Badge,DatePicker,Button} from 'ant-design-vue'

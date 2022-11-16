@@ -14,8 +14,8 @@
 <script setup lang="ts">
 import {ref, getCurrentInstance, inject} from 'vue'
 import router from "../../../router";
-import {isProdMode} from "@/utils/env";
-import {useCounterStoreWidthOut} from "@/store/modules/counter";
+import {isProdMode} from "/@/utils/env";
+import {useCounterStoreWidthOut} from "/@/store/modules/counter";
 
 const wujieVueRef = ref()
 

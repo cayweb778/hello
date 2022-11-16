@@ -7,7 +7,7 @@ import router from './router'
 
 import './assets/main.css'
 import WujieVue from "wujie-vue3";
-import {setupRouterGuard} from "@/router/guard";
+import {setupRouterGuard} from "/@/router/guard";
 import {setupStore} from "./store";
 import {setupEventbus} from "./eventbus";
 

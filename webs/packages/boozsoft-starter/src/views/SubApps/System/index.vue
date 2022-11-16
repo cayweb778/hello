@@ -16,7 +16,7 @@
 import {ref, inject} from 'vue'
 import Layout from '../components/Layout.vue'
 import router from "../../../router";
-import {isProdMode} from "@/utils/env";
+import {isProdMode} from "/@/utils/env";
 import {modules} from "../../../../pages/menuData";
 import {useCounterStoreWidthOut} from "../../../store/modules/counter";
 import {useGlobalStoreWidthOut} from "../../../store/modules/global";

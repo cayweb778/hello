@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {usePluginsStore} from "./plugins";
-import {store} from '@/store';
+import {store} from '/@/store';
 let footerShow = false
 const cache = window.localStorage.getItem("showFooter")
 if (cache == null) {

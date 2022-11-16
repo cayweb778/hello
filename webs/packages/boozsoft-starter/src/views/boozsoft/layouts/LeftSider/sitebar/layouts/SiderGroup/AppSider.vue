@@ -112,9 +112,9 @@ function abdc(){
   bus.$emit("goPlatform",'11112321');
 }
 
-import {goZongZhang,goStock,goSystem,goGuDingZiChan, goPlatformById} from "@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
-import router from "@/router";
-import {useCounterStoreWidthOut} from "@/store/modules/counter";
+import {goZongZhang,goStock,goSystem,goGuDingZiChan, goPlatformById} from "/@/views/boozsoft/layouts/LeftSider/sitebar/layouts/SiderGroup/funs";
+import router from "/@/router";
+import {useCounterStoreWidthOut} from "/@/store/modules/counter";
 
 function toGoPlatformById(id : any){
   // useCounterStoreWidthOut().setShowFooter(true)
