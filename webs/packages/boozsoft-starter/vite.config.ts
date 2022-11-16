@@ -16,7 +16,8 @@ export default defineConfig({
     outDir:'../../dist/main',
     rollupOptions:{
       external: [
-        "@tauri-apps/api/path"
+        "@tauri-apps/api/path",
+          "@tauri-apps/api/shell"
       ]
     }
   },
