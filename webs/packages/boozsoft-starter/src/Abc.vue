@@ -3,7 +3,7 @@ import { ref} from "vue";
 import { open } from '@tauri-apps/api/shell';
 window.tauriOpenWindow=open
 const  showApp=ref(false)
-if(window.__TAURI__!=null){
+if(window.__TAURI_POST_MESSAGE__!=null){
   showApp.value=true
 }
 </script>
