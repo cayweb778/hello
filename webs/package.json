@@ -27,7 +27,7 @@
     "devsystem::main": "pnpm start:main",
     "devsystem::system": "pnpm start:system",
     "build": "run-p build:*",
-    "build:initial:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm build",
+    "build:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm build",
     "build:desktop": "cd packages/boozsoft-desktop && pnpm build",
     "build:main": "cd packages/boozsoft-starter && pnpm build-only",
     "build:auth": "cd packages/boozsoft-auth && pnpm build",
