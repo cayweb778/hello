@@ -13,7 +13,12 @@ export default defineConfig({
     }
   },
   build:{
-    outDir:'../../dist/main'
+    outDir:'../../dist/main',
+    rollupOptions:{
+      external: [
+        "@tauri-apps/api/path"
+      ]
+    }
   },
 
   css: {
