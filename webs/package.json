@@ -11,7 +11,7 @@
     "initial:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm install",
     "initial:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm install",
     "initial:print": "cd packages/boozsoft-print && pnpm install",
-    "initial:zhongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm install",
+    "initial:zongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm install",
     "initial:modals": "cd packages/boozsoft-modals && pnpm install",
     "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",
     "start": "esno ./build/scripts/runapp.ts",
