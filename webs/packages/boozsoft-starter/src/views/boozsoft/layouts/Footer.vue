@@ -150,13 +150,14 @@ async function goMessage(){
 
 async function goPrint(){
   let useNcDataExport=useGlobalStoreWidthOut().getNcDataExport
-  debugger
   const data=await useNcDataExport(({To}) => To.Print, {})
   console.log(data)
 }
+import { appLocalDataDir } from '@tauri-apps/api/path';
 const outSystemBefore = async () => {
-  window.localStorage.clear()
-  router.push("/login");
+  console.log(await appLocalDataDir())
+  // window.localStorage.clear()
+  // router.push("/login");
   // const Document=await readDir('', { dir: BaseDirectory. Document});
   // const Download=await readDir('', { dir: BaseDirectory. Download, });
   // const Executable=await readDir('', { dir: BaseDirectory. Executable, });
