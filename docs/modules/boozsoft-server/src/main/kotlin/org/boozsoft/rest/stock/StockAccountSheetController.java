@@ -308,7 +308,7 @@ public class StockAccountSheetController {
                                 String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
                                 v.setBq2(bq2);
                                 v.setIcost2(it2);
-                                if("0.00".equals(it2)){
+                                if("0.00".equals(it2) || "0.00".equals(bq2)){
                                     v.setPrice2("0.00");
                                 }else{
                                     v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());
@@ -581,7 +581,7 @@ public class StockAccountSheetController {
                                 String it2 = new BigDecimal(stockKctzVo.getIcost2()).subtract( new BigDecimal(Objects.isNull(v.getIcost1())?"0.00":v.getIcost1())).setScale(2,BigDecimal.ROUND_UP).toString();
                                 v.setBq2(bq2);
                                 v.setIcost2(it2);
-                                if("0.00".equals(it2)){
+                                if("0.00".equals(it2) || "0.00".equals(bq2)){
                                     v.setPrice2("0.00");
                                 }else{
                                     v.setPrice2(new BigDecimal(it2).divide(new BigDecimal(bq2), 2, BigDecimal.ROUND_HALF_UP).toString());

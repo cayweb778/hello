@@ -108,4 +108,8 @@ public class StockTaking {
 	private List<StockTakingCunVo> stcList = new ArrayList<>();
 	@Transient
 	private List<StockTakingCunbatchVo> stcpList = new ArrayList<>();
+	@Transient
+	private String rkBcheck;
+	@Transient
+	private String ckBcheck;
 }

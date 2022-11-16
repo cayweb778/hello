@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.boozsoft.domain.entity.ReportEncodingRules;
 import org.boozsoft.domain.entity.stock.*;
@@ -147,7 +148,7 @@ public class StockTransfersController {
                 warehousing.setCwhcoderk(map.containsKey("cwhcoderk") ? map.get("cwhcoderk").toString() : null);  // 调入仓库
                 warehousing.setCdepcode(map.containsKey("cdepcode") ? map.get("cdepcode").toString() : null); // 部门
                 warehousing.setCpersoncode(map.containsKey("cpersoncode") ? map.get("cpersoncode").toString() : null); // 业务员
-                warehousing.setCmemo(map.containsKey("cmemo") ? map.get("cmemo").toString() : null);
+                warehousing.setCmemo(map.containsKey("cmemo") ? ObjectUtil.isEmpty(map.get("cmemo"))?null:map.get("cmemo").toString() : null);
                 warehousing.setBillStyle(type);
                 warehousing.setCwhcodeUser(map.containsKey("cwhcodeUser") ? map.get("cwhcodeUser").toString() : null);
                 if (bcheckUser != null) {
@@ -460,10 +461,12 @@ public class StockTransfersController {
                         sa.setDdate(v.getDdate());
                         sa.setCcode(ckCcode.get());
                         sa.setCmakerTime(LocalDateTime.now().toString());
-                        sa.setXsUnitId(v.getCunitid());
                         sa.setQuantity(sa.getBaseQuantity());
                         sa.setCwhcode(cwhcode.get());
                         sa.setCwhcode1(cwhcode.get());
+
+                        sa.setQuantity(v.getCnumber());
+                        sa.setXsUnitId(v.getCgUnitId());
                         sa.setBcheck("1");
                         sa.setBcheckTime(LocalDate.now().toString());
                         sa.setBcheckUser(userId);
@@ -501,8 +504,8 @@ public class StockTransfersController {
                         sw.setDdate(v.getDdate());
                         sw.setCcode(rkCcode.get());
                         sw.setCmakerTime(LocalDateTime.now().toString());
-                        sw.setCgUnitId(v.getCunitid());
-                        sw.setCnumber(sw.getBaseQuantity());
+                        sw.setCgUnitId(v.getXsUnitId());
+                        sw.setCnumber(v.getQuantity());
                         sw.setCwhcode(cwhcoderk.get());
                         sw.setCwhcode1(cwhcoderk.get());
 
@@ -732,8 +735,8 @@ public class StockTransfersController {
                 })
                 .map(a -> R.ok().setResult(a));
     }
-    @GetMapping("/auditCheck2/{ccode}/{rkBcheck}/{ckBcheck}/{flg}")
-    public Mono<R> auditCheck2(@PathVariable String ccode,@PathVariable String rkBcheck,@PathVariable String ckBcheck,@PathVariable String flg) {
+    @GetMapping("/auditCheck2/{ccode}/{rkBcheck}/{ckBcheck}/{flg}/{type}")
+    public Mono<R> auditCheck2(@PathVariable String ccode,@PathVariable String rkBcheck,@PathVariable String ckBcheck,@PathVariable String flg,@PathVariable String type) {
         // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
         rkBcheck=ObjectUtil.isEmpty(rkBcheck)?"0":rkBcheck;
         ckBcheck=ObjectUtil.isEmpty(ckBcheck)?"0":ckBcheck;
@@ -752,16 +755,23 @@ public class StockTransfersController {
                 .flatMap(st->{
                     //入库单 需要验证现存量
                     String ck = st.getCwhcode();
+                    if("sh".equals(type)){
+                        ck = st.getCwhcode();
+                    }else{
+                        ck = st.getCwhcoderk();
+                    }
+
                     String year = st.getIyear();
                     List<StockAccSheetVo> skl = new ArrayList<>();
                     List<StockVo> sv = new ArrayList<>();
                     List<StockTransfers> stsList1 = st.getStsList();
                     List<String> cinvodeList = stsList1.stream().map(v -> v.getCinvode()).collect(Collectors.toList());
+                    String finalCk = ck;
                     return stockRepository.findAllByXcl2(cinvodeList)
                             .collectList()
                             .flatMap(slist->{
                                 //期初
-                                return stockBeginBalanceRepository.findAllByIyearAndCkAndStockList(year,ck,cinvodeList)
+                                return stockBeginBalanceRepository.findAllByIyearAndCkAndStockList(year, finalCk,cinvodeList)
                                         .collectList()
                                         .map(wl->{
                                             skl.addAll(wl);
@@ -770,7 +780,7 @@ public class StockTransfersController {
                             })
                             .flatMap(slist->{
                                 //入库(其他 采购 领用)+到货单(采购到货单数量-累计入库数量)
-                                return warehousingsRepository.findAllByIyearAndCkAndList(year,ck,cinvodeList)
+                                return warehousingsRepository.findAllByIyearAndCkAndList(year,finalCk,cinvodeList)
                                         .filter(v-> {
                                             if(finalRkBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());
@@ -799,7 +809,7 @@ public class StockTransfersController {
                             })
                             .flatMap(slist->{
                                 //出库(销售 其他 领用)+销货单(销货单数量-累计销售出库数量)
-                                return saleousingsRepository.findAllByIyearAndCkAndList(year,ck,cinvodeList)
+                                return saleousingsRepository.findAllByIyearAndCkAndList(year,finalCk,cinvodeList)
                                         .filter(v-> {
                                             if(finalCkBcheck.equals("0")){
                                                 return  "1".equals(v.getBcheck());
@@ -890,7 +900,7 @@ public class StockTransfersController {
                                     }
 
                                     //现存量存在 并且不等于0的
-                                    if(subtract.compareTo(BigDecimal.ZERO) != 0){
+                                    if(subtract.compareTo(BigDecimal.ZERO) >= 0){
                                         StockVo stockVo = new StockVo();
                                         stockVo.setStockNum(value.get(0).getCinvode());
                                         stockVo.setXcl(subtract);

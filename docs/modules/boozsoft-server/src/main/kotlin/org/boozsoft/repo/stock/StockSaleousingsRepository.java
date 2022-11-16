@@ -63,14 +63,14 @@ public interface StockSaleousingsRepository extends ReactiveCrudRepository<Stock
             " left join stock s on sc.cinvode = s.stock_num " +
             " left join supplier sup on sup.id=sc.cvencode " +
             " left join customer cus on cus.id=sc.cvencode_js " +
-            " where s.stock_num =:ch and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('XSCKD', 'DBCKD', 'QTCKD', 'PKCKD', 'XTZHCKD','CLLYCKD','CKTZD')")
+            " where s.stock_num =:ch and sc.ddate BETWEEN :strDate AND :endDate and sc.bill_style in ('XSCKD','QTCKD','LYCKD','CKTZD')")
     Flux<StockKctzVo> findAllByCinvodeAndDate(String ch, String strDate, String endDate);
 
     @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +
             " sbb.cunitid_f1 as cunitidF1, sbb.cunitid_f2 as cunitidF2, sbb.cunitid as cunitid,  sbb.price, sbb.icost,  sbb.bcheck," +
             " sbb.cinvode, sbb.batch_id as batchid, sbb.base_quantity bq, sbb.sub_quantity1 bq1, sbb.dpdate, sbb.dvdate, sbb.sub_quantity2 bq2, '2' as types, sbb.isum_xiaohuo as isum " +
             " from stock_saleousings sbb  " +
-            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.bill_style in ('XSCKD', 'QTCKD','CLLYCKD','CKTZD')")
+            " where sbb.iyear=:iyear  and sbb.cwhcode=:ck and sbb.bill_style in ('XSCKD', 'QTCKD','LYCKD')")
     Flux<StockAccSheetVo> findAllByIyearAndCk(String iyear, String ck);
 
     @Query(" select sbb.iyear as iyear, sbb.cwhcode1, sbb.cwhcode2, sbb.cwhcode3, sbb.cwhcode4, sbb.cwhcode5, sbb.cwhcode6, sbb.cwhcode, " +

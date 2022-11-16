@@ -466,7 +466,7 @@
                 style="width: 82%;"
                 class="cgUnitId"
                 @keyup.enter="focusNext(record,'cgUnitId')"
-                @change="cgUnitIdChange(record);verifyRowXCLData(record)"
+                @change="cgUnitIdChange(record);verifyRowXCL(record)"
               >
                 <SelectOption v-for="tem in record.unitList" :value="tem.value">
                   {{ tem.title }}
@@ -777,8 +777,6 @@ async function contentSwitch(action) {
     pageParameter.searchConditon.value = ''
     searchList.value = []
     formItems.value.entryList = null
-
-    //获取数据后
 
   } else {
     let arr = []
@@ -1196,78 +1194,105 @@ const startDel = async () => {
 const startReview = async (b) => {
   let a = useUserStoreWidthOut().getUserInfo.id
   if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
-    if ((b && !hasBlank(formItems.value.bcheckUser)) || (!b && hasBlank(formItems.value.bcheckUser))){
-      createWarningModal({title: '温馨提示',content: '请勿重复操作！'})
-    }else {
-      //校验
-      compState.loading = true
-      let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
-      //  1 日期是否已结账
-      let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
-      console.log('入库单操作：1--->日期是否已结账-->'+temp)
-      if(temp>0){
-        compState.loading = false
-        return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
-      }
-      //  2 结账操作
-      let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
-      console.log('入库单操作：2--->结账操作-->'+jzMethod)
-      if(!hasBlank(jzMethod)){
-        compState.loading = false
-        return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
-      }
+    //校验
+    compState.loading = true
+    let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
+    //  1 日期是否已结账
+    let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
+    console.log('入库单操作：1--->日期是否已结账-->'+temp)
+    if(temp>0){
+      compState.loading = false
+      return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
+    }
+    //  2 结账操作
+    let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
+    console.log('入库单操作：2--->结账操作-->'+jzMethod)
+    if(!hasBlank(jzMethod)){
+      compState.loading = false
+      return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
+    }
 
-      //  3 盘点处理
-      let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
-      console.log('入库单操作：3--->盘点处理-->'+pd)
-      if(pd>0){
-        return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
-      }
+    //  3 盘点处理
+    let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
+    console.log('入库单操作：3--->盘点处理-->'+pd)
+    if(pd>0){
+      return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
+    }
 
+    let a = useUserStoreWidthOut().getUserInfo.id
+    if(b==true){
       //校验现存量
-      let isCheck = true
-      let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity)  && !hasBlank(it.price + ''))
-      list.forEach(v=>{
-        let num = verifyRowXCLData(v)
-        if(num < v.baseQuantity){
-          isCheck = false
-          return
-        }
+      let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+        ccode: formFuns.value.getFormValue().ccode,
+        rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+        ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+        flg:'XCL',
+        type:'sh',
       })
-      if(!isCheck){
+      console.log(b)
+      if(!b){
         compState.loading = false
         return message.error('现存量不足不能审核！！！')
       }
 
-      let a = useUserStoreWidthOut().getUserInfo.id
-      if(b==true){
-        await useRouteApi(audit,{schemaName: dynamicTenantId})({
-          ccode:  formFuns.value.getFormValue().ccode,
-          userId: a,
-          type: true,
-        })
-        formItems.value.bcheck = '1'
-      }else{
-        //弃审 4 校验下有单据是否存在审核
-        let bcheck= await useRouteApi(auditCheckBcheck, { schemaName: dynamicTenantId })({ccode:formItems.value.ccode})
-        console.log(bcheck)
-        if(bcheck == true){
-          compState.loading = false
-          return message.error('下游单据未弃审，请弃审下游单据后操作！')
-        }
-
-        await useRouteApi(auditBack,{schemaName: dynamicTenantId})({
-          ccode:  formFuns.value.getFormValue().ccode,
-          userId: a,
-          type: true,
-        })
-        formItems.value.bcheck = '0'
+      //校验可用量
+      let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+        ccode: formFuns.value.getFormValue().ccode,
+        rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+        ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+        flg:'KYL',
+        type:'sh',
+      })
+      console.log(kyl)
+      if(!kyl){
+        compState.loading = false
+        return message.error('可用量不足不能审核！！！')
       }
-      compState.loading = false
-      message.success("操作成功")
+
+      await useRouteApi(audit,{schemaName: dynamicTenantId})({
+        ccode:  formFuns.value.getFormValue().ccode,
+        userId: a,
+        type: true,
+      })
+      formItems.value.bcheck = '1'
+
+    }else{
+      //校验现存量
+      let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+        ccode: formFuns.value.getFormValue().ccode,
+        rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+        ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+        flg:'XCL',
+        type:'qs',
+      })
+      console.log(b)
+      if(!b){
+        compState.loading = false
+        return message.error('现存量不足不能审核！！！')
+      }
+      //校验可用量
+      let kyl = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
+        ccode: formFuns.value.getFormValue().ccode,
+        rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+        ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
+        flg:'KYL',
+        type:'qs',
+      })
+      console.log(kyl)
+      if(!kyl){
+        compState.loading = false
+        return message.error('可用量不足不能审核！！！')
+      }
+
+      await useRouteApi(auditBack,{schemaName: dynamicTenantId})({
+        ccode:  formFuns.value.getFormValue().ccode,
+        userId: a,
+        type: true,
+      })
+      formItems.value.bcheck = '0'
     }
-  } else {
-    if (hasBlank(a)) message.error('获取用户信息异常！')
+    compState.loading = false
+    message.success("操作成功")
   }
 }
 
@@ -1435,6 +1460,7 @@ async function saveData() {
       formItems.value.ccode = await generateCode(formItems.value.ddate)
       showAvailability(false)
     }
+    showAvailability(false)
     await useRouteApi(saveXhd, {schemaName: dynamicTenantId})(formItems.value)
     tempTaskDel(taskInfo.value?.id)
     /************** 记录操作日志 ****************/
@@ -1866,15 +1892,15 @@ const modalData = (o) => {
       thisEditObj.value['tempTwo'] = o[0].stockNum
       thisEditObj.value['cinvodeInfo'] = o[0]
       thisEditObj.value['xcl'] = o[0].xcl
-      console.log(o[0].xcl)
       focusNext(thisEditObj.value,thisEditType.value)
 
     } else if (thisEditType.value == 'batchId') {
       if (o.length == 1) {
-        getCurrPrice(thisEditObj.value)
         thisEditObj.value['tempTwelve'] = o[0].batchId
         thisEditObj.value['dpdate'] = o[0].dpdate
         thisEditObj.value['dvdate'] = o[0].dvdate
+        thisEditObj.value['tempCnumber'] = o[0].outQuantity
+        getCurrPrice(thisEditObj.value)
         focusNext(thisEditObj.value,thisEditType.value)
       } else {
         let arr = []
@@ -1882,12 +1908,12 @@ const modalData = (o) => {
         o.forEach((v)=>{
           let t = JsonTool.parseProxy(temp)
           t.key = uuid().replaceAll(/\-/g,'')
-          getCurrPrice(t)
           t['batchId'] = v.batchId
           t['dpdate'] = v.dpdate
           t['dvdate'] = v.dvdate
           // 调整数量
           t['baseQuantity'] = v.outQuantity
+          getCurrPrice(t)
           arr.push(tableDataChange(t, 'baseQuantity'))
         })
         let tables = getDataSource()
@@ -1930,7 +1956,7 @@ const getCurrPrice = async (record) => {
       record.price = getUnitNumberOrPrice(record,res[0].price,4)
       record.tempNine =  record.price
       //计算无税金额
-      record.icost = record.price * record.cnumber.toFixed(4)
+      record.icost = (record.price * record.cnumber).toFixed(4)
     }
   })
 }
@@ -2027,6 +2053,9 @@ const tableDataChange =  (r,c) => {
     r.itaxrate = parseFloat(r.itaxrate || 0 ).toFixed(4)
   }
   switch (c) {
+    case 'batchId':
+      slChange0(r)
+      break;
     case 'cwhcode':
       let cangkuInfo = ckListOptions.value.filter(it => it.id == r.cwhcode)[0]
       if (null != cangkuInfo) {
@@ -2080,6 +2109,14 @@ const tableDataChange =  (r,c) => {
       else{
         slChange0(r)
       }
+      //重置批号 无税单价 无税金额 生产日期 失效日期
+      r.batchId = ''
+      r.dpdate = ''
+      r.dvdate = ''
+      r.price = '0'
+      r.Nine = '0'
+      r.icost = '0'
+      r.tempTen = '0'
       break;
   }
   return r;
@@ -2119,7 +2156,6 @@ const slChange0 = (r) => {
       let conversionRate=list.filter(a=>a.id==r.cgUnitId)[0]?.conversionRate
       r.baseQuantity=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
       r.tempSix=r.baseQuantity
-
       let n:any = parseFloat(r.baseQuantity).toFixed(10)
       let isnum  = (r.unitInfo.unitType == '2')
       let conversionRate1:any=0
@@ -2164,7 +2200,6 @@ const chChange = (record) => {
 }
 const findByUnitList = async (record) => {
   let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
-  console.log(o)
   record.unitList=[]
   record.cinvodeInfo = o
   record.cinvodeName = o?.stockName
@@ -2457,7 +2492,6 @@ const exportExcelNow = async () => {
 
   //数量金额格式化调整
   let fdata = data.filter(v=> v.id != null)
-  console.log(fdata)
   fdata.forEach(v=>{
 
     v.cunitidF1 = formatCunitid(v.rate1,v.fnames1)
@@ -2843,6 +2877,14 @@ async function cgUnitIdChange(record) {
   record.cinvodeType= record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].ggxh
   record.bcheck1= record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].txm
   record.cgUnitId=record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].value
+  //重置批号 无税单价 无税金额 生产日期 失效日期
+  record.batchId = ''
+  record.dpdate = ''
+  record.dvdate = ''
+  record.price = '0'
+  record.Nine = '0'
+  record.icost = '0'
+  record.tempTen = '0'
   slChange0(record)
 }
 
@@ -2854,8 +2896,8 @@ async function verifyRowXCLData(r) {
     cinvode:r.cinvode,
     cwhcode:r.cwhcode,
     batchId:r.batchId,
-    dpdate:r.dpdate,
-    dvdate:r.dpdate,
+    dpdate:'',
+    dvdate:'',
     iyear:dynamicYear.value,
     rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
@@ -2864,6 +2906,41 @@ async function verifyRowXCLData(r) {
       r.xcl=parseFloat(t/conversionRate).toFixed(2)
     })
 }
+
+async function verifyRowXCL(r) {
+  // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'xcl',
+    cinvode:r.cinvode,
+    cwhcode:r.cwhcode,
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
+    .then((t)=>{
+      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+    })
+}
+
+// 按行校验存货现存量
+async function verifyRowKylData(r) {
+  // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'keyong',
+    cinvode:r.cinvode,
+    cwhcode:r.cwhcode,
+    batchId:r.batchId,
+    dpdate:'',
+    dvdate:'',
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
+    .then((t)=>{
+      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+    })
+}
+
 const cunitFormat = (list,id) => {
   if (null == list || hasBlank(id)) return id;
   let it = list.filter(it=>it.value == id)[0]

@@ -1156,6 +1156,7 @@ const toAudit = async () => {
       rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
       ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
       flg:'XCL',
+      type:'sh',
     })
     console.log(b)
     if(!b){
@@ -1169,6 +1170,7 @@ const toAudit = async () => {
       rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
       ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
       flg:'KYL',
+      type:'sh',
     })
     console.log(kyl)
     if(!kyl){
@@ -1232,6 +1234,7 @@ const toAuditBack = async () => {
       rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
       ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
       flg:'XCL',
+      type:'qs',
     })
     console.log(b)
     if(!b){
@@ -1244,6 +1247,7 @@ const toAuditBack = async () => {
       rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
       ckBcheck:dynamicTenant.value.target?.kcXsckCheck,
       flg:'KYL',
+      type:'qs',
     })
     console.log(kyl)
     if(!kyl){

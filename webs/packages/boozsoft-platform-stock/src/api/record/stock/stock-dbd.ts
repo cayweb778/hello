@@ -111,9 +111,9 @@ export const auditBack = defRouteApi( async (params)=>{
   }
 })
 
-export const auditCheck = defRouteApi( async ({ccode,rkBcheck,ckBcheck,flg})=>{
+export const auditCheck = defRouteApi( async ({ccode,rkBcheck,ckBcheck,flg,type})=>{
   return  {
-    url: '/stock/stockTransfers/auditCheck2/'+ccode+'/'+rkBcheck+'/'+ckBcheck+'/'+flg,
+    url: '/stock/stockTransfers/auditCheck2/'+ccode+'/'+rkBcheck+'/'+ckBcheck+'/'+flg+'/'+type,
     method: 'GET',
     timeout: 10000000,
   }

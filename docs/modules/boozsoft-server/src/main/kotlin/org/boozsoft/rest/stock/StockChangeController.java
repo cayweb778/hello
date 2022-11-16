@@ -621,7 +621,7 @@ public class StockChangeController {
                                         }
 
                                         //现存量存在 并且不等于0的
-                                        if(subtract.compareTo(BigDecimal.ZERO) != 0){
+                                        if(subtract.compareTo(BigDecimal.ZERO) >= 0){
                                             StockVo stockVo = new StockVo();
                                             stockVo.setStockNum(value.get(0).getCinvode());
                                             stockVo.setXcl(subtract);

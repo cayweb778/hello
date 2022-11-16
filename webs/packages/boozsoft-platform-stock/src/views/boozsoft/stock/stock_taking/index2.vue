@@ -519,6 +519,8 @@ async function reloadCurrentPage() {
 async function saveData(data: any) {
   data.cmaker = useUserStoreWidthOut().getUserInfo.id
   data.iyear = iyear.value
+  data.rkBcheck = dynamicTenant.value.target?.kcCgrkCheck
+  data.ckBcheck = dynamicTenant.value.target?.kcXsckCheck
   compState.loading = true
   let a
   if(data.isEdit==false){

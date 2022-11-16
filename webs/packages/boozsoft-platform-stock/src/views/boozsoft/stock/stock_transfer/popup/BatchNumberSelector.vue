@@ -56,7 +56,7 @@
               <InputNumber v-model:value="record.tempQuantity"
                            :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                            :parser="value => value.replace(/\$\s?|(,*)/g, '')"
-                           style="width: 82%;" size="small" :min="1" :max="record.availability"
+                           style="width: 82%;" size="small" :min="1" :max="record.xcl"
                            @keyup.enter="record.editQuantity = null;record.outQuantity=record.tempQuantity;"/>
               <CheckOutlined
                 @click="record.editQuantity = null;record.outQuantity=record.tempQuantity;"/>
@@ -105,11 +105,11 @@ const onSelectChange = (record, selected, obj, nativeEvent) => {
   // 检查日期
   // 判断数量是否符合标准
   if (new Date(record.dvdate)<new Date(busDate)) return createWarningModal({title: '温馨提示', content: '当前存货批号已经失效,不能选择！'});
-  const xN = parseFloat(rowInfo.value.quantity)
+  const xN = parseFloat(rowInfo.value.cnumber)
   let cN = 0;
   tableSelectedRowObjs.value = obj.filter(it => {
     // if (xN > 0 && cN >= xN) return false   // 精准限制数量
-    let tN = parseFloat(it.availability)
+    let tN = parseFloat(it.xcl)
     cN += tN
     return true;
   })
@@ -117,13 +117,13 @@ const onSelectChange = (record, selected, obj, nativeEvent) => {
   let yN = 0
   tableSelectedRowObjs.value.filter(it => tableSelectedRowKeys.value.indexOf(it.key) != -1).map(it => yN += parseFloat(it.outQuantity))
   selected
-    ? (len > 0 ? (record['outQuantity'] = cN >= xN ? xN - yN : record['availability']) : null)
+    ? (len > 0 ? (record['outQuantity'] = cN >= xN ? xN - yN : record['xcl']) : null)
     : (record['outQuantity'] = 0)
   tableSelectedRowKeys.value = tableSelectedRowObjs.value.map(it => it.key)
 }
 
 const onCheckChange = (record) => {
-  return {disabled: isLack.value || (parseFloat(record.availability) <= 0)}
+  return {disabled: isLack.value || (parseFloat(record.xcl) <= 0)}
 }
 
 const [registerTable, {getDataSource, setTableData,getColumns,setColumns}] = useTable({
@@ -152,7 +152,7 @@ const [registerTable, {getDataSource, setTableData,getColumns,setColumns}] = use
     },*/
     {
       title: `可用量`,
-      dataIndex: 'availability',
+      dataIndex: 'xcl',
       width: '100px',
     },
     {
@@ -215,7 +215,7 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (o) => {
   ckList.value = o.list
   reloadPage()
   setColumns(getColumns().map(it=>{
-    if (it.dataIndex == 'availability')
+    if (it.dataIndex == 'xcl')
       it.title = queryMode.value=='all'?'可用量':'现存量'
     return it;
   }))
@@ -237,9 +237,9 @@ async function reloadPage() {
 function reset() {
   let list = JsonTool.parseProxy(getDataSource())
   if (list.length > 0) {
-    rowInfo.value['quantity'] = JsonTool.parseProxy(lackNumber.value)
+    rowInfo.value['cnumber'] = JsonTool.parseProxy(lackNumber.value)
     tableSelectedRowObjs.value = list.map(it=>{
-      it.outQuantity = it.availability
+      it.outQuantity = it.xcl
       return it;
     })
     tableSelectedRowKeys.value = tableSelectedRowObjs.value.map(it=>it.key)
@@ -261,7 +261,7 @@ function openEdit(record){
 function conversionCalculation(list) {
   let c = rowInfo.value['cunitid']
   let x = rowInfo.value['xsUnitId']
-  let q = rowInfo.value['quantity']
+  let q = rowInfo.value['cnumber']
   let unitList = rowInfo.value['unitList']
   let arr = []
   let lack = 0
@@ -270,9 +270,9 @@ function conversionCalculation(list) {
     r['xsUnitId'] = x
     r['batchId'] = r['batchNumber']
     r['cwhcode'] = r['stockCangkuId']
-    r['availability'] = (c == x ? bNum : bNum / parseFloat((unitList[unitList.findIndex(it => it.value == x)]?.conversionRate))).toFixed(2)
-    if (parseFloat(r['availability']) > 0) {
-      lack += parseFloat(r['availability'])
+    r['xcl'] = (c == x ? bNum : bNum / parseFloat((unitList[unitList.findIndex(it => it.value == x)]?.conversionRate))).toFixed(2)
+    if (parseFloat(r['xcl']) > 0) {
+      lack += parseFloat(r['xcl'])
       arr.push(r)
     }
   }
@@ -289,7 +289,7 @@ async function handleOk() {
     let list =  tableSelectedRowObjs.value.filter(it=>parseFloat(it.outQuantity)>0)
     let sN =0
     list.map(it=>sN+=parseFloat(it.outQuantity))
-    if (sN != parseFloat(rowInfo.value.quantity)){
+    if (sN != parseFloat(rowInfo.value.cnumber)){
       createWarningModal({title: '温馨提示', content: '表头主数量与表体已选总出库量不想等！'});
     }else {
       emit('throwData',list)

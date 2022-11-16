@@ -216,6 +216,10 @@ public class StockTakingController {
     public Mono save(@RequestBody StockTaking object) {
         String time = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         AtomicReference<String> ccode = new AtomicReference<>("");
+        // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
+        String finalRkBcheck=ObjectUtil.isEmpty(object.getRkBcheck())?"0":object.getRkBcheck();
+        String finalCkBcheck=ObjectUtil.isEmpty(object.getCkBcheck())?"0":object.getCkBcheck();
+        //审核弃审前校验现存量
         return reportEncodingRulesRepository.findByFileType("3-14")
                 .flatMap(obj->{
                     return  stockTakingRepository.findMaxCode()
@@ -336,9 +340,6 @@ public class StockTakingController {
                         //查询实时现存量
                         List<StockAccSheetVo> skl = new ArrayList<>();
                         String ck= object.getCwhcode();
-                        // 参数设置：入库保存状态就是现存量 标志 1是查询所有 0 查询已审核
-                        String rkBcheck= "";
-                        String ckBcheck= "";
                         return stockRepository.findAll()
                                 .collectList()
                                 .flatMap(slist->{
@@ -354,10 +355,10 @@ public class StockTakingController {
                                     //入库
                                     return stockWarehousingsRepository.findAllByIyearAndCk(year,ck)
                                             .filter(v-> {
-                                                if(rkBcheck.equals("0")){
+                                                if(finalRkBcheck.equals("0")){
                                                     return  "1".equals(v.getBcheck());
                                                 }else{
-                                                    return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
+                                                    return  true;
                                                 }
                                             })
                                             .collectList()
@@ -370,10 +371,10 @@ public class StockTakingController {
                                     //出库
                                     return stockSaleousingsRepository.findAllByIyearAndCk(year,ck)
                                             .filter(v-> {
-                                                if(ckBcheck.equals("0")){
+                                                if(finalCkBcheck.equals("0")){
                                                     return  "1".equals(v.getBcheck());
                                                 }else{
-                                                    return  "0".equals(v.getBcheck()) || Objects.isNull(v.getBcheck());
+                                                    return  true;
                                                 }
                                             })
                                             .collectList()
