@@ -354,6 +354,7 @@ const userId = userStore.getUserInfo.id
 const accAuthList = ref([])
 
 const currentDynamicTenant = ref('')
+const dynamicTenant = ref(null)
 const {createWarningModal} = useMessage();
 
 const targetKeys: any = ref([])
@@ -402,6 +403,7 @@ const codeChange = async (value) => {
   if (count == 2) return false; // 防止重复打开
   // 赋值默认参数
   dbQueryJson.accountId = value.accId;
+  dbQueryJson.accountId = value.accId;
   defaultModel.constant.tenantId = value.accountMode
   defaultModel.constant.name = value.companyName
   defaultModel.variable.xsShXkd = value.target.xsShXkd
@@ -428,6 +430,7 @@ const codeChange = async (value) => {
   // 初始化基础参数
   queryModel.constant.tenantId = value.accountMode
   currentDynamicTenant.value = value.accountMode
+  dynamicTenant.value = value
   await reLifeQueryParameter(currentDynamicTenant.value,value.target.id)
   await reLifeEtcList(currentDynamicTenant.value)
   modelLoadIng.value = false
@@ -625,7 +628,7 @@ async function handleOk() {
   queryModel.variable.dateEnd = endRq
   //   modifyDbPersonData(queryModel);  记录个人习惯
   modelLoadIng.value = false
-  emit('query', {data: unref(queryModel),map: dataMap.value})
+  emit('query', {data: unref(queryModel),map: dataMap.value,dynamic: dynamicTenant.value})
   closeModal()
   return true
 }

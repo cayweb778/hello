@@ -5,7 +5,7 @@
         <div>
           <CopyOutlined style="color: white;font-size: 50px;"/>
         </div>
-        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'"/></div>
+        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'" :dataFun="accountPickerFuns"/></div>
       </div>
       <div></div>
       <div>
@@ -713,15 +713,16 @@ import {
   delRuKu,
   findBillByCondition,
   findBillCode,
-  findBillLastDate, generateCkd, generateThd,
+  findBillLastDate, generateCkd, generateThd, operateBeforeCheck,
   reviewRuKu,
-   saveXhdChange, saveXhdQc,
+  saveXhdChange, saveXhdQc,
   unAuditBefore,
 } from "/@/api/record/stock/stock-xhd";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {checkMonth, findStockPeriodInfoByYm} from "/@/api/record/group/im-unit";
 import {findAll as findAllPrice} from "/@/api/record/stock/stock-price";
 import {
+  getByStockBalanceBatchTask,
   getByStockBalanceTask, stockBalanceTaskDelByUserName, stockBalanceTaskEditNewTime,
   stockBalanceTaskSave, stockTaskDelById,
 } from "/@/api/record/stock/stock_balance";
@@ -805,18 +806,31 @@ const columnReload = async () => {
   dynamicFormModel.value = await GenerateDynamicColumn(dynamicTenantId.value,router.currentRoute?.value?.meta?.title,defaultRows()) || []
   formRowNum.value = Math.ceil((dynamicFormModel.value.filter(it=>it.isShow).length/4))-1
 }
+const accountPickerFuns = ref({
+  resetCoCode: (v) => {}
+})
 const route = useRoute();
 const routeData:any = route.query;
+let markLen = 0
 const pageReload = async () => {
   if(routeData.type!==undefined){
+    if (!hasBlank(routeData?.co) && dynamicTenant.value?.coCode !=routeData.co){
+      accountPickerFuns.value.resetCoCode(routeData.co)
+      return false
+    }
+    if (markLen!=0){
+      await contentSwitch('curr')
+      return false
+    }
     if(routeData.type=='add'){
       await startEdit('add')
     }else if(routeData.type=='edit'){
-      status.value=2
-      await contentSwitch('tail',routeData.ccode)
+      await contentSwitch('curr')
+      await startEdit('edit')
     }else{
-      await contentSwitch('tail',routeData.ccode)
+      await contentSwitch('tail')
     }
+    markLen++
   }else{
     await contentSwitch(formItems.value.id == null?'tail':'curr')
   }
@@ -843,7 +857,7 @@ async function contentSwitch(action) {
     type: pageParameter.type,
     iyear: dynamicYear.value || '2022',
     action: action,
-    curr: formFuns.value.getFormValue()?.ccode || '',
+    curr: route.query?.ccode != null?route.query.ccode:( formFuns.value.getFormValue()?.ccode || ''),
     bdocum: bdocumStyle.value,
   })
   if (null != res) {
@@ -1159,7 +1173,7 @@ const xclList = ref([])
 const startEdit = async (type) => {
   let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'结账',recordNum:''})
   if (!hasBlank(taskData)){
-    createWarningModal({title: '温馨提示',content: '操作员'+taskData.caozuoUnique+'正在对当前账套进行月末结账处理，不能进行单据新增业务操作，请销后再试！'})
+    createWarningModal({title: '温馨提示',content: '操作员'+taskData[0].username+'正在对当前账套进行月末结账处理，不能进行单据新增业务操作，请销后再试！'})
     return  false;
   }else if (ymPeriod.value){
     createWarningModal({title: '温馨提示',content: '当前业务日期期间已经结账，请重新选择单据日期！'})
@@ -1216,10 +1230,10 @@ const startEdit = async (type) => {
         tempTaskSave('变更')
       }else{
         // 任务不是当前操作员的
-        if(taskData.caozuoUnique!==useUserStoreWidthOut().getUserInfo.username){
-          return createWarningModal({ content: taskData.caozuoUnique+'正在变更期初销货单,不能同时进行操作！' });
+        if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return createWarningModal({ content: taskData[0].username+'正在变更期初销货单,不能同时进行操作！' });
         }else{
-          await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData.id)
+          await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
         }
       }
 
@@ -1241,12 +1255,13 @@ const startEdit = async (type) => {
       tempTaskSave('修改')
     }else{
       // 任务不是当前操作员的
-      if(taskData.caozuoUnique!==useUserStoreWidthOut().getUserInfo.username){
-        return createWarningModal({ content: taskData.caozuoUnique+'正在修改期初销货单,不能同时进行操作！' });
+      if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        return createWarningModal({ content: taskData[0].username+'正在修改期初销货单,不能同时进行操作！' });
       }else{
-        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData.id)
+        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
+    if (markLen != 0 && await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     status.value = 2
     let list = getDataSource()
     let dLen = list.length
@@ -1278,6 +1293,7 @@ const startDel = async () => {
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'期初销货单',method:'修改,审核,删除,整理现存量',recordNum:formItems.value.ccode})
     if(taskData==''){
+      if (await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       tempTaskSave('删除')
       createConfirm({
         iconType: 'warning',
@@ -1303,10 +1319,10 @@ const startDel = async () => {
       });
     }else{
       // 任务不是当前操作员的
-      if(taskData.caozuoUnique!==useUserStoreWidthOut().getUserInfo.username){
-        return createWarningModal({ content: taskData.caozuoUnique+'正在删除期初销货单,不能同时进行操作！' });
+      if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        return createWarningModal({ content: taskData[0].username+'正在删除期初销货单,不能同时进行操作！' });
       }else{
-        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData.id)
+        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
   }
@@ -1332,12 +1348,13 @@ const startReview = async (b) => {
         tempTaskSave(b?'审核':'弃审')
       }else{
         // 任务不是当前操作员的
-        if(taskData.caozuoUnique!==useUserStoreWidthOut().getUserInfo.username){
-          return createWarningModal({ content: '当前单据正在被操作员'+taskData.caozuoUnique+'正在进行'+taskData.method+'操作，任务互斥，请销后再试！' });
+        if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return createWarningModal({ content: '当前单据正在被操作员'+taskData[0].username+'正在进行'+taskData[0].method+'操作，任务互斥，请销后再试！' });
         }else{
-          await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData.id)
+          await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
         }
       }
+      if (await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       if (!b){ // 弃审前 检查
         let che = await useRouteApi(unAuditBefore, {schemaName: dynamicTenantId})({
           codes: [formItems.value.ccode],
@@ -2965,6 +2982,21 @@ const calculateTotal = () => {
   }
 }
 /*** 合计 ***/
+
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `单据已发生变化，请刷新当前单据！`})
+    if (code == 1){
+      formItems.value.ccode = {}
+      formFuns.value.setFormValue({})
+    }
+    return true
+  }
+  return false
+}
+
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色

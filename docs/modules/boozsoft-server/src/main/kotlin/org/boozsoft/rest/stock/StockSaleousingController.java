@@ -1209,7 +1209,7 @@ public class StockSaleousingController {
         if (map.keySet().size() == 0) return Mono.just(R.error());
         List<String> codes = JSON.parseArray(map.get("codes").toString(), String.class);
         String type = map.get("type").toString();
-        return saleousingRepository.findByCcodeIn(codes).collectList().zipWith(saleousingsRepository.findAllByBillStyleAndLineCodeInOrderByDdateAscCcodeAscLineIdAsc(type, codes).collectList()).flatMap(tips->
+        return saleousingRepository.findByCcodeIn(codes).collectList().zipWith(saleousingsRepository.findAllByBillStyleAndCcodeIn(type, codes).collectList()).flatMap(tips->
              saleousingRepository.deleteAll(tips.getT1()).thenReturn("").zipWith(saleousingsRepository.deleteAll(tips.getT2()).thenReturn("")).flatMap(res->Mono.just(R.ok()))
         );
     }
@@ -2962,6 +2962,30 @@ public class StockSaleousingController {
                     }
                     return Mono.just(list);
                 }).map(a->R.ok().setResult(a));
+    }
+
+
+    @PostMapping("operateBeforeCheck")
+    public Mono<R> operateBeforeCheck(@RequestBody Map map){
+        if (map.keySet().size() == 0)return Mono.just(R.ok(new ArrayList<>()));
+        List<String> parms =JSON.parseArray(map.get("parm").toString(),String.class);
+        return saleousingsRepository.findAllByCcodeIn(parms.stream().map(s->s.split("==")[0]).distinct().collect(Collectors.toList())).collectList().flatMap(list->{
+            int code = 0;
+            for (String pram : parms) {
+                String[] split = pram.split("==");
+                List<StockSaleousings> collect = list.stream().filter(it -> it.getCcode().equals(split[0])).collect(Collectors.toList());
+                if (collect.size() == 0){
+                    code = 1;// 已不存在
+                    break;
+                }else {
+                    if (collect.stream().filter(it-> (split[1].equals("1")?StrUtil.equals(it.getBcheck(),"1"):!StrUtil.equals(it.getBcheck(),"1"))).collect(Collectors.toList()).size() == 0){
+                        code = 2;// 审核状态发生变化
+                        break;
+                    }
+                }
+            }
+            return Mono.just(R.ok(code));
+        });
     }
 
 }

@@ -21,7 +21,7 @@
             <button
               type="button"
               class="ant-btn ant-btn-me"
-              @click="router.push({path: '/xs-arrive',query: {type:'add',ccode:''}})"
+              @click="toRouter(null,'add')"
             ><span>新增</span></button>
             <button
               type="button"
@@ -296,7 +296,7 @@
           </span>
             </template>
           <template #ccode="{ record }">
-            <a @click="toRouter(record,'list')">{{record.ccode}}</a>
+            <a @click="toRouter(record.ccode,'list')">{{record.ccode}}</a>
           </template>
             <template #icost="{ record }">{{ toThousandFilter(record.icost) }}</template>
             <template #baseQuantity="{ record }">{{ toThousandFilter(record.baseQuantity) }}</template>
@@ -337,7 +337,7 @@
           </span>
             </template>
           <template #ccode="{ record }">
-            <a @click="toRouter(record,'list')">{{record.ccode}}</a>
+            <a @click="toRouter(record.ccode,'list')">{{record.ccode}}</a>
           </template>
             <template #icost="{ record }">{{ toThousandFilter(record.icost) }}</template>
             <template #squantity="{ record }">{{ toThousandFilter(record.squantity) }}</template>
@@ -419,7 +419,7 @@ import {
   batchReviewCkd, delBatch,
   findOutByTypeList,
   reviewRuKu,
-  unAuditBefore
+  unAuditBefore,operateBeforeCheck
 } from "/@/api/record/stock/stock-xhd";
 import {DateTool, JsonTool} from "/@/api/task-api/tools/universal-tools";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
@@ -427,6 +427,10 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+import {
+  getByStockBalanceBatchTask,
+  stockBalanceTaskEditNewTime
+} from "/@/api/record/stock/stock_balance";
 const InputSearch = Input.Search
 const SelectOption = Select.Option
 const ARadioButton = ARadio.Button
@@ -441,7 +445,6 @@ const {
     createConfirm
 } = useMessage()
 
-const {closeCurrent} = useTabs(router);
 
 const formItems = ref({
   selectType: '1'
@@ -464,6 +467,7 @@ const companyName = ref('')
 const strDate = ref('')
 async function saveQuery(e) {
   let data = e.data
+  dynamicTenant.value = e.dynamic
   companyName.value = data.constant.name
   dynamicTenantId.value = data.constant.tenantId
   pageParameter.queryMark = data.constant.queryType
@@ -501,6 +505,7 @@ const replenishTrs = (list) =>{
 const typeFlag = ref('0')
 
 const dynamicTenantId = ref(getCurrentAccountName(true))
+const dynamicTenant = ref(null)
 
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
@@ -1937,6 +1942,7 @@ const startReview = async (b) => {
         } else if ((b && checkRow.value.filter(it => it.bcheck == '1').length > 0) || (!b && checkRow.value.filter(it => it.bcheck != '1').length > 0)) {
             createWarningModal({title: '温馨提示', content: `选中的${b ? '审核' : '弃审'}的单据中存在已${b ? '审核' : '弃审'}单据，请先排除！`})
         } else {
+          if(await operateBefore(checkRow.value)) return false;
           let codes = [...new Set(checkRow.value.map(it => it.ccode))]
           if (!b){ // 弃审前 检查
             let che = await useRouteApi(unAuditBefore, {schemaName: dynamicTenantId})({
@@ -1978,20 +1984,6 @@ const startReview = async (b) => {
             })
             message.success(`${b ? '审核' : '弃审'}成功！`)
             reloadTable()
-            /* if (b && res != null){
-                 message.success(`正在准备跳转查看销售出库单。。。`)
-                 // 获取下游单号 打开出库单查看
-                 let query = {}
-                 query['ccode'] = res.xyccode
-                 query['bdate'] = res.xyccodeDate
-                 // 去期初销货单页面
-                 setTimeout(()=>{
-                     router.push({
-                         path:'/kc-xsDepot',
-                         query: query,
-                     });
-                 },2000)
-             }*/
         }
     } else {
         if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -2004,30 +1996,63 @@ function codeToName(arr) {
 const startDel = async () => {
   if(checkRow.value.length == 0){
     createWarningModal({title: '温馨提示', content: `请选择要进行删除的单据！`})
-  } else if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+  } else if(await operateBefore(checkRow.value)){
+    return false;
+  }else if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
     createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
   } else {
-     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({code: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XHD'})
+     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({codes: JsonTool.json([...new Set(checkRow.value.map(it => it.ccode))]),type: 'QCXHD'})
      message.success('删除成功！')
      reloadTable()
   }
 }
-function editFun() {
+async function editFun() {
   if(checkRow.value.length !== 1){
     message.error("只能选择一条数据修改！")
     return false
   }
-  let data=checkRow.value[0].ccode
-  router.push({path: '/xs-arrive',query: {type:'edit',ccode:data}});
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
+    return false
+  }else {
+    let data=checkRow.value[0].ccode
+    await toRouter(data,'edit')
+  }
 }
-function toRouter(data,type) {
-  if(type=='list'){
-    if(parseFloat(data.baseQuantity)<0){
-      router.push({path: '/xs-return',query: {type:'info',ccode:data.ccode}});
+
+const operateBefore = async (rows) => {
+  // 检查操作单据是否锁定
+  let taskData= await useRouteApi(getByStockBalanceBatchTask, { schemaName: dynamicTenantId })({iyear:strDate.value,name:'期初销货单',method:'修改,审核,删除,整理现存量',recordNum: [...new Set(rows.map(it => it.ccode))].join()})
+  if(taskData!=''){
+    if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+      createWarningModal({ content: '列表单据正在被操作员'+taskData[0].username+'正在进行'+taskData[0].method+'操作，任务互斥，请销后再试！' });
+      return true
     }else{
-      router.push({path: '/xs-arrive',query: {type:'info',ccode:data.ccode}});
+      await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
     }
   }
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `列表单据已发生变化，请刷新当前列表！`})
+    return true
+  }
+  return false
+}
+const {closeToFullPaths,closeCurrent} = useTabs(router);
+async function toRouter(data,type) {
+  if (type=='list' && await operateBefore(checkRow.value))return false
+  await closeToFullPaths('/stock_sales_balance')
+  setTimeout(async ()=>{
+    if(type=='list'){
+      router.push({path: '/stock_sales_balance',query: {type:'info',ccode:data,co: dynamicTenant.value.coCode}});
+    }else if(type=='add'){
+      router.push({path: '/stock_sales_balance',query: {type:'add',ccode:'',co: dynamicTenant.coCode}})
+    }else if (type=='edit'){
+      router.push({path: '/stock_sales_balance',query: {type:'edit',ccode:data,co: dynamicTenant.value.coCode}});
+    }
+  },1000)
 }
 /*打印专区*/
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()

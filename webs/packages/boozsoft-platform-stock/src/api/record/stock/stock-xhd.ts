@@ -444,3 +444,11 @@ export const copyReceipt = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const operateBeforeCheck = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/saleousing/operateBeforeCheck',
+    method: 'POST',
+    params,
+  };
+});
+

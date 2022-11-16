@@ -21,7 +21,7 @@
             <button
               type="button"
               class="ant-btn ant-btn-me"
-              @click="router.push({path: '/xs-arrive',query: {type:'add',ccode:''}})"
+              @click="router.push({path: '/xs-arrive',query: {type:'add',ccode:'',co: dynamicTenant.coCode}})"
             ><span>新增</span></button>
             <button
               type="button"
@@ -436,7 +436,7 @@ import {cloneDeep} from "lodash-es";
 import {initDynamics as initDynamics1} from "./data1";
 import {
   batchReview, delBatch,
-  findOutByTypeList,
+  findOutByTypeList, operateBeforeCheck,
   reviewRuKu,
   unAuditBefore
 } from "/@/api/record/stock/stock-xhd";
@@ -2276,10 +2276,13 @@ function codeToName(arr) {
 const startDel = async () => {
   if(checkRow.value.length == 0){
     createWarningModal({title: '温馨提示', content: `请选择要进行删除的单据！`})
-  } else if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    return  false
+  }
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
     createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
   } else {
-     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({code: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XHD'})
+     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({codes: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XHD'})
      message.success('删除成功！')
      reloadTable()
   }
@@ -2289,29 +2292,34 @@ const cunitFormat = (list,id,k) => {
   let it = list.filter(it=>it.id == id)[0]
   return  null == it?id:it.label
 }
-function editFun() {
+
+async function editFun() {
   if(checkRow.value.length !== 1){
     message.error("只能选择一条数据修改！")
     return false
   }
-  let data=checkRow.value[0].ccode
-  router.push({path: '/xs-arrive',query: {type:'edit',ccode:data}});
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
+    return false
+  }else {
+    await toRouter(checkRow.value[0],'edit')
+  }
 }
 
 async function toRouter(data,type) {
-  if(type=='list'){
     if(parseFloat(data.baseQuantity)<0){
       await closeToFullPaths('/xs-return')
       setTimeout(()=>{
-        router.push({path: '/xs-return',query: {type:'info',ccode:data.ccode,co: dynamicTenant.value.coCode}});
+        router.push({path: '/xs-return',query: {type:type,ccode:data.ccode,co: dynamicTenant.value.coCode}});
       },1000)
     }else{
       await closeToFullPaths('/xs-arrive')
       setTimeout(()=>{
-        router.push({path: '/xs-arrive',query: {type:'info',ccode:data.ccode,co:  dynamicTenant.value.coCode}});
+        router.push({path: '/xs-arrive',query: {type:type,ccode:data.ccode,co:  dynamicTenant.value.coCode}});
       },1000)
     }
-  }
+
 }
 /*打印专区*/
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
@@ -2553,6 +2561,25 @@ async function tempTaskSave(method,ccode) {
     .then((a)=>{
       taskIds.value.push(...(new Set(a.map(it => it.id))))
     })
+}
+const operateBefore = async (rows) => {
+  // 检查操作单据是否锁定
+  let taskData= await useRouteApi(getByStockBalanceBatchTask, { schemaName: dynamicTenantId })({iyear:strDate.value,name:'销货单',method:'修改,审核,删除,整理现存量',recordNum: [...new Set(rows.map(it => it.ccode))].join()})
+  if(taskData!=''){
+    if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+      createWarningModal({ content: '列表单据正在被操作员'+taskData[0].username+'正在进行'+taskData[0].method+'操作，任务互斥，请销后再试！' });
+      return true
+    }else{
+      await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
+    }
+  }
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `列表单据已发生变化，请刷新当前列表！`})
+    return true
+  }
+  return false
 }
 </script>
 <style scoped lang="less">
