@@ -2,6 +2,7 @@
   "scripts": {
     "initial": " pnpm install && npm-run-all initial:*",
     "initial:main": "cd packages/boozsoft-starter && pnpm install",
+    "initial:ncpdfviewer": "cd packages/boozsoft-pdfviewer && pnpm install",
     "initial:docs": "cd packages/boozsoft-docs && pnpm install",
     "initial:cdn": "cd packages/boozsoft-cdn && pnpm install",
     "initial:auth": "cd packages/boozsoft-auth && pnpm install",
@@ -30,6 +31,7 @@
     "devsystem::system": "pnpm start:system",
     "build": "run-p build:*",
     "build:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm build",
+    "build:ncpdfviewer": "cd packages/boozsoft-pdfviewer && pnpm build",
     "build:print": "cd packages/boozsoft-print && pnpm build",
     "build:modals": "cd packages/boozsoft-modals && pnpm build",
     "build:desktop": "cd packages/boozsoft-desktop && pnpm build",
