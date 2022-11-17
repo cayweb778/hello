@@ -33,7 +33,7 @@ function abc(){
 if(props.wujieAttrs.socketAddr==null){
   showServerError.value=false
 }else{
-  abc()
+  // abc()
 
 }
 </script>

@@ -78,7 +78,7 @@ function ncPrint(){
 
   // Configure routing
   // 跳转到 缓存平台id 对应的平台
-  getCurrentPlatformIdCache() != null && await usePlatformsStoreWidthOut().goCurrentCachePlatform()
+  // getCurrentPlatformIdCache() != null && await usePlatformsStoreWidthOut().goCurrentCachePlatform()
 
   setupRouter(app);
 
