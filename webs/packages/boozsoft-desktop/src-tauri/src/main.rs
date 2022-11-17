@@ -175,7 +175,7 @@ fn goApp2(app: &AppHandle<Wry>) {
 }
 
 #[tauri::command]
-fn clearCache(window: Window) -> &'static str {
+fn clear_cache(window: Window) -> &'static str {
     window.close();
     if(!window.get_window("main_dy2").is_none()){
 
@@ -259,7 +259,7 @@ fn main() {
         })
 
         .invoke_handler(tauri::generate_handler![
-            clearCache,
+            clear_cache,
             generate,
             goApp,getCacheIpAddrApi,rest::print::get_printers_all,rest::print::printData]);
     app.run(tauri::generate_context!())
