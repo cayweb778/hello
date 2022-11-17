@@ -9,7 +9,6 @@ function loginDate(){
 }
 function ncPrint(){
     bus.$on("registerNcDataExport",function ({usePrint,useExcel}){
-        debugger
         // function useNcPrint(){
         //     useGlobalStoreWidthOut().setCurrentPluginName("ncPrint")
         //     return e

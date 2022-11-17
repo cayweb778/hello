@@ -6,13 +6,13 @@
     :key="`submenu-${item.path}`"
     popupClassName="app-top-menu-popup-hello"
   >
-    <Import
-      @reloadProjects="()=>{}"
-      @register="registerImportPage"
-    />
-    <ZcAuthorize
-      @register="registerAuthorizePage"
-    />
+<!--    <Import-->
+<!--      @reloadProjects="()=>{}"-->
+<!--      @register="registerImportPage"-->
+<!--    />-->
+<!--    <ZcAuthorize-->
+<!--      @register="registerAuthorizePage"-->
+<!--    />-->
     <CancelClose
       @register="registerCancelPage"
     />

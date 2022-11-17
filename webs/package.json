@@ -2,6 +2,7 @@
   "scripts": {
     "initial": " pnpm install && npm-run-all initial:*",
     "initial:main": "cd packages/boozsoft-starter && pnpm install",
+    "initial:excelviewer": "cd packages/boozsoft-excelviewer && pnpm install",
     "initial:ncpdfviewer": "cd packages/boozsoft-pdfviewer && pnpm install",
     "initial:docs": "cd packages/boozsoft-docs && pnpm install",
     "initial:cdn": "cd packages/boozsoft-cdn && pnpm install",
@@ -16,6 +17,7 @@
     "initial:modals": "cd packages/boozsoft-modals && pnpm install",
     "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",
     "start": "esno ./build/scripts/runapp.ts",
+    "start:excelviewer": "cd packages/boozsoft-excelviewer && pnpm dev",
     "start:desktop": "cd packages/boozsoft-desktop && pnpm tauri dev",
     "start:pdfviewer": "cd packages/boozsoft-pdfviewer && pnpm dev",
     "start:print": "cd packages/boozsoft-print && pnpm dev",
@@ -42,6 +44,7 @@
     "build:zongzhang": "cd packages/boozsoft-platform-zhongzhang && pnpm build",
     "build:stock": "cd packages/boozsoft-platform-stock && pnpm build",
     "build:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm build",
+    "build:excelviewer": "cd packages/boozsoft-excelviewer && pnpm build",
     "build:system": "cd packages/boozsoft-platform-system && pnpm build"
   },
   "devDependencies": {
