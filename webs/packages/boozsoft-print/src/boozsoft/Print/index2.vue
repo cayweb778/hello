@@ -15,7 +15,7 @@
           <Item>
             <div>当前环境: 图形化 可选:[函数，图形化,演示]</div>
           </Item>
-              <Divider style="border-color: #7cb305" dashed />
+          <Divider style="border-color: #7cb305" dashed/>
           <Item>
             <div>
               <Item>
@@ -24,28 +24,28 @@
             </div>
           </Item>
           <Item label="选择打印机">
-            <div> <Select :options="prints" :value="'Mi All in One Inkjet'"></Select></div>
+            <div><Select :options="prints" :value="'Mi All in One Inkjet'"></Select></div>
           </Item>
           <Item label="纸张类型">
-            <div> <Select :value="'A4'"></Select></div>
+            <div><Select :value="'A4'"></Select></div>
           </Item>
           <Item label="边距">
-            <div> <Select :value="'0'"></Select></div>
+            <div><Select :value="'0'"></Select></div>
           </Item>
           <Item label="页眉">
-            <div> <Select :value="'显示'"></Select></div>
+            <div><Select :value="'显示'"></Select></div>
           </Item>
           <Item label="页尾">
-            <div> <Select :value="'显示'"></Select></div>
+            <div><Select :value="'显示'"></Select></div>
           </Item>
-            <Item>
-              <Button @click="testPrint">开始打印</Button>
-              <Button @click="closePrint">取消打印</Button>
-            </Item>
+          <Item>
+            <Button @click="testPrint">开始打印</Button>
+            <Button @click="closePrint">取消打印</Button>
+          </Item>
         </Form>
       </div>
-      <div style="height:100vh;width:64vw;background:white">
-          <PdfViewer v-model="dataaaa"/>
+      <div style="height:100vh;width:100vw;background:white">
+        <PdfViewer :value="printBase64"/>
       </div>
     </div>
   </div>
@@ -53,26 +53,29 @@
 </template>
 <script setup>
 import {savePdf, useNewPrint, useNewPrintLang} from "/@/utils/boozsoft/print/print";
-import {Button, Select, Form,Divider} from "ant-design-vue";
+import {Button, Select, Form, Divider} from "ant-design-vue";
 import PdfViewer from './SubApps/PdfViewer/index.vue'
+
 const Item = Form.Item
+import {ref, computed} from 'vue'
 
 window.helloK = 'https://pdftron.s3.amazonaws.com/downloads/pl/demo-annotated.pdf'
-const dataaaa=ref()
+const dataaaa = ref()
+const printBase64=computed(()=>useNewPrintStoreWidthOut().getPrintBase64)
 function testPrint() {
-  dataaaa.value=useNewPrintLang({data: ['l', 'px', 'a4', true]}, (doc) => {
+  dataaaa.value = useNewPrintLang({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
-    let bbb=[]
-    for(let i=0;i<200;i++){
-      bbb.push(  ['结算客户编码', '结算客户名称', '期初余额', '应收金额', '收款金额', '期末余额'])
+    let bbb = []
+    for (let i = 0; i < 200; i++) {
+      bbb.push(['结算客户编码', '结算客户名称', '期初余额', '应收金额', '收款金额', '期末余额'])
     }
     doc.autoTable({
       head: [['客户应收余额表', '', '', '', '', ''],
         ['单位：', '', '期间：', '', '', ''],
         ['结算客户编码', '结算客户名称', '期初余额', '应收金额', '收款金额', '期末余额']
       ],
-      body:bbb,
-      styles:tableStyle(),
+      body: bbb,
+      styles: tableStyle(),
       // startY: 60,
       margin: {
         left: 30,
@@ -93,13 +96,14 @@ function testPrint() {
 
 }
 
-import {ref, onMounted} from 'vue'
 import {tableStyle} from "/@/utils/boozsoft/print/abc-print";
 import {useNewPrintStore, useNewPrintStoreWidthOut} from "/@/store/modules/new-print";
-function closePrint(){
+
+function closePrint() {
   window.$wujie.bus.$emit("closePluginShadow")
 }
-const prints = computed(()=>useNewPrintStoreWidthOut().getPrinters)
+
+const prints = computed(() => useNewPrintStoreWidthOut().getPrinters)
 
 
 </script>

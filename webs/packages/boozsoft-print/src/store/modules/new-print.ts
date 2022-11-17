@@ -10,12 +10,17 @@ function strToJson(str) {
 export const useNewPrintStore = defineStore({
   id: 'useNewPrintStore',
   state: (): any => ({
-      printers:[]
+      printers:[],
+      printBase64:null
   }),
   getters: {
-    getPrinters: (state) => state.printers
+    getPrinters: (state) => state.printers,
+    getPrintBase64: (state) => state.printBase64
   },
   actions: {
+    setPrintBase64(e){
+      this.printBase64=e
+    },
     async initPrint(){
      this.printers= strToJson(await window.top.__TAURI_INVOKE__("get_printers_all")).map(it => {
         return {

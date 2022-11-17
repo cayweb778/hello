@@ -8,10 +8,11 @@
 import Core from './core.vue'
 import Hello from './hello.vue'
 import {computed, ref,watch} from 'vue'
-const props=defineProps(['modelValue'])
-const modelValue=computed(()=>props['modelValue'])
+const props=defineProps(['value'])
+const modelValue=computed(()=>props['value'])
+const showCore=ref(false)
 watch(()=>modelValue.value,(e)=>{
  showCore.value=true
-})
-const showCore=ref(false)
+},{immediate:true})
+
 </script>

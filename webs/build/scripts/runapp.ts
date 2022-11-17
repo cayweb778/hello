@@ -14,6 +14,7 @@ const process = require("child_process");
     ]
     const arr2 = [
 
+        ["PDF查看器", "start:pdfviewer"],
         ["弹出框组件", "start:modals"],
         ["打印组件", "start:print"],
     ]

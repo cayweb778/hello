@@ -17,6 +17,7 @@
     "clean": "rm -rf **/node_modules **/yarn.lock node_modules yarn.lock",
     "start": "esno ./build/scripts/runapp.ts",
     "start:desktop": "cd packages/boozsoft-desktop && pnpm tauri dev",
+    "start:pdfviewer": "cd packages/boozsoft-pdfviewer && pnpm dev",
     "start:print": "cd packages/boozsoft-print && pnpm dev",
     "start:main": "cd packages/boozsoft-starter && pnpm dev",
     "start:modals": "cd packages/boozsoft-modals && pnpm dev",

@@ -1,5 +1,5 @@
 <template>
-  <div  v-show="getCurrentPluginName!==''" style="background:rgba(255,255,255,1);width:100vw;height:100vh;position:fixed;left:0;top:0;z-index:10000000000">
+  <div  v-show="getCurrentPluginName!==''" style="background:rgba(255,255,255,0.1);width:100vw;height:100vh;position:fixed;left:0;top:0;z-index:10000000000">
     <div v-show="getCurrentPluginName==='ncModals'"><modals></modals></div>
     <div v-show="getCurrentPluginName==='ncPrint'"><Print></Print></div>
     <Layout v-if="false">

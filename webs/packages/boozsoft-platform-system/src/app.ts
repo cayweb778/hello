@@ -43,11 +43,7 @@ function registerNcModal(){
   ncModal.dept=()=>import('./views/boozsoft/global/dept/index.vue')
 }
 
-function ncPrint(){
-  window.$wujie.event.$emit("registerNcDataExport",{
-    resetPlatformRouter
-  })
-}
+
 
 
 
