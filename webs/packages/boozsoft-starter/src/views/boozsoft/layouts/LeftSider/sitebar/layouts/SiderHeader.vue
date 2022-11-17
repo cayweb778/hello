@@ -7,6 +7,7 @@
     </svg>
     <span
       style="
+          cursor:pointer;
           margin-top: -24px;
           display: block;
           height:25px;

@@ -1,5 +1,5 @@
 <template>
-  <div  class="left_sider_main">
+  <div  class="left_sider_main" style="user-select:none;">
     <div class="booz_nav booz_nav1">
       <div style="top:-5px;right:0;height:30px;position: absolute">
       </div>
