@@ -14,6 +14,7 @@ const process = require("child_process");
     ]
     const arr2 = [
 
+        ["表单设计器", "start:boozsoft-table-design"],
         ["excel编辑器", "start:excelviewer"],
         ["PDF编辑器", "start:pdfviewer"],
         ["弹出框组件", "start:modals"],
