@@ -18,7 +18,7 @@ fetch(props.wujieAttrs.url).then(e=>{
 }).catch(e=>{
   showModuleError.value=true
 })
-const showServerError=ref(true)
+const showServerError=ref(false)
 function abc(){
   const socket=new WebSocket(props.wujieAttrs.socketAddr+'/pingServer')
   socket.onopen=()=>{

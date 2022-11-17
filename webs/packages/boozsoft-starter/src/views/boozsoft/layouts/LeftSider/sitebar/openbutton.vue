@@ -48,7 +48,6 @@ const tiao = ref()
 
 
 function openOptionPage() {
-  console.log("xxxxxx1")
   showPromissSiteBar.value = true
 }
 
@@ -65,7 +64,6 @@ provide('leftSiderFun', {
 
   showOpenButton() {
     showOption.value = false
-    console.log(88909999)
     // setTimeout(()=>{
     showPromissSiteBar.value = false
     // },1000)

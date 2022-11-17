@@ -31,6 +31,21 @@ function funasd() {
   hello.value = '127.0.0.1:3000'
 
 }
+import {appLocalDataDir} from '@tauri-apps/api/path';
+import {removeDir,BaseDirectory} from '@tauri-apps/api/fs';
+async function clearCache(){
+  // const aaa=await appLocalDataDir()
+  console.log("wujie")
+  await removeDir('', { dir: BaseDirectory.AppLocalData})
+      .then(()=>{
+
+        useDesktopStoreWidthOut().goApp(hello.value)
+      })
+      .finally(()=>{
+
+    useDesktopStoreWidthOut().goApp(hello.value)
+  });
+}
 </script>
 
 <template>
@@ -50,9 +65,7 @@ function funasd() {
     <div>
       <button>卸载</button>
     </div>
-    <div>
-      <button>清除缓存</button>
-    </div>
+
     <div>
       <button>财税达文档</button>
     </div>
@@ -61,6 +74,9 @@ function funasd() {
     </div>
     <div>
       <button>泊舟官网</button>
+    </div>
+    <div>
+      <button @click="clearCache">清除缓存</button>
     </div>
     <div>
       <button>完成</button>
