@@ -15,7 +15,6 @@ pub fn registerShort(app:&App<Wry>){
                 .title("财税达配置选项")
                 .inner_size(600.0, 360.0)
                 .always_on_top(true)
-                .hidden_title(true)
                 .decorations(false)
 
                 .build().unwrap();
