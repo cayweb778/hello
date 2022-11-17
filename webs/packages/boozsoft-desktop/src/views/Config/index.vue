@@ -39,19 +39,21 @@ function funasd() {
 
 }
 
-import {appLocalDataDir} from '@tauri-apps/api/path';
+import {appWindow} from '@tauri-apps/api/window';
+
 import {readDir, removeDir,BaseDirectory} from '@tauri-apps/api/fs';
 
 async function clearCache() {
-      await removeDir('org.boozsoft.ncapp', {dir: BaseDirectory.LocalData,recursive:true})
-          .then((e)=>{
-            useDesktopStoreWidthOut().goApp(hello.value)
-            abc11.value=e
-          })
-          .catch((e)=>{
-            useDesktopStoreWidthOut().goApp(hello.value)
-    abc11.value=e
-  })
+  await invoke("clearCache");
+      // await removeDir('org.boozsoft.ncapp', {dir: BaseDirectory.LocalData,recursive:true})
+      //     .then((e)=>{
+      //       useDesktopStoreWidthOut().goApp(hello.value)
+      //       abc11.value=e
+      //     })
+      //     .catch((e)=>{
+      //       useDesktopStoreWidthOut().goApp(hello.value)
+    // abc11.value=e
+  // })
   // console.log("dddd")
   // console.log(aaaa)
   // const aaa=await appLocalDataDir()
@@ -94,7 +96,7 @@ async function clearCache() {
 
       </Descriptions>
     </Space>
-      <div style="color:white;height:100px;width:100vw;background:black">111{{abc11}}222</div>
+      <div style="color:white;height:100px;width:100vw;background:black">调试信息:::{{abc11}}</div>
   </div>
 </template>
 
