@@ -20,7 +20,7 @@ function openAbc() {
 const addr = ref()
 const abc11 = ref()
 onMounted(async () => {
-  addr.value = JSON.parse(await invoke("getCacheIpAddrApi")).data;
+  addr.value = JSON.parse(await invoke("get_cache_ip_addr_api")).data;
   console.log(addr.value)
   hello.value = addr.value
   console.log(addr.value)
@@ -44,7 +44,7 @@ import {appWindow} from '@tauri-apps/api/window';
 import {readDir, removeDir,BaseDirectory} from '@tauri-apps/api/fs';
 
 async function clearCache() {
-  await invoke("clearCache");
+  await invoke("clear_cache");
       // await removeDir('org.boozsoft.ncapp', {dir: BaseDirectory.LocalData,recursive:true})
       //     .then((e)=>{
       //       useDesktopStoreWidthOut().goApp(hello.value)

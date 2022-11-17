@@ -4,28 +4,19 @@ windows_subsystem = "windows"
 )]
 
 use std::io::Write;
-use std::{fs, io, env, path::Path};
+use std::{env};
 use std::borrow::Borrow;
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 use std::collections::HashMap;
-use std::fmt::format;
-use std::fs::File;
 use std::io::Read;
 
-use tauri::{App, AppHandle, Builder, Manager, Wry,api};
-use printers::{get_printers, print};
-use serde_json::Result;
-use serde::{Deserialize, Serialize};
+use tauri::{ AppHandle , Manager, Wry,api};
 
-use tauri::{Menu, Submenu, MenuItem, command, window::WindowBuilder, Window, WindowUrl, RunEvent, GlobalShortcutManager};
-use tauri::{
-    api::dialog::ask, CustomMenuItem, WindowEvent,
-};
+use tauri::{Menu, Submenu,CustomMenuItem, MenuItem , Window, WindowUrl, };
 
-mod shortCar;
+mod short_car;
 mod rest;
-use rest::print;
-fn hasFilenameExist(path: &str, filename: &str) -> bool {
+fn has_filename_exist(path: &str, filename: &str) -> bool {
     let dir = std::fs::read_dir(path).unwrap();
     for x in dir {
         if let Ok(path) = x {
@@ -38,9 +29,8 @@ fn hasFilenameExist(path: &str, filename: &str) -> bool {
     return false;
 }
 
-fn getTxt(path: &str, filename: &str) -> String {
+fn get_txt(path: &str, filename: &str) -> String {
     let filepath = format!("{}/{}", path, filename);
-    println!("{}", filepath);
     let mut file = std::fs::File::open(filepath).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -49,7 +39,7 @@ fn getTxt(path: &str, filename: &str) -> String {
 
 
 
-fn usepathInfo() -> HashMap<String, String> {
+fn usepath_info() -> HashMap<String, String> {
     let ddd=api::path::data_dir().unwrap();
     let ccc=ddd.as_path().to_str().unwrap();
     let mut scores = HashMap::new();
@@ -58,17 +48,17 @@ fn usepathInfo() -> HashMap<String, String> {
     return scores;
 }
 
-fn getCacheIpAddr() -> HashMap<String, String> {
-    let pathInfo = usepathInfo();
-    let dirpath = pathInfo.get("dirpath").unwrap();
-    let filename = pathInfo.get("filename").unwrap();
-    let isExist = hasFilenameExist(&dirpath, &filename);
+fn get_cache_ip_addr() -> HashMap<String, String> {
+    let path_info = usepath_info();
+    let dirpath = path_info.get("dirpath").unwrap();
+    let filename = path_info.get("filename").unwrap();
+    let is_exist = has_filename_exist(&dirpath, &filename);
 
     let mut scores = HashMap::new();
-    if isExist {
+    if is_exist {
         scores.insert(String::from("code"), String::from("200"));
         scores.insert(String::from("msg"), String::from("成功获取"));
-        scores.insert(String::from("data"), String::from(getTxt(&dirpath, filename)));
+        scores.insert(String::from("data"), String::from(get_txt(&dirpath, filename)));
     } else {
         scores.insert(String::from("code"), String::from("404"));
         scores.insert(String::from("msg"), String::from("找不到"));
@@ -81,45 +71,30 @@ fn getCacheIpAddr() -> HashMap<String, String> {
 
 
 #[tauri::command]
-fn getCacheIpAddrApi() -> String {
-    let scores = getCacheIpAddr();
+fn get_cache_ip_addr_api() -> String {
+    let scores = get_cache_ip_addr();
     return serde_json::to_string(&scores).unwrap();
 }
 
 
-#[tauri::command]
-fn hello() -> bool {
-    let pathInfo = usepathInfo();
-    let dirpath = pathInfo.get("dirpath").unwrap();
-    let filename = pathInfo.get("filename").unwrap();
-    let isExist = hasFilenameExist(&dirpath, &filename);
-
-    if isExist {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 #[tauri::command]
 fn generate(name: String) -> String {
-    let pathInfo = usepathInfo();
-    let dirpath = pathInfo.get("dirpath").unwrap();
-    let filename = pathInfo.get("filename").unwrap();
-    println!("无敌：{}", dirpath);
-    println!("无敌：{}", filename);
+    let path_info = usepath_info();
+    let dirpath = path_info.get("dirpath").unwrap();
+    let filename = path_info.get("filename").unwrap();
     let mut file = std::fs::File::create(format!("{}/{}", dirpath, filename)).expect("create failed");
     file.write_all(name.as_bytes()).expect("write failed");
     return format!("{}::{}::{}", dirpath, filename, dirpath);
 }
 
 #[tauri::command]
-fn goApp(name: String, window: Window) -> String {
-    goApp2(window.app_handle().borrow());
+fn go_app(_name: String, window: Window) -> String {
+    go_app2(window.app_handle().borrow());
     return "".to_string();
-    // let pathInfo=usepathInfo();
-    // let dirpath =pathInfo.get("dirpath").unwrap();
-    // let filename=pathInfo.get("filename").unwrap();
+    // let path_info=usepath_info();
+    // let dirpath =path_info.get("dirpath").unwrap();
+    // let filename=path_info.get("filename").unwrap();
     // println!("无敌：{}",dirpath);
     // println!("无敌：{}",filename);
     // let mut file = std::fs::File::create(format!("{}{}",dirpath,filename)).expect("create failed");
@@ -130,44 +105,26 @@ fn goApp(name: String, window: Window) -> String {
 
 
 
-fn createNew() {
-    // let pathInfo=usepathInfo();
-    // let dirpath =pathInfo.get("dirpath").unwrap();
-    // let filename=pathInfo.get("filename").unwrap();
-    //
-    //
-    // let file = fs::File::open("tauri.conf.json")
-    //     .expect("file should open read only");
-    // let mut json: serde_json::Value = serde_json::from_reader(file)
-    //     .expect("file should be proper JSON");
-    // let mut t = serde_json::json!({});
-    // json["build"]["devPath"]= serde_json::Value::String("http://81.70.47.206:81".to_string());
-    // println!("{:?}",json);
-    // println!("{:?}",dirpath);
-    // let mut hello=File::create(format!("{}{}",dirpath,"abc.json")).unwrap();
-    // hello.write_all(json.to_string().as_bytes());
-}
+
 // register shortcut
 
-fn goApp2(app: &AppHandle<Wry>) {
-    println!("{}", "sdassaassada");
-    let cacheIpAddrMap = getCacheIpAddr();
-    let code = cacheIpAddrMap["code"].clone();
-    let url = cacheIpAddrMap["data"].clone();
+fn go_app2(app: &AppHandle<Wry>) {
+    let cache_ip_addr_map = get_cache_ip_addr();
+    let url = cache_ip_addr_map["data"].clone();
 
 
-    let windowUrl = format!("http://{}/nc/", url);
+    let window_url = format!("http://{}/nc/", url);
     let name;
-    if (app.get_window("main_dy1").is_none()) {
-        if (!app.get_window("main_dy2").is_none()) {
-            app.get_window("main_dy2").unwrap().close();
+    if app.get_window("main_dy1").is_none() {
+        if !app.get_window("main_dy2").is_none() {
+            app.get_window("main_dy2").unwrap().close().expect("dsadsad");
         }
         name = "main_dy1";
     } else {
         name = "main_dy2";
-        app.get_window("main_dy1").unwrap().close();
+        app.get_window("main_dy1").unwrap().close().expect("sadsadas");
     }
-    let win = tauri::window::WindowBuilder::new(app, name.to_string(), WindowUrl::App(windowUrl.into()))
+    let _win = tauri::window::WindowBuilder::new(app, name.to_string(), WindowUrl::App(window_url.into()))
         .title("财税达ERP-NC企业管理软件")
         .maximized(true)
         .inner_size(600.0, 400.0)
@@ -176,19 +133,18 @@ fn goApp2(app: &AppHandle<Wry>) {
 
 #[tauri::command]
 fn clear_cache(window: Window) -> &'static str {
-    window.close();
-    if(!window.get_window("main_dy2").is_none()){
+    window.close().expect("sdasdas");
+    if !window.get_window("main_dy2").is_none(){
 
-        window.get_window("main_dy2").unwrap().close();
+        window.get_window("main_dy2").unwrap().close().expect("hesa");
     }else{
 
-        window.get_window("main_dy1").unwrap().close();
+        window.get_window("main_dy1").unwrap().close().expect("hesa");
     }
     let aaaa=api::path::local_data_dir();
     let ccccc=format!("{}/org.boozsoft.ncapp",aaaa.unwrap().as_path().to_str().unwrap().to_string());
     println!("{}",ccccc);
-    let ccc=fs::remove_dir(ccccc);
-    goApp2(window.app_handle().borrow());
+    go_app2(window.app_handle().borrow());
     return "hello";
 }
 
@@ -219,7 +175,6 @@ fn main() {
     let menus = Menu::new()
         .add_submenu(submenu_gear)
         .add_submenu(submenu_customer);
-    fn abcsss() {}
     let app = tauri::Builder::default()
         // 添加菜单
         .menu(menus)
@@ -235,18 +190,16 @@ fn main() {
             _ => {}
         })
         .setup(|app| {
-            shortCar::registerShort(app);
+            short_car::register_short(app);
 
 
-            let cacheIpAddrMap = getCacheIpAddr();
-            let code = cacheIpAddrMap["code"].clone();
-            let url = cacheIpAddrMap["data"].clone();
-            let windowUrl = format!("http://{}/nc/", url);
+            let cache_ip_addr_map = get_cache_ip_addr();
+            let code = cache_ip_addr_map["code"].clone();
 
-            if (code == "200") {
-                goApp2(app.handle().borrow());
+            if code == "200" {
+                go_app2(app.handle().borrow());
             } else {
-                let win = tauri::window::WindowBuilder::new(app, "main".to_string(), WindowUrl::default())
+                let _win = tauri::window::WindowBuilder::new(app, "main".to_string(), WindowUrl::default())
                     .title("财税达ERP-NC企业管理软件")
                     .maximized(true)
                     .inner_size(600.0, 400.0)
@@ -261,7 +214,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             clear_cache,
             generate,
-            goApp,getCacheIpAddrApi,rest::print::get_printers_all,rest::print::printData]);
+            go_app,get_cache_ip_addr_api,rest::print::get_printers_all,rest::print::print_data]);
     app.run(tauri::generate_context!())
         .expect("error while running tauri application");
     // let mut bvvv=json.get_mut("build")

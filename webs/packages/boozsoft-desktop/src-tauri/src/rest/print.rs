@@ -1,5 +1,4 @@
-use printers::{get_printers, print};
-use serde_json::Result;
+use printers::{get_printers};
 
 #[tauri::command]
 pub fn get_printers_all() -> String {
@@ -9,14 +8,14 @@ pub fn get_printers_all() -> String {
     // let ddddd=serde_json::to_string(&printers);
     return aaaa.to_string();
 }
-use base64::{encode as base64encode, decode as base64Decode};
+use base64::{ decode as base64Decode};
 #[tauri::command]
-pub fn printData(contents:&str) -> String {
+pub fn print_data(contents:&str) -> String {
 
     let printers = get_printers();
 
-    let base64DecodeVec=base64Decode(contents).unwrap();
+    let base64_decode_vec=base64Decode(contents).unwrap();
 
-    printers::print(&printers[1],&base64DecodeVec);
+    printers::print(&printers[1],&base64_decode_vec);
     return "".to_string();
 }

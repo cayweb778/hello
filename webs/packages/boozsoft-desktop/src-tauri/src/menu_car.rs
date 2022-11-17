@@ -3,7 +3,7 @@ use tauri::{
     api::dialog::ask, CustomMenuItem,  WindowEvent,
 };
 
-pub fn getMenus() -> Menu {
+pub fn get_menus() -> Menu {
     let submenu_gear = Submenu::new(
         "Gear",
         Menu::new()

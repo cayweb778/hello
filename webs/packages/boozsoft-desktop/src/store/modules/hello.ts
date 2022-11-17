@@ -30,7 +30,7 @@ export const useDesktopStore = defineStore({
         async goApp(path){
             // this.setUrl(path+'/')
             await invoke("generate", {name: path});
-            await invoke("goApp", {name: path});
+            await invoke("go_app", {name: path});
             // router.push('/app')
         }
     }

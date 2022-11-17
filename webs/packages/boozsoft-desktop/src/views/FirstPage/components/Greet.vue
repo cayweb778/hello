@@ -25,7 +25,7 @@ const greetMsg = ref("");
 const name = ref("127.0.0.1:3000");
 
 async function getAddr() {
-  return await invoke("getCacheIpAddr", {name: name.value});
+  return await invoke("get_cache_ip_addr", {name: name.value});
 }
 const emit=defineEmits(['ok']);
 
