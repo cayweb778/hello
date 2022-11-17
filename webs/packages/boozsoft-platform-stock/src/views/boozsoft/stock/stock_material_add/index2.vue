@@ -682,7 +682,7 @@ const pageParameter = reactive({
     requirement: '',
     value: '',
   },
-  type: 'CLLYD'
+  type: 'LYCKD'
 })
 const summaryModel = ref({})
 const formItems: any = ref({})
@@ -752,12 +752,7 @@ async function contentSwitch(action) {
     curr: formFuns.value.getFormValue()?.ccode || '',  bdocum: titleValue.value
   })
   if (null != res) {
- /*   // 查看是否已经生成出库单
-    res.isGenerate = (await useRouteApi(delBefore, {schemaName: dynamicTenantId})({
-      type: 'CLLYD',
-      code: res.ccode
-    })) > 0
-    res.xsRate = dynamicTenant.value.target.xsRate || 0*/
+
     formItems.value = JsonTool.parseProxy(res)
     res.entryList = null
     formFuns.value.setFormValue(res)
@@ -2305,7 +2300,7 @@ const calculateTotal = () => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
       .acttd-right-d-search {
         .acttdrd-search-select {
           width: 120px;

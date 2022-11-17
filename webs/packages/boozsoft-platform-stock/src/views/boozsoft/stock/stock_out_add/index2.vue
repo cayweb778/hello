@@ -5,7 +5,7 @@
         <div>
           <CopyOutlined style="color: white;font-size: 50px;"/>
         </div>
-        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'"/></div>
+        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'" :dataFun="accountPickerFuns"/></div>
       </div>
       <div></div>
       <div>
@@ -664,7 +664,7 @@ import {
   delRuKu,
   findBillByCondition,
   findBillCode,
-  findBillLastDate, findbyStockSaleousingsCodeAndBillStyle, generateXhd,
+  findBillLastDate, findbyStockSaleousingsCodeAndBillStyle, generateXhd, operateBeforeCheck,
   reviewCkd,
   saveCkd,
   unAuditBefore,
@@ -770,16 +770,29 @@ const columnReload = async () => {
 }
 
 const routeData:any = route.query;
+const accountPickerFuns = ref({
+  resetCoCode: (v) => {}
+})
+let markLen = 0
 const pageReload = async () => {
   if(routeData.type!==undefined){
+    if (!hasBlank(routeData.co) && dynamicTenant.value?.coCode !=routeData.co){
+      accountPickerFuns.value.resetCoCode(routeData.co)
+      return false
+    }
+    if (markLen!=0){
+      await contentSwitch('curr')
+      return false
+    }
     if(routeData.type=='add'){
       await startEdit('add')
     }else if(routeData.type=='edit'){
       await contentSwitch('curr')
-      status.value=2
+      await startEdit('edit')
     }else{
       await contentSwitch('curr')
     }
+    markLen++
   }else{
     await contentSwitch(formItems.value.id == null?'tail':'curr')
   }
@@ -1182,6 +1195,7 @@ const startEdit = async (type) => {
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
+    if (markLen != 0 && await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     status.value = 2
     let list = getDataSource()
     let dLen = list.length
@@ -1219,6 +1233,7 @@ const startDel = async () => {
     if (await checkPeriod())return false;
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'销售出库单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       tempTaskSave('删除')
       createConfirm({
         iconType: 'warning',
@@ -1263,6 +1278,7 @@ const startReview = async (b) => {
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
+    if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
     if (!b){ // 弃审前 检查
       /* let taskData2= await useRouteApi(getByStockBalanceBatchTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'拣货装箱单,销售出库确认单',method:'新增',recordNum:formItems.value.ccode})
@@ -2717,6 +2733,19 @@ const openCodePage = () => {
 }
 /*** 条形码 ***/
 
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `单据已发生变化，请刷新当前单据！`})
+    if (code == 1){
+      formItems.value.ccode = {}
+      formFuns.value.setFormValue({})
+    }
+    return true
+  }
+  return false
+}
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色
@@ -2894,7 +2923,7 @@ const openCodePage = () => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
       .acttd-right-d-search {
         .acttdrd-search-select {
           width: 120px;

@@ -706,7 +706,7 @@ import {
   delRuKu,
   findBillByCondition,
   findBillCode,
-  findBillLastDate, findEntityAndDetailsByCcode, generateCkd, generateThd,
+  findBillLastDate, findEntityAndDetailsByCcode, generateCkd, generateThd, operateBeforeCheck,
   reviewRuKu,
   saveFp, saveXhdChange,
   unAuditBefore,
@@ -818,24 +818,29 @@ const columnReload = async () => {
 }
 const route = useRoute();
 const routeData:any = route.query;
+let markLen = 0
 const pageReload = async () => {
   if(routeData.type!==undefined){
     if (!hasBlank(routeData.co) && dynamicTenant.value?.coCode !=routeData.co){
       accountPickerFuns.value.resetCoCode(routeData.co)
       return false
     }
+    if (markLen!=0){
+      await contentSwitch('curr')
+      return false
+    }
     if(routeData.type=='add'){
       await startEdit('add')
     }else if(routeData.type=='edit'){
-      status.value=2
-      await contentSwitch('tail',routeData.ccode)
+      await contentSwitch('curr')
+      await startEdit('edit')
     }else{
-      await contentSwitch('tail',routeData.ccode)
+      await contentSwitch('curr')
     }
+    markLen++
   }else{
     await contentSwitch(formItems.value.id == null?'tail':'curr')
   }
-
 }
 
 async function reloadList() {
@@ -1247,6 +1252,7 @@ const startEdit = async (type) => {
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
+    if (markLen != 0 && await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     status.value = 2
     let list = getDataSource()
     let dLen = list.length
@@ -1276,6 +1282,7 @@ const startDel = async () => {
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'销售发票',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       tempTaskSave('删除')
       createConfirm({
         iconType: 'warning',
@@ -2747,6 +2754,19 @@ const openCodePage = () => {
   })
 }
 /*** 条形码 ***/
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `单据已发生变化，请刷新当前单据！`})
+    if (code == 1){
+      formItems.value.ccode = {}
+      formFuns.value.setFormValue({})
+    }
+    return true
+  }
+  return false
+}
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色
@@ -2927,7 +2947,7 @@ const openCodePage = () => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
       .acttd-right-d-search {
         .acttdrd-search-select {
           width: 120px;

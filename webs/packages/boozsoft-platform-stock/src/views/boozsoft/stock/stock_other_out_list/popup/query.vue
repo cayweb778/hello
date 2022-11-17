@@ -361,6 +361,7 @@ const userId = userStore.getUserInfo.id
 const accAuthList = ref([])
 
 const currentDynamicTenant = ref('')
+const dynamicTenant = ref(null)
 const {createWarningModal} = useMessage();
 
 const targetKeys: any = ref([])
@@ -434,6 +435,7 @@ const codeChange = async (value) => {
   // 初始化基础参数
   queryModel.constant.tenantId = value.accountMode
   currentDynamicTenant.value = value.accountMode
+  dynamicTenant.value = value
   await reLifeQueryParameter(currentDynamicTenant.value,value.target.id)
   await reLifeEtcList(currentDynamicTenant.value)
   modelLoadIng.value = false
@@ -630,7 +632,7 @@ async function handleOk() {
   queryModel.variable.dateEnd = endRq
   //   modifyDbPersonData(queryModel);  记录个人习惯
   modelLoadIng.value = false
-  emit('query', {data: unref(queryModel),map: dataMap.value})
+  emit('query', {data: unref(queryModel),map: dataMap.value,dynamic:dynamicTenant.value})
   closeModal()
   return true
 }

@@ -1762,7 +1762,7 @@ function toThousandFloat(num: any) {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
     }
   }
 }

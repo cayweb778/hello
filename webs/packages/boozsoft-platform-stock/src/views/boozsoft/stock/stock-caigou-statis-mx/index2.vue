@@ -10,7 +10,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">采购明细表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">采购明细表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ qijianText }}</span></div>
       </div>
       <div>
@@ -950,7 +950,7 @@ return n
   >div:nth-of-type(3){
     width: 40%;text-align: right;margin-right: 7px;
       >div:nth-of-type(2){
-        display: inline-flex;justify-content: space-between;margin-top: 14px;
+        display: inline-flex;justify-content: space-between;margin-top: 15px;
       }
   }
 }

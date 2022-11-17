@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <BarChartOutlined style="color: #0096c7;font-size: 50px;"/>
+          <BarChartOutlined />
         </div>
         <div>
           <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">{{getHomeOrSelectName(true)}}销售排行榜</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">{{getHomeOrSelectName(true)}}销售排行榜</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -61,14 +61,14 @@
           ><span>退出</span></button>
         </div>
         <div>
-          <div>
-            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;text-align-last: center;font-weight: bold;" class="special_select">
+          <div class="acttd-right-d-search">
+            <Select v-model:value="formItems.selectType" class="acttdrd-search-select">
               <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
             </Select>
             <InputSearch
               placeholder=""
-              style="width: 200px; border-radius: 4px;margin-right: 4px;"
+              class="acttdrd-search-input"
               @search="onSearch"
             />
           </div>
@@ -76,7 +76,7 @@
             <Button >
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
-            <Popover class="ant-btn-default" placement="bottom" v-model:visible="visible">
+            <Popover class="ant-btn-default"  v-model:visible="visible">
               <template #content>
                 <DynamicColumn :defaultData="initDynamics()[pageParameter.queryMark]" :dynamicData="dynamicColumnModel" :lanmuInfo="lanMuData" @reload="reloadColumns"/>
                 <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
@@ -179,6 +179,9 @@
             </TableSummary>
           </template>
         </BasicTable>
+      <div class="pagination-text" v-show="showPaginationText"  :style="{left:(windowWidth>totalColumnWidth?(totalColumnWidth-220):windowWidth-300)+'px'}">
+        {{`共 ${paginationNumber} 条记录 每页 200 条`}}
+      </div>
     </div>
     <Query @query="saveQuery" @register="registerQueryPage"/>
     <Excel @save="saveExcel" @register="registerExcelPage"/>
@@ -301,15 +304,20 @@ const dynamicTenantId = ref(getCurrentAccountName(true))
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
 const loadMark = ref(false)
+const showPaginationText = ref(false)
+const paginationNumber = ref(0)
 async function reloadTable(){
   loadMark.value = true
+  showPaginationText.value = false
   tableDataAll.value = await useRouteApi(findTongJi,{schemaName: dynamicTenantId})(ObjTool.dels(pageParameter,['selectList','selectClass']))
-  tableData.value =replenishTrs(tableDataAll.value)
+  tableData.value =replenishTrs(JsonTool.parseProxy(tableDataAll.value))
   await setPagination({
-    total: tableData.value.length
+    total: tableDataAll.value.length
   })
+  paginationNumber.value = tableDataAll.value.length
   calculateTotal()
   loadMark.value = false
+  showPaginationText.value = true
 }
 const jiList = ref([])
 const manyJiList = ref([])
@@ -466,10 +474,8 @@ const [registerTable, {
   bordered: true,
   showIndexColumn: true,
   pagination: {
-    pageSize: 50,
-    showSizeChanger: true,
-    pageSizeOptions: ['10', '25', '50', '100'],
-    showTotal: t => `总共${t}条数据`
+    pageSize: 200,
+    simple: true,
   },
   /*actionColumn: {
     width: 120,
@@ -1579,7 +1585,7 @@ function openNewPage(e,type) {
 }
 </script>
 <style scoped lang="less">
-@import "../../../../assets/styles/global-menu-index.less";
+@import '/@/assets/styles/global-menu-index.less';
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
@@ -1590,7 +1596,7 @@ function openNewPage(e,type) {
 }
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
-  font-size: 16px !important;
+  font-size: 14px !important;
   padding: 5px 8px !important;
   border-color: #aaaaaa !important;
   font-weight: 550;
@@ -1608,14 +1614,23 @@ function openNewPage(e,type) {
 
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px ;
   margin: 10px 10px 0px;
+  border-radius: 5px 5px 0 0;
 }
 
 .app-container:nth-of-type(2) {
   padding: 0px;
   margin: 0px 10px;
   background: #b4c8e3 !important;
+  position: relative;
+  .pagination-text{
+    position: absolute;
+    bottom: 6px;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
 }
 
 :deep(.ant-table-thead) th{
@@ -1653,7 +1668,7 @@ function openNewPage(e,type) {
   margin-bottom: 20px;
 }
 
-:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
 
@@ -1661,21 +1676,55 @@ function openNewPage(e,type) {
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;vertical-align: super;}
+    position: relative;
+    >div:nth-of-type(1){
+      top: 10px;
+      position: inherit;
+      width: 64px;display: inline-block;text-align: center;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
+    }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
-      >div:nth-of-type(2){margin-top: 14px;}
+      position: inherit;
+      display: inline-block;
+      top: 8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-      >div:nth-of-type(2){margin-top: 14px;}
+      >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
       >div:nth-of-type(2){
-        display: inline-flex;justify-content: space-between;margin-top: 14px;
+        display: inline-flex;justify-content: space-between;margin-top: 15px;
       }
+    .acttd-right-d-search {
+      .acttdrd-search-select {
+        width: 150px;
+        text-align: left;
+        :deep(.ant-select-selector) {
+          border-color: @Global-Border-Color;
+          border-radius: 2px 0 0 2px;
+        }
+      }
+
+      .acttdrd-search-input {
+        width: 150px;
+        :deep(.ant-input){
+          border-color: @Global-Border-Color;
+          border-left: none;
+        }
+        :deep(.ant-input-search-button){
+          border-color: #c9c9c9;
+          border-left: none;
+          //color: #0096c7;
+        }
+      }
+    }
   }
 }
 :deep(.ant-table-measure-row){

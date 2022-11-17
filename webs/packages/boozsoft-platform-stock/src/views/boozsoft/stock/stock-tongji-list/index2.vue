@@ -3,11 +3,10 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <BarChartOutlined style="color: #0096c7;font-size: 50px;"/>
+          <BarChartOutlined />
         </div>
         <div>
           <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
-
 <!--        <div>     <span style="color: black;margin-left: 1em;">{{getHomeOrSelectName(false)}}：</span>
             <Select v-if="pageParameter.queryMark != 4" style="width: 250px" v-model:value="pageParameter.selectClass" @change="selectChange">
               <SelectOption value="">全部</SelectOption>
@@ -27,7 +26,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">{{getHomeOrSelectName(true)}}销售统计表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">{{getHomeOrSelectName(true)}}销售统计表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -250,7 +249,7 @@ const {
 const {closeCurrent} = useTabs(router);
 
 const formItems = ref({
-  selectType: ''
+  selectType: 'cinvode'
 })
 
 const [registerQueryPage, {openModal: openQueryPage}] = useModal()
@@ -1565,7 +1564,7 @@ const calculateTotal = () => {
 
 </script>
 <style scoped lang="less">
-@import "../../../../assets/styles/global-menu-index.less";
+@import '/@/assets/styles/global-menu-index.less';
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
@@ -1587,7 +1586,7 @@ const calculateTotal = () => {
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
-  font-size: 12px !important;
+  font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #aaaaaa !important;
   height: 27px;
@@ -1597,8 +1596,9 @@ const calculateTotal = () => {
 
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px;
   margin: 10px 10px 0px;
+  border-radius: 5px 5px 0 0;
 }
 
 .app-container:nth-of-type(2) {
@@ -1642,50 +1642,56 @@ const calculateTotal = () => {
   width: 100%!important;
 }
 
-:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
 
 .lcr-theme-div{
-  border-radius: 5px 5px 0 0;
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
     position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;
-    position: absolute;
-      top: 15px;
-      left: 15px;
+    >div:nth-of-type(1){
+      width: 64px;display: inline-block;text-align: center;    top: 10px;
+      position: inherit;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
     }
     >div:nth-of-type(2){
-      width: calc( 100% - 64px);display: inline-block;
-      position: absolute;
-      top: 25px;
-      left: 75px;
+      width: calc(100% - 64px);
+      position: inherit;
+      display: inline-block;
+      top: -8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-      >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-      >div:nth-of-type(2){
-        display: inline-flex;justify-content: space-between;margin-top: 14px;
-
+    >div:nth-of-type(1){
+      .ant-btn-me {
+        color: #0096c7;
       }
+    }
+    >div:nth-of-type(2){
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
+    }
     .acttd-right-d-search {
       .acttdrd-search-select {
-        width: 120px;
-
+        width: 150px;
+        text-align: left;
         :deep(.ant-select-selector) {
+          border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;
-          height: 30px;
         }
       }
 
       .acttdrd-search-input {
-        width: 180px;
+        width: 150px;
         :deep(.ant-input){
           border-color: @Global-Border-Color;
           border-left: none;

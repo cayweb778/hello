@@ -5,7 +5,7 @@
         <div>
           <CopyOutlined style="color: white;font-size: 50px;"/>
         </div>
-        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'"/></div>
+        <div>  <AccountPicker theme="three" @reloadTable="dynamicAdReload" :readonly="status != 3?'':'false'"  :dataFun="accountPickerFuns"/></div>
       </div>
       <div></div>
       <div>
@@ -641,13 +641,23 @@ import {
   findBillCode,
   findBillLastDate,
   reviewRuKu,
-  saveXhd, saveCkdQt,
-  unAuditBefore, reviewXsdd, reviewCkd, findbyStockSaleousingsCodeAndBillStyle, copyReceipt,
+  saveXhd,
+  saveCkdQt,
+  unAuditBefore,
+  reviewXsdd,
+  reviewCkd,
+  findbyStockSaleousingsCodeAndBillStyle,
+  copyReceipt,
+  operateBeforeCheck,
 } from "/@/api/record/stock/stock-xhd";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import { findStockPeriodInfoByYm} from "/@/api/record/group/im-unit";
 import {findAll as findAllPrice} from "/@/api/record/stock/stock-price";
-import {updateStockCurrentRevision} from "/@/api/record/stock/stock_balance";
+import {
+  getByStockBalanceTask,
+  stockBalanceTaskEditNewTime, stockBalanceTaskSave, stockTaskDelById,
+  updateStockCurrentRevision
+} from "/@/api/record/stock/stock_balance";
 import {getCkPriceList} from "/@/api/record/stock/stock_cost";
 import dayjs from "dayjs";
 import {findAvailability} from "/@/api/record/stock/stock-currents";
@@ -732,8 +742,33 @@ const columnReload = async () => {
 }
 const route = useRoute();
 
+const routeData:any = route.query;
+const accountPickerFuns = ref({
+  resetCoCode: (v) => {}
+})
+let markLen = 0
 const pageReload = async () => {
-  await contentSwitch(formItems.value.id == null?'tail':'curr')
+  if(routeData.type!==undefined){
+    if (!hasBlank(routeData.co) && dynamicTenant.value?.coCode !=routeData.co){
+      accountPickerFuns.value.resetCoCode(routeData.co)
+      return false
+    }
+    if (markLen!=0){
+      await contentSwitch('curr')
+      return false
+    }
+    if(routeData.type=='add'){
+      await startEdit('add')
+    }else if(routeData.type=='edit'){
+      await contentSwitch('curr')
+      await startEdit('edit')
+    }else{
+      await contentSwitch('curr')
+    }
+    markLen++
+  }else{
+    await contentSwitch(formItems.value.id == null?'tail':'curr')
+  }
 }
 
 async function reloadList() {
@@ -754,7 +789,7 @@ async function contentSwitch(action) {
     type: pageParameter.type,
     iyear: dynamicYear.value || '2022',
     action: action,
-    curr: formFuns.value.getFormValue()?.ccode || '',  bdocum: titleValue.value
+    curr: route.query?.ccode != null?route.query.ccode:( formFuns.value.getFormValue()?.ccode || ''),  bdocum: titleValue.value,
   })
   if (null != res) {
     formItems.value = JsonTool.parseProxy(res)
@@ -1046,6 +1081,19 @@ const startEdit = async (type) => {
     }
     setTableData(list)
   } else {
+    // 任务
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'其他出库单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
+    if(taskData==''){
+      tempTaskSave('修改')
+    }else{
+      // 任务不是当前操作员的
+      if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        return createWarningModal({ content: taskData[0].username+'正在修改销售出库单,不能同时进行操作！' });
+      }else{
+        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
+      }
+    }
+    if (markLen != 0 && await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     status.value = 2
     // 以下单据只能修改 单价与金额
     biandong.value = ['调拨出库','盘亏出库','形态转换出库'].indexOf(formFuns.value.getFormValue()['bstyle'])!=-1
@@ -1076,27 +1124,43 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    createConfirm({
-      iconType: 'warning',
-      title: '期初销货单删除',
-      content: '您确定要进行其他出库单删除吗!',
-      onOk: async () => {
-        // 删除前校验
-        if (['调拨出库','盘亏出库','形态转换出库','组装出库','拆卸出库'].indexOf(formItems.value.bstyle)!=-1) {
-          createWarningModal({title: '温馨提示', content: '当前单据由来源“'+formFuns.value.getSelectMap()['method'].filter(it=>it.value==formItems.value.bstyle)[0]?.label+'”单据关联生成，不能直接删除单据，弃审来源单据时将自动删除！'})
-        } else {
-          if (formItems.value?.bdocumStyle=='1' ){
-            let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
-            if (!await stockCheck(JsonTool.parseProxy(list)))return false;
+    if (await checkPeriod())return false;
+    let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'销售出库单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
+    if(taskData==''){
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
+      tempTaskSave('删除')
+      createConfirm({
+        iconType: 'warning',
+        title: '其他出库单删除',
+        content: '您确定要进行其他出库单删除吗!',
+        onOk: async () => {
+          // 删除前校验
+          if (['调拨出库','盘亏出库','形态转换出库','组装出库','拆卸出库'].indexOf(formItems.value.bstyle)!=-1) {
+            createWarningModal({title: '温馨提示', content: '当前单据由来源“'+formFuns.value.getSelectMap()['method'].filter(it=>it.value==formItems.value.bstyle)[0]?.label+'”单据关联生成，不能直接删除单据，弃审来源单据时将自动删除！'})
+          } else {
+            if (formItems.value?.bdocumStyle=='1' ){
+              let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
+              if (!await stockCheck(JsonTool.parseProxy(list)))return false;
+            }
+            await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
+            message.success('删除成功！')
+            tempTaskDel()
+            writeLog('删除',formItems.value,null)
+            formItems.value.id = ''
+            await contentSwitch('tail')
           }
-          await useRouteApi(delRuKu, {schemaName: dynamicTenantId})({id: formItems.value.id})
-          message.success('删除成功！')
-          writeLog('删除',formItems.value,null)
-          formItems.value.id = ''
-          await contentSwitch('tail')
         }
+      });
+    }else{
+      // 任务不是当前操作员的
+      if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        return createWarningModal({ content: taskData[0].username+'正在修改销售出库单,不能同时进行操作！' });
+      }else{
+        await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
-    });
+    }
+
+
   }
 }
 
@@ -1106,6 +1170,19 @@ const startReview = async (b) => {
     if ((b && !hasBlank(formItems.value.bcheckUser)) || (!b && hasBlank(formItems.value.bcheckUser))){
       createWarningModal({title: '温馨提示',content: '请勿重复操作！'})
     }else {
+      let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'其他出库单',method:'修改,审核,弃审,删除',recordNum:formItems.value.ccode})
+      if(taskData==''){
+        tempTaskSave(b?'审核':'弃审')
+      }else{
+        // 任务不是当前操作员的
+        if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          return createWarningModal({ content: taskData[0].username+'正在操作销售出库单,不能同时进行操作！' });
+        }else{
+          await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
+        }
+      }
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
+
       let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
       if (!b){ // 弃审红字 校验现存量
         if (formItems.value?.bdocumStyle=='1' && (!await stockCheck(JsonTool.parseProxy(list))))return false;
@@ -1334,6 +1411,7 @@ async function saveData() {
     }
     await useRouteApi(saveCkdQt, {schemaName: dynamicTenantId})(formItems.value)
     message.success('保存成功！')
+    tempTaskDel()
     writeLog(formItems.value?.id == null?'新增':'修改',formItems.value,null)
     await pageReload()
     status.value = 3
@@ -1353,17 +1431,15 @@ async function editStockCurrentRevison(map) {
 }
 
 async function giveUp() {
-  formFuns.value.setFormValue({})
-  setTableData([])
   if (status.value == 1) {
-    await contentSwitch('first')
+    await contentSwitch('tail')
     showAvailability(false)
   } else if (status.value == 2) {
     await contentSwitch('curr')
+    tempTaskDel()
   }
   tableSelectedRowKeys.value = []
   status.value = 3
-  biandong.value = false
 }
 
 const loadPage = (e) => {
@@ -2290,6 +2366,53 @@ const openCodePage = () => {
   })
 }
 /*** 条形码 ***/
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `单据已发生变化，请刷新当前单据！`})
+    if (code == 1){
+      formItems.value.ccode = {}
+      formFuns.value.setFormValue({})
+    }
+    return true
+  }
+  return false
+}
+const taskIds = ref([])
+async function tempTaskDel() {
+  if(!hasBlank(taskIds.value)){
+    taskIds.value.filter(id=>useRouteApi(stockTaskDelById, { schemaName: dynamicTenantId })(id)
+      .then((a)=>{taskIds.value=taskIds.value.filter(s=>s != id)}))
+  }
+}
+
+async function tempTaskSave(method) {
+  await useRouteApi(stockBalanceTaskSave, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'其他出库单',method:method,recordNum:formItems.value.ccode})
+    .then((a)=>{
+      taskIds.value.push(a.id)
+    })
+}
+/**
+ * 检查当前账套业务期间 是否已经结账 或者 是否正在结账
+ */
+async function checkPeriod(){
+  if (ymPeriod.value){
+    createWarningModal({title: "温馨提示",content: '当前业务期间已结账，不能进行新增单据操作！'})
+    return true;
+  }
+  let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'结账',recordNum:''})
+  if (!hasBlank(taskData)){
+    createWarningModal({title: '温馨提示',content: '操作员'+taskData.caozuoUnique+'正在对当前账套进行月末结账处理，不能进行对单据业务操作，请销后再试！'})
+    return  true;
+  }
+  taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'盘点单',method:'盘点',recordNum:formItems.value.cwhcode})
+  if(taskData!=''){
+    createWarningModal({ content:`操作员${ taskData[0].username}正在对当前仓库进行盘点处理，不能进行单据新增操作，请销后再试！` });
+    return true
+  }
+  return false
+}
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色
@@ -2485,7 +2608,7 @@ const openCodePage = () => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
       .acttd-right-d-search {
         .acttdrd-search-select {
           width: 120px;

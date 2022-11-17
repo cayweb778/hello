@@ -2407,11 +2407,12 @@ const calculateTotal = (t) => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
     }
     .acttd-right-d-search {
       .acttdrd-search-select {
-
+        width: 150px;
+        text-align: left;
         :deep(.ant-select-selector) {
           border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;

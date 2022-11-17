@@ -158,7 +158,7 @@ export const menus = [
   createPlatformMenu({ id: useId(155), path: '/kc-out-qtDepot-list', component: '/boozsoft/stock/stock_other_out_list/index', componentName:'QtChuKuDanList', parentId: useId(232), name: '其他出库单列表' }),
   createPlatformMenu({ id: useId(156), path: '/kc-out-material-list', component: '/boozsoft/stock/stock-clly-list/index', componentName:'CllyList', parentId: useId(232), name: '领用出库单列表' }),
 
-  createPlatformMenu({ id: useId(139), path: '/kc-Jgzx-list', component: '/boozsoft/stock/stock-jhzx-list/index', componentName:'JhzxList', parentId: useId(237), name: '拣货装箱列表' }),
+  createPlatformMenu({ id: useId(139), path: '/kc-Jgzx-list', component: '/boozsoft/stock/stock-jhzx-list/index', componentName:'JhzxList', parentId: useId(237), name: '拣货装箱单列表' }),
   createPlatformMenu({ id: useId(158), path: '/stock-assem-assemble-list', component: '/boozsoft/stock/stock-assem-assemble-list/index', componentName:'stockAssemAssembleList', parentId: useId(237), name: '组装拆卸单列表' }),
 
   createPlatformMenu({ id: useId(160), path: '/kc-xclQuery', component: '/boozsoft/stock/stock-kc-xcl/index', componentName:'StockKcXcl', parentId: useId(236), name: '存货现存量查询' }),

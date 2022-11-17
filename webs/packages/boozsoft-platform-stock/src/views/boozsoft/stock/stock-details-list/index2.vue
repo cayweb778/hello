@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <BarChartOutlined style="color: #0096c7;font-size: 50px;position: relative;top: 15px;"/>
+          <BarChartOutlined />
         </div>
         <div>
           <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">销售明细表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">销售明细表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">日期：{{qijianText}}</span></div>
       </div>
       <div>
@@ -55,14 +55,14 @@
           ><span>退出</span></button>
         </div>
         <div>
-          <div>
-            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;text-align-last: center;font-weight: bold;" class="special_select">
+          <div class="acttd-right-d-search">
+            <Select v-model:value="formItems.selectType" class="acttdrd-search-select">
               <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
             </Select>
             <InputSearch
               placeholder=""
-              style="width: 200px; border-radius: 4px;margin-right: 4px;"
+              class="acttdrd-search-input"
               @search="onSearch"
             />
           </div>
@@ -150,7 +150,7 @@
             </TableSummary>
           </template>
         </BasicTable>
-        <div class="pagination-text" v-show="showPaginationText">
+        <div class="pagination-text" v-show="showPaginationText"   :style="{left:(windowWidth>totalColumnWidth?(totalColumnWidth-220):windowWidth-300)+'px'}">
           {{`共 ${paginationNumber} 条记录 每页 200 条`}}
         </div>
     </div>
@@ -200,12 +200,16 @@ import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/Dyn
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 /**********************汇总栏目设置**********************/
 import {
- findMingXi,
+  findMingXi, operateBeforeCheck,
 } from "/@/api/record/stock/stock-xhd";
 import {findAll as findAllJiLang, findUnitInfoList} from "/@/api/record/system/unit-mea";
 import {JsonTool, ObjTool} from "/@/api/task-api/tools/universal-tools";
 import {useRoute} from "vue-router";
 import {findStockCaiGouList} from "/@/api/record/stock/stock-caigou";
+import {
+  getByStockBalanceBatchTask,
+  stockBalanceTaskEditNewTime
+} from "/@/api/record/stock/stock_balance";
 const TableSummary = ATable.Summary
 const TableSummaryRow = TableSummary.Row
 const TableSummaryCell = TableSummary.Cell
@@ -221,7 +225,6 @@ const {
     createConfirm
 } = useMessage()
 
-const {closeCurrent} = useTabs(router);
 
 const formItems = ref({
   selectType: '1'
@@ -980,18 +983,36 @@ const calculateTotal = () => {
   }
 }
 /*** 合计 ***/
-function toRouter(data,type) {
+
+const {closeCurrent,closeToFullPaths} = useTabs(router);
+async function toRouter(data,type) {
+  if (type=='list' && await operateBefore(checkRow.value))return false
   if(type=='list'){
     if(parseFloat(data.baseQuantity)<0){
-      router.push({path: '/xs-return',query: {type:'info',ccode:data.ccode}});
+      await closeToFullPaths('/xs-return')
+      setTimeout(()=>{
+        router.push({path: 'xs-return',query: {type:type,ccode:data.ccode,co: dynamicTenant.value.coCode}});
+      },1000)
     }else{
-      router.push({path: '/xs-arrive',query: {type:'info',ccode:data.ccode}});
+      await closeToFullPaths('/xs-arrive')
+      setTimeout(()=>{
+        router.push({path: 'xs-arrive',query: {type:type,ccode:data.ccode,co: dynamicTenant.value.coCode}});
+      },1000)
     }
   }
 }
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `列表单据已发生变化，请刷新当前列表！`})
+    return true
+  }
+  return false
+}
 </script>
 <style scoped lang="less">
-@import "../../../../assets/styles/global-menu-index.less";
+@import '/@/assets/styles/global-menu-index.less';
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
@@ -1011,7 +1032,7 @@ function toRouter(data,type) {
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
-  font-size: 12px !important;
+  font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #cccccc !important;
   color: black;
@@ -1028,8 +1049,9 @@ function toRouter(data,type) {
 
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px ;
   margin: 10px 10px 0px;
+  border-radius: 5px 5px 0 0;
 }
 
 .app-container:nth-of-type(2) {
@@ -1040,7 +1062,6 @@ function toRouter(data,type) {
   .pagination-text{
     position: absolute;
     bottom: 6px;
-    right: 10%;
     font-size: 13px;
     color: black;
     z-index: 99999999;
@@ -1083,7 +1104,7 @@ function toRouter(data,type) {
   margin-bottom: 20px;
 }
 
-:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
 
@@ -1091,21 +1112,59 @@ function toRouter(data,type) {
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;vertical-align: super;}
+    position: relative;
+    >div:nth-of-type(1){
+      width: 64px;display: inline-block;text-align: center;    top: 10px;
+      position: inherit;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
+    }
     >div:nth-of-type(2){
-      width: calc( 100% - 64px);display: inline-block;
-      >div:nth-of-type(2){margin-top: 14px;}
+      width: calc(100% - 64px);
+      position: inherit;
+      display: inline-block;
+      top: -8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-      >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-      >div:nth-of-type(2){
-        display: inline-flex;justify-content: space-between;margin-top: 14px;
+    >div:nth-of-type(1){
+      .ant-btn-me {
+        color: #0096c7;
       }
+    }
+    >div:nth-of-type(2){
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
+    }
+    .acttd-right-d-search {
+      .acttdrd-search-select {
+        width: 150px;
+        text-align: left;
+        :deep(.ant-select-selector) {
+          border-color: @Global-Border-Color;
+          border-radius: 2px 0 0 2px;
+        }
+      }
+
+      .acttdrd-search-input {
+        width: 150px;
+        :deep(.ant-input){
+          border-color: @Global-Border-Color;
+          border-left: none;
+        }
+        :deep(.ant-input-search-button){
+          border-color: #c9c9c9;
+          border-left: none;
+          //color: #0096c7;
+        }
+      }
+    }
   }
 }
 :deep(.ant-table-measure-row){

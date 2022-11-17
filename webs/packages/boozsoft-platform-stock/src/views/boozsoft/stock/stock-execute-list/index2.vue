@@ -3,7 +3,7 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <BarChartOutlined style="color: #0096c7;font-size: 50px;"/>
+          <BarChartOutlined/>
         </div>
         <div>
           <div><AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
@@ -17,7 +17,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">销售订单执行表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">销售订单执行表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -43,14 +43,14 @@
           ><span>退出</span></button>
         </div>
         <div>
-          <div>
-            <Select v-model:value="formItems.selectType" style="width: 120px;font-size: 12px;text-align-last: center;font-weight: bold;" class="special_select">
+          <div class="acttd-right-d-search">
+            <Select v-model:value="formItems.selectType" class="acttdrd-search-select">
               <SelectOption style="font-size: 12px;" value="1">单据编码</SelectOption>
               <SelectOption style="font-size: 12px;" value="4">存货名称</SelectOption>
             </Select>
             <InputSearch
               placeholder=""
-              style="width: 200px; border-radius: 4px;margin-right: 4px;"
+              class="acttdrd-search-input"
               @search="onSearch"
             />
           </div>
@@ -58,7 +58,7 @@
             <Button >
               <SyncOutlined :style="{ fontSize: '14px' }"/>
             </Button>
-            <Popover class="ant-btn-default" placement="bottom">
+            <Popover class="ant-btn-default" placement="leftTop">
               <template #content>
                 <a-popconfirm
                   ok-text="确定"
@@ -216,20 +216,15 @@
             <template #speciType="{ record }">{{ formatGgxh(record.cinvode) }}</template>
           <template #summary>
             <TableSummary fixed>
-            <TableSummaryRow style="background-color: #cccccc;">
-              <TableSummaryCell :index="0" :colSpan="pageParameter.queryMark == '1'?6:pageParameter.queryMark == '2'?4:5" :align="'center'">合&emsp;&emsp;计</TableSummaryCell>
-              <TableSummaryCell :index="1" :align="'center'">{{summaryTotals.baseQuantity}}</TableSummaryCell>
-              <TableSummaryCell :index="2" :align="'right'">{{pageParameter.queryMark != '2'?summaryTotals.isum:summaryTotals.icost}}</TableSummaryCell>
-              <TableSummaryCell :index="3" :align="pageParameter.queryMark != '2'?'center':'right'">{{pageParameter.queryMark != '2'?summaryTotals.isumChuku:summaryTotals.itaxprice}}</TableSummaryCell>
-              <TableSummaryCell :index="4" :align="pageParameter.queryMark != '2'?'center':'right'">{{pageParameter.queryMark == '2'?summaryTotals.isum:summaryTotals.isumJijian}}</TableSummaryCell>
-              <TableSummaryCell :index="5" :align="'center'">{{pageParameter.queryMark != '2'?summaryTotals.isumFapiao:summaryTotals.isumChuku}}</TableSummaryCell>
-              <TableSummaryCell :index="6" :align="'center'" v-if="pageParameter.queryMark != '1'">{{pageParameter.queryMark == '2'?summaryTotals.isumJijian:summaryTotals.hxIsum}}</TableSummaryCell>
-              <TableSummaryCell :index="7" :align="'center'" v-if="pageParameter.queryMark == '2'">{{summaryTotals.isumFapiao}}</TableSummaryCell>
-              <TableSummaryCell :index="8" :align="'right'" v-if="pageParameter.queryMark == '2'">{{summaryTotals.hxIsum}}</TableSummaryCell>
-            </TableSummaryRow>
+              <TableSummaryRow>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'center'">合计</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" v-for="cell in getCurrSummary()"  :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryModel[cell.dataIndex]?'':summaryModel[cell.dataIndex].toFixed(2)}}</span></TableSummaryCell></TableSummaryRow>
             </TableSummary>
           </template>
         </BasicTable>
+      <div class="pagination-text" v-show="showPaginationText"  :style="{left:(windowWidth>totalColumnWidth?(totalColumnWidth-220):windowWidth-300)+'px'}">
+        {{`共 ${paginationNumber} 条记录 每页 200 条`}}
+      </div>
     </div>
     <Query @query="saveQuery" @register="registerQueryPage"/>
     <Excel @save="saveExcel" @register="registerExcelPage"/>
@@ -342,14 +337,19 @@ const dynamicTenantId = ref(getCurrentAccountName(true))
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
 const loadMark = ref(false)
+const showPaginationText = ref(false)
+const paginationNumber = ref(0)
 async function reloadTable(){
   loadMark.value = true
+  showPaginationText.value = false
   tableDataAll.value = [] || await useRouteApi(findTongJi,{schemaName: dynamicTenantId})(ObjTool.dels(pageParameter,['selectList','selectClass']))
   tableData.value =replenishTrs(JsonTool.parseProxy(tableDataAll.value))
   await setPagination({
-    total: tableData.value.length
+    total: tableDataAll.value.length
   })
+  paginationNumber.value = tableDataAll.value.length
   loadMark.value = false
+  showPaginationText.value = true
 }
 const jiList = ref([])
 const manyJiList = ref([])
@@ -360,7 +360,6 @@ const userList:any = ref([])
 const stockList:any = ref([])
 const selectClassList:any = ref([])
 
-const summaryTotals = ref({})
 
 async function reloadList(map) {
   psnList.value = map['user']
@@ -483,10 +482,8 @@ const [registerTable, {
   bordered: true,
   showIndexColumn: true,
   pagination: {
-    pageSize: 50,
-    showSizeChanger: true,
-    pageSizeOptions: ['10', '25', '50', '100'],
-    showTotal: t => `总共${t}条数据`
+    pageSize: 200,
+    simple: true,
   },
   /*actionColumn: {
     width: 120,
@@ -1609,14 +1606,24 @@ const formatText = (text) => {
   return text.substring(0,4) +'.'+text.substring(4,7)
 }
 const replenishTrs = (list) =>{
-  assembleTotal(list)
+  calculateTotal(list)
   let l = list.length
   for (let i = 0; i < (30-l); i++) {
     list.push({})
   }
   return list
 }
-const assembleTotal = (list) => {
+/*** 合计 ***/
+const summaryModel = ref({})
+const getCurrSummary  = () => {
+  return ((getColumns()).filter(it=>it.title != '序号' && it.ifShow).map((it,ind)=>{it['ind']=ind+1;return it;}))
+}
+const calculateTotal = () => {
+  let list = JsonTool.parseProxy((getDataSource()).filter(it=>it.cvencode!=null && it.quantity!=null))
+  if (list.length == 0){
+    summaryModel.value = {}
+    return false;
+  }
   let num = 0
   let ws = 0
   let se = 0
@@ -1635,8 +1642,9 @@ const assembleTotal = (list) => {
     ljkp += parseFloat(o.isumFapiao || '0')
     ljjk += parseFloat(o.hxIsum || '0')
   }
-  summaryTotals.value={baseQuantity: num.toFixed(2),icost: ws.toFixed(2),itaxprice: se.toFixed(2),isum: js.toFixed(2),isumChuku: ljck.toFixed(2),isumJijian: ljtk.toFixed(2),isumFapiao:ljkp.toFixed(2),hxIsum: ljjk.toFixed(2)}
+  summaryModel.value={baseQuantity: num.toFixed(2),icost: ws.toFixed(2),itaxprice: se.toFixed(2),isum: js.toFixed(2),isumChuku: ljck.toFixed(2),isumJijian: ljtk.toFixed(2),isumFapiao:ljkp.toFixed(2),hxIsum: ljjk.toFixed(2)}
 }
+/*** 合计 ***/
 const dynamicAdReload = async (obj) => {
     // const dataBase:any = await findDataBase(obj.accId,obj.year)
     return false
@@ -1674,7 +1682,7 @@ return n
 }
 </script>
 <style scoped lang="less">
-@import "../../../../assets/styles/global-menu-index.less";
+@import '/@/assets/styles/global-menu-index.less';
 :deep(.ant-card-body) {
   padding: 16px;
   border-left: 2px solid rgb(1, 143, 251);
@@ -1685,7 +1693,7 @@ return n
 }
 .a-table-font-size-16 :deep(td),
 .a-table-font-size-16 :deep(th) {
-  font-size: 16px !important;
+  font-size: 14px !important;
   padding: 5px 8px !important;
   border-color: #aaaaaa !important;
   font-weight: 550;
@@ -1707,14 +1715,23 @@ return n
 }
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
+  padding: 10px ;
   margin: 10px 10px 0px;
+  border-radius: 5px 5px 0 0;
 }
 
 .app-container:nth-of-type(2) {
   padding: 0px;
   margin: 0px 10px;
   background: #b4c8e3 !important;
+  position: relative;
+  .pagination-text{
+    position: absolute;
+    bottom: 6px;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
 }
 
 :deep(.ant-table-thead) th{
@@ -1751,29 +1768,67 @@ return n
   margin-bottom: 20px;
 }
 
-:deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
+:deep(.ant-input),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
 }
-
+:deep(.nc-summary){
+  font-weight: bold;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
+}
 .lcr-theme-div{
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;vertical-align: super;}
+    position: relative;
+    >div:nth-of-type(1){
+      top: 10px;
+      position: inherit;
+      width: 64px;display: inline-block;text-align: center;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
+    }
     >div:nth-of-type(2){
       width: calc( 100% - 64px);display: inline-block;
-      >div:nth-of-type(2){margin-top: 14px;}
+      position: inherit;
+      display: inline-block;
+      top: 8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-      >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
-      >div:nth-of-type(2){
-        display: inline-flex;justify-content: space-between;margin-top: 14px;
+    >div:nth-of-type(2){
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
+    }
+    .acttd-right-d-search {
+      .acttdrd-search-select {
+        width: 150px;
+        text-align: left;
+        :deep(.ant-select-selector) {
+          border-color: @Global-Border-Color;
+          border-radius: 2px 0 0 2px;
+        }
       }
+
+      .acttdrd-search-input {
+        width: 150px;
+        :deep(.ant-input){
+          border-color: @Global-Border-Color;
+          border-left: none;
+        }
+        :deep(.ant-input-search-button){
+          border-color: #c9c9c9;
+          border-left: none;
+          //color: #0096c7;
+        }
+      }
+    }
   }
 }
 </style>

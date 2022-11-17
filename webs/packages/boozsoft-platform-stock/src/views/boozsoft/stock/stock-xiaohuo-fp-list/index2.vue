@@ -3,12 +3,12 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <ProfileOutlined />
         </div>
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">销售发票列表</b></div>
+        <div>  <b class="noneSpan" style="font-size: 24px;color: #0096c7;">销售发票列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -21,7 +21,7 @@
             <button
               type="button"
               class="ant-btn ant-btn-me"
-              @click="router.push({path: '/xs-bill',query: {type:'add',ccode:''}})"
+              @click="toRouter(null,'add')"
             ><span>新增</span></button>
             <button
               type="button"
@@ -423,7 +423,7 @@ import {cloneDeep} from "lodash-es";
 import {initDynamics as initDynamics1} from "./data1";
 import {
   batchReviewCkd, delBatch,
-  findOutByTypeList,
+  findOutByTypeList, operateBeforeCheck,
   reviewRuKu,
   unAuditBefore
 } from "/@/api/record/stock/stock-xhd";
@@ -433,6 +433,10 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+import {
+  getByStockBalanceBatchTask,
+  stockBalanceTaskEditNewTime
+} from "/@/api/record/stock/stock_balance";
 const InputSearch = Input.Search
 const SelectOption = Select.Option
 const ARadioButton = ARadio.Button
@@ -470,6 +474,7 @@ const companyName = ref('')
 const strDate = ref('')
 async function saveQuery(e) {
   let data = e.data
+  dynamicTenant.value = e.dynamic
   companyName.value = data.constant.name
   dynamicTenantId.value = data.constant.tenantId
   pageParameter.queryMark = data.constant.queryType
@@ -508,6 +513,7 @@ const replenishTrs = (list) =>{
 const typeFlag = ref('0')
 
 const dynamicTenantId = ref(getCurrentAccountName(true))
+const dynamicTenant = ref(null)
 
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
@@ -2020,30 +2026,37 @@ function codeToName(arr) {
 const startDel = async () => {
   if(checkRow.value.length == 0){
     createWarningModal({title: '温馨提示', content: `请选择要进行删除的单据！`})
-  } else if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    return  false
+  }
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
     createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
   } else {
-     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({code: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XHD'})
-     message.success('删除成功！')
-     reloadTable()
+    await useRouteApi(delBatch, {schemaName: dynamicTenantId})({codes: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XSFP'})
+    message.success('删除成功！')
+    reloadTable()
   }
 }
-function editFun() {
+async function editFun() {
   if(checkRow.value.length !== 1){
     message.error("只能选择一条数据修改！")
     return false
   }
-  let data=checkRow.value[0].ccode
-  router.push({path: '/xs-bill',query: {type:'edit',ccode:data}});
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
+    return false
+  }else {
+    await toRouter(checkRow.value[0],'edit')
+  }
 }
 
 async function toRouter(data,type) {
-  if(type=='list'){
+  if (type=='list' && await operateBefore(checkRow.value))return false
     await closeToFullPaths('/xs-bill')
     setTimeout(()=>{
-      router.push({path: '/xs-bill',query: {type:'info',ccode:data.ccode,co: dynamicTenant.value.coCode}});
+      router.push({path: '/xs-bill',query: {type:type,ccode:data.ccode,co: dynamicTenant.value.coCode}});
     },1000)
-  }
 }
 /*打印专区*/
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
@@ -2273,6 +2286,25 @@ const calculateTotal = (t) => {
 }
 /*** 合计 ***/
 
+const operateBefore = async (rows) => {
+  // 检查操作单据是否锁定
+  let taskData= await useRouteApi(getByStockBalanceBatchTask, { schemaName: dynamicTenantId })({iyear:strDate.value,name:'销售发票',method:'修改,审核,删除,整理现存量',recordNum: [...new Set(rows.map(it => it.ccode))].join()})
+  if(taskData!=''){
+    if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+      createWarningModal({ content: '列表单据正在被操作员'+taskData[0].username+'正在进行'+taskData[0].method+'操作，任务互斥，请销后再试！' });
+      return true
+    }else{
+      await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
+    }
+  }
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `列表单据已发生变化，请刷新当前列表！`})
+    return true
+  }
+  return false
+}
 </script>
 <style scoped lang="less">
 @import '/@/assets/styles/global-menu-index.less';
@@ -2309,8 +2341,7 @@ const calculateTotal = (t) => {
 }
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
-  margin: 10px 10px 5px;
+  padding: 10px;
 }
 
 .app-container:nth-of-type(2) {
@@ -2371,17 +2402,25 @@ const calculateTotal = (t) => {
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-  position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    position: relative;
+    >div:nth-of-type(1){
+      width: 64px;display: inline-block;text-align: center;    top: 10px;
+      position: inherit;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
     }
     >div:nth-of-type(2){
-      width: calc( 100% - 64px);display: inline-block;
+      width: calc(100% - 64px);
+      position: inherit;
+      display: inline-block;
+      top: -8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
@@ -2391,11 +2430,12 @@ const calculateTotal = (t) => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
     }
     .acttd-right-d-search {
       .acttdrd-search-select {
-
+        width: 150px;
+        text-align: left;
         :deep(.ant-select-selector) {
           border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;

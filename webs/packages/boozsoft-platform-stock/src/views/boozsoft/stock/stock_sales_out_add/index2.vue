@@ -670,7 +670,7 @@ import {
   findbyStockSaleousingsCodeAndBillStyle,
   findEntityAndDetailsByCcode,
   generateCkd,
-  generateThd,
+  generateThd, operateBeforeCheck,
   reviewRuKu,
   saveXhd,
   saveXhdChange,
@@ -787,24 +787,29 @@ const columnReload = async () => {
 }
 const route = useRoute();
 const routeData:any = route.query;
+let markLen = 0
 const pageReload = async () => {
   if(routeData.type!==undefined){
     if (!hasBlank(routeData.co) && dynamicTenant.value?.coCode !=routeData.co){
       accountPickerFuns.value.resetCoCode(routeData.co)
       return false
     }
+    if (markLen!=0){
+      await contentSwitch('curr')
+      return false
+    }
     if(routeData.type=='add'){
       await startEdit('add')
     }else if(routeData.type=='edit'){
-      status.value=2
       await contentSwitch('curr')
+      await startEdit('edit')
     }else{
       await contentSwitch('curr')
     }
+    markLen++
   }else{
     await contentSwitch(formItems.value.id == null?'tail':'curr')
   }
-
 }
 
 async function reloadList() {
@@ -1194,6 +1199,7 @@ const startEdit = async (type) => {
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
       }
     }
+    if (markLen != 0 && await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
     status.value = 2
     let list = getDataSource()
     let dLen = list.length
@@ -1224,10 +1230,12 @@ const startDel = async () => {
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'销售退货单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
       // 检测可用量
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       let list = (JsonTool.parseProxy( getDataSource().filter(it=>!hasBlank(it.cinvode) && !hasBlank(it.baseQuantity)))).map(it=>{it.baseQuantity=Math.abs(parseFloat(it.baseQuantity)).toFixed(10);return it})
       if(!await stockXclCheck(list)){
         return createWarningModal({ title: '温馨提示',content: '可用量不足，请检查存货可用量后再试！' });;
       }else {
+
         tempTaskSave('删除')
         createConfirm({
           iconType: 'warning',
@@ -1286,6 +1294,7 @@ const startReview = async (b) => {
           await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
         }
       }
+      if ( await operateBefore([{ccode: formItems.value.ccode,bcheck:formItems.value.bcheck}]))return false;
       let isAuto =  dynamicTenant.value.target.xsShXkd == '1'
       if (!b){ // 弃审前 检查
         let che = await useRouteApi(unAuditBefore, {schemaName: dynamicTenantId})({
@@ -2853,6 +2862,19 @@ const toReceipt = async (v) => {
   nextTick(async ()=>contentSwitch('curr'))
 }
 /********** 单据搜索 *********/
+const operateBefore = async (rows) => {
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `单据已发生变化，请刷新当前单据！`})
+    if (code == 1){
+      formItems.value.ccode = {}
+      formFuns.value.setFormValue({})
+    }
+    return true
+  }
+  return false
+}
 </script>
 <style lang="less" scoped="scoped">
 @Global-Border-Color: #c9c9c9; // 全局下划线颜色
@@ -3033,7 +3055,7 @@ const toReceipt = async (v) => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
       .acttd-right-d-search {
         .acttdrd-search-select {
           width: 120px;

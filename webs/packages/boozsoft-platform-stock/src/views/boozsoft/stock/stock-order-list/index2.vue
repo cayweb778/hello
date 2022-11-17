@@ -3,12 +3,12 @@
     <div class="app-container lcr-theme-div">
       <div>
         <div>
-          <ProfileOutlined style="color: #0096c7;font-size: 50px;"/>
+          <ProfileOutlined />
         </div>
         <div> <AccountPicker theme="three" readonly @reloadTable="dynamicAdReload"/></div>
       </div>
       <div>
-        <div>  <b class="noneSpan" style="font-size: 26px;color: #0096c7;">销售订单列表</b></div>
+        <div>  <b class="noneSpan" style="font-size: 24px;color: #0096c7;">销售订单列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;">期间：{{qijianText}}</span></div>
       </div>
       <div>
@@ -21,7 +21,7 @@
             <button
               type="button"
               class="ant-btn ant-btn-me"
-              @click="router.push({path: '/xs-order',query: {type:'add',ccode:''}})"
+              @click="toRouter(null,'add')"
             ><span>新增</span></button>
             <button
               type="button"
@@ -77,133 +77,6 @@
             </Button>
             <Popover class="ant-btn-default" placement="bottom" v-model:visible="visible">
               <template #content>
-<!--              <span v-show="typeFlag=='0'">
-                <a-popconfirm
-                  ok-text="确定"
-                  cancel-text="放弃"
-                  @confirm="confirm"
-                  @cancel="cancel">
-                <template #icon><b>栏目设置</b><br></template>
-                <template #title>
-                  <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
-                           childrenColumnName="children" :pagination="false"
-                           style="max-height: 500px;overflow-y: auto" class="lanmu-table">
-                    <template #checkBox="{ text, record }">
-                      <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
-                    </template>
-                    <template #widthInput="{ text, record }">
-                      <div class="editable-cell">
-                        <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                          <a-input type="number" v-model:value="editableData[record.key].width"
-                                   @pressEnter="save(record.key,record.min,record.max)"
-                                   style="width: 80px"/>
-                          <check-outlined class="editable-cell-icon-check"
-                                          @click="save(record.key,record.min,record.max)"/>
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                          {{ text || ' ' }}
-                          <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                          <span style="float: right;">{{ record.min + '~' + record.max }}</span>
-                        </div>
-                      </div>
-                    </template>
-                    <template #nameInput="{ text, record }">
-                      <div class="editable-cell">
-                        <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                          <a-input type="text" v-model:value="editableData[record.key].nameNew"
-                                   @pressEnter="saveName(record.key)" style="width: 100px"/>
-                          <check-outlined class="editable-cell-icon-check"
-                                          @click="saveName(record.key)"/>
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                          {{ text || ' ' }}
-                          <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                        </div>
-                      </div>
-                    </template>
-                    <template #alignRadio="{ text, record }">
-                      <a-radio-group default-value="a" size="small" v-model:value="record.align"
-                                     :disabled="record.align==''">
-                        <a-radio-button value="left">
-                          左
-                        </a-radio-button>
-                        <a-radio-button value="center">
-                          中
-                        </a-radio-button>
-                        <a-radio-button value="right">
-                          右
-                        </a-radio-button>
-                      </a-radio-group>
-                    </template>
-                  </a-table>
-                </template>
-                <a-button style="width: 120px;margin-bottom: 2px">栏目设置</a-button>
-              </a-popconfirm>
-              </span>
-                <span v-show="typeFlag=='1'">
-                <a-popconfirm
-                  ok-text="确定"
-                  cancel-text="放弃"
-                  @confirm="confirm1"
-                  @cancel="cancel1">
-                <template #icon><b>栏目设置</b><br></template>
-                <template #title>
-                  <a-table bordered :data-source="dynamicColumnData1" :columns="dynamicColumns1"
-                           childrenColumnName="children" :pagination="false"
-                           style="max-height: 500px;overflow-y: auto" class="lanmu-table">
-                    <template #checkBox="{ text, record }">
-                      <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
-                    </template>
-                    <template #widthInput="{ text, record }">
-                      <div class="editable-cell">
-                        <div v-if="editableData1[record.key]" class="editable-cell-input-wrapper">
-                          <a-input type="number" v-model:value="editableData1[record.key].width"
-                                   @pressEnter="save1(record.key,record.min,record.max)"
-                                   style="width: 80px"/>
-                          <check-outlined class="editable-cell-icon-check"
-                                          @click="save1(record.key,record.min,record.max)"/>
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                          {{ text || ' ' }}
-                          <edit-outlined class="editable-cell-icon" @click="edit1(record.key)"/>
-                          <span style="float: right;">{{ record.min + '~' + record.max }}</span>
-                        </div>
-                      </div>
-                    </template>
-                    <template #nameInput="{ text, record }">
-                      <div class="editable-cell">
-                        <div v-if="editableData1[record.key]" class="editable-cell-input-wrapper">
-                          <a-input type="text" v-model:value="editableData1[record.key].nameNew"
-                                   @pressEnter="saveName1(record.key)" style="width: 100px"/>
-                          <check-outlined class="editable-cell-icon-check"
-                                          @click="saveName1(record.key)"/>
-                        </div>
-                        <div v-else class="editable-cell-text-wrapper">
-                          {{ text || ' ' }}
-                          <edit-outlined class="editable-cell-icon" @click="edit1(record.key)"/>
-                        </div>
-                      </div>
-                    </template>
-                    <template #alignRadio="{ text, record }">
-                      <a-radio-group default-value="a" size="small" v-model:value="record.align"
-                                     :disabled="record.align==''">
-                        <a-radio-button value="left">
-                          左
-                        </a-radio-button>
-                        <a-radio-button value="center">
-                          中
-                        </a-radio-button>
-                        <a-radio-button value="right">
-                          右
-                        </a-radio-button>
-                      </a-radio-group>
-                    </template>
-                  </a-table>
-                </template>
-                <a-button style="width: 120px;margin-bottom: 2px">栏目设置</a-button>
-              </a-popconfirm>
-              </span>
-                <br/>-->
                 <DynamicColumn :defaultData="(typeFlag=='0'?initDynamics()['DATA']:initDynamics1()['DATA'])" :dynamicData="(typeFlag=='0'?dynamicColumnModel:dynamicColumnModel1)" :lanmuInfo="(typeFlag=='0'?lanMuData:lanMuData1)" @reload="(typeFlag=='0'?reloadColumns():reloadColumns1())"/>
                 <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
                       :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
@@ -229,22 +102,6 @@
               </template>
               <Button>
                 <PicLeftOutlined :style="{ fontSize: '14px' }"/>
-              </Button>
-            </Popover>
-            <Popover class="ant-btn-default" placement="bottom">
-              <template #content>
-              <span class="group-btn-span-special2" @click="pageParameter.documentType='';reloadTable()" :style="pageParameter.documentType==''?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 130px;">
-                全&emsp;部&emsp;&emsp;&emsp;<CheckOutlined v-if="pageParameter.documentType==''"/>
-              </span><br/>
-                <span class="group-btn-span-special2" @click="pageParameter.documentType='0';reloadTable()" :style="pageParameter.documentType=='0'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 130px;">
-                销售订单&emsp;&emsp;&emsp;<CheckOutlined v-if="pageParameter.documentType=='0'"/>
-              </span><br/>
-<!--                <span class="group-btn-span-special2" @click="pageParameter.documentType='1';reloadTable()" :style="pageParameter.documentType=='1'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 130px;">
-                销售退货单&emsp;<CheckOutlined v-if="pageParameter.documentType=='1'"/>
-              </span>-->
-              </template>
-              <Button>
-                <InboxOutlined :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
             <Popover class="ant-btn-default" placement="bottom">
@@ -418,7 +275,7 @@ import {cloneDeep} from "lodash-es";
 import {initDynamics as initDynamics1} from "./data1";
 import {
   batchReview, delBatch,
-  findOutByTypeList,
+  findOutByTypeList, operateBeforeCheck,
   reviewRuKu,
   unAuditBefore
 } from "/@/api/record/stock/stock-xhd";
@@ -428,6 +285,10 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {assemblyDynamicColumn} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+import {
+  getByStockBalanceBatchTask,
+  stockBalanceTaskEditNewTime
+} from "/@/api/record/stock/stock_balance";
 const InputSearch = Input.Search
 const SelectOption = Select.Option
 const ARadioButton = ARadio.Button
@@ -442,7 +303,6 @@ const {
     createConfirm
 } = useMessage()
 
-const {closeCurrent} = useTabs(router);
 
 const formItems = ref({
   selectType: '1'
@@ -467,6 +327,7 @@ async function saveQuery(e) {
   let data = e.data
   companyName.value = data.constant.name
   dynamicTenantId.value = data.constant.tenantId
+  dynamicTenant.value = e.dynamic
   pageParameter.queryMark = data.constant.queryType
   pageParameter.query = data.variable
   if (!hasBlank(data.variable.periodStart)){
@@ -503,6 +364,7 @@ const replenishTrs = (list) =>{
 const typeFlag = ref('0')
 
 const dynamicTenantId = ref(getCurrentAccountName(true))
+const dynamicTenant = ref(null)
 
 const tableData:any = ref([]);
 const tableDataAll:any = ref([]);
@@ -2001,30 +1863,56 @@ function codeToName(arr) {
 const startDel = async () => {
   if(checkRow.value.length == 0){
     createWarningModal({title: '温馨提示', content: `请选择要进行删除的单据！`})
-  } else if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    return  false
+  }
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
     createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
   } else {
-     await useRouteApi(delBatch, {schemaName: dynamicTenantId})({code: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XHD'})
-     message.success('删除成功！')
-     reloadTable()
+    await useRouteApi(delBatch, {schemaName: dynamicTenantId})({codes: [...new Set(checkRow.value.map(it => it.ccode))],type: 'XSDD'})
+    message.success('删除成功！')
+    reloadTable()
   }
 }
-function editFun() {
+async function editFun() {
   if(checkRow.value.length !== 1){
     message.error("只能选择一条数据修改！")
     return false
   }
-  let data=checkRow.value[0].ccode
-  router.push({path: '/xs-order',query: {type:'edit',ccode:data}});
+  if(await operateBefore(checkRow.value)) return false;
+  if ((checkRow.value.filter(it => it.bcheck == '1').length > 0)) {
+    createWarningModal({title: '温馨提示', content: `选中的单据中存在已审核单据，请先排除！`})
+    return false
+  }else {
+    await toRouter(checkRow.value[0],'edit')
+  }
 }
-function toRouter(data,type) {
-  if(type=='list'){
-    if(parseFloat(data.baseQuantity)<0){
-      router.push({path: '/xs-return',query: {type:'info',ccode:data.ccode}});
+const operateBefore = async (rows) => {
+  // 检查操作单据是否锁定
+  let taskData= await useRouteApi(getByStockBalanceBatchTask, { schemaName: dynamicTenantId })({iyear:strDate.value,name:'销售订单',method:'修改,审核,删除,整理现存量',recordNum: [...new Set(rows.map(it => it.ccode))].join()})
+  if(taskData!=''){
+    if(taskData[0].caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+      createWarningModal({ content: '列表单据正在被操作员'+taskData[0].username+'正在进行'+taskData[0].method+'操作，任务互斥，请销后再试！' });
+      return true
     }else{
-      router.push({path: '/xs-order',query: {type:'info',ccode:data.ccode}});
+      await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[0].id)
     }
   }
+  // 检查操作单据是否正常
+  let  code = await useRouteApi(operateBeforeCheck, {schemaName: dynamicTenantId})({parm: JsonTool.json([...new Set(rows.map(it => it.ccode+'=='+(it.bcheck=='1'?'1':'0')))])})
+  if (code != 0){
+    createWarningModal({title: '温馨提示', content: `列表单据已发生变化，请刷新当前列表！`})
+    return true
+  }
+  return false
+}
+const {closeCurrent,closeToFullPaths} = useTabs(router);
+async function toRouter(data,type) {
+  if (type=='list' && await operateBefore(checkRow.value))return false
+  await closeToFullPaths('/xs-order')
+  setTimeout(()=>{
+    router.push({path: '/xs-order',query: {type:type,ccode:data.ccode,co: dynamicTenant.value.coCode}});
+  },1000)
 }
 /*打印专区*/
 const [registerPrintPage, {openModal: openPrintPage}] = useModal()
@@ -2273,7 +2161,7 @@ const calculateTotal = (t) => {
 
 .a-table-font-size-12 :deep(td),
 .a-table-font-size-12 :deep(th) {
-  font-size: 12px !important;
+  font-size: 13px !important;
   padding: 2px 8px !important;
   border-color: #cccccc !important;
   font-weight: bold;
@@ -2290,8 +2178,7 @@ const calculateTotal = (t) => {
 }
 .app-container:nth-of-type(1) {
   background-color: #f2f2f2;
-  padding: 10px 5px;
-  margin: 10px 10px 5px;
+  padding: 10px;
 }
 
 .app-container:nth-of-type(2) {
@@ -2352,17 +2239,25 @@ const calculateTotal = (t) => {
   display: inline-flex;justify-content: space-between;width: 99%;height: 100px;
   >div:nth-of-type(1){
     width: 40%;
-  position: relative;
-    >div:nth-of-type(1){width: 64px;display: inline-block;text-align: center;    top: 12px;
-      position: inherit
+    position: relative;
+    >div:nth-of-type(1){
+      width: 64px;display: inline-block;text-align: center;    top: 10px;
+      position: inherit;
+      :deep(.anticon){
+        color: #0096c7;
+        font-size: 60px;
+      }
     }
     >div:nth-of-type(2){
-      width: calc( 100% - 64px);display: inline-block;
+      width: calc(100% - 64px);
+      position: inherit;
+      display: inline-block;
+      top: -8px;
     }
   }
   >div:nth-of-type(2){
     width: 20%;text-align:center;
-    >div:nth-of-type(2){margin-top: 14px;}
+    >div:nth-of-type(1){margin-top: 8px;}
   }
   >div:nth-of-type(3){
     width: 40%;text-align: right;
@@ -2372,11 +2267,12 @@ const calculateTotal = (t) => {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
     }
     .acttd-right-d-search {
       .acttdrd-search-select {
-
+        width: 150px;
+        text-align: left;
         :deep(.ant-select-selector) {
           border-color: @Global-Border-Color;
           border-radius: 2px 0 0 2px;

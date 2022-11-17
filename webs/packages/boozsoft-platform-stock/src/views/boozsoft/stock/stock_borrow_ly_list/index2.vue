@@ -10,7 +10,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">借入借用单列表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">借入借用单列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：</span><span style="color:#000;font-weight: bold;">{{ strDate }} - {{ endDate }}</span></div>
       </div>
       <div>
@@ -1276,7 +1276,7 @@ async function tempTaskSave(method, ccode) {
       }
     }
     >div:nth-of-type(2){
-      display: inline-flex;justify-content: space-between;margin-top: 14px;
+      display: inline-flex;justify-content: space-between;margin-top: 15px;
     }
   }
 }

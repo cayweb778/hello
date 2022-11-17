@@ -10,7 +10,7 @@
         </div>
       </div>
       <div>
-        <div><b class="noneSpan" style="font-size: 26px;color: #0096c7;">期初暂估入库单列表</b></div>
+        <div><b class="noneSpan" style="font-size: 24px;color: #0096c7;">期初暂估入库单列表</b></div>
         <div><span style="font-size: 14px;font-weight: bold;color: #666666">日期：{{ strDate }} - {{
             endDate
           }}</span></div>

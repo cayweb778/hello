@@ -30,7 +30,7 @@
       <div class="open-content-up" style="width: calc(100% - 150px);height: 100%;">
         <div style="display: block;text-align: center;">
           <SearchOutlined style="font-size: 26px;color: #0096c7;"/>
-          <span style="font-size: 30px;color: #0096c7;font-weight: bold;">&ensp;材料出库单列表</span>
+          <span style="font-size: 30px;color: #0096c7;font-weight: bold;">&ensp;领用出库单列表</span>
         </div>
         <ul>
           <li>
@@ -361,6 +361,7 @@ const userId = userStore.getUserInfo.id
 const accAuthList = ref([])
 
 const currentDynamicTenant = ref('')
+const dynamicTenant = ref(null)
 const {createWarningModal} = useMessage();
 
 const targetKeys: any = ref([])
@@ -434,6 +435,7 @@ const codeChange = async (value) => {
   // 初始化基础参数
   queryModel.constant.tenantId = value.accountMode
   currentDynamicTenant.value = value.accountMode
+  dynamicTenant.value = value
   await reLifeQueryParameter(currentDynamicTenant.value,value.target.id)
   await reLifeEtcList(currentDynamicTenant.value)
   modelLoadIng.value = false
@@ -630,7 +632,7 @@ async function handleOk() {
   queryModel.variable.dateEnd = endRq
   //   modifyDbPersonData(queryModel);  记录个人习惯
   modelLoadIng.value = false
-  emit('query', {data: unref(queryModel),map: dataMap.value})
+  emit('query', {data: unref(queryModel),map: dataMap.value,dynamic:dynamicTenant.value})
   closeModal()
   return true
 }
