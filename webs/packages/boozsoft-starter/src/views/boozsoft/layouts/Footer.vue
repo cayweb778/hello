@@ -65,8 +65,7 @@
           </div>
         </div>
       </Col>
-      <Col :span="6"></Col>
-      <Col :span="2">
+      <Col :span="8" style="min-width:100px">
 
         <!--        <div style="min-width:57px;padding-top:1px;text-align:center;color:white;font-size:14px;background:black">财务版</div>-->
 
@@ -99,17 +98,12 @@
                   </span>
               </div>-->
         <!--        <CustomizeInfo style="min-width:90px;" />-->
-        <Row >
-          <Col :span="10"></Col>
-          <Col :span="14">
-              <Row @click="outSystemBefore">
-                <Col :span="7" style="padding-top:3px" >
-                  <LogoutOutlined style="font-size: 15px;cursor:pointer"/>
+              <Row @click="outSystemBefore" style="float:right;margin-right:10px">
+                <Col  style="padding-top:2px;margin-right:6px" >
+                  <LogoutOutlined style="font-size: 14px;cursor:pointer"/>
                 </Col>
-                <Col  :span="15" style="cursor:pointer;padding-top:1px"><span style="font-size: 12px;padding-right:0px;">退出系统</span></Col>
+                <Col  style="cursor:pointer;padding-top:1px"><span style="font-size: 12px;padding-right:0px;">退出系统</span></Col>
               </Row>
-          </Col>
-        </Row>
 
 
       </Col>

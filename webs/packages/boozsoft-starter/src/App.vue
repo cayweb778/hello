@@ -3,7 +3,7 @@ import {RouterView} from 'vue-router'
 import Layout from "./views/boozsoft/layouts/index.vue"
 import NcProvider from "./views/boozsoft/provider/index.vue"
 import LeftSider from './views/boozsoft/layouts/LeftSider/index.vue'
-import Footer from './views/boozsoft/layouts/Footer.vue'
+
 import AppView from './views/boozsoft/layouts/AppView.vue'
 import Abc from './Abc.vue'
 import PluginView from './PluginViews/index.vue'
@@ -12,17 +12,16 @@ import PluginView from './PluginViews/index.vue'
 <template>
   <Abc>
     <NcProvider>
-      <Layout>
-        <PluginView/>
+      <RouterView/>
+<!--        <PluginView/>-->
         <!--    left sider switch    -->
-        <LeftSider/>
+<!--        <LeftSider/>-->
         <!--    platfrom view    -->
-        <AppView>
-          <RouterView/>
-        </AppView>
+<!--        <AppView>-->
+<!--          <RouterView/>-->
+<!--        </AppView>-->
         <!--    footer view    -->
-        <Footer></Footer>
-      </Layout>
+
     </NcProvider>
   </Abc>
 </template>

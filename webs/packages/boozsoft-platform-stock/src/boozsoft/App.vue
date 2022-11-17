@@ -34,6 +34,7 @@ const layoutsStore = usePlatformsStoreWidthOut();
 
 
 const newPlatformId=window.localStorage.getItem("newPlatformId")
+console.log(newPlatformId)
 layoutsStore.switchPlatform({ id:newPlatformId})
 
 window?.$wujie.bus.$on("goStock", function (id) {

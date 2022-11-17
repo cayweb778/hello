@@ -5,8 +5,9 @@
     transform: translate(0);
    ">
     <slot/>
+
   </div>
 </template>
-<script>
+<script setup>
 
 </script>
