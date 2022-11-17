@@ -176,6 +176,7 @@ fn goApp2(app: &AppHandle<Wry>) {
 
 #[tauri::command]
 fn clearCache(window: Window) -> &'static str {
+    window.close();
     if(!window.get_window("main_dy2").is_none()){
 
         window.get_window("main_dy2").unwrap().close();
