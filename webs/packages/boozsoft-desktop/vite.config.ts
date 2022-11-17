@@ -29,6 +29,14 @@ export default defineConfig({
       },
     ],
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
+
   build: {
     // Tauri supports es2021
     target: ["es2021", "chrome100", "safari13"],

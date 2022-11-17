@@ -12,9 +12,12 @@ pub fn registerShort(app:&App<Wry>){
         let window1 = appHandleClone.borrow().get_window("config");
         if(window1.is_none()){
             let win = tauri::window::WindowBuilder::new(appHandleClone.borrow(), "config".to_string(), WindowUrl::App("config".into()))
-                .title("Mai33n")
-                .inner_size(600.0, 900.0)
+                .title("财税达配置选项")
+                .inner_size(600.0, 360.0)
                 .always_on_top(true)
+                .hidden_title(true)
+                .decorations(false)
+
                 .build().unwrap();
         }else{
             if(window1.clone().unwrap().is_visible().unwrap()){

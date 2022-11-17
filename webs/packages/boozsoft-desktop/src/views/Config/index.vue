@@ -6,19 +6,25 @@ import Greet from "../../components/Greet.vue";
 import {onMounted, ref} from 'vue'
 import {useDesktopStoreWidthOut} from "../../store/modules/hello";
 import {invoke} from "@tauri-apps/api/tauri";
+import {Form, Button, Input, Space, TypographyText, TypographyLink,Descriptions,DescriptionsItem} from 'ant-design-vue'
+
+const Item = Form.Item
 
 const hello = ref('127.0.0.1:3000')
 
 function openAbc() {
-  addr.value=hello.value
+  addr.value = hello.value
   useDesktopStoreWidthOut().goApp(hello.value)
 }
-const addr=ref()
-onMounted(async ()=>{
-  addr.value=JSON.parse(await invoke("getCacheIpAddrApi")).data;
-  hello.value=addr.value
+
+const addr = ref()
+onMounted(async () => {
+  addr.value = JSON.parse(await invoke("getCacheIpAddrApi")).data;
+  console.log(addr.value)
+  hello.value = addr.value
   console.log(addr.value)
 })
+
 function funasd() {
   if (hello.value == '127.0.0.1:3000') {
     hello.value = '81.70.47.206:81'
@@ -31,60 +37,60 @@ function funasd() {
   hello.value = '127.0.0.1:3000'
 
 }
+
 import {appLocalDataDir} from '@tauri-apps/api/path';
-import {removeDir,BaseDirectory} from '@tauri-apps/api/fs';
-async function clearCache(){
+import {removeDir, BaseDirectory} from '@tauri-apps/api/fs';
+
+async function clearCache() {
   // const aaa=await appLocalDataDir()
   console.log("wujie")
-  await removeDir('', { dir: BaseDirectory.AppLocalData})
-      .then(()=>{
+  await removeDir('', {dir: BaseDirectory.AppLocalData})
+      .then(() => {
 
         useDesktopStoreWidthOut().goApp(hello.value)
       })
-      .finally(()=>{
+      .finally(() => {
 
-    useDesktopStoreWidthOut().goApp(hello.value)
-  });
+        useDesktopStoreWidthOut().goApp(hello.value)
+      });
 }
 </script>
 
 <template>
-  <div style="text-align: center">
-    我是配置页面
-    <div>当前服务器地址: {{addr}}</div>
-    <div>服务器地址：<input v-model="hello"/>
-      <button @click="funasd">🚀</button>
-      <button @click="openAbc">确认</button>
-    </div>
-    <div>
-      <button>打印控件配置</button>
-    </div>
-    <div>
-      <button>表格控件配置</button>
-    </div>
-    <div>
-      <button>卸载</button>
-    </div>
+  <div class="helloconfig"
+       style="text-align: center;border-radius:30px;position:fixed;left:0;width:100vw;top:0;height:100vh;background:#2b2b2b;color:white">
+    <Space direction="vertical" style="padding:10px 5px">
+      <h2 style="color:white;padding:0;margin:0;position:absolute;width:100vw;text-align:center">财税达配置中心</h2>
+      <Descriptions bordered title="" :size="'small'">
+        <template #extra>
+          <Button type="primary">编辑</Button>
+        </template>
 
-    <div>
-      <button>财税达文档</button>
-    </div>
-    <div>
-      <button>财税达官网</button>
-    </div>
-    <div>
-      <button>泊舟官网</button>
-    </div>
-    <div>
-      <button @click="clearCache">清除缓存</button>
-    </div>
-    <div>
-      <button>完成</button>
-    </div>
+         <DescriptionsItem :span="4"  label="当前服务器地址">
+          <Input style="width:300px" v-model:value="hello"/>
+          <Button @click="funasd">🚀</Button>
+          <Button @click="openAbc">确认</Button>
+        </DescriptionsItem>
+        <DescriptionsItem label="打印控件配置"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="表格控件配置"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="财税达文档"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="财税达官网"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="泊舟官网"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="清除缓存"><Button @click="clearCache">清理</Button></DescriptionsItem>
+        <DescriptionsItem label="卸载"><Button>配置</Button></DescriptionsItem>
+        <DescriptionsItem label="退出"><Button>配置</Button></DescriptionsItem>
+
+      </Descriptions>
+    </Space>
+
   </div>
 </template>
 
 <style scoped>
+/*.helloconfig :deep(*) {*/
+/*  color: white !important;*/
+/*}*/
+
 .logo.vite:hover {
   filter: drop-shadow(0 0 2em #747bff);
 }
