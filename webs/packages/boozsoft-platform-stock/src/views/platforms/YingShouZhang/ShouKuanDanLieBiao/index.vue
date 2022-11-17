@@ -356,7 +356,7 @@ import {add, sub, toThousandFilter} from "../YingShouKuanQiChuYuE/calculation";
 import Query from './popup/query.vue'
 import {findAll as findCustAll} from "/@/api/record/costomer_data/customer";
 import {
-  deleteArApYsyfById, deleteArApYsyfsByCcode,
+  deleteArApYsyfById, deleteArApYsyfsByCcode, findArApYsyfByCcode,
   findArApYsyfsByCcode, findByTypeByDateList,
   findByTypeList,
   findQuxiaohexiaoList,
@@ -803,6 +803,23 @@ async function editPage(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findArApYsyfByCcode,{schemaName: dynamicTenantId})(item.ccode)
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -862,9 +879,26 @@ async function editPage(){
 }
 
 //查看收款单
-function openPage(data){
+async function openPage(data){
   pageParameter.id = data.id
   pageParameter.isEdit = '3'
+  const res = await useRouteApi(findArApYsyfByCcode,{schemaName: dynamicTenantId})(data.ccode)
+  if (res.length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '警告',
+      content: '列表单据已发生变化，请刷新当前列表！'
+    })
+    return false
+  }
+  if (res[0].bcheck == data.bcheck) {
+    createErrorModal({
+      iconType: 'warning',
+      title: '警告',
+      content: '列表单据已发生变化，请刷新当前列表！'
+    })
+    return false
+  }
   if (data.bdocumStyle!='1') {
     router.push({
       path: '/YingShouZhang/ShouKuan/CaoZuo/YingShouShouKuanDan',
@@ -884,6 +918,23 @@ async function delList(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findArApYsyfByCcode,{schemaName: dynamicTenantId})(item.ccode)
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -1015,6 +1066,23 @@ async function approved(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findArApYsyfByCcode,{schemaName: dynamicTenantId})(item.ccode)
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -1112,6 +1180,31 @@ async function unApproved(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findArApYsyfByCcode,{schemaName: dynamicTenantId})(item.ccode)
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].hxIsum == item.hxIsum) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck != '1') {
         num++
         createErrorModal({
@@ -1539,6 +1632,7 @@ import {
 } from "/@/api/record/stock/stock_balance";
 import {saveTaskApi} from "/@/api/record/system/task";
 import {findPeriodByYearList} from "/@/api/record/system/ar-ap-period";
+import {findSaleousingByCcode} from "/@/api/record/system/ysd";
 
 /*start栏目设置*/
 const visible = ref(false);

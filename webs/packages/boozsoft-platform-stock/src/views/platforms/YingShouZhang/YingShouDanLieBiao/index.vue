@@ -740,6 +740,23 @@ async function editPage(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -769,6 +786,11 @@ async function editPage(){
           path: '/YingShouZhang/YingShou/DanJu/YingShouDan',
           query: pageParameter
         });
+      } else {
+        router.push({
+          path: '/YingShouZhang/YingShou/DanJu/YingShouDanHong',
+          query: pageParameter
+        });
       }
     }
   } else {
@@ -782,12 +804,26 @@ async function editPage(){
 }
 
 //查看收款单
-function openPage(data){
+async function openPage(data){
   pageParameter.id = data.id
   pageParameter.isEdit = '3'
+  const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:data.ccode,billStyle:data.billStyle})
+  if (res.length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '警告',
+      content: '列表单据已发生变化，请刷新当前列表！'
+    })
+    return false
+  }
   if (data.bdocumStyle!='1') {
     router.push({
       path: '/YingShouZhang/YingShou/DanJu/YingShouDan',
+      query: pageParameter
+    });
+  } else {
+    router.push({
+      path: '/YingShouZhang/YingShou/DanJu/YingShouDanHong',
       query: pageParameter
     });
   }
@@ -799,6 +835,23 @@ async function delList(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bcheck == item.bcheck) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -888,6 +941,23 @@ async function approved(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bworkable == item.bworkable) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bworkable == '1') {
         num++
         createErrorModal({
@@ -1151,6 +1221,31 @@ async function unApproved(){
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].bworkable == item.bworkable) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
+      if (res[0].hxIsum == item.hxIsum) {
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bworkable != '1') {
         num++
         createErrorModal({
@@ -1159,7 +1254,7 @@ async function unApproved(){
           content: '记录未复核，操作无效！'
         })
         return false
-      } else if (item.hxIsum>0) {
+      } else if (res[0].hxIsum>0) {
         createErrorModal({
           iconType: 'warning',
           title: '警告',
@@ -1555,7 +1650,7 @@ import {findStockDbLanMuList, saveStockLanMuList} from "/@/api/record/system/sto
 import {cloneDeep} from "lodash-es";
 import {
   deleteSaleousingById,
-  deleteSaleousingsByCcode,
+  deleteSaleousingsByCcode, findSaleousingByCcode,
   findSaleousingList, findSaleousingsByCcode, findYsdmxbList, saveSaleousing, saveSaleousingsList
 } from "/@/api/record/system/ysd";
 import {useRoute} from "vue-router";

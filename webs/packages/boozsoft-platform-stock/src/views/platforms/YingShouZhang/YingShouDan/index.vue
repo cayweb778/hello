@@ -343,7 +343,11 @@ import {
   deleteSaleousingsById,
   saveSaleousing,
   saveSaleousingsList,
-  deleteSaleousingById, deleteSaleousingsByCcode, findSaleousingsByCcode, findSaleousingList
+  deleteSaleousingById,
+  deleteSaleousingsByCcode,
+  findSaleousingsByCcode,
+  findSaleousingList,
+  findSaleousingByCcode
 } from "/@/api/record/system/ysd";
 import {useAccountPickerCache} from "/@/store/modules/boozsoft/components/AccountPicker/cache";
 import {
@@ -809,15 +813,15 @@ async function jiezhang() {
 
 const startEdit = async (type) => {
   let maxR = 20
+  await jiezhang()
+  if(flag.value){
+    return createWarningModal({ content: '应收款已进行月末结账,不能进行操作！' });
+  }
+  let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收款月末结账',method:'月末结账'})
+  if(ymjz.length){
+    return createWarningModal({ content: ymjz[0]?.username+'正在进行应收款月末结账,不能同时进行操作！' });
+  }
   if (type === 'add') {
-    await jiezhang()
-    if(flag.value){
-      return createWarningModal({ content: '应收款已进行月末结账,不能进行操作！' });
-    }
-    let ymjz= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收款月末结账',method:'月末结账'})
-    if(ymjz.length){
-      return createWarningModal({ content: ymjz[0]?.username+'正在进行应收款月末结账,不能同时进行操作！' });
-    }
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'添加'})
     if(taskData.length==0){
       await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'添加',caozuoModule:'ar'})
@@ -850,6 +854,23 @@ const startEdit = async (type) => {
     tableData1.value = []
     // setTableData1(list)
   } else {
+    const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.billStyle})
+    if (res.length==0){
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
+    if (res[0].bcheck == formItems.value.bcheck) {
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,复核,弃审',recordNum:formItems.value.ccode})
     if(taskData.length==0){
       await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'应收单',method:'修改',recordNum:formItems.value.ccode,caozuoModule:'ar'})
@@ -915,6 +936,23 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.billStyle})
+    if (res.length==0){
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
+    if (res[0].bcheck == formItems.value.bcheck) {
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
     if (formItems.value.bcheck=='1') {
       createErrorModal({
         iconType: 'warning',
@@ -954,6 +992,31 @@ const startDel = async () => {
 const startReview = async (b) => {
   let a = useUserStoreWidthOut().getUserInfo.id
   if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
+    const res = await useRouteApi(findSaleousingByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.billStyle})
+    if (res.length==0){
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
+    if (res[0].bcheck == formItems.value.bcheck) {
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '单据已发生变化，请刷新当前单据！'
+      })
+      return false
+    }
+    if (res[0].hxIsum == formItems.value.hxIsum) {
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '列表单据已发生变化，请刷新当前列表！'
+      })
+      return false
+    }
     if (b==true){
       // console.log('复核')
       let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'应收单',method:'修改,删除,复核,弃复',recordNum:formItems.value.ccode})
