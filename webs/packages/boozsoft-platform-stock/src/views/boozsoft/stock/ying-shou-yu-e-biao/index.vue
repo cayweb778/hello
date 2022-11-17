@@ -751,7 +751,8 @@ function printData(){
     }
   }
   let num = Math.ceil(printList.length/27)
-  useNewPrint({data: ['l', 'px', 'a4', true]}, (doc) => {
+
+  useNcBusStoreWidthOut().usePrint({data: ['l', 'px', 'a4', true]}, (doc) => {
     loadMark.value = false
     doc.autoTable({
       head: [['客户应收余额表','', '', '',  '', ''],

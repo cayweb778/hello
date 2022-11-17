@@ -65,6 +65,7 @@ import {
 import XLSX from "xlsx-js-style";
 window.$wujie.bus.$emit("registerNcDataExport", {
   usePrint(params,fun){
+    debugger
    const aaaa= useNewPrintLang(params,fun).getBase64()
     useNewPrintStoreWidthOut().setPrintBase64(aaaa)
     window.$wujie.bus.$emit('setCurrentPluginName', 'ncPrint')

@@ -7,8 +7,8 @@ export const useNcBusStore = defineStore({
   state: () => ({}),
   getters: {},
   actions: {
-    usePrint() {
-      return window.$wujie.props.globalApiStore.getNcDataExport()
+    usePrint(params,fun) {
+      return window.$wujie.props.globalApiStore.getNcDataExport(params,fun)
     },
     useExcel() {
       return window.$wujie.props.globalApiStore.getUseExcelFn()
