@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 import {store} from '/@/store';
 import {modules} from "../../../pages/menuData";
+import {computed} from "vue";
 
 
 export const useGlobalStore = defineStore({
@@ -11,7 +12,8 @@ export const useGlobalStore = defineStore({
         ncModals: '',
         ncPrintFn:'',
         loginDate:'',
-        ncDataExport:''
+        ncDataExport:'',
+        useExcelFn:''
     }),
     getters: {
         getCurrentPluginName:(state)=>state.currentPluginName,
@@ -19,8 +21,12 @@ export const useGlobalStore = defineStore({
         getLoginDate:(state)=>state.loginDate,
         getNcModals: (state) => state.ncModals,
         getNcDataExport: (state) => state.ncPrintFn,
+        getUseExcelFn: (state) => state.useExcelFn,
     },
     actions: {
+        setUseExcelFn(fn){
+            this.useExcelFn=fn
+        },
         setCurrentPluginName(e){
             this.currentPluginName=e
         },
@@ -39,7 +45,7 @@ export const useGlobalStore = defineStore({
         defineWujieProps(e){
             return {
                 menuModules:modules,
-                ncModals:useGlobalStoreWidthOut().getNcModals,
+                globalApiStore:useGlobalStoreWidthOut(),
                 ...e
             }
         }

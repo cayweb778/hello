@@ -26,7 +26,7 @@
             type="button"
             class="ant-btn ant-btn-me"
             @click="excelData()"
-          ><span>导出</span></button>
+          ><span>导出5555</span></button>
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -847,14 +847,29 @@ function printData(){
 }
 
 //导出
-import {
+// import {
+//   defaultV,
+//   sheet_from_array_of_arrays,
+//   Workbook,
+//   writeExcel
+// } from "/@/utils/boozsoft/excel/excel2";
+const {
+  XLSX,
   defaultV,
   sheet_from_array_of_arrays,
   Workbook,
   writeExcel
-} from "/@/utils/boozsoft/excel/excel2";
-import XLSX from "xlsx-js-style";
+}=useNcBusStoreWidthOut().useExcel()
+
+// setInterval(()=>{
+//  // const aaa= useNcBusStoreWidthOut().useExcel()
+//  //  console.log(aaa)
+// },1000)
 const excelData = () => {
+  // // const ddd=useNcBusStoreWidthOut()
+  //
+  // debugger
+  console.log(89988)
   // console.log("导出成功！")
   const arrData = tableDataAll.value
   arrData.forEach(item=>{
@@ -1147,6 +1162,7 @@ import {cloneDeep} from "lodash-es";
 import {findYsdtjbList} from "/@/api/record/system/ysd";
 import {findSkdtjbList} from "/@/api/record/system/arApYsyf";
 import {findYszzYueList} from "/@/api/record/system/arBeginBalance";
+import {useNcBusStoreWidthOut} from "/@/store/modules/nc-bus";
 /*start栏目设置*/
 const visible = ref(false);
 const windowWidth = (window.innerWidth)

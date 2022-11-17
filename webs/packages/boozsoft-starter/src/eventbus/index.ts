@@ -8,12 +8,14 @@ function loginDate(){
     })
 }
 function ncPrint(){
-    bus.$on("registerNcDataExport",function (e){
+    bus.$on("registerNcDataExport",function ({usePrint,useExcel}){
+        debugger
         // function useNcPrint(){
         //     useGlobalStoreWidthOut().setCurrentPluginName("ncPrint")
         //     return e
         // }
-        useGlobalStoreWidthOut().setNcPrintFn(e)
+        useGlobalStoreWidthOut().setUseExcelFn(useExcel)
+        useGlobalStoreWidthOut().setNcPrintFn(usePrint)
     })
 }
 

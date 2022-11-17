@@ -62,7 +62,7 @@ import {
   Workbook,
   writeExcel
 } from "/@/utils/boozsoft/excel/excel2";
-
+import XLSX from "xlsx-js-style";
 window.$wujie.bus.$emit("registerNcDataExport", {
   usePrint(params,fun){
    const aaaa= useNewPrintLang(params,fun).getBase64()
@@ -75,6 +75,7 @@ window.$wujie.bus.$emit("registerNcDataExport", {
   useNewPrintLang,
   useExcel(){
     return {
+      XLSX,
       defaultV,
       sheet_from_array_of_arrays,
       Workbook,
