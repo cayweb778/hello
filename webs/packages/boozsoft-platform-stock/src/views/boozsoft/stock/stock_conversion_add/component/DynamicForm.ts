@@ -49,13 +49,13 @@ const defaultRows = () => {
     {
       columnType: '1',
       field: 'cpersoncode',
-      label: '业务员',
+      label: '业 务 员',
       component: 'Select',
       componentProps: 'user',
       required: false,
       readonly: false,
       serial: 5,
-      isShow: false
+      isShow: true
     },
     {
       columnType: '1',
@@ -66,7 +66,7 @@ const defaultRows = () => {
       required: false,
       readonly: false,
       serial: 6,
-      isShow: false
+      isShow: true
     },
     {
       columnType: '1',

@@ -187,3 +187,10 @@ export const auditCheck = defRouteApi( async ({ccode,rkBcheck,ckBcheck,flg,type}
     timeout: 10000000,
   }
 })
+export const getDataInfo = defRouteApi( async (ccode)=>{
+  return  {
+    url: '/stock/change/findStockWareByCcode?ccode='+ccode,
+    method: 'POST',
+    timeout: 10000000,
+  }
+})

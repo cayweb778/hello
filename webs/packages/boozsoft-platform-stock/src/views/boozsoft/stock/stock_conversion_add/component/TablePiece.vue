@@ -308,7 +308,7 @@
             <span>合计</span>
           </div>
           <div>
-            <span>主数量:</span>
+            <span>数量:</span>
             <span>{{ parseFloat(formItems?.squantity|| '0').toFixed(2) }}</span>
           </div>
           <div>
@@ -628,8 +628,8 @@ async function contentSwitch(action) {
       if (!hasBlank(v.icost)) {
         a = parseFloat(doadd(a, v.icost))
       }
-      if (!hasBlank(v.baseQuantity)) {
-        b = add(b, v.baseQuantity)
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
       }
     })
     formItems.value.squantity = b
@@ -672,14 +672,14 @@ async function contentSwitch2(action,curr) {
     }
     //计算数量金额总和
     let list = getDataSource()
-    let a = '0.00'
+    let a = '0'
     let b = '0'
     list.forEach(v=>{
       if (!hasBlank(v.icost)) {
-        a = parseFloat(doadd(a, v.icost))
+        a = add(a, v.icost)
       }
-      if (!hasBlank(v.baseQuantity)) {
-        b = add(b, v.baseQuantity)
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
       }
     })
     formItems.value.squantity = b
@@ -1015,6 +1015,9 @@ const tableDataChange =  (r,c) => {
     }
   }
   switch (c) {
+    case 'batchId':
+      slChange0(r)
+      break;
     case 'cwhcode':
       let cangkuInfo = ckListOptions.value.filter(it => it.id == r.cwhcode)[0]
       if (null != cangkuInfo) {
@@ -1037,18 +1040,34 @@ const tableDataChange =  (r,c) => {
       chChange(r)
       break;
     case 'baseQuantity':
-    case 'price':
     case 'fyprice':
       if (!hasBlank(r.baseQuantity) && !hasBlank(r.price)) {
         let n = parseFloat(r.baseQuantity).toFixed(10)
         if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
         let d = parseFloat(r.price).toFixed(10)
         //let t = parseFloat(r.fyprice).toFixed(10)
-        r.icost = parseFloat(n * d).toFixed(10)
+        //r.icost = parseFloat(n * d).toFixed(10)
       }
       slChange(r,c)
       break;
     case 'price':
+      setTimeout(()=>{
+        let list = getDataSource();
+        r.flgs = '1'
+        //计算数量金额总和
+        let a = '0'
+        let b = '0'
+        list.forEach(v=>{
+          if (!hasBlank(v.icost)) {
+            a = add(a, v.icost)
+          }
+          if (!hasBlank(v.cnumber)) {
+            b = add(b, v.cnumber)
+          }
+        })
+        formItems.value.squantity = b
+        formItems.value.icost  = a
+      },1000)
       break;
     case 'cnumber':
       let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == r.cinvode) :tempType.value=='three'? (it.stockBarcode == r.bcheck1) : (it.stockName == r.cinvodeName))[0]
@@ -1062,21 +1081,6 @@ const tableDataChange =  (r,c) => {
       }
       break;
   }
-  r.flgs = '1'
-  //计算数量金额总和
-  let list = getDataSource()
-  let a = '0.00'
-  let b = '0'
-  list.forEach(v=>{
-    if (!hasBlank(v.icost)) {
-      a = parseFloat(doadd(a, v.icost))
-    }
-    if (!hasBlank(v.baseQuantity)) {
-      b = doadd(b, v.baseQuantity)
-    }
-  })
-  formItems.value.squantity = b
-  formItems.value.icost  = a
   return r;
 }
 const slChange0 = (r) => {
@@ -1123,6 +1127,23 @@ const slChange0 = (r) => {
       r.tempSubQuantity2 = r.baseQuantity
     }
   }
+  setTimeout(()=>{
+    let list = getDataSource();
+    r.flgs = '1'
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
+  },1000)
 }
 
 //加
@@ -1479,6 +1500,19 @@ const tableDel = () => {
     let selectIndex = list.findIndex(it => it.key === tableSelectedRowKeys.value[0])
     list.splice(selectIndex, 1)
     setTableData(list)
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
     tableSelectedRowKeys.value = []
   } else {
     createErrorModal({
@@ -1489,10 +1523,11 @@ const tableDel = () => {
   }
 }
 const tableFt = () => {
-  //获取所有信息 根据总金额 每一个数量 分摊
-  let list = getDataSource().filter(it => it.icost != null && it.icost != null);
+  //获取所有信息 根据总金额 数量 分摊
+  let list = getDataSource().filter(it => it.cnumber != null && it.cwhcode != null && it.cinvode != null);
   let m = props.formFuns.getFormValue().fymoney
   let n = formItems.value.icost
+  let sq = formItems.value.squantity
   let i = props.icost
   if(list.length > 0){
     if(list.length == 1){
@@ -1506,19 +1541,52 @@ const tableFt = () => {
       })
     }else{
       let sum = 0
+      let sumf = 0
       list.forEach(v=>{
-        v.icost = i
-        //相同编码直接给相同金额 然后剩余金额在分配
-        if(!hasBlank(v.icost)){
-          let t = parseFloat((m*(v.icost/i)))
+          let t = parseFloat((i*(v.cnumber/sq)))
           v.icost = Math.round(t * 100) / 100
 
-          let s = parseFloat((m*(v.icost/n)))
+          let p = parseFloat(v.icost/v.cnumber)
+          v.price = Math.round(p * 100) / 100
+
+          let s = parseFloat((m*(v.cnumber/sq)))
           v.fyprice = Math.round(s * 100) / 100
-          sum = sum + v.fyprice
-        }
+          sum = sum + v.icost
+          sumf = sumf + v.fyprice
       })
+      //分摊结束 如果转换后金额不一致 大就那最后一个金额减 小则加
+      if(i != sum){
+        if(i>sum){
+          list[list.length-1].icost = parseFloat(list[list.length-1].icost)+(parseFloat(i)-parseFloat(sum))
+        }else{
+          list[list.length-1].icost = parseFloat(list[list.length-1].icost)-(parseFloat(i)-parseFloat(sum))
+        }
+      }
+
+      if(m != sumf){
+        if(m>sumf){
+          list[list.length-1].fyprice = parseFloat(list[list.length-1].fyprice)+(parseFloat(m)-parseFloat(sumf))
+        }else{
+          list[list.length-1].fyprice = parseFloat(list[list.length-1].fyprice)-(parseFloat(m)-parseFloat(sumf))
+        }
+      }
     }
+
+    //计算数量金额总和
+    let list2 = getDataSource()
+    let a = '0'
+    let b = '0'
+    list2.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
+
     let len = list.length
     for (let i = 0; i < (7 - len); i++) {
       list.push({})

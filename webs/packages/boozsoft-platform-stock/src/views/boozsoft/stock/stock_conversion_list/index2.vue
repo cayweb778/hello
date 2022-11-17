@@ -256,7 +256,7 @@ import {
 } from "/@/api/record/stock/stock-ruku";
 
 import {
-  findAllMainList, audit, deleteSettModes, auditCheck
+  findAllMainList, audit, deleteSettModes, auditCheck,getDataInfo
 } from "/@/api/record/stock/stock-xtzhd";
 import {
   delCGDHDverifyZTRKSum,
@@ -273,6 +273,7 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import {getByStockBalanceTask} from "/@/api/record/stock/stock_balance";
 import { Loading } from '/@/components/Loading';
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
+import {findAll as findAllJiLang} from "/@/api/record/system/unit-mea";
 
 const InputSearch = Input.Search
 const SelectOption = Select.Option
@@ -974,10 +975,17 @@ const iyear = ref('2022')
 const dynamicTenant:any = ref('')
 const toAudit = async () => {
   if (checkRow.value.length == 1) {
-    if(checkRow.value[0].bcheck === '1'){
-      message.error("已审核请勿重复审核！")
+    //验证数据完整性
+    let d = await checkData(checkRow.value[0].ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
       return
     }
+    if(d.bcheck === '1'){
+      message.error("已审核请勿重复审核，请刷新页面后操作！")
+      return
+    }
+
     //校验
     compState.loading = true
     let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
@@ -1054,10 +1062,18 @@ const toAudit = async () => {
 const toAuditBack = async () => {
   //判断范围
   if (checkRow.value.length == 1) {
-    if(checkRow.value[0].bcheck != '1'){
-      message.error("未审核不能弃审！")
+
+    //验证数据完整性
+    let d = await checkData(checkRow.value[0].ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
       return
     }
+    if(d.bcheck != '1'){
+      message.error("未审核不能弃审，请刷新页面后操作！")
+      return
+    }
+
     //校验
     compState.loading = true
     let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
@@ -1140,6 +1156,17 @@ async function delList() {
       onOk: async () => {
         for (let i = 0; i < checkRow.value.length; i++) {
           const item = checkRow.value[i]
+          //验证数据完整性
+          let d = checkData(checkRow.value[i].ccode)
+          if(d.id){
+            message.error("单据异常不能删除！")
+            return
+          }
+          //已审核不能修改
+          if(checkRow.value[i].bcheck ==='1'){
+            message.error("已审核单据不能删除！")
+            return
+          }
           //已审核不能修改
           if(checkRow.value[i].bcheck ==='1'){
             message.error("已审核单据不能删除！")
@@ -1167,6 +1194,13 @@ async function delList() {
     })
   }
 }
+
+async function checkData(ccode) {
+  let d = await useRouteApi(getDataInfo, {schemaName: dynamicTenantId})(ccode)
+  return d
+}
+
+
 async function saveLogData(optAction,ccode) {
   let logmap={
     loginTime:new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "),

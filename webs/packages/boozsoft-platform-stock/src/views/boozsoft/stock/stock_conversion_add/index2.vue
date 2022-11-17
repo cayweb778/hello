@@ -422,8 +422,8 @@
                 <span>合计</span>
               </div>
               <div>
-                <span>主数量:</span>
-                <span>{{ parseFloat(formItems?.squantity || '0').toFixed(2) }}</span>
+                <span>数量:</span>
+                <span>{{ parseFloat(formItems?.squantity|| '0').toFixed(2) }}</span>
               </div>
               <div>
                 <span>金额:</span>
@@ -434,7 +434,7 @@
         </BasicTable>
 
         <TablePiece :seachData="seachData"  :dynamicAccId="dynamicAccId" :dynamicYear="dynamicYear" :status="status" :dynamicTenant="dynamicTenant" :cardListOptions="cardListOptions"
-                      :accId="dynamicTenantId" :exportData="exportData" ref="tableTwo" :formFuns="formFuns" :icost="formItems.icost"/>
+                      :accId="dynamicTenantId"  ref="tableTwo" :formFuns="formFuns" :icost="formItems.icost" />
         <Import
           @save="introduceData"
           @register="registerImportPage"
@@ -532,7 +532,7 @@ import {
   findBillLastDate,
   reviewRuKu,
   saveXhd,
-  auditCheckBcheck,findByXyCcode
+  auditCheckBcheck, findByXyCcode, getDataInfo
 } from "/@/api/record/stock/stock-xtzhd";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {findStockPeriodInfoByYm} from "/@/api/record/group/im-unit";
@@ -683,10 +683,10 @@ async function contentSwitch(action) {
     let b = '0'
     list.forEach(v=>{
       if (!hasBlank(v.icost)) {
-        a = parseFloat(doadd(b, v.icost))
+        a = parseFloat(doadd(a, v.icost))
       }
-      if (!hasBlank(v.baseQuantity)) {
-        b = add(b, v.baseQuantity)
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
       }
     })
     formItems.value.squantity = b
@@ -882,6 +882,19 @@ const tableDel = () => {
     let selectIndex = list.findIndex(it => it.key === tableSelectedRowKeys.value[0])
     list.splice(selectIndex, 1)
     setTableData(list)
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
     tableSelectedRowKeys.value = []
   } else {
     createErrorModal({
@@ -914,6 +927,17 @@ async function checkBusDate(date) {
 const tableTwo = ref(null)
 const startEdit = async (type) => {
   let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck == '1'){
+    message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+    return
+  }
+
   //  1 日期是否已结账
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
   console.log('1--->日期是否已结账-->'+temp)
@@ -1012,9 +1036,17 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-    if (formItems.value.bcheck == '1') {
-      return message.error('提示：当前入库单已经审核，不能删除，请弃审单据后重试！！')
+    //验证数据完整性
+    let d = await checkData(formFuns.value.getFormValue().ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
+      return
     }
+    if(d.bcheck == '1'){
+      message.error("提示：当前单据已经审核，不能删除，请弃审单据后重试！！！")
+      return
+    }
+
     // 有无 整理现存量 任务
     let xclTaskData = await useRouteApi(getByStockBalanceTask, {schemaName: dynamicTenantId})({
       iyear: dynamicYear.value,
@@ -1087,10 +1119,12 @@ const compState = reactive({
 const startReview = async (b) => {
   let a = useUserStoreWidthOut().getUserInfo.id
   if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
-    if ((b && !hasBlank(formItems.value.bcheckUser)) || (!b && hasBlank(formItems.value.bcheckUser))){
-      createWarningModal({title: '温馨提示',content: '请勿重复操作！'})
-    }else {
-
+      //验证数据完整性
+      let d = await checkData(formFuns.value.getFormValue().ccode)
+      if(!d){
+        message.error("数据异常请刷新页面后操作！")
+        return
+      }
       //校验
       compState.loading = true
       let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
@@ -1117,6 +1151,10 @@ const startReview = async (b) => {
       }
 
       if(b){//审核校验出库
+        if(d.bcheck === '1'){
+          message.error("已审核请勿重复审核，请刷新页面后操作！")
+          return
+        }
         //校验现存量
         let isCheck = true
         let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity)  && !hasBlank(it.price + ''))
@@ -1145,7 +1183,10 @@ const startReview = async (b) => {
         }
 
       }else{
-
+        if(d.bcheck != '1'){
+          message.error("未审核不能弃审，请刷新页面后操作！")
+          return
+        }
         //弃审校验入库
         let isCheck = true
         let arr = await tableTwo.value.getTablePieceData()
@@ -1190,13 +1231,12 @@ const startReview = async (b) => {
       message.success(`${b?'审核':'弃审'}成功！`)
       compState.loading = false
       await pageReload()
-      if (b && isAuto && res != null){
-
-      }
     }
-  } else {
-    if (hasBlank(a)) message.error('获取用户信息异常！')
-  }
+}
+
+async function checkData(ccode) {
+  let d = await useRouteApi(getDataInfo, {schemaName: dynamicTenantId})(ccode)
+  return d
 }
 
 function codeToName(arr) {
@@ -1294,7 +1334,14 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 //数据保存
 async function saveData() {
-
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(d){
+    if(d.bcheck == '1'){
+      message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+      return
+    }
+  }
   let id = (status.value == 1?null:formItems.value.id)
   formItems.value = formFuns.value.getFormValue()
   formItems.value.id = id // 制单人
@@ -1307,12 +1354,54 @@ async function saveData() {
   let s = await tableTwo.value.getTablePieceData()
 
   let fymoney = '0.00'
+  let wsmoney = '0.00'
   s.forEach(v=>{
-    fymoney = add(parseFloat(fymoney).toFixed(10), parseFloat(v.fyprice).toFixed(10))
+    fymoney = add(parseFloat(fymoney).toFixed(4), parseFloat(v.fyprice).toFixed(4))
+    wsmoney = add(parseFloat(wsmoney).toFixed(4), parseFloat(v.icost).toFixed(4))
   })
-
+  console.log(formFuns.value.getFormValue()?.fymoney)
+  console.log(fymoney)
   if(formFuns.value.getFormValue()?.fymoney  != fymoney){
-    message.error("费用金额不一致!")
+    message.error("转换前后费用金额不一致!")
+    let list = getDataSource();
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
+    return
+  }
+
+  let money = '0.00'
+  list.forEach(v=>{
+    money = add(parseFloat(money).toFixed(4), parseFloat(v.icost).toFixed(4))
+  })
+  console.log(money)
+  console.log(wsmoney)
+  if(money != wsmoney){
+    message.error("转换前后无税金额不一致!")
+    let list = getDataSource();
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
     return
   }
 
@@ -1988,6 +2077,23 @@ const tableDataChange =  (r,c) => {
         r.tempTen = r.icost
       }
       slChange(r,c)
+      setTimeout(()=>{
+        let list = getDataSource();
+        r.flgs = '1'
+        //计算数量金额总和
+        let a = '0'
+        let b = '0'
+        list.forEach(v=>{
+          if (!hasBlank(v.icost)) {
+            a = add(a, v.icost)
+          }
+          if (!hasBlank(v.cnumber)) {
+            b = add(b, v.cnumber)
+          }
+        })
+        formItems.value.squantity = b
+        formItems.value.icost  = a
+      },1000)
       break;
     case 'icost':
       if (!hasBlank(r.cnumber) && !hasBlank(r.icost)) { //反算 单价
@@ -2028,21 +2134,6 @@ const tableDataChange =  (r,c) => {
       r.tempTen = '0'
       break;
   }
-  r.flgs = '0'
-  //计算数量金额总和
-  let list = getDataSource()
-  let a = '0.00'
-  let b = '0'
-  list.forEach(v=>{
-    if (!hasBlank(v.icost)) {
-      a = parseFloat(doadd(b, v.icost))
-    }
-    if (!hasBlank(v.baseQuantity)) {
-      b = add(b, v.baseQuantity)
-    }
-  })
-  formItems.value.squantity = b
-  formItems.value.icost  = a
   return r;
 }
 
@@ -2091,6 +2182,23 @@ const slChange0 = (r) => {
     }
     tableDataChange(r,'price')
   }
+  setTimeout(()=>{
+    let list = getDataSource();
+    r.flgs = '0'
+    //计算数量金额总和
+    let a = '0'
+    let b = '0'
+    list.forEach(v=>{
+      if (!hasBlank(v.icost)) {
+        a = add(a, v.icost)
+      }
+      if (!hasBlank(v.cnumber)) {
+        b = add(b, v.cnumber)
+      }
+    })
+    formItems.value.squantity = b
+    formItems.value.icost  = a
+  },1000)
 }
 
 const slChange = (r,c) => {
@@ -2372,6 +2480,7 @@ const focusNext =  (r, c) => {
     let doms = nextC == 'cmemo' ? document.getElementsByClassName(nextC)[0] : document.getElementsByClassName(nextC)[0]?.getElementsByTagName('input')[0]
     if (null != doms) doms.focus()
   })
+
 }
 const getNextMark = (c,b) => {
   let model = {
@@ -2485,6 +2594,17 @@ function doadd(a, b) {
 
 const databaseCo=ref('')
 const gotoPy = async () => {
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
+
   let dataBaseInfo=await findByStockAccId(dynamicTenantId.value.substring(0,dynamicTenantId.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')
@@ -2498,6 +2618,16 @@ const gotoPy = async () => {
 }
 
 const gotoPk = async () => {
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
   let dataBaseInfo=await findByStockAccId(dynamicTenantId.value.substring(0,dynamicTenantId.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')
