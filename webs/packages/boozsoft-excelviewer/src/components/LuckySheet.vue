@@ -2,7 +2,7 @@
   <div style="position: absolute; top: 0">
     <input id="uploadBtn" type="file" @change="loadExcel" />
 
-    <span>Or Load remote xlsx file:</span>
+    <span>输入地址来加载表格:</span>
 
     <select v-model="selected" @change="selectExcel">
       <option disabled value="">Choose</option>
@@ -11,7 +11,7 @@
       </option>
     </select>
 
-    <a href="javascript:void(0)" @click="downloadExcel">Download source xlsx file</a>
+    <a href="javascript:void(0)" @click="downloadExcel">下载当前表格</a>
   </div>
   <div id="luckysheet"></div>
   <div v-show="isMaskShow" id="tip">Downloading</div>
@@ -83,7 +83,7 @@ const loadExcel = (evt) => {
       container: 'luckysheet', //luckysheet is the container id
       showinfobar: false,
       data: exportJson.sheets,
-      title: exportJson.info.name,
+      title: '财税达表格',
       userInfo: exportJson.info.name.creator,
     })
   })
@@ -113,7 +113,7 @@ const selectExcel = (evt) => {
       container: 'luckysheet', //luckysheet is the container id
       showinfobar: false,
       data: exportJson.sheets,
-      title: exportJson.info.name,
+      title: "财税达表格",
       userInfo: exportJson.info.name.creator,
     })
   })
@@ -140,6 +140,7 @@ const downloadExcel = () => {
 // !!! create luckysheet after mounted
 onMounted(() => {
   luckysheet.create({
+    title: "财税达表格",
     container: 'luckysheet',
   })
 })
@@ -173,5 +174,15 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   display: flex;
+}
+
+</style>
+<style>
+.luckysheet-share-logo{
+  background-image: url("http://81.70.47.206:81/ncdn/img/all/logo/aaaa.jpg")  !important;
+  background-repeat: no-repeat !important;
+  background-size:  152px 32px !important;
+  border-radius: 3px;
+  background:#2b2b2b;
 }
 </style>
