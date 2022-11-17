@@ -354,4 +354,20 @@ public class IperiodController {
     public Mono<R> countAllByAccountIdAndIyear(String accId,String iyear) {
         return sysPeriodRepository.countAllByAccountIdAndIyear(accId, iyear).map(o -> R.ok(o));
     }
+
+
+    @PostMapping("findAllDataByAccountId")
+    public Mono<R> findAllDataByAccountId(@RequestBody Map map) {
+        String accId=map.get("accId").toString();
+        return sysPeriodRepository.findAllDataByAccountId(accId).collectList()
+        .flatMap(list->{
+            list.forEach(t->{
+                t.setValue(t.getIyear()+"-"+t.getIperiodNum());
+                t.setTitle(t.getIyear()+"-"+t.getIperiodNum());
+                t.setLabel(t.getBeiyong1());
+            });
+            return Mono.just(list);
+        })
+        .map(o -> R.ok(o));
+    }
 }

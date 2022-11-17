@@ -31,3 +31,10 @@ export const getLastDayOfMonth = defRouteApi( async (iyearAndMonth:any)=>{
     method: 'POST',
   }
 })
+export const newQCSYJZ = defRouteApi( async (params:any)=>{
+  return  {
+    url: '/company/loss/newQCSYJZ',
+    timeout:10000000,
+    method: 'POST',params
+  }
+})

@@ -43,22 +43,12 @@ const dynamicColumnAndDataModel = reactive({
   ],
   DATA: [
     {
-      key: '20',
-      name: '单据类型',
-      nameNew: '单据类型',
-      check: true,
-      width: 70,
-      max: 150,
-      min: 70,
-      align: 'center'
-    },
-    {
       key: '0',
       name: '状态',
       nameNew: '状态',
       check: true,
       width: 70,
-      max: 150,
+      max: 100,
       min: 70,
       align: 'center'
     },
@@ -67,9 +57,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,isFixed: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 90,
+      max: 120,
+      min: 90,
       align: 'center'
     },
     {
@@ -78,8 +68,8 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '单据编号',
       check: true,isFixed: true,
       width: 120,
-      max: 200,
-      min: 80,
+      max: 150,
+      min: 120,
       align: 'left'
     },
     {
@@ -88,7 +78,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '供应商编码',
       check: true,
       width: 100,
-      max: 300,
+      max: 150,
       min: 100,
       align: 'left'
     },
@@ -107,7 +97,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '结算供应商编码',
       check: true,
       width: 100,
-      max: 300,
+      max: 150,
       min: 100,
       align: 'left'
     },
@@ -127,7 +117,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '业务员',
       check: true,
       width: 80,
-      max: 200,
+      max: 150,
       min: 80,
       align: 'left'
     },{
@@ -145,9 +135,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '税率',
       nameNew: '税率',
       check: true,isFixed: true,
-      width: 100,
-      max: 200,
-      min: 100,
+      width: 60,
+      max: 80,
+      min: 60,
       align: 'right'
     },
     {
@@ -155,20 +145,20 @@ const dynamicColumnAndDataModel = reactive({
       name: '票据类型',
       nameNew: '票据类型',
       check: true,
-      width: 100,
-      max: 200,
-      min: 100,
-      align: 'right'
+      width: 80,
+      max: 100,
+      min: 80,
+      align: 'center'
     },
     {
       key: '11',
       name: '付款方式',
       nameNew: '付款方式',
       check: true,
-      width: 100,
-      max: 200,
-      min: 100,
-      align: 'right'
+      width: 80,
+      max: 100,
+      min: 80,
+      align: 'center'
     },
     {
       key: '12',
@@ -176,9 +166,9 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '预计付款日期',
       check: true,
       width: 100,
-      max: 200,
+      max: 120,
       min: 100,
-      align: 'right'
+      align: 'center'
     }, {
       key: '13',
       name: '定金',

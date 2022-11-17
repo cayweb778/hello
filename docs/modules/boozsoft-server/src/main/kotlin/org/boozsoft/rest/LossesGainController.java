@@ -5,8 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.util.TypeUtils;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,17 +18,15 @@ import org.boozsoft.domain.entity.account.SysPsnType;
 import org.boozsoft.domain.entity.accstyle.AccStyle;
 import org.boozsoft.domain.entity.carryovers.AccCarryOverEntry;
 import org.boozsoft.domain.entity.codekemu.CodeKemu;
-import org.boozsoft.domain.ro.SubjectBalanceRo;
 import org.boozsoft.domain.vo.*;
+import org.boozsoft.domain.vo.stock.StockCurrentLackVo;
 import org.boozsoft.repo.*;
 import org.boozsoft.repo.accstyle.AccStyleRepository;
 import org.boozsoft.repo.codekemu.CodeKemuRepository;
 import org.boozsoft.service.KeMuBalanceService;
 import org.boozsoft.service.SubjectInitalBalanceService;
-import org.boozsoft.service.impl.SubjectInitialFuZhuBalanceServiceImpl;
 import org.boozsoft.util.BigDecimalUtils;
 import org.boozsoft.util.NewDateUtil;
-import org.boozsoft.utils.CollectOfUtils;
 import org.springbooz.core.tool.result.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -41,13 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoOperator;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @RestController
@@ -1692,5 +1686,39 @@ public class LossesGainController {
     @PostMapping("getLastDayOfMonth")
     public Mono<R> getLastDayOfMonth(String iyearAndMonth) {
         return Mono.just(R.ok().setResult(NewDateUtil.getLastDayOfMonth(iyearAndMonth)));
+    }
+
+
+    /**
+     * @description: 新的------期间损益结转
+     * @author: miao
+     * @date: 2022/11/17 14:28
+     * @param:
+     * @return: null
+     **/
+    @PostMapping("newQCSYJZ")
+    public Mono<R> newQCSYJZ(@RequestBody Map map){
+        String ddate=map.get("ddate").toString();
+        String kmLevel=map.get("kmLevel").toString();
+        String dataType=map.get("dataType").toString();
+        String lirunKm=map.get("lirunKm").toString();
+        String jz=map.get("jz").toString();
+        String sunYiCodeFirst=map.get("sunYiCodeFirst").toString();
+        List<CodeKemu> sykmAll= (List<CodeKemu>) map.get("sykmAll");
+
+        // 获取结转数据
+        Mono<List<QjsyjzVo>> listMono = getJieZhuanData(ddate.split("-")[0], ddate.replaceAll("-", ""), sunYiCodeFirst).collectList()
+                .flatMapMany(skList -> Flux.fromIterable(JSON.parseArray(JSON.toJSONString(skList), QjsyjzVo.class))).collectList();
+        Mono<List<FuzhuHesuan>> fzhslist = fuzhuHesuanRepository.findAll().collectList();
+        Mono<List<CustomerClass>> cusClassList = customerClassRepository.findAll().collectList();
+        Mono<List<SupplierClass>> supClassList = supplierClassRepository.findAll().collectList();
+        Mono<List<SysPsnType>> psnTypeList = sysPsnTypeRepository.findAll().collectList();
+        Mono<List<ProjectClass>> proClassList = projectClassRepository.findAll().collectList();
+
+        return Mono.zip(listMono,fzhslist,cusClassList,supClassList,psnTypeList,proClassList).flatMap(t->{
+            List<QjsyjzVo> a = t.getT1();
+
+            return Mono.just("");
+        }).map(R::ok);
     }
 }

@@ -48,19 +48,19 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '费用科目编码',
       check: true,
       isFixed: true,
-      width: 90,
-      max: 120,
-      min: 90,
-      align: 'center'
+      width: 200,
+      max: 300,
+      min: 100,
+      align: 'left'
     },
     {
       key: '1',
       name: "费用科目名称",
       nameNew: "费用科目名称",
       check: true,
-      width: 90,
-      max: 200,
-      min: 90,
+      width: 200,
+      max: 300,
+      min: 100,
       align: 'left'
     }
     , {
@@ -69,9 +69,9 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '本年利润科目编码',
       check: true,
       isFixed: true,
-      width: 120,
-      max: 200,
-      min: 120,
+      width: 200,
+      max: 300,
+      min: 100,
       align: 'left'
     }
     , {

@@ -6409,4 +6409,16 @@ public class AccCodekemuController {
         return name;
     }
 
+    @PostMapping("/company/findByIyearCcod")
+    public Mono<R> findByIyearCcod(@RequestBody Map map) {
+        String iyear=map.get("iyear").toString();
+        return codeKemuRepository.findAllByIyear(iyear).collectList().flatMap(list->{
+            list.forEach(t->{
+                t.setValue(t.getCcode());
+                t.setTitle(t.getCcode()+"-"+t.getCcodeName());
+                t.setLabel(t.getCcode()+"-"+t.getCcodeName());
+            });
+           return Mono.just(list);
+        }).map(R::ok);
+    }
 }

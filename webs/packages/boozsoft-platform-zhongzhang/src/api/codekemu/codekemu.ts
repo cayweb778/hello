@@ -935,3 +935,10 @@ export const company_findByCcodeAndIyearOrderByDbillDate = defRouteApi(async (pa
     timeout: 100000000000,params
   };
 });
+export const company_findByIyearCcod = defRouteApi(async (params) => {
+  return {
+    url: '/sys/acckemu/company/findByIyearCcod',
+    method: 'POST',
+    timeout: 100000000000,params
+  };
+});

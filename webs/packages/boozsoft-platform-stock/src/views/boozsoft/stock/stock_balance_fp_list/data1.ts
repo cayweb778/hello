@@ -47,9 +47,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '状态',
       nameNew: '状态',
       check: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 70,
+      max: 100,
+      min: 70,
       align: 'center'
     },
     {
@@ -57,9 +57,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 90,
+      max: 120,
+      min: 90,
       align: 'center'
     },
     {
@@ -67,9 +67,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据编号',
       nameNew: '单据编号',
       check: true,
-      width: 120,
-      max: 200,
-      min: 80,
+      width: 100,
+      max: 150,
+      min: 100,
       align: 'left'
     },
     {
@@ -77,7 +77,7 @@ const dynamicColumnAndDataModel = reactive({
       name: '供应商编码',
       nameNew: '供应商编码',
       check: true,
-      width: 150,
+      width: 100,
       max: 300,
       min: 100,
       align: 'left'
@@ -97,18 +97,18 @@ const dynamicColumnAndDataModel = reactive({
       name: '税率',
       nameNew: '税率',
       check: true,
-      width: 150,
-      max: 300,
-      min: 100,
-      align: 'left'
+      width: 80,
+      max: 100,
+      min: 80,
+      align: 'right'
     },
     {
       key: '6',
       name: '发票类型',
       nameNew: '发票类型',
       check: true,
-      width: 150,
-      max: 300,
+      width: 100,
+      max: 150,
       min: 100,
       align: 'left'
     },
@@ -117,8 +117,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '发票代码',
       nameNew: '发票代码',
       check: true,
-      width: 150,
-      max: 300,
+      width: 100,
+      max: 200,
       min: 100,
       align: 'left'
     },
@@ -127,8 +127,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '发票号码',
       nameNew: '发票号码',
       check: true,
-      width: 150,
-      max: 300,
+      width: 100,
+      max: 200,
       min: 100,
       align: 'left'
     },
@@ -137,10 +137,10 @@ const dynamicColumnAndDataModel = reactive({
       name: '发票日期',
       nameNew: '发票日期',
       check: true,
-      width: 150,
-      max: 300,
+      width: 100,
+      max: 120,
       min: 100,
-      align: 'left'
+      align: 'center'
     },
     {
       key: '10',

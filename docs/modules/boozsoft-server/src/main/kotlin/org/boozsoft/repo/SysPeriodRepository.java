@@ -55,4 +55,7 @@ public interface SysPeriodRepository extends ReactiveCrudRepository<SysPeriod, S
 
     @Query("select iyear from _app_group_sys_period where account_id=:accId group by iyear order by iyear")
     Flux<String> findByAccIdIyearGroupBy(String accId);
+
+    @Query("SELECT * FROM _app_group_sys_period where  account_id = :accountId ORDER BY iyear,iperiod_num")
+    Flux<SysPeriod> findAllDataByAccountId(String accountId);
 }

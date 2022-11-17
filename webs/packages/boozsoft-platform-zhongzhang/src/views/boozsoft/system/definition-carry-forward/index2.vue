@@ -10,6 +10,8 @@
       <div></div>
       <div>
         <div>
+          <Button class="actod-btn actod-btn-last" @click="setPz">生成凭证</Button>
+          <Button class="actod-btn actod-btn-last" @click="tableDel">清空</Button>
           <Button class="actod-btn actod-btn-last" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')">退出</Button>
         </div>
         <div>
@@ -49,15 +51,14 @@
             <div></div>
             <div>
               <span
-                style="color: white;">{{
-                  status == 0 ? '暂存' : status == 1 ? '新增' : status == 2 ? '编辑' : '查看'
-                }}</span>
+                style="color: white;">{{'结转'}}</span>
             </div>
           </div>
           <span style="font-size: 22px;font-weight: bold;margin-right: 300px;" :style="{color:'#0096c7'}">{{ titleContents[0] }}</span>
         </div>
         <div class="acbgead-two dynamic-form">
-          <DynamicForm :datasource="dynamicFormModel" :formDataFun="formFuns" :accId="dynamicTenantId" :dynamicTenant="dynamicTenant"/>
+          <DynamicForm :datasource="dynamicFormModel" :formDataFun="formFuns" :accId="dynamicAccId" :iyear="dynamicYear" :thisDate="ddate"
+                     @kmLevelThrow="kmLevelThrow" @dataTypeThrow="dataTypeThrow"  @lirunKmThrow="lirunKmThrow" @ddateThrow="ddateThrow" :dynamicTenant="lanMuData.accId"/>
         </div>
       </div>
       <div class="acb-centent">
@@ -71,7 +72,12 @@
           size="small"
           @register="registerTable"
         >
-
+          <template #lirunKm="{ record }" >
+            {{ kmAll.filter(t=>t.ccode==record.lirunKm)[0]?.ccode }}
+          </template>
+          <template #lirunKmName="{ record }" >
+            {{ kmAll.filter(t=>t.ccode==record.lirunKmName)[0]?.ccodeName }}
+          </template>
         </BasicTable>
       </div>
     </div>
@@ -80,9 +86,10 @@
 </template>
 
 <script setup="props, {emit}" lang="ts">
-import {Button, Input, Popover, Radio, Select, Tabs,} from "ant-design-vue";
+import {Button, Input, Popover, Radio, Select, Tabs,message} from "ant-design-vue";
 import DynamicColumn from "./component/DynamicColumn.vue";
 import {
+  SearchOutlined,
   BarcodeOutlined,
   CheckOutlined,
   CopyOutlined,
@@ -102,6 +109,12 @@ import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {assemblyDynamicColumn, initDynamics} from "./data";
 import DynamicForm from './component/DynamicForm.vue';
 import {GenerateDynamicColumn} from "./component/ts/DynamicForm";
+import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
+import {company_findByIyearCcod} from "/@/api/codekemu/codekemu";
+import {findAllDataByAccountId} from "/@/api/sys_period/data";
+import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
+import {JsonTool} from "/@/api/task-api/tools/universal-tools";
+import {newQCSYJZ} from "/@/api/record/system/losses-gain";
 
 
 const RadioButton = Radio.Button
@@ -118,7 +131,7 @@ const [registerLackPage, {openModal: openLackPage}] = useModal()
 const [registerItemsPage, {openModal: openItemsSourcePage}] = useModal()
 
 const windowHeight = (window.innerHeight - 300)
-const dynamicTenantId = ref('')
+const dynamicTenantId:any = ref('')
 const dynamicTenant:any = ref(null)
 const dynamicAccId = ref('')
 const dynamicYear = ref('')
@@ -131,7 +144,6 @@ const pageParameter:any = reactive({
   },
   type: 'CGFP'
 })
-const iyearPeriodList = ['202201','202202','202203']
 const visible3:any = ref(false)
 const tableSelectedRowKeys = ref([])
 const tableSelectedRowObjs = ref([])
@@ -154,51 +166,64 @@ const formFuns:any = ref({
   }, getSelectMap: () => {
   }
 })
+const formItems: any = ref({})
+const lirunKm: any = ref('')
+const lirunKmThrowData: any = ref('')
+const ddate: any = ref(useCompanyOperateStoreWidthOut().getLoginDate)
+const sykmAll: any = ref([])
+const kmAll: any = ref([])
+const kmLevel: any = ref('1')
+const dataType: any = ref('')
 
 
 
 
-
-
-const dynamicAdReload = async (obj) => {
+const initTable = ()=>{
   visible3.value = true
+  setTimeout(()=>{
+      lanMuData.value.changeNumber+=1
+      visible3.value = false
+    }
+    ,300)
+}
+const dynamicAdReload = async (obj) => {
   console.log('当前时间：'+new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "))
+  initTable()
   dynamicTenant.value = obj
-  dynamicTenantId.value = obj.accountMode
   dynamicAccId.value = obj.accId
-  dynamicYear.value = obj.stockYear
+  dynamicYear.value = obj.iyear
+  dynamicTenantId.value=obj.accountMode
   lanMuData.value.accId=obj.accountMode
   await columnReload()
-  lanMuData.value.changeNumber+=1
 }
 
 const CrudApi = {
   columns: [
     {
       title: '费用科目编码',
-      dataIndex: 'cwhcode',
+      dataIndex: 'feiyongKm',
       ellipsis: true,
-      slots: {customRender: 'cwhcode'},
+      slots: {customRender: 'feiyongKm'},
       width: 120
     },
     {
       title: '费用科目名称',
-      dataIndex: 'bcheck1',
+      dataIndex: 'feiyongKmName',
       ellipsis: true,
-      width: 120,slots: {customRender: 'bcheck1'},
+      width: 120,slots: {customRender: 'feiyongKmName'},
     },
     {
       title: '本年利润科目编码',
-      dataIndex: 'cinvode',
+      dataIndex: 'lirunKm',
       ellipsis: true,
-      slots: {customRender: 'cinvode'},
+      slots: {customRender: 'lirunKm'},
       width: 120
     },
     {
       title: '本年利润科目名称',
-      dataIndex: 'cinvodeName',
+      dataIndex: 'lirunKmName',
       ellipsis: true,
-      slots: {customRender: 'cinvodeName'},
+      slots: {customRender: 'lirunKmName'},
       width: 200
     }
   ]
@@ -211,7 +236,8 @@ const [registerTable, {
   setPagination,
   getPaginationRef,
   getColumns,
-  setColumns
+  setColumns,
+  getSelectRows
 }] = useTable({
   columns: CrudApi.columns,
   bordered: true,
@@ -238,6 +264,7 @@ const reloadColumns = () => {
   newA = assemblyDynamicColumn(dynamicColumnData.value.value, newA)
   setColumns(newA)
   initTableWidth(newA)
+  pageReload()
 }
 
 function initTableWidth(thisCs) {
@@ -264,28 +291,118 @@ const columnReload = async () => {
   formRowNum.value = Math.ceil((dynamicFormModel.value.filter(it=>it.isShow).length/4))-1
 }
 
-//金额格式化
-function toThousandFilter(num:any) {
-  if (num=='' || num==null){
-    return ''
-  }
-  return (+num || 0).toFixed(2).replace(/\d{1,3}(?=(\d{3})+(\.\d*)?$)/g, '$&,')
+const pageReload = async () => {
+  await contentSwitch()
 }
-// 时间格式化
-function formatTimer(value) {
-  let date: any = new Date(value);
-  let y = date.getFullYear();
-  let MM = date.getMonth() + 1;
-  MM = MM < 10 ? "0" + MM : MM;
-  let d = date.getDate();
-  d = d < 10 ? "0" + d : d;
-  let h = date.getHours();
-  h = h < 10 ? "0" + h : h;
-  let m = date.getMinutes();
-  m = m < 10 ? "0" + m : m;
-  let s = date.getSeconds();
-  s = s < 10 ? "0" + s : s;
-  return y + "-" + MM + "-" + d;
+const contentSwitch = async () => {
+  loadMark.value=true
+  await findAllCode()
+  await findAllPeriod()
+
+  setTimeout(()=>{
+    formItems.value = {
+      jz: '1',
+      kmLevel: kmLevel.value,
+      ddate: ddate.value,
+      lirunKm: lirunKm.value,
+      dataType: dataType.value
+    }
+    formFuns.value.setFormValue({
+      jz: '1',
+      kmLevel: kmLevel.value,
+      ddate: ddate.value,
+      lirunKm: lirunKm.value,
+      dataType: dataType.value
+    })
+
+    let list:any=[]
+    for (let i = 0; i < sykmAll.value.length; i++) {
+      let temp:any={}
+      temp.feiyongKm=sykmAll.value[i].ccode
+      temp.feiyongKmName=sykmAll.value[i].ccodeName
+      temp.lirunKm=lirunKm.value
+      temp.lirunKmName=lirunKm.value
+      list.push(temp)
+    }
+
+    for (let i = list.length; i < 50; i++) {
+      list.push({})
+    }
+    setTableData(list)
+    loadMark.value=false
+  },300)
+}
+
+// 查询科目
+const findAllCode = async () => {
+  let kemu = await useRouteApi(company_findByIyearCcod, { schemaName: dynamicTenantId })({iyear:dynamicYear.value});
+  if(kemu.length>0){
+    kmAll.value=kemu
+    let list=kemu.filter(t=>kmLevel.value=='1'?t.igrade=='1':t.bend=='1')
+    list=list.filter(t=>t.cclass=='损益')
+    list=dataType.value==''?list:list.filter(t=>t.bprogerty==dataType.value)
+    sykmAll.value=list
+    lirunKm.value=lirunKmThrowData.value==''?kemu.filter(t=>t.cclass=='权益'&&t.ccodeName=='本年利润')[0]?.ccode:lirunKmThrowData.value
+  }
+}
+// 结转期间
+const findAllPeriod = async () => {
+  let time=useCompanyOperateStoreWidthOut().getLoginDate
+  time=time.substring(0,time.length-3)
+  let periodList = (await findAllDataByAccountId({accId:dynamicAccId.value}))
+  let temp=periodList.filter(t=>t.title==time)
+  if(temp.length>0){
+    ddate.value=temp[0]?.title
+  }else{
+    ddate.value=temp[periodList.length-1]?.title
+  }
+}
+
+const openSelectContent = async () => {
+
+}
+const kmLevelThrow = (v) => {
+  kmLevel.value=v
+  contentSwitch()
+}
+const dataTypeThrow = (v) => {
+  dataType.value=v
+  contentSwitch()
+}
+const lirunKmThrow = (v) => {
+  lirunKmThrowData.value=v
+  contentSwitch()
+}
+const ddateThrow = (v) => {
+  dynamicYear.value=v.split('-')[0]
+  contentSwitch()
+}
+
+const tableDel = async () => {
+  let list:any = getDataSource()
+  for (let i = 0; i < list.length; i++) {
+    for (let j = 0; j < tableSelectedRowKeys.value.length; j++) {
+      if(list[i].key==tableSelectedRowKeys.value[j]){
+        list[i].lirunKm=''
+        list[i].lirunKmName=''
+      }
+    }
+  }
+  setTableData(list)
+  tableSelectedRowKeys.value = []
+}
+
+const setPz = async () => {
+  let map={
+    ddate:formItems.value.ddate,
+    kmLevel:formItems.value.kmLevel,
+    dataType:formItems.value.dataType,
+    lirunKm:formItems.value.lirunKm,
+    jz:formItems.value.jz,
+    sykmAll:JsonTool.json(sykmAll.value),
+    sunYiCodeFirst:sykmAll.value[0].ccode.charAt(0)
+  }
+  // await useRouteApi(newQCSYJZ, { schemaName: dynamicTenantId })(map);
 }
 </script>
 <style lang="less" scoped="scoped">

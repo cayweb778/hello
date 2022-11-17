@@ -19,5 +19,10 @@ export async function countAllByAccountIdAndIyear(accId,iyear) {
     method: 'POST',
   });
 }
-
+export async function findAllDataByAccountId(params) {
+  return defHttp.request({
+    url: '/iperiod/findAllDataByAccountId',
+    method: 'POST',params
+  });
+}
 

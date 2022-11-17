@@ -47,9 +47,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 90,
+      max: 120,
+      min: 90,
       align: 'center'
     },
     {
@@ -58,8 +58,8 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '单据编号',
       check: true,
       width: 120,
-      max: 200,
-      min: 80,
+      max: 150,
+      min: 120,
       align: 'left'
     },
     {
@@ -67,8 +67,8 @@ const dynamicColumnAndDataModel = reactive({
       name: '供应商编码',
       nameNew: '供应商编码',
       check: true,
-      width: 150,
-      max: 300,
+      width: 100,
+      max: 150,
       min: 100,
       align: 'left'
     },

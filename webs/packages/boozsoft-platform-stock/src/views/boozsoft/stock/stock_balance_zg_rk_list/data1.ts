@@ -48,7 +48,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '状态',
       check: true,
       width: 70,
-      max: 150,
+      max: 100,
       min: 70,
       align: 'center'
     },
@@ -57,9 +57,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,isFixed: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 90,
+      max: 120,
+      min: 90,
       align: 'center'
     },
     {
@@ -67,9 +67,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据编号',
       nameNew: '单据编号',
       check: true,
-      width: 120,
-      max: 200,
-      min: 80,
+      width: 100,
+      max: 150,
+      min: 100,
       align: 'left'
     },
     {
@@ -97,7 +97,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '结算供应商编码',
       check: true,
       width: 120,
-      max: 300,
+      max: 200,
       min: 120,
       align: 'left'
     },
@@ -117,7 +117,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '业务员',
       check: true,
       width: 80,
-      max: 200,
+      max: 150,
       min: 80,
       align: 'left'
     },{
@@ -125,9 +125,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '业务部门',
       nameNew: '业务部门',
       check: true,
-      width: 80,
+      width: 100,
       max: 200,
-      min: 80,
+      min: 100,
       align: 'left'
     },
     {
@@ -136,7 +136,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '库管员',
       check: true,
       width: 80,
-      max: 200,
+      max: 150,
       min: 80,
       align: 'left'
     },
@@ -146,7 +146,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '仓库',
       check: true,
       width: 100,
-      max: 200,
+      max: 150,
       min: 100,
       align: 'left'
     },

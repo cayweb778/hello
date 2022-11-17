@@ -10,7 +10,7 @@ const defaultRows = () => {
       field: 'ddate',
       label: '结转期间',
       component: 'Select',
-      componentProps: null,
+      componentProps: 'ddate',
       required: true,
       readonly: true,
       serial: 1,
@@ -32,7 +32,7 @@ const defaultRows = () => {
       label: '收支类型',
       component: 'Select',
       componentProps: null,
-      required: true,
+      required: false,
       readonly: true,
       serial: 3,
       isShow: true

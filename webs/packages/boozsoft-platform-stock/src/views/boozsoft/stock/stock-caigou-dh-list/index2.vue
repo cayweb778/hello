@@ -76,6 +76,19 @@
             <Button>
               <SyncOutlined :style="{ fontSize: '14px' }" @click="dataType=='0'?reloadTable():reloadPageMX()"/>
             </Button>
+            <Popover class="ant-btn-default" placement="bottom">
+              <template #content>
+                <span class="group-btn-span-special2" @click="dataType='0';reloadPage()" :style="dataType=='0'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
+                  按汇总显示&emsp;<CheckOutlined v-if="dataType=='0'"/>
+                </span><br/>
+                <span class="group-btn-span-special2" @click="dataType='1';reloadColumnsMX()" :style="dataType=='1'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
+                  按明细显示&emsp;<CheckOutlined v-if="dataType=='1'"/>
+                </span>
+              </template>
+              <Button>
+                <PicLeftOutlined :style="{ fontSize: '14px' }"/>
+              </Button>
+            </Popover>
             <Popover class="ant-btn-default" placement="bottom" v-model:visible="visible3">
               <template #content>
                 <DynamicColumn :defaultData="(dataType=='0'?initDynamics()['DATA']:initDynamicsMX()['1'])" :dynamicData="(dataType=='0'?dynamicColumnData:dynamicColumnDataMX)" :lanmuInfo="(dataType=='0'?lanMuData:lanMuDataMX)" @reload="dataType=='0'?reloadColumns():reloadColumnsMX()"/>
@@ -90,19 +103,6 @@
               </template>
               <Button>
                 <SettingFilled :style="{ fontSize: '14px' }"/>
-              </Button>
-            </Popover>
-            <Popover class="ant-btn-default" placement="bottom">
-              <template #content>
-                <span class="group-btn-span-special2" @click="dataType='0';reloadPage()" :style="dataType=='0'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
-                  按汇总显示&emsp;<CheckOutlined v-if="dataType=='0'"/>
-                </span><br/>
-                <span class="group-btn-span-special2" @click="dataType='1';reloadColumnsMX()" :style="dataType=='1'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
-                  按明细显示&emsp;<CheckOutlined v-if="dataType=='1'"/>
-                </span>
-              </template>
-              <Button>
-                <PicLeftOutlined :style="{ fontSize: '14px' }"/>
               </Button>
             </Popover>
             <Popover class="ant-btn-default" placement="bottom">
@@ -795,14 +795,6 @@ const CrudApi1 = {
       slots: { customRender: 'bcheck' }
     },
     {
-      title: '单据类型',
-      dataIndex: 'billStyle2',
-      key: 'billStyle2',
-      width: 100,
-      align: 'left',
-      ellipsis: true,
-    },
-    {
       title: '单据日期',
       dataIndex: 'ddate',
       key: 'ddate',
@@ -836,16 +828,16 @@ const CrudApi1 = {
     },
     {
       title: '结算供应商编码',
-      key: 'cvencodeJs',
-      dataIndex: 'cvencodeJs',
+      key: 'jscustCode',
+      dataIndex: 'jscustCode',
       width: 150,
       align: 'left',
       ellipsis: true,
     },
     {
       title: '结算供应商简称',
-      dataIndex: 'cvencodeJsname',
-      key: 'cvencodeJsname',
+      dataIndex: 'jscustName',
+      key: 'jscustName',
       width: 150,
       align: 'left',
       ellipsis: true,
@@ -994,13 +986,13 @@ const CrudApi1 = {
     },
     {
       title: '结算供应商编码',
-      dataIndex: 'cvencodeJs',
+      dataIndex: 'jscustCode',
       align: 'left',
       ellipsis: true,
     },
     {
       title: '结算供应商简称',
-      dataIndex: 'cvencodeJsname',
+      dataIndex: 'jscustName',
       align: 'left',
       ellipsis: true,
     },

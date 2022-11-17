@@ -81,4 +81,8 @@ public class SysPeriod {
 
 	@Transient
 	private String value;
+	@Transient
+	private String label;
+	@Transient
+	private String title;
 }

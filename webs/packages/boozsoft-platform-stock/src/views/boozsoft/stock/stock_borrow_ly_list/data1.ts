@@ -48,7 +48,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '状态',
       check: true,
       width: 70,
-      max: 150,
+      max: 100,
       min: 70,
       align: 'center'
     },
@@ -57,9 +57,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据日期',
       nameNew: '单据日期',
       check: true,isFixed: true,
-      width: 100,
-      max: 150,
-      min: 80,
+      width: 90,
+      max: 120,
+      min: 90,
       align: 'center'
     },
     {
@@ -67,9 +67,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '单据编号',
       nameNew: '单据编号',
       check: true,isFixed: true,
-      width: 120,
-      max: 200,
-      min: 80,
+      width: 100,
+      max: 150,
+      min: 100,
       align: 'left'
     },
     {
@@ -88,7 +88,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '借入单位名称',
       check: true,isFixed: true,
       width: 150,
-      max: 300,
+      max: 200,
       min: 100,
       align: 'left'
     },{
@@ -97,7 +97,7 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '业务部门',
       check: true,
       width: 100,
-      max: 150,
+      max: 200,
       min: 100,
       align: 'left'
     },
@@ -106,9 +106,9 @@ const dynamicColumnAndDataModel = reactive({
       name: '业务员',
       nameNew: '业务员',
       check: true,
-      width: 100,
+      width: 80,
       max: 150,
-      min: 100,
+      min: 80,
       align: 'left'
     },
     {
@@ -208,7 +208,7 @@ const dynamicColumnAndDataModel = reactive({
       width: 100,
       max: 150,
       min: 100,
-      align: 'right'
+      align: 'center'
     },{
       key: '16',
       name: '已归还数量',

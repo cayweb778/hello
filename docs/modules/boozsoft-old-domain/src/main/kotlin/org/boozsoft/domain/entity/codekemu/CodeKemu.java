@@ -248,6 +248,11 @@ public class CodeKemu {
 	private String itemName;
 
 
+	@Transient
+	private String label;
+	@Transient
+	private String title;
+
 	public CodeKemu( String uniqueAccStandard, String cclass, String cclassEngl, String ccode, String ccodeName, String ccodeEngl, String igrade, String bprogerty, String cbookType, String cbookTypeEngl, String bperson, String bcus, String bsup, String bdept, String bitem, String cassItem, String bnum, String menterage, String bstock, String bcash, String bbank, String bend, String bdaybook, String flag, String iyear, String templateId, String currency, String currencyType, String lowerControl, String fuzhuControl, String superiorCcode, String bcashEquivalence, String controlled, String pxjz, String xjll, String cyfx/*, String uniqueAccStandardName, String templateName*/) {
 		this.uniqueAccStandard = uniqueAccStandard;
 		this.cclass = cclass;
