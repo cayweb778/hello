@@ -14,6 +14,7 @@ pub fn registerShort(app:&App<Wry>){
             let win = tauri::window::WindowBuilder::new(appHandleClone.borrow(), "config".to_string(), WindowUrl::App("config".into()))
                 .title("财税达配置选项")
                 .inner_size(600.0, 360.0)
+                .center()
                 .always_on_top(true)
                 .decorations(false)
 
