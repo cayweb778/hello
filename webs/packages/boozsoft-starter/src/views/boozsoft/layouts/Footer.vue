@@ -40,6 +40,7 @@
 </span>
             <!--            <MessageOutlined style="font-size: 1em"/>-->
           </Badge>
+
         </div>
       </Col>
       <Col :span="8">
@@ -66,7 +67,7 @@
         </div>
       </Col>
       <Col :span="8" style="min-width:100px">
-
+        <div @click="downFile">下载</div>
         <!--        <div style="min-width:57px;padding-top:1px;text-align:center;color:white;font-size:14px;background:black">财务版</div>-->
 
 
@@ -98,12 +99,13 @@
                   </span>
               </div>-->
         <!--        <CustomizeInfo style="min-width:90px;" />-->
-              <Row @click="outSystemBefore" style="float:right;margin-right:10px">
-                <Col  style="padding-top:2px;margin-right:6px" >
-                  <LogoutOutlined style="font-size: 14px;cursor:pointer"/>
-                </Col>
-                <Col  style="cursor:pointer;padding-top:1px"><span style="font-size: 12px;padding-right:0px;">退出系统</span></Col>
-              </Row>
+        <Row @click="outSystemBefore" style="float:right;margin-right:10px">
+          <Col style="padding-top:2px;margin-right:6px">
+            <LogoutOutlined style="font-size: 14px;cursor:pointer"/>
+          </Col>
+          <Col style="cursor:pointer;padding-top:1px"><span style="font-size: 12px;padding-right:0px;">退出系统</span>
+          </Col>
+        </Row>
 
 
       </Col>
@@ -152,8 +154,14 @@ async function goMessage() {
   console.log(data)
 }
 
+import MyWorker from './abbbb?worker'
+
+
 async function goPrint() {
-  let {usePrint,tableStyle} = useGlobalStoreWidthOut().getNcDataExport
+  let {usePrint, tableStyle} = useGlobalStoreWidthOut().getNcDataExport
+  // const aaaa=new MyWorker()
+  // aaaa.postMessage({id})
+  // return
   const data = await usePrint({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
     let bbb = []
@@ -185,6 +193,20 @@ async function goPrint() {
     return doc
   })
   console.log(data)
+}
+
+async function goExcel() {
+  // const excelData = () => {
+  //   // console.log("导出成功！")
+  //
+  //   const wb:any = Workbook()
+  //
+  //
+  //   const bookType = 'xlsx'
+  //   // 类型默认为xlsx
+  //   writeExcel(wb, bookType, '客户应收余额表_'+pageParameter.companyName)
+  // }
+
 }
 
 import {appLocalDataDir} from '@tauri-apps/api/path';
@@ -252,4 +274,45 @@ const outSystemBefore = async () => {
   //   }
   // });
 }
+
+import {save} from '@tauri-apps/api/dialog';
+import {writeBinaryFile,} from '@tauri-apps/api/fs';
+import {path, dialog} from '@tauri-apps/api';
+import {open} from '@tauri-apps/api/shell';
+
+window.ncSaveFile = async function (e1, filename) {
+  // const reader = new FileReader();
+  // let selPath = await dialog.save({
+  //   title:'财税达-'+filename,
+  //       filters: [{
+  //     name: 'Image222',
+  //     extensions: ['png', 'jpeg']
+  //   }],
+  //   defaultPath: await path.downloadDir(),
+  // });
+  // reader.readAsArrayBuffer(e1);
+  // debugger
+  let fileU8A = new Uint8Array(e1);
+
+  let downLoadDirStr = await path.downloadDir()
+
+  writeBinaryFile({contents: fileU8A, path: `${downLoadDirStr}${filename}`});
+
+  await open(`${downLoadDirStr}${filename}`)
+  // reader.onload = function (e) {
+  //   let fileU8A = new Uint8Array(e.target.result);
+  //
+  //
+  //   datas.tip = '图片保存成功';
+  // };
+}
+// async function downFile(){
+//   writeBinaryFile({ contents: fileU8A, path: `${selPath}${file.data.name}` });
+//   const filePath = await save({
+//     filters: [{
+//       name: 'Image',
+//       extensions: ['png', 'jpeg']
+//     }]
+//   });
+// }
 </script>

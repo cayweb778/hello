@@ -1,5 +1,5 @@
 import XLSX from "xlsx-js-style";
-import { saveAs } from 'file-saver'
+import { saveAs,s } from 'file-saver'
 
 
 /**
@@ -69,10 +69,19 @@ export function writeExcel (wb, bookType, filename) {
     bookSST: false,
     type: 'binary'
   });
-  const blob = new Blob([s2ab(wbout)], {
-    type: "application/octet-stream"
-  })
-  saveAs(blob, `${filename}.${bookType}`);
+  // const reader = new FileReader();
+  // reader.readAsArrayBuffer(wbout);
+  window.top.ncSaveFile(s2ab(wbout),filename+'.'+bookType)
+  // reader.onload = function (e) {
+  //   let fileU8A = new Uint8Array(e.target.result);
+  //   writeBinaryFile({ contents: fileU8A, path: `` });
+  //   datas.tip = '图片保存成功';
+  // };
+  // const blob = new Blob([s2ab(wbout)], {
+  //   type: "application/octet-stream"
+  // })
+  // console.log(blob)
+  // saveAs(blob, `${filename}.${bookType}`);
 }
 
 export function Workbook() {

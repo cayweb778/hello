@@ -55,6 +55,14 @@ function handleCancel() {
 }
 
 
+
+import {
+  defaultV,
+  sheet_from_array_of_arrays,
+  Workbook,
+  writeExcel
+} from "/@/utils/boozsoft/excel/excel2";
+
 window.$wujie.bus.$emit("registerNcDataExport", {
   usePrint(params,fun){
    const aaaa= useNewPrintLang(params,fun).getBase64()
@@ -64,7 +72,15 @@ window.$wujie.bus.$emit("registerNcDataExport", {
     visible.value = true
   },
   tableStyle,
-  useNewPrintLang
+  useNewPrintLang,
+  useExcel(){
+    return {
+      defaultV,
+      sheet_from_array_of_arrays,
+      Workbook,
+      writeExcel,
+    }
+  }
 })
 </script>
 <style>
