@@ -18,6 +18,7 @@ function openAbc() {
 }
 
 const addr = ref()
+const abc11 = ref()
 onMounted(async () => {
   addr.value = JSON.parse(await invoke("getCacheIpAddrApi")).data;
   console.log(addr.value)
@@ -39,20 +40,31 @@ function funasd() {
 }
 
 import {appLocalDataDir} from '@tauri-apps/api/path';
-import {removeDir, BaseDirectory} from '@tauri-apps/api/fs';
+import {readDir, remove,BaseDirectory} from '@tauri-apps/api/fs';
 
 async function clearCache() {
+      await readDir('', {dir: BaseDirectory.AppLocalData,recursive:true})
+          .then((e)=>{
+            console.log(e)
+            abc11.value=e
+          })
+          .catch((e)=>{
+    console.log(e)
+    abc11.value=e
+  })
+  // console.log("dddd")
+  // console.log(aaaa)
   // const aaa=await appLocalDataDir()
   console.log("wujie")
-  await removeDir('', {dir: BaseDirectory.AppLocalData})
-      .then(() => {
-
-        useDesktopStoreWidthOut().goApp(hello.value)
-      })
-      .finally(() => {
-
-        useDesktopStoreWidthOut().goApp(hello.value)
-      });
+ // const ddddd= await removeDir('', {dir: BaseDirectory.Cache,recursive:true})
+ //      .then(() => {
+ //
+ //        useDesktopStoreWidthOut().goApp(hello.value)
+ //      })
+ //      .finally(() => {
+ //
+ //        useDesktopStoreWidthOut().goApp(hello.value)
+ //      });
 }
 </script>
 
@@ -72,8 +84,8 @@ async function clearCache() {
           <Button @click="openAbc">确认</Button>
         </DescriptionsItem>
         <DescriptionsItem label="打印控件配置"><Button>配置</Button></DescriptionsItem>
-        <DescriptionsItem label="表格控件配置"><Button>配置</Button></DescriptionsItem>
-        <DescriptionsItem label="财税达文档"><Button>配置</Button></DescriptionsItem>
+<!--        <DescriptionsItem label="表格控件配置"><Button>配置</Button></DescriptionsItem>-->
+<!--        <DescriptionsItem label="财税达文档"><Button>配置</Button></DescriptionsItem>-->
         <DescriptionsItem label="财税达官网"><Button>配置</Button></DescriptionsItem>
         <DescriptionsItem label="泊舟官网"><Button>配置</Button></DescriptionsItem>
         <DescriptionsItem label="清除缓存"><Button @click="clearCache">清理</Button></DescriptionsItem>
@@ -82,7 +94,7 @@ async function clearCache() {
 
       </Descriptions>
     </Space>
-
+      <div style="color:white;height:100px;width:100vw;background:black">111{{abc11}}222</div>
   </div>
 </template>
 
