@@ -48,8 +48,8 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '仓储位置',
       check: true,
       isFixed: true,
-      width: 200,
-      max: 250,
+      width: 120,
+      max: 150,
       min: 100,
       align: 'center'
     }
@@ -103,8 +103,18 @@ const dynamicColumnAndDataModel = reactive({
       min: 100,
       align: 'center'
     },
-    ,{
+    {
       key: '6',
+      name: '现存量',
+      nameNew: '现存量',
+      check: true,
+      width: 120,
+      max: 150,
+      min: 100,
+      align: 'center'
+    },
+    ,{
+      key: '7',
       name: '数量',
       nameNew: '数量',
       check: true,
@@ -114,7 +124,7 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
      {
-      key: '7',
+      key: '8',
       name: '主计量',
       nameNew: '主计量',
       check: true,
@@ -124,19 +134,9 @@ const dynamicColumnAndDataModel = reactive({
       align: 'center'
     },
     {
-      key: '8',
+      key: '9',
       name: '主数量',
       nameNew: '主数量',
-      check: true,
-      width: 120,
-      max: 150,
-      min: 100,
-      align: 'center'
-    },
-    {
-      key: '9',
-      name: '现存量',
-      nameNew: '现存量',
       check: true,
       width: 120,
       max: 150,
@@ -210,8 +210,8 @@ const dynamicColumnAndDataModel = reactive({
       nameNew: '仓储位置',
       check: true,
       isFixed: true,
-      width: 200,
-      max: 250,
+      width: 120,
+      max: 150,
       min: 100,
       align: 'center'
     }

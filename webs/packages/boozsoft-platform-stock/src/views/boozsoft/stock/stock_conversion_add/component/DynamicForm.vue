@@ -65,7 +65,7 @@
       <template #fymoney="{ model, field }">
         <InputNumber v-model:value="model[field]" ref="fymoneyRef"
                      :min="0"
-                     @blur="cChange(`${value}`)"
+                     style="width: 100%;border: none;border-bottom: 1px solid #c9c9c9;"
                      :formatter="value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
                      :parser="value => value.replace(/\$\s?|(,*)/g, '')"/>
       </template>
@@ -145,10 +145,10 @@ function createItem(it) {
       span: it['component'] == 'DatePicker' ? 5 : 5,
     },
     required: it['required'],
-    componentProps: (it['component'] == 'DatePicker' ? {locale: localeCn,disabled: true} : it['component'] == 'Select'?{
-      options: it['list'],
-    }:it['component'] == 'Input'?{readonly: it['readonly']}:{}),
-    slot: it['component'] == 'Select' ? it['field'] || it['field'] == 'fymoney' : null,
+    componentProps:
+      (it['component'] == 'DatePicker' ? {locale: localeCn,disabled: true} : it['component'] == 'Select'?{options: it['list'],}
+      :it['component'] == 'Input'?{readonly: it['readonly']}:{}),
+    slot: it['component'] == 'Select' ? it['field'] : it['field'] == 'fymoney' ? it['field'] : null,
     show: it['isShow']
   }
 }
@@ -202,12 +202,7 @@ const focusNext = (t) => {
   let field = list[list.findIndex(it => it.field === t) + 1]?.field
   if (null != field) proxy.$refs[field + 'Ref'].focus()
 }
-function cChange(v) {
-  console.log(v)
-  let model = getFieldsValue()
-  model['fymoney'] = '1,1101';
-  setFieldsValue(model)
-}
+
 function custChange(v,t) {
   let custList = selectModel.value['cust']
   let nextV = v

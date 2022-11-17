@@ -391,7 +391,7 @@ const InputSearch = Input.Search
 const SelectOption = Select.Option
 const TabPane = Tabs.TabPane
 const {createErrorModal, createConfirm, createWarningModal} = useMessage()
-const props = defineProps(['modelValue', 'exportData','seachData','accId','dynamicAccId','dynamicYear','status','dynamicTenant','formFuns','cardListOptions'])
+const props = defineProps(['modelValue', 'exportData','seachData','accId','dynamicAccId','dynamicYear','status','dynamicTenant','formFuns','cardListOptions','icost'])
 const targetKeys = ref([])
 
 const pageParameter = reactive({
@@ -615,7 +615,7 @@ async function contentSwitch(action) {
     if (!hasBlank(formItems.value.entryList)) {
       let list = JsonTool.parseObj(formItems.value.entryList).map(it => resetRow(it))
       let len = list.length
-      for (let i = 0; i < (5 - len); i++) {
+      for (let i = 0; i < (7 - len); i++) {
         list.push({})
       }
       setTableData(list)
@@ -634,7 +634,6 @@ async function contentSwitch(action) {
     })
     formItems.value.squantity = b
     formItems.value.icost  = a
-    console.log(a)
     pageParameter.searchConditon.value = ''
     searchList.value = []
     formItems.value.entryList = null
@@ -666,7 +665,7 @@ async function contentSwitch2(action,curr) {
     if (!hasBlank(formItems.value.entryList)) {
       let list = JsonTool.parseObj(formItems.value.entryList).map(it => resetRow(it))
       let len = list.length
-      for (let i = 0; i < (5 - len); i++) {
+      for (let i = 0; i < (7 - len); i++) {
         list.push({})
       }
       setTableData(list)
@@ -767,7 +766,6 @@ async function reloadList() {
   jiList.value = await useRouteApi(findAllJiLang, {schemaName: props.accId})({unitName: ''})
   manyJiList.value = await useRouteApi(findUnitInfoList, {schemaName: props.accId})({})
   assetsCardList.value = (await useRouteApi(findCunHuoAllList, {schemaName: props.accId})({date: useCompanyOperateStoreWidthOut().getLoginDate}))
-  console.log(assetsCardList.value)
   //cardListOptions.value = assetsCardList.value
   stockPriceList.value = (await useRouteApi(findAllPrice, {schemaName: props.accId})({stockClass: '0'}))
 }
@@ -912,8 +910,6 @@ function formatData(data:any){
   return str;
 }
 function sumIcost(a,b){
-  console.log(a)
-  console.log(b)
   if(hasBlank(a) || a == undefined){
     a = 0
   }
@@ -946,7 +942,6 @@ const focusNext =  (r, c) => {
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
   let cols:any = getColumns().filter(it=>it?.title!='序号' &&  filters.indexOf(it?.dataIndex) == -1)
   let index = list.findIndex(it => it.key == r.key)
-  console.log(getColumns())
   let nextC = cols[0].dataIndex // 获取下一个列位置
   if (index == list.length - 1 && cols[cols.length - 1].dataIndex == c) { // 最后一行最后一列回车追加
     list.push({editOne: true})
@@ -1023,10 +1018,8 @@ const tableDataChange =  (r,c) => {
     case 'cwhcode':
       let cangkuInfo = ckListOptions.value.filter(it => it.id == r.cwhcode)[0]
       if (null != cangkuInfo) {
-        console.log(cangkuInfo.ckIsDuli)
         if (cangkuInfo.ckIsDuli == '1') {
           r['cwhcodeText'] = cangkuInfo.ckName
-          console.log(cangkuInfo.ckName)
         }
       }
       break;
@@ -1214,7 +1207,6 @@ async function verifyRowXCLData(r) {
 }
 const findByUnitList = async (record) => {
   let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
-  console.log(o)
   record.unitList=[]
   record.cinvodeInfo = o
   record.cinvodeName = o?.stockName
@@ -1501,9 +1493,13 @@ const tableFt = () => {
   let list = getDataSource().filter(it => it.icost != null && it.icost != null);
   let m = props.formFuns.getFormValue().fymoney
   let n = formItems.value.icost
+  let i = props.icost
   if(list.length > 0){
     if(list.length == 1){
       list.forEach(v=>{
+        v.icost = i
+        let s = parseFloat(v.icost/v.cnumber)
+        v.price = Math.round(s * 100) / 100
         if(!hasBlank(v.icost)){
           v.fyprice = m
         }
@@ -1511,14 +1507,20 @@ const tableFt = () => {
     }else{
       let sum = 0
       list.forEach(v=>{
+        v.icost = i
+        //相同编码直接给相同金额 然后剩余金额在分配
         if(!hasBlank(v.icost)){
+          let t = parseFloat((m*(v.icost/i)))
+          v.icost = Math.round(t * 100) / 100
+
           let s = parseFloat((m*(v.icost/n)))
           v.fyprice = Math.round(s * 100) / 100
           sum = sum + v.fyprice
         }
       })
     }
-    for (let i = 0; i < (7 - list.length); i++) {
+    let len = list.length
+    for (let i = 0; i < (7 - len); i++) {
       list.push({})
     }
     setTableData(list)
@@ -1526,7 +1528,6 @@ const tableFt = () => {
 }
 
 async function getTablePieceData(){
-  console.log("getTablePieceData")
   let list = getDataSource().filter(it => !hasBlank(it.cwhcode) && !hasBlank(it.cinvode) && !hasBlank(it.cunitid) && !hasBlank(it.baseQuantity) && !hasBlank(it.icost + '') && !hasBlank(it.price + ''))
   return  list
 }

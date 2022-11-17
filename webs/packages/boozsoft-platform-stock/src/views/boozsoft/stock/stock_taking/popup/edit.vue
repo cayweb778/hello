@@ -174,8 +174,8 @@
                 >
                   <a-select-option
                     v-for="item in userList"
-                    :key="item.uniqueCode"
-                    :value="item.uniqueCode"
+                    :key="item.id"
+                    :value="item.id"
                   >
                     {{ item.psnCode+'-'+ item.psnName}}
                   </a-select-option>

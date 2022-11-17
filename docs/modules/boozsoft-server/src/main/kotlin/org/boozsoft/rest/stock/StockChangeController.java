@@ -363,7 +363,6 @@ public class StockChangeController {
                                                                 sas.setXsUnitId(v.getCunitid());
                                                                 sas.setQuantity(sas.getBaseQuantity());
                                                                 sas.setCwhcode1(v.getCwhcode());
-
                                                                 sas.setBcheck("1");
                                                                 sas.setBcheckTime(LocalDate.now().toString());
                                                                 sas.setBcheckUser(userId);
@@ -404,6 +403,7 @@ public class StockChangeController {
                                                     stockWarehousings.setBcheckUser(userId);
                                                     stockWarehousings.setId(null);
                                                     stockWarehousings.setIcost(new BigDecimal(v.getIcost()).add(new BigDecimal(v.getFyprice())).toString());
+                                                    stockWarehousings.setPrice(new BigDecimal(stockWarehousings.getIcost()).divide(new BigDecimal(v.getCnumber()),10,BigDecimal.ROUND_HALF_UP).toString());
                                                     swlist.add(stockWarehousings);
                                                 });
                                                 return stockSaleousingsRepository.saveAll(e).collectList().thenReturn(swlist);

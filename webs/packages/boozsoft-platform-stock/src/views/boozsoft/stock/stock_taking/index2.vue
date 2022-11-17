@@ -280,7 +280,7 @@ const CrudApi = {
     {
       title: '单据编号',
       dataIndex: 'ccode',
-      width: '20%',
+      width: '25%',
       align: 'left',
       customHeaderCell: () => {		// 表头加粗
         return {style: {'font-weight':'bold'}} // return 想要设置的样式

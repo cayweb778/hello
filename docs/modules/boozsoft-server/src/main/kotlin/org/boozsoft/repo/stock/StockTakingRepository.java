@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 public interface StockTakingRepository extends ReactiveCrudRepository<StockTaking, String> {
 
     @Query("select st.*, sp1.psn_name as puname, sp2.psn_name as kuname, sp3.psn_name as buname, sd.dept_name as dname, sc.ck_name as cname " +
-            " from stock_taking st left join sys_psn sp1 on st.pd_userid = sp1.unique_code " +
+            " from stock_taking st left join sys_psn sp1 on st.pd_userid = sp1.id " +
             " left join sys_psn sp2 on st.kg_userid = sp2.unique_code " +
             " left join sys_psn sp3 on st.bcheck_user = sp3.unique_code " +
             " left join sys_department sd on st.cdepcode = sd.unique_code " +

@@ -595,7 +595,7 @@ public class StockTakingController {
                         st.setCurrentId(item.getId());
                         st.setIyear(item.getIyear());
                         st.setQuantityUk(item.getQuantityPd().subtract(item.getBaseQuantity()));
-                        st.setIcost(new BigDecimal(item.getPrice()).multiply(item.getQuantityUk().abs()).toString());
+                        st.setIcost(new BigDecimal(item.getPrice()).multiply(st.getQuantityUk().abs()).toString());
                         //st.setQuantityUk1(Objects.isNull(item.getSubPandian1())? BigDecimal.ZERO.subtract(item.getSubQuantity1()):item.getSubPandian1().subtract(item.getSubQuantity1()));
                         //st.setQuantityUk2(Objects.isNull(item.getSubPandian2())? BigDecimal.ZERO.subtract(item.getSubQuantity2()) :item.getSubPandian2().subtract(item.getSubQuantity2()));
                         if (StringUtils.isBlank(item.getPdid())) {

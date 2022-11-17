@@ -71,7 +71,7 @@
           </div>
 
           <Button class="ant-btn-me">
-            <SyncOutlined :style="{ fontSize: '14px' }"/>
+            <SyncOutlined :style="{ fontSize: '14px' }" @click="reloadTable()"/>
           </Button>
           <Popover class="ant-btn-default" placement="bottom">
             <template #content>

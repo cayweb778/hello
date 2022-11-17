@@ -307,7 +307,7 @@
                 style="width: 82%;"
                 class="cgUnitId"
                 @keyup.enter="focusNext(record,'cgUnitId')"
-                @change="cgUnitIdChange(record);verifyRowXCLData(record)"
+                @change="cgUnitIdChange(record);verifyRowXCL(record)"
               >
                 <SelectOption v-for="tem in record.unitList" :value="tem.value">
                   {{ tem.title }}
@@ -434,7 +434,7 @@
         </BasicTable>
 
         <TablePiece :seachData="seachData"  :dynamicAccId="dynamicAccId" :dynamicYear="dynamicYear" :status="status" :dynamicTenant="dynamicTenant" :cardListOptions="cardListOptions"
-                      :accId="dynamicTenantId" :exportData="exportData" ref="tableTwo" :formFuns="formFuns"/>
+                      :accId="dynamicTenantId" :exportData="exportData" ref="tableTwo" :formFuns="formFuns" :icost="formItems.icost"/>
         <Import
           @save="introduceData"
           @register="registerImportPage"
@@ -749,7 +749,15 @@ const CrudApi = {
       ellipsis: true,
       slots: {customRender: 'cgUnitId'},
       width: 120
-    },{
+    },
+    {
+      title: '现存量',
+      dataIndex: 'xcl',
+      slots: {customRender: 'xcl'},
+      ellipsis: true,
+      width: 80,
+    },
+    {
       title: '数量',
       dataIndex: 'cnumber',
       ellipsis: true,
@@ -767,13 +775,6 @@ const CrudApi = {
       title: '主数量',
       dataIndex: 'baseQuantity',
       slots: {customRender: 'baseQuantity'},
-      ellipsis: true,
-      width: 80,
-    },
-    {
-      title: '现存量',
-      dataIndex: 'xcl',
-      slots: {customRender: 'xcl'},
       ellipsis: true,
       width: 80,
     },
@@ -1144,13 +1145,6 @@ const startReview = async (b) => {
         }
 
       }else{
-        //弃审 4 校验下有单据是否存在审核 
-        /*let bcheck= await useRouteApi(auditCheckBcheck, { schemaName: dynamicTenantId })({ccode:formItems.value.ccode})
-        console.log(bcheck)
-        if(bcheck == true){
-          compState.loading = false
-          return message.error('下游单据未弃审，请弃审下游单据后操作！')
-        }*/
 
         //弃审校验入库
         let isCheck = true
@@ -1236,7 +1230,6 @@ async function stockCheck(list,model) {
       }*/
     }else {
       if (!checkParm.isOut){ // 如果退货单跳过
-        console.log(tStock)
         if (tStock && tStock["stockPropertyBatch"] == '1'){
           let eList = dbs.filter(r=>{
             let it =  tList.filter(it2=>it2.batchId == r.batchId)[0]
@@ -1323,6 +1316,20 @@ async function saveData() {
     return
   }
 
+  //转换前后存货编码相同 批号不能相同
+  let flg = true
+  list.forEach(v=>{
+    let index = s.findIndex(o=> v.cinvode == o.cinvode && v.batchId == o.batchId)
+    if(index > -1 ){
+      flg = false
+      return
+    }
+  })
+  if(flg == false){
+    message.error("转换前后存货编码相同，批号不能相同!")
+    return
+  }
+
   s.forEach(v=>{
     list.push(v)
   })
@@ -1345,7 +1352,6 @@ async function saveData() {
     })
 
     formItems.value.entryList = JsonTool.json(merge(list))
-    console.log(formItems.value)
     if (formItems.value?.id == null)
       formItems.value.ccode = await generateCode(formItems.value.ddate)
     await useRouteApi(saveXhd, {schemaName: dynamicTenantId})(formItems.value)
@@ -1806,10 +1812,12 @@ const modalData = (o) => {
       focusNext(thisEditObj.value,thisEditType.value)
     } else if (thisEditType.value == 'batchId') {
       if (o.length == 1) {
-        getCurrPrice(thisEditObj.value)
         thisEditObj.value['tempTwelve'] = o[0].batchId
         thisEditObj.value['dpdate'] = o[0].dpdate
         thisEditObj.value['dvdate'] = o[0].dvdate
+        thisEditObj.value['tempCnumber'] = o[0].outQuantity
+        thisEditObj.value['tempCnumber'] = o[0].outQuantity
+        getCurrPrice(thisEditObj.value)
         focusNext(thisEditObj.value,thisEditType.value)
       } else {
         let arr = []
@@ -1817,12 +1825,12 @@ const modalData = (o) => {
         o.forEach((v)=>{
           let t = JsonTool.parseProxy(temp)
           t.key = uuid().replaceAll(/\-/g,'')
-          getCurrPrice(t)
           t['batchId'] = v.batchId
           t['dpdate'] = v.dpdate
           t['dvdate'] = v.dvdate
           // 调整数量
           t['baseQuantity'] = v.outQuantity
+          getCurrPrice(t)
           arr.push(tableDataChange(t, 'baseQuantity'))
         })
         let tables = getDataSource()
@@ -1864,7 +1872,7 @@ const getCurrPrice = async (record) => {
       record.price = getUnitNumberOrPrice(record,res[0].price,4)
       record.tempNine =  record.price
       //计算无税金额
-      record.icost = record.price * record.cnumber.toFixed(4)
+      record.icost = (record.price * record.cnumber).toFixed(4)
     }
   })
 }
@@ -1962,6 +1970,9 @@ const tableDataChange =  (r,c) => {
     r.itaxrate = parseFloat(r.itaxrate || 0 ).toFixed(4)
   }
   switch (c) {
+    case 'batchId':
+      slChange0(r)
+      break;
     case 'cinvode':
       if (chFocus.value == 'two') r.cinvodeName = r.tempEleven
       if (chFocus.value == 'three') r.cinvodeBarcode = r.tempThree
@@ -2007,6 +2018,14 @@ const tableDataChange =  (r,c) => {
       else{
         slChange0(r)
       }
+      //重置批号 无税单价 无税金额 生产日期 失效日期
+      r.batchId = ''
+      r.dpdate = ''
+      r.dvdate = ''
+      r.price = '0'
+      r.Nine = '0'
+      r.icost = '0'
+      r.tempTen = '0'
       break;
   }
   r.flgs = '0'
@@ -2070,6 +2089,7 @@ const slChange0 = (r) => {
       r.tempSubQuantity2 = r.subQuantity2
       r.tempSubQuantity2 = r.baseQuantity
     }
+    tableDataChange(r,'price')
   }
 }
 
@@ -2117,7 +2137,6 @@ const chChange = async (record) => {
 
 const findByUnitList = async (record) => {
   let o:any = assetsCardList.value.filter(it => tempType.value=='one'?(it.stockNum == record.cinvode) :tempType.value=='three'? (it.stockBarcode == record.bcheck1) : (it.stockName == record.cinvodeName))[0]
-  console.log(o)
   record.unitList=[]
   record.cinvodeInfo = o
   record.cinvodeName = o?.stockName
@@ -2220,8 +2239,8 @@ async function verifyRowXCLData(r) {
     cinvode:r.cinvode,
     cwhcode:r.cwhcode,
     batchId:r.batchId,
-    dpdate:r.dpdate,
-    dvdate:r.dpdate,
+    dpdate:'',
+    dvdate:'',
     iyear:dynamicYear.value,
     rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
@@ -2239,8 +2258,8 @@ async function verifyRowKylData(r) {
     cinvode:r.cinvode,
     cwhcode:r.cwhcode,
     batchId:r.batchId,
-    dpdate:r.dpdate,
-    dvdate:r.dpdate,
+    dpdate:'',
+    dvdate:'',
     iyear:dynamicYear.value,
     rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
@@ -2262,6 +2281,21 @@ async function findByStockPrice(data) {
   })
   data.tempNine=!isNaN(price)?parseFloat(price).toFixed(2):null
   data.price=data.tempNine
+}
+
+async function verifyRowXCL(r) {
+  // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
+    queryType:'xcl',
+    cinvode:r.cinvode,
+    cwhcode:r.cwhcode,
+    iyear:dynamicYear.value,
+    rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,
+    ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
+    .then((t)=>{
+      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+    })
 }
 
 const outBefore = () => {
@@ -2308,28 +2342,7 @@ const focusNext =  (r, c) => {
   // 查找下一个
   let list = getDataSource();
   let filters = [ 'bcheck', 'cinvodeType','cunitid','cinvodeName','cinvodeBarcode','baseQuantity','xcl','itaxprice','itaxrate','price','icost']
-
-/*  columns: [
-    {
-      title: '无税单价',
-      dataIndex: 'price',
-      ellipsis: true,
-      slots: {customRender: 'price'},
-      width: 120,
-    },
-    {
-      title: '无税金额',
-      dataIndex: 'icost',
-      slots: {customRender: 'icost'},
-      ellipsis: true,
-      width: 120,
-      align: 'right'
-    },
-
-  ],*/
-
-    // 要求填批号才填写
-  console.log(r.isBatch)
+  // 要求填批号才填写
   if (!r.isBatch)filters.push('batchId')
   if (!r.isIndate)filters.push('dpdate'),filters.push('dvdate')
   let cols:any = getColumns().filter(it=>it?.title!='序号' &&  filters.indexOf(it?.dataIndex) == -1 && it.ifShow)
@@ -2388,6 +2401,14 @@ async function cgUnitIdChange(record) {
   record.cinvodeType= record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].ggxh
   record.bcheck1= record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].txm
   record.cgUnitId=record.unitList.filter(a=>a.value==record.tempCgUnitId)[0].value
+  //重置批号 无税单价 无税金额 生产日期 失效日期
+  record.batchId = ''
+  record.dpdate = ''
+  record.dvdate = ''
+  record.price = '0'
+  record.Nine = '0'
+  record.icost = '0'
+  record.tempTen = '0'
   slChange0(record)
 }
 
