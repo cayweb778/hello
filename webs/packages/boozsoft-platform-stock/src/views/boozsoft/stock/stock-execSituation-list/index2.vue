@@ -1139,6 +1139,7 @@ function toRouter(data,type) {
   color: black;
   height: 27px;
 }
+
 :deep(.nc-summary){
   font-weight: bold;
   background-color: #cccccc!important;

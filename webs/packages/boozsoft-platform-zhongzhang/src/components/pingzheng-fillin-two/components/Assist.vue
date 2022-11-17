@@ -28,7 +28,7 @@
             <template #option="{ value: val, label ,title }">{{ title }}</template>
           </Select>
         </template>
-        <span>{{hsKey == 'nfrat'?`${showTitle(hsKey)}`:hsKey == 'number1'?`${showTitle(hsKey)}`:''}}</span>
+        <span>{{hsKey == 'nfrat'?`${showTitle(hsKey)}`:hsKey == 'number'?`${showTitle(hsKey)}`:''}}</span>
       </li>
     </div>
   </BasicModal>
@@ -191,9 +191,11 @@ async function handleOk() {
     createWarningModal({title: '温馨提示', content: '请完善所有辅助核算项内容！'})
   } else {
     let list = rowStrList.value.filter(k=>k != 'nfrat' && k != 'mdF' && k!='number' && k!= 'cunitPrice').map(k=>hesuanList.value.filter(it=>it.key == blend(k,true))[0]?.list.filter(it=>it.value == formItems.value[k])[0]?.title)
-    formItems.value['fuzhuStr'] = `数量:${formItems.value['number']}/${formItems.value['cunitPrice']}` + `其他:${list.join()}`
+    formItems.value['fuzhuStr'] = `${list.join()}`
     formItems.value['wbTopStr'] = `${showTitle('nfrat')} / ${formItems.value['nfrat']}`
     formItems.value['wbDownStr'] = `${formItems.value['mdF']} %`
+    formItems.value['slTopStr'] = `${showTitle('number')} / ${formItems.value['number']}`
+    formItems.value['slDownStr'] = `${formItems.value['cunitPrice']}`
     emit('save',  unref(formItems.value));
     closeModal();
     return true;
@@ -202,7 +204,7 @@ async function handleOk() {
 const showTitle = (t) => {
   let text = ''
   if (t == 'number'){
-   text = kemuInfo.value['menterage']
+   text = '个' || kemuInfo.value['menterage']
   }else if(t == 'nfrat'){
     text =  kemuInfo.value['currencyType']
   }

@@ -187,27 +187,32 @@
             </template>
           </template>
 
-          <template #colum3="{ record }">
-            <template v-if="record.editColum3 && record.isFu">
+          <template #colum2="{ record }">
+            <template v-if="record.editColum2 && record.isFu">
               <Input
-                v-model:value="record.tempColum3"
+                v-model:value="record.tempColum2"
                 style="width:76%;"
-                class="colum3"
+                class="colum2"
                 :readonly="true"
-                @keyup.enter="hasBlank(record?.fuzhuStr)?openAssist(record):focusNext(record,'colum3')"
+                @keyup.enter="hasBlank(record?.fuzhuStr)?openAssist(record):focusNext(record,'colum2')"
               />
               <SearchOutlined
                 @click="openAssist(record)"/>
             </template>
             <template v-else>
-              <div @click="record.tempColum3=record.colum3,record.editColum3 = true,clearFocus(record,'colum3')"  style="text-align: left;"
+              <div @click="record.tempColum2=record.colum2,record.editColum2 = true,clearFocus(record,'colum2')"  style="text-align: left;"
                    :class="status == 1 || status == 2?'suspended-div':'status-look'">
                 <span v-if="record.isFu && hasBlank(record?.fuzhuStr)" style="color: #e88f09;">待录入!</span>
                 <span v-else>{{record?.fuzhuStr}}</span>
               </div>
             </template>
           </template>
-
+          <template #colum3="{ record }">
+            <div class="topAndDownDiv">
+               <span>{{record?.slTopStr}}</span>
+               <span>{{record?.slDownStr}}</span>
+            </div>
+          </template>
           <template #colum4="{ record }">
              <div class="topAndDownDiv">
                <span>{{record?.wbTopStr}}</span>
@@ -246,10 +251,10 @@
                   <span>&emsp;&emsp;合计：</span>
                   <span>{{totalModel.mc===totalModel.md && 0 != totalModel.mc?convertCurrency(totalModel.mc+''):''}}</span>
                 </TableSummaryCell>
-                <TableSummaryCell :index=5 :colSpan="15" :align="'right'">
+                <TableSummaryCell :index=6 :colSpan="15" :align="'right'">
                   <span>{{NumberTool.amountThousands(totalModel.mc+'')}}</span>
                 </TableSummaryCell>
-                <TableSummaryCell :index="21" :colSpan="15" :align="'right'">
+                <TableSummaryCell :index="22" :colSpan="15" :align="'right'">
                   <span>{{NumberTool.amountThousands(totalModel.md+'')}}</span>
                 </TableSummaryCell>
                </TableSummaryRow>
@@ -260,7 +265,7 @@
           <div><span>制单：</span><span></span>{{saveModel['cbill']}}</div>
         </div>
         <Assist
-          @save="(r)=>focusNext(r,'colum3')"
+          @save="(r)=>focusNext(r,'colum2')"
           @register="registerAssist"
         />
       </div>
@@ -340,7 +345,10 @@ const tableRef = ref(null)
 const testColums = [
   {title: '摘要', dataIndex: 'cdigest', ellipsis: true,width:150, slots: {customRender: 'cdigest'}},
   {title: '会计科目', dataIndex: 'ccode', ellipsis: true,width:250, slots: {customRender: 'ccode'}},
-  {title: '辅助核算', dataIndex: 'colum3',  width:120,slots: {customRender: 'colum3'}},
+  {title: '辅助核算', dataIndex: 'colum2',  width:120,slots: {customRender: 'colum2'}},
+  {title: '单位/数量',dataIndex: 'colum3', width:120,children:
+      [{title: '单价', dataIndex: 'colum31', ellipsis: true, width:120, slots: {customRender: 'colum3'}}]
+  },
   {title: '货币/金额',dataIndex: 'colum4', width:120,children:
       [{title: '汇率', dataIndex: 'colum41', ellipsis: true, width:120, slots: {customRender: 'colum4'}}]
   },
@@ -436,7 +444,7 @@ const [registerAssist, {openModal: opeAssistPageM}] = useModal()
 /************* 实例方法块 **************/
 
 onMounted(()=>{
-  tableRef.value.$el.style.setProperty('width', 1290+20+50 + 'px')
+  tableRef.value.$el.style.setProperty('width', 1290+20+50+120 + 'px')
 })
 
 
@@ -656,10 +664,10 @@ const csignChange = async (v) => {
 
 /******************* table 表体业务 ********************/
 const numberClick = (r,i,e) => {
-  if (e.target.cellIndex > 6 && e.target.cellIndex < 21){
+  if (e.target.cellIndex > 7 && e.target.cellIndex < 22){
     amountToggle(r,'colum5',true,true)
     clearFocus(r,'colum5')
-  }else if ( e.target.cellIndex >= 21){
+  }else if ( e.target.cellIndex >= 22){
     amountToggle(r,'colum6',true,true)
     clearFocus(r,'colum6')
   }
@@ -674,8 +682,8 @@ const focusNext =  (r, c,trN) => {
   r[`${c}`] = r[`temp${t}`];
   tableDataRowChange(r, c)
   let list = getDataSource();
-  let filters = ['colum3','colum4']
-  if (r.isFu) filters =  ['colum4']
+  let filters = ['colum2','colum3','colum4']
+  if (r.isFu) filters =  ['colum4','colum3']
   let cols = getColumns().filter(it => it.title != '序号' && filters.indexOf(it.dataIndex) == -1)
   let index = list.findIndex(it => it.key == r.key)
   let nextC = cols[0].dataIndex // 获取下一个列位置
@@ -799,7 +807,7 @@ const splitNumber = (r,key) => {
     }
   }
   let trE =  document.getElementsByTagName(`tr[data-row-key="${r.key}"]`)[0]
-  let tdO = trE?.cells[key=='colum5'?6:21]
+  let tdO = trE?.cells[key=='colum5'?7:22]
   if (tdO != null){ // 上色
     let te = tdO
     te.style.color = zV >-1?'':'red'
@@ -1009,7 +1017,7 @@ const toolEventWatch = (action) => {
 const toFocus = (c) => {
   nextTick(() => {
     let arr = document.getElementsByClassName(c)
-    let doms = c==='colum3'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
+    let doms = c==='colum2'?arr[arr.length-1]:arr[arr.length-1]?.getElementsByTagName('input')[0]
     if (null != doms) doms.focus()
   })
 }
