@@ -40,16 +40,16 @@ function funasd() {
 }
 
 import {appLocalDataDir} from '@tauri-apps/api/path';
-import {readDir, remove,BaseDirectory} from '@tauri-apps/api/fs';
+import {readDir, removeDir,BaseDirectory} from '@tauri-apps/api/fs';
 
 async function clearCache() {
-      await readDir('', {dir: BaseDirectory.AppLocalData,recursive:true})
+      await removeDir('org.boozsoft.ncapp', {dir: BaseDirectory.LocalData,recursive:true})
           .then((e)=>{
-            console.log(e)
+            useDesktopStoreWidthOut().goApp(hello.value)
             abc11.value=e
           })
           .catch((e)=>{
-    console.log(e)
+            useDesktopStoreWidthOut().goApp(hello.value)
     abc11.value=e
   })
   // console.log("dddd")
