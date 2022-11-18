@@ -47,6 +47,7 @@ const layoutsStore = usePlatformsStoreWidthOut();
 const newPlatformId=window.localStorage.getItem("newPlatformId")
 layoutsStore.switchPlatform({ id:newPlatformId})
 console.log(window.localStorage)
+console.log(window.top)
 window?.$wujie.bus.$on("goPlatform", function (id) {
   setCacheShowGdzc(false)
   const layoutsStore = usePlatformsStoreWidthOut();
