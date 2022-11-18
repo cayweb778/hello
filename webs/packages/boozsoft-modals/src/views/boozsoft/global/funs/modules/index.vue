@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <MessagePop @close="closeFn" @throwData="modalData" @register="registerModalPopPage" />
+    <MessagePop @close="close" @throwData="modalData" @register="registerModalPopPage" />
   </div>
 </template>
 <script setup>
@@ -23,11 +23,14 @@ openMoalPopPage(true, {
     database: ''
   });
 }
-const emit=defineEmits(['cancel'])
-function closeFn(){
+
+function close(){
   emit('cancel')
   // window.$wujie.bus.$emit('closePluginShadow')
 }
+
+const emit=defineEmits(['cancel'])
+
 
 defineExpose({open})
 </script>

@@ -3,6 +3,7 @@
     "initial": " pnpm install && npm-run-all initial:*",
     "initial:main": "cd packages/boozsoft-starter && pnpm install",
     "initial2:excelviewer": "cd packages/boozsoft-excelviewer && pnpm install",
+    "initial2:docs:": "cd packages/boozsoft-docs && pnpm install",
     "initial2:ncpdfviewer": "cd packages/boozsoft-pdfviewer && pnpm install",
     "initial2:boozsoft-table-design": "cd packages/boozsoft-table-design && pnpm install",
     "initial:docs": "cd packages/boozsoft-docs && pnpm install",
@@ -20,6 +21,7 @@
     "start": "esno ./build/scripts/runapp.ts",
     "start:excelviewer": "cd packages/boozsoft-excelviewer && pnpm dev",
     "start:desktop": "cd packages/boozsoft-desktop && pnpm tauri dev",
+    "start:docs:": "cd packages/boozsoft-docs && pnpm docs:dev",
     "start:pdfviewer": "cd packages/boozsoft-pdfviewer && pnpm dev",
     "start:print": "cd packages/boozsoft-print && pnpm dev",
     "start:main": "cd packages/boozsoft-starter && pnpm dev",
@@ -48,6 +50,7 @@
     "build:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm build",
     "build:excelviewer": "cd packages/boozsoft-excelviewer && pnpm build",
     "build:boozsoft-table-design": "cd packages/boozsoft-table-design && pnpm build",
+    "build:docs:": "cd packages/boozsoft-docs && pnpm docs:build",
     "build:system": "cd packages/boozsoft-platform-system && pnpm build"
   },
   "devDependencies": {

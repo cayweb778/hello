@@ -13,8 +13,7 @@
 <script setup>
 import {computed, onMounted} from 'vue'
 // import {defineNcModals} from "/@/views/boozsoft/global/funs";
-import abc1 from "/@/views/boozsoft/global/abc1.vue";
-import {usePluginStore, usePluginStoreWidthOut} from "/@/store/modules/pluginStore";
+import { usePluginStoreWidthOut} from "/@/store/modules/pluginStore";
 
 
 // const componentName=shallowRef()

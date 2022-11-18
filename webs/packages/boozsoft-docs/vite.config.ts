@@ -8,4 +8,7 @@ export default defineConfig({
   //   buildSsrCjsExternalHeuristics: true
   // }
   css: { preprocessorOptions: { scss: { charset: false } } },
+  build:{
+    outDir:'../../dist/docs'
+  }
 })

@@ -61,7 +61,7 @@ export const usePluginStore = defineStore({
   actions: {
     async getOrCreateComponent(name2) {
       const [name, path] = this.componentReference[name2]
-      const componentInstance = (await (() => import(path))()).default
+      const componentInstance = (await path()).default
       if (this.componentsReferenceMap.dept == null) {
         // Create Component Data
         const componentData = createdComponentData(componentInstance)

@@ -212,6 +212,7 @@ import {getGlobalFinanceSettingInfo} from "/@/api/record/system/financial-settin
 import {useAccountPickerCache} from "/@/store/modules/boozsoft/components/AccountPicker/cache";
 import moment from "moment";
 import {findByStockAccId} from "/@/api/record/system/stock-account";
+import {useNcBusStoreWidthOut} from "/@/store/modules/nc-bus";
 const AInputSearch = AInput.Search;
 const ASelectOption = ASelect.Option;
 const ARangePicker = ADatePicker.RangePicker
@@ -347,10 +348,13 @@ const [registerModalPopPage, {openModal: openMoalPopPage}] = useModal();
 const [registerSelectDeptPage, {openModal: openSelectDeptPage}] = useModal()
 const [registerSelectPsnPage, {openModal: openSelectPsnPage}] = useModal()
 
-const openHeadSelectContent = (type) => {
+const openHeadSelectContent =async (type) => {
+  // let {useNcModalData} =  useNcBusStoreWidthOut().useModals()
+  // const data = await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
   thisEditType.value = type
   switch (type) {
     case 'cvencode':
+
       openMoalPopPage(true, {
         database: dynamicTenantId.value,
         accId: defaultAdName.value,
