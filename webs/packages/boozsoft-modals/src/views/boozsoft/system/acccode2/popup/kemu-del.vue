@@ -93,9 +93,10 @@ import {
 } from "/@/api/record/system/customer_group";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
-import {
-  aoaToSheetXlsx
-} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+// import {
+//   aoaToSheetXlsx
+// } from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
 import {jsonToSheetXlsx} from "/@/components/Excel";
 import {findAllByCusBendEq1} from "/@/api/record/system/customer_class_group";
 
