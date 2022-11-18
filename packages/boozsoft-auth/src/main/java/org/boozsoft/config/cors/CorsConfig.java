@@ -23,7 +23,7 @@ public class CorsConfig {
 
       //设置允许跨域的配置
       // 这里填写你允许进行跨域的主机ip（正式上线时可以动态配置具体允许的域名和IP）
-      rep.getHeaders().add("Access-Control-Allow-Origin", "*");
+//      rep.getHeaders().add("Access-Control-Allow-Origin", "*");
       // 允许的访问方法
       rep.getHeaders().add("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
       // Access-Control-Max-Age 用于 CORS 相关配置的缓存
