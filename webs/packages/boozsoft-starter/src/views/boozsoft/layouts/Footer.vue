@@ -40,7 +40,9 @@
 </span>
             <!--            <MessageOutlined style="font-size: 1em"/>-->
           </Badge>
-
+            <Button @click="goPrint">打印测试</Button>
+            <Button @click="goExcel">excel测试</Button>
+            <Button @click="goMessage">弹出窗测试</Button>
         </div>
       </Col>
       <Col :span="8">

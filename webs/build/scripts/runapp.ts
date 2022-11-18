@@ -13,12 +13,11 @@ const process = require("child_process");
         ["主页", "start:home"],
     ]
     const arr2 = [
-
+        ["数据导出控件", "start:print"],
+        ["弹出框控件", "start:modals"],
+        ["打印预览控件", "start:pdfviewer"],
+        ["excel预览控件", "start:excelviewer"],
         ["表单设计器", "start:boozsoft-table-design"],
-        ["excel编辑器", "start:excelviewer"],
-        ["PDF编辑器", "start:pdfviewer"],
-        ["弹出框组件", "start:modals"],
-        ["打印组件", "start:print"],
     ]
     const res = await prompts([
         {
