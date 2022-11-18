@@ -541,7 +541,7 @@ import {
   delLine,
   getFwList,
   autoPd,
-  audit, auditBack, getUnitsList, getUnitList, auditCheck,findByXyCcode
+  audit, auditBack, getUnitsList, getUnitList, auditCheck,findByXyCcode,getDataInfo
 } from '/@/api/record/stock/stock_taking';
 import {onMounted, ref, reactive} from 'vue';
 import ImprotExcel from './popup/improtExcel.vue';
@@ -1750,6 +1750,18 @@ const delList = () => {
     title: '警告',
     content: '清空后数据将不能恢复，你确认要清空吗?',
     onOk: async () => {
+      //验证数据完整性
+      let d = await checkData(routemsg.value.ccode)
+      if(!d){
+        message.error("提示：当前单据不存在，请关闭该页面后重试！！！")
+        return
+      }
+      if(d){
+        if(d.bcheck == '1'){
+          message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+          return
+        }
+      }
       await useRouteApi(clearPd, {schemaName: databaseTrue})(routemsg.value.ccode)
       message.success('清空成功！')
       findAllInitialBalance()
@@ -1765,6 +1777,19 @@ const doAutoPd = () => {
     title: '警告',
     content: '盘点后数据将不能恢复，你确认要盘点吗?',
     onOk: async () => {
+      //验证数据完整性
+      let d = await checkData(routemsg.value.ccode)
+      if(!d){
+          message.error("提示：当前单据不存在，请关闭该页面后重试！！！")
+          return
+      }
+      if(d){
+        if(d.bcheck == '1'){
+          message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+          return
+        }
+      }
+
       await useRouteApi(autoPd, {schemaName: databaseTrue})(routemsg.value.ccode)
       saveLogData('盘点')
       message.success('盘点成功！')
@@ -1906,8 +1931,14 @@ const delLines = () => {
 
 const userName = useUserStoreWidthOut().getUserInfo.username
 const toAudit = async () => {
-  if(routemsg.value.bcheck === '1'){
-    message.error("已审核请勿重复审核！")
+  //验证数据完整性
+  let da = await checkData(routemsg.value.ccode)
+  if(!da){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(da.bcheck === '1'){
+    message.error("已审核请勿重复审核，请刷新页面后操作！")
     return
   }
 
@@ -1964,8 +1995,14 @@ async function saveLogData(optAction) {
 
 const dynamicTenant:any = ref('')
 const toAuditBack = async () => {
-  if(routemsg.value.bcheck != '1'){
-    message.error("未审核不能弃审！")
+  //验证数据完整性
+  let da = await checkData(routemsg.value.ccode)
+  if(!da){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(da.bcheck != '1'){
+    message.error("未审核不能弃审，请刷新页面后操作！")
     return
   }
   compState.loading = true
@@ -2014,6 +2051,16 @@ const toAuditBack = async () => {
 }
 const databaseCo=ref('')
 const gotoPy = async () => {
+  //验证数据完整性
+  let d = await checkData(routemsg.value.ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
   let dataBaseInfo=await findByStockAccId(databaseTrue.value.substring(0,databaseTrue.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')
@@ -2031,6 +2078,16 @@ const gotoPy = async () => {
 }
 
 const gotoPk = async () => {
+  //验证数据完整性
+  let d = await checkData(routemsg.value.ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
   let dataBaseInfo=await findByStockAccId(databaseTrue.value.substring(0,databaseTrue.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')
@@ -2047,6 +2104,10 @@ const gotoPk = async () => {
     })
 }
 
+async function checkData(ccode) {
+  let d = await useRouteApi(getDataInfo, {schemaName: databaseTrue})(ccode)
+  return d
+}
 const exportExcelNow = async () => {
   const data = JSON.parse(JSON.stringify(getDataSource()))
   const columns = getColumns()
@@ -2405,7 +2466,13 @@ const loadPrint = (obj) => {
 }
 
 
-const openExcel = (obj) => {
+const openExcel = async(obj) => {
+  //验证数据完整性
+  let d = await checkData(routemsg.value.ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
   openImprotPage(true, {
     databaseTrue: databaseTrue.value,
     year:'2022',

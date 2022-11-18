@@ -927,17 +927,6 @@ async function checkBusDate(date) {
 const tableTwo = ref(null)
 const startEdit = async (type) => {
   let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
-  //验证数据完整性
-  let d = await checkData(formFuns.value.getFormValue().ccode)
-  if(!d){
-    message.error("数据异常请刷新页面后操作！")
-    return
-  }
-  if(d.bcheck == '1'){
-    message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
-    return
-  }
-
   //  1 日期是否已结账
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date1.split('-')[0],month:date1.split('-')[1]})
   console.log('1--->日期是否已结账-->'+temp)
@@ -982,6 +971,16 @@ const startEdit = async (type) => {
     }
     setTableData(list)
   } else {
+    //验证数据完整性
+    let d = await checkData(formFuns.value.getFormValue().ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
+      return
+    }
+    if(d.bcheck == '1'){
+      message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+      return
+    }
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'形态装换单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
@@ -2079,7 +2078,7 @@ const tableDataChange =  (r,c) => {
       slChange(r,c)
       setTimeout(()=>{
         let list = getDataSource();
-        r.flgs = '1'
+        r.flgs = '0'
         //计算数量金额总和
         let a = '0'
         let b = '0'

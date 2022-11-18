@@ -1163,7 +1163,7 @@ async function delList() {
             return
           }
           //已审核不能修改
-          if(checkRow.value[i].bcheck ==='1'){
+          if(d.bcheck ==='1'){
             message.error("已审核单据不能删除！")
             return
           }

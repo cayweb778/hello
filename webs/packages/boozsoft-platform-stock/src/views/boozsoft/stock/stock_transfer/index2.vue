@@ -620,7 +620,7 @@ import {
   findBillLastDate,
   reviewRuKu,
   saveXhd,
-  unAuditBefore, findByXyCcode, auditCheck, audit,auditBack
+  unAuditBefore, findByXyCcode, auditCheck, audit,auditBack,getDataInfo
 } from "/@/api/record/stock/stock-dbd";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {findStockPeriodInfoByYm} from "/@/api/record/group/im-unit";
@@ -1069,6 +1069,16 @@ const startEdit = async (type) => {
       tempTaskSave('新增')
     }
   } else {
+    //验证数据完整性
+    let d = await checkData(formFuns.value.getFormValue().ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
+      return
+    }
+    if(d.bcheck == '1'){
+      message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+      return
+    }
     // 任务
     let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'调拨单',method:'修改,审核,删除',recordNum:formItems.value.ccode})
     if(taskData==''){
@@ -1093,6 +1103,12 @@ const startEdit = async (type) => {
   }
 
 }
+
+async function checkData(ccode) {
+  let d = await useRouteApi(getDataInfo, {schemaName: dynamicTenantId})(ccode)
+  return d
+}
+
 const showAvailability = (b) => {
   if (titleValue.value == 0)
     setColumns(getColumns().map(it=>{if (it.dataIndex == 'xcl')it.ifShow = b;return it;}))
@@ -1194,6 +1210,12 @@ const startDel = async () => {
 const startReview = async (b) => {
   let a = useUserStoreWidthOut().getUserInfo.id
   if (!hasBlank(a) && !hasBlank(formItems.value.id)) {
+    //验证数据完整性
+    let d = await checkData(formFuns.value.getFormValue().ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
+      return
+    }
     //校验
     compState.loading = true
     let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
@@ -1221,6 +1243,10 @@ const startReview = async (b) => {
 
     let a = useUserStoreWidthOut().getUserInfo.id
     if(b==true){
+      if(d.bcheck === '1'){
+        message.error("已审核请勿重复审核，请刷新页面后操作！")
+        return
+      }
       //校验现存量
       let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
         ccode: formFuns.value.getFormValue().ccode,
@@ -1229,7 +1255,6 @@ const startReview = async (b) => {
         flg:'XCL',
         type:'sh',
       })
-      console.log(b)
       if(!b){
         compState.loading = false
         return message.error('现存量不足不能审核！！！')
@@ -1243,7 +1268,6 @@ const startReview = async (b) => {
         flg:'KYL',
         type:'sh',
       })
-      console.log(kyl)
       if(!kyl){
         compState.loading = false
         return message.error('可用量不足不能审核！！！')
@@ -1257,6 +1281,10 @@ const startReview = async (b) => {
       formItems.value.bcheck = '1'
 
     }else{
+      if(d.bcheck != '1'){
+        message.error("未审核不能弃审，请刷新页面后操作！")
+        return
+      }
       //校验现存量
       let b = await useRouteApi(auditCheck,{schemaName: dynamicTenantId})({
         ccode: formFuns.value.getFormValue().ccode,
@@ -1265,7 +1293,6 @@ const startReview = async (b) => {
         flg:'XCL',
         type:'qs',
       })
-      console.log(b)
       if(!b){
         compState.loading = false
         return message.error('现存量不足不能审核！！！')
@@ -1278,7 +1305,6 @@ const startReview = async (b) => {
         flg:'KYL',
         type:'qs',
       })
-      console.log(kyl)
       if(!kyl){
         compState.loading = false
         return message.error('可用量不足不能审核！！！')
@@ -1427,6 +1453,14 @@ const modelText1 = ref('');
 const modelText2 = ref('');
 //数据保存
 async function saveData() {
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(d){
+    if(d.bcheck == '1'){
+      message.error("提示：当前单据已经审核，不能修改，请弃审单据后重试！！！")
+      return
+    }
+  }
   compState.loading = true
   let id = (status.value == 1?null:formItems.value.id)
   formItems.value = formFuns.value.getFormValue()
@@ -2949,6 +2983,16 @@ const cunitFormat = (list,id) => {
 
 const databaseCo=ref('')
 const gotoPy = async () => {
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
   let dataBaseInfo=await findByStockAccId(dynamicTenantId.value.substring(0,dynamicTenantId.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')
@@ -2962,6 +3006,16 @@ const gotoPy = async () => {
 }
 
 const gotoPk = async () => {
+  //验证数据完整性
+  let d = await checkData(formFuns.value.getFormValue().ccode)
+  if(!d){
+    message.error("数据异常请刷新页面后操作！")
+    return
+  }
+  if(d.bcheck != '1'){
+    message.error("未审核不能进行联查，请刷新页面后重试！")
+    return
+  }
   let dataBaseInfo=await findByStockAccId(dynamicTenantId.value.substring(0,dynamicTenantId.value.length-5))
   databaseCo.value=dataBaseInfo?.coCode
   await closeToFullPaths('/kc-transfer')

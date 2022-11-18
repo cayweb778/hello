@@ -1068,4 +1068,8 @@ public class StockTransfersController {
                 .map(a->R.ok().setResult(a.get(0).getSyccode()));
     }
 
+    @PostMapping("findStockWareByCcode")
+    public Mono<R> findStockWareByCcode(String ccode){
+        return stockTransferRepository.findByCcode(ccode).map(a->R.ok().setResult(a)).defaultIfEmpty(R.ok().setResult(""));
+    }
 }

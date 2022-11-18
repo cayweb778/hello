@@ -2244,4 +2244,9 @@ public class StockTakingController {
                 .map(v-> ObjectUtil.isEmpty(v) ? "0" : v.get(0).getSyccode())
                 .map(a->R.ok().setResult(a));
     }
+
+    @PostMapping("findStockWareByCcode")
+    public Mono<R> findStockWareByCcode(String ccode){
+        return stockTakingRepository.findAllByCcode(ccode).map(a->R.ok().setResult(a)).defaultIfEmpty(R.ok().setResult(""));
+    }
 }

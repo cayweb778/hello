@@ -253,7 +253,7 @@ import {
 } from "/@/api/record/stock/stock-ruku";
 
 import {
-  findAllMainList,audit,deleteSettModes,auditCheck,auditBack
+  findAllMainList,audit,deleteSettModes,auditCheck,auditBack,getDataInfo
 } from "/@/api/record/stock/stock-dbd";
 import {
   delCGDHDverifyZTRKSum,
@@ -1121,8 +1121,14 @@ function randomString(length) {
 const dynamicTenant:any = ref('')
 const toAudit = async () => {
   if (checkRow.value.length == 1) {
-    if(checkRow.value[0].bcheck === '1'){
-      message.error("已审核请勿重复审核！")
+    //验证数据完整性
+    let d = await checkData(checkRow.value[0].ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
+      return
+    }
+    if(d.bcheck === '1'){
+      message.error("已审核请勿重复审核，请刷新页面后操作！")
       return
     }
     //校验
@@ -1199,10 +1205,18 @@ const toAudit = async () => {
 const toAuditBack = async () => {
   //判断范围
   if (checkRow.value.length == 1) {
-    if(checkRow.value[0].bcheck != '1'){
-      message.error("未审核不能弃审！")
+
+    //验证数据完整性
+    let d = await checkData(checkRow.value[0].ccode)
+    if(!d){
+      message.error("数据异常请刷新页面后操作！")
       return
     }
+    if(d.bcheck != '1'){
+      message.error("未审核不能弃审，请刷新页面后操作！")
+      return
+    }
+
     //校验
     compState.loading = true
     let date1:any = useCompanyOperateStoreWidthOut().getLoginDate
@@ -1273,6 +1287,11 @@ const toAuditBack = async () => {
   }
 }
 
+async function checkData(ccode) {
+  let d = await useRouteApi(getDataInfo, {schemaName: dynamicTenantId})(ccode)
+  return d
+}
+
 async function delList() {
   if (checkRow.value.length > 0) {
     createConfirm({
@@ -1283,6 +1302,17 @@ async function delList() {
         compState.loading = true
         for (let i = 0; i < checkRow.value.length; i++) {
           const item = checkRow.value[i]
+          //验证数据完整性
+          let d = checkData(checkRow.value[i].ccode)
+          if(d.id){
+            message.error("单据异常不能删除！")
+            return
+          }
+          //已审核不能修改
+          if(d.bcheck ==='1'){
+            message.error("已审核单据不能删除！")
+            return
+          }
           //已审核不能修改
           if(checkRow.value[i].bcheck ==='1'){
             message.error("已审核单据不能删除！")
