@@ -78,6 +78,9 @@ export const createStorage = ({
      * @memberof Cache
      */
     get(key: string, def: any = null): any {
+      console.log('99999')
+      console.log(this.getKey(key))
+      console.log(this.hasEncrypt )
       const val = this.storage.getItem(this.getKey(key));
       if (!val) return def;
 
