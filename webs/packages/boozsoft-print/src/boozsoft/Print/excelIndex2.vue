@@ -9,11 +9,18 @@
       <div style="border-radius:10px;background:rgb(219, 240, 255)">
         <Form :label-col="{ span: 8 }">
           <Item>
-            <div>NC 表格预览222控件</div>
+            <div>NC 表格预览控件</div>
           </Item>
 
           <Item>
             <div>当前环境222: 图形化 可选:[函数，图形化,演示]</div>
+          </Item>
+          <Item>
+            <Button @click="testPrint">保存过的表格(C:/Users/boozsoft/Downloads)</Button>
+            <Row><Button @click="closePrint">客户应收余额表_中途启用财务账套.xlsx</Button></Row>
+            <Row><Button @click="closePrint">客户应收余额表_中途启用财务账套.xlsx（1）</Button></Row>
+            <Row><Button @click="closePrint">客户应收余额表_中途启用财务账套.xlsx（2）</Button></Row>
+            <Row><Button @click="closePrint">客户应收余额表_中途启用财务账套.xlsx（3）</Button></Row>
           </Item>
           <Divider style="border-color: #7cb305" dashed/>
           <Item>
@@ -49,7 +56,7 @@
 </template>
 <script setup>
 import {savePdf, useNewPrint, useNewPrintLang} from "/@/utils/boozsoft/print/print";
-import {Button, Select, Form, Divider} from "ant-design-vue";
+import {Button, Select, Form, Divider,Row} from "ant-design-vue";
 import ExcelPdfViewer from './SubApps/ExcelViewer/index.vue'
 
 const Item = Form.Item
