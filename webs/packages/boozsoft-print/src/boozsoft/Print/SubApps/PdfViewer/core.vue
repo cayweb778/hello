@@ -34,7 +34,7 @@ const props=defineProps(["value"])
 const wujieAttrs = ref({
 
   // globalData:useCounterStoreWidthOut(),
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncprint' : '//localhost:5010',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncpdfviewer' : '//localhost:5010',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: {
     pdfDoc:props.value,
