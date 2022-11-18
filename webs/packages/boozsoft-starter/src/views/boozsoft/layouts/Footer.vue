@@ -67,7 +67,7 @@
         </div>
       </Col>
       <Col :span="8" style="min-width:100px">
-        <div @click="downFile">下载</div>
+<!--        <div @click="downFile">下载</div>-->
         <!--        <div style="min-width:57px;padding-top:1px;text-align:center;color:white;font-size:14px;background:black">财务版</div>-->
 
 
