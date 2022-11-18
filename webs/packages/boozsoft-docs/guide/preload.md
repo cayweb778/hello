@@ -1,4 +1,4 @@
-- **打印控件示例：**
+**打印控件示例：**
 
 ```typescript
 const {print, tableStyle} = useNcBusStoreWidthOut().usePrint()
