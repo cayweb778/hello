@@ -43,7 +43,6 @@ const sessionMemory = new Memory(DEFAULT_CACHE_TIME);
 
 function initPersistentMemory() {
   const localCache = ls.get(APP_LOCAL_CACHE_KEY);
-  console.log(localCache)
   const sessionCache = ss.get(APP_SESSION_CACHE_KEY);
   localCache && localMemory.resetCache(localCache);
   sessionCache && sessionMemory.resetCache(sessionCache);

@@ -78,21 +78,12 @@ export const createStorage = ({
      * @memberof Cache
      */
     get(key: string, def: any = null): any {
-      console.log('99999')
-      console.log(this.getKey(key))
-      console.log(this.hasEncrypt )
-      console.log(this.storage)
       const val = this.storage.getItem(this.getKey(key));
-      console.log(!val)
-      console.log(344444)
       if (!val) return def;
 
       try {
         const decVal = this.hasEncrypt ? this.encryption.decryptByAES(val) : val;
-        console.log(decVal)
-        console.log('xxx111xxxxx')
         const data = JSON.parse(decVal);
-        console.log('xxx2222xxxxx')
         const { value, expire } = data;
         if (isNullOrUnDef(expire) || expire >= new Date().getTime()) {
           return value;
