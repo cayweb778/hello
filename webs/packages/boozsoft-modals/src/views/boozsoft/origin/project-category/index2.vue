@@ -311,7 +311,8 @@ import {
   message
 } from 'ant-design-vue'
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/components/Excel/src/Export2Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel/src/Export2Excel";
+const aoaToSheetXlsx=null
 
 const AListItem=AList.Item
 const AInputSearch=AInput.Search

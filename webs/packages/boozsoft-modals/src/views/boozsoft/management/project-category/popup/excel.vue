@@ -43,7 +43,8 @@ const AInputSearch=AInput.Search
 const ASelectOption=ASelect.Option
 const ARadioGroup = ARadio.Group
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/components/Excel/src/Export2Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel/src/Export2Excel";
+const aoaToSheetXlsx=null
 import {cateFindAll} from "/@/api/group_project_category/project_category";
 import projectCategoryItemConfigModelHelper
   from "/@/views/boozsoft/management/project-category/popup/helper/projectCategoryItemConfigModelHelper";
