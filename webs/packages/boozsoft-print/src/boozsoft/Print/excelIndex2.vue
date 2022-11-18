@@ -44,6 +44,7 @@
           <Item>
             <Button @click="testPrint">保存</Button>
             <Button @click="closePrint">下载</Button>
+            <Button @click="closePrint">关闭</Button>
           </Item>
         </Form>
       </div>
