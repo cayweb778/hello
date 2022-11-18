@@ -1,5 +1,6 @@
 import { saveAs } from 'file-saver'
-import XLSX from 'xlsx-js-style'
+//import XLSX from 'xlsx-js-style'
+const XLSX=null
 
 export function writeExcel (wb, bookType, filename) {
   const wbout = XLSX.write(wb, {

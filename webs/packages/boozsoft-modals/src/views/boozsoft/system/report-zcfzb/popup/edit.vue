@@ -1021,7 +1021,8 @@ async function hangPrintDefaultPDF() {
 
 /************************导出excel开始***************************************/
 import {saveAs} from 'file-saver'
-import XLSX from 'xlsx-js-style'
+//import XLSX from 'xlsx-js-style'
+const XLSX=null
 import {useMessage} from "/@/hooks/web/useMessage";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker.vue";

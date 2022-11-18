@@ -1,3 +1,6 @@
+预构建优化
+https://blog.csdn.net/m0_67265464/article/details/125345620
+
 https://github.com/talesluna/rust-printers
 虚拟机安装
 https://www.cnblogs.com/lin-wang/p/15748235.html

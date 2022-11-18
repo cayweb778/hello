@@ -684,7 +684,8 @@ async function printDefaultPDF() {
 
 /************************导出excel开始***************************************/
 import {saveAs} from 'file-saver'
-import XLSX from 'xlsx-js-style'
+//import XLSX from 'xlsx-js-style'
+const XLSX=null
 import {useMessage} from "/@/hooks/web/useMessage";
 import {deleteReport, findByDataType} from "/@/api/record/system/report-data";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
