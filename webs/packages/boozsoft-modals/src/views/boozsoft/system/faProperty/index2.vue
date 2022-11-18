@@ -564,7 +564,8 @@ import {findDataBase} from "/@/api/record/system/account";
 import {psnFindAll} from "/@/api/psn/psn";
 
 import {columnProps} from "ant-design-vue/es/table/interface";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";

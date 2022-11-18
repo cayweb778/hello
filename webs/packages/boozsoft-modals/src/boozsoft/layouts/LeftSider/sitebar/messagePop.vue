@@ -138,7 +138,8 @@ import {
 import { findAll,hide,goread,chexiao,getTypeList } from "/@/api/record/message/data";
 
 import {columnProps} from "ant-design-vue/es/table/interface";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import moment from "moment";
 import {deleteDept} from "/@/api/record/system/zf-class";
 const ASelectOption = ASelect.Option;

@@ -84,7 +84,8 @@ import {delCusArr, findAllIsDel,recoverIsDel} from "/@/api/record/supplier_data/
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {saveAllLog, saveLog} from "/@/api/record/system/group-sys-login-log";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 
 
 const AInputSearch = AInput.Search

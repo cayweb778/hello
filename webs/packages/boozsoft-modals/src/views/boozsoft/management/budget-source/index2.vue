@@ -184,7 +184,8 @@ import {
 import {columnProps} from "ant-design-vue/es/table/interface";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";

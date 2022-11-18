@@ -571,7 +571,8 @@ import {useMessage} from "/@/hooks/web/useMessage";
 import {psnFindAll} from "/@/api/psn/psn";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";

@@ -602,7 +602,8 @@ import {
 } from "/@/api/record/generalLedger/excelExport";
 //import XLSX from "xlsx-js-style";
 const XLSX=null;
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";

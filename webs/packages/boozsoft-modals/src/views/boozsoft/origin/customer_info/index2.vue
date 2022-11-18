@@ -153,7 +153,8 @@ import {
   originCustomerSaveAll
 } from "/@/api/org/cus/org_cus";
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 

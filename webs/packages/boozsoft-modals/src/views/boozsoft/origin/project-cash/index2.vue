@@ -243,7 +243,8 @@ import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
 import {columnProps} from "ant-design-vue/es/table/interface";
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 
 import {

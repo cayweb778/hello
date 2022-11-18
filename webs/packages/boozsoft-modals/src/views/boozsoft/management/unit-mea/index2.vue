@@ -251,7 +251,8 @@ import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {columnProps} from "ant-design-vue/es/table/interface";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 const {closeCurrent} = useTabs(router);
 
 const formItems = ref({

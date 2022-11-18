@@ -271,7 +271,8 @@ import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {columnProps} from "ant-design-vue/es/table/interface";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {isGroup} from "/@/api/record/system/project-cash";
 const {closeCurrent} = useTabs(router);
 

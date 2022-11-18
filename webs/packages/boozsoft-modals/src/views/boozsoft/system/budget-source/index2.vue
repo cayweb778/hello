@@ -220,7 +220,8 @@ import {findByAccId, findDataBase} from "/@/api/record/system/account";
 import {findAllCustomerClass} from "/@/api/record/system/customer_class";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useUserStoreWidthOut} from "/@/store/modules/user";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";

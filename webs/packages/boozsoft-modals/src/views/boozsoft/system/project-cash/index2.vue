@@ -242,7 +242,8 @@ import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
 import {useMessage} from "/@/hooks/web/useMessage";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 import {findDataBase} from "/@/api/record/system/account";
 
 const AInputSearch=AInput.Search

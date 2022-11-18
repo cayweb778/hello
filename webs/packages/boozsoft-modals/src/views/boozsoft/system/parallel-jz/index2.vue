@@ -113,7 +113,8 @@ import {useMessage} from "/@/hooks/web/useMessage";
 import {exportExcel} from "/@/api/record/generalLedger/excelExport";
 import {findYearByAccount} from "/@/api/record/system/bank-statement";
 import {findAllByAccCountPartColumn, findDataBase} from "/@/api/record/system/account";
-import {aoaToSheetXlsx} from "/@/components/Excel";
+//import {aoaToSheetXlsx} from "/@/components/Excel";
+const aoaToSheetXlsx=null
 const ASelectOption = ASelect.Option;
 const AInputSearch = AInput.Search;
 const AStatisticCountdown = AStatistic.Countdown;
