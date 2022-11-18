@@ -34,7 +34,7 @@ const hello={
 const wujieAttrs = ref({
 
   globalData:useCounterStoreWidthOut(),
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncprint666' : '//localhost:5002',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/data-export' : '//localhost:5002',
   socketAddr:isProdMode()? "ws://"+new URL(window.location.href).host+'/api/nc'+'/newstock':"ws://localhost:8085/newstock",
   props: {
     hello,
