@@ -5,7 +5,7 @@ const ogDescription = "极致的微前端框架";
 const ogImage = "https://wujie-micro.github.io/doc/wujie.png";
 const ogTitle = "NC";
 const ogUrl = "https://wujie-micro.github.io/doc/";
-const base = process.env.NODE_ENV === "production" ? "/doc/" : "";
+const base = process.env.NODE_ENV === "production" ? "/docs/" : "";
 
 export default defineConfig({
   title: "NC",
