@@ -89,8 +89,10 @@ export const createStorage = ({
 
       try {
         const decVal = this.hasEncrypt ? this.encryption.decryptByAES(val) : val;
+        console.log(decVal)
         console.log('xxx111xxxxx')
         const data = JSON.parse(decVal);
+        console.log('xxx2222xxxxx')
         const { value, expire } = data;
         if (isNullOrUnDef(expire) || expire >= new Date().getTime()) {
           return value;
