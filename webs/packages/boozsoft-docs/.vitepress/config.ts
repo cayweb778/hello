@@ -123,6 +123,10 @@ export default defineConfig({
                             link: "/guide/mode",
                         },
                         {
+                            text: "探索微前端",
+                            link: "/guide/ddd",
+                        },
+                        {
                             text: "首屏加载优化",
                             link: "/guide/hello",
                         },
