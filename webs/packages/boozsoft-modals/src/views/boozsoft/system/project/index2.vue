@@ -927,7 +927,8 @@ import {
 } from "/@/api/task-api/tast-bus-api";
 import {cloneDeep} from "lodash-es";
 import {getThisAdInfoData} from "/@/api/record/system/financial-settings";
-import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+// import {aoaToSheetXlsx} from "/@/views/boozsoft/xian_jin_liu_liang/yin_hang_dui_zhang/yin_hang_dui_zhang_dan/excel/components/importexcel";
+const aoaToSheetXlsx=null
 // import {getFromEdit} from "/@/api/record/system/sys_project_category";
 import {useUserStore, useUserStoreWidthOut} from "/@/store/modules/user";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
