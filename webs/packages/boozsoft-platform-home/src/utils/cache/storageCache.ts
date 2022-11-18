@@ -82,8 +82,9 @@ export const createStorage = ({
       console.log(this.getKey(key))
       console.log(this.hasEncrypt )
       console.log(this.storage)
-      console.log(344444)
       const val = this.storage.getItem(this.getKey(key));
+      console.log(val)
+      console.log(344444)
       if (!val) return def;
 
       try {
