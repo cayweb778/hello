@@ -5,7 +5,6 @@ const process = require("child_process");
 ~async function () {
     const createChoice = (title, disable) => ({title: "⭐️ " + title, value: title, disable: !!disable});
     const arr = [
-        ["登陆", "start:auth"],
         ["存货", "start:stock"],
         ["总账", "start:zongzhang"],
         ["固定资产", "start:gdzc"],
