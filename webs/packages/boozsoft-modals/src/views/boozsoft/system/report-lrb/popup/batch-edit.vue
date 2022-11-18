@@ -521,7 +521,8 @@ async function printDefaultPDF() {
   })
 }
 /************************导出excel开始***************************************/
-import XLSX from "xlsx-js-style";
+//import XLSX from "xlsx-js-style";
+const XLSX=null;
 import {
   sheet_from_array_of_arrays, Workbook,
   writeExcel, defaultV

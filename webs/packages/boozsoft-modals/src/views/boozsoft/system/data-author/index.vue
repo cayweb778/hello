@@ -166,7 +166,8 @@ import {
   Workbook,
   writeExcel
 } from "/@/utils/boozsoft/excel/excel2";
-import XLSX from "xlsx-js-style";
+//import XLSX from "xlsx-js-style";
+const XLSX=null;
 import LeftTreeOld from "/@/views/boozsoft/system/data-author/popup/LeftTree.vue";
 
 const CrudApi = {

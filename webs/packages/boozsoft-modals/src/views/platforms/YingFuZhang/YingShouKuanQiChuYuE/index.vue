@@ -1048,7 +1048,8 @@ import {
   Workbook,
   writeExcel
 } from "/@/utils/boozsoft/excel/excel2";
-import XLSX from "xlsx-js-style";
+//import XLSX from "xlsx-js-style";
+const XLSX=null;
 const excelData = async () => {
   // console.log("导出成功！")
   await saveLogData('导出')

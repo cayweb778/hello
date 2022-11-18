@@ -1208,7 +1208,8 @@ import {
   Workbook,
   writeExcel
 } from "/@/utils/boozsoft/excel/excel2";
-import XLSX from "xlsx-js-style";
+//import XLSX from "xlsx-js-style";
+const XLSX=null;
 const excelData = () => {
   // console.log("导出成功！")
   const arrData = tableData.value
