@@ -47,11 +47,11 @@ export const usePluginStore = defineStore({
     // Reference components
     componentsReferenceMap: {},
     componentReference: {
-      SYSTEM_MESSAGE: ['SYSTEM_MESSAGE', '/@/views/boozsoft/global/funs/modules/index.vue'],
-      DEPT: ['dept', '../dept/index.vue'],
-      PSN: ['dept', '../psn/index.vue'],
-      CUSTOM: ['custom', '../custom/index.vue'],
-      GYS: ['gys', '../gys/index.vue'],
+      SYSTEM_MESSAGE: ['SYSTEM_MESSAGE', () => import('/@/views/boozsoft/global/funs/modules/index.vue')],
+      DEPT: ['dept', ()=>import('/@/views/boozsoft/global/dept/index.vue')],
+      PSN: ['dept', ()=>import('/@/views/boozsoft/global/psn/index.vue')],
+      CUSTOM: ['custom',()=>import( '/@/views/boozsoft/global/custom/index.vue')],
+      GYS: ['gys', ()=>import('/@/views/boozsoft/global/gys/index.vue')],
       // d:['dept', '../dept/index.vue'],
     }
   }),
