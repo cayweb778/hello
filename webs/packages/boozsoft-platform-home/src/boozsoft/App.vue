@@ -46,15 +46,7 @@ const {setCacheShowGdzc,getCacheShowGdzc}=defineCacheShowGdzc(showGdzc)
 const layoutsStore = usePlatformsStoreWidthOut();
 const newPlatformId=window.localStorage.getItem("newPlatformId")
 layoutsStore.switchPlatform({ id:newPlatformId})
-console.log(window.localStorage)
 
-function aaaa(){
-  for (var i = 0; i < window.top.localStorage.length; i++) {
-    var key = window.top.localStorage.key(i); //获取本地存储的Key
-    window.localStorage.setItem(key,window.top.localStorage.getItem(key));//所有value
-  }
-}
-aaaa()
 window?.$wujie.bus.$on("goPlatform", function (id) {
   setCacheShowGdzc(false)
   const layoutsStore = usePlatformsStoreWidthOut();
