@@ -199,6 +199,9 @@ async function goPrint() {
 }
 
 async function goExcel() {
+  let aaa =  useNcBusStoreWidthOut().useExcel().excel(()=>{
+
+  })
   // const excelData = () => {
   //   // console.log("导出成功！")
   //

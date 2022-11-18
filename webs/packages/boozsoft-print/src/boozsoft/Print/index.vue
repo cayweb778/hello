@@ -54,13 +54,6 @@ function handleCancel() {
 
 
 
-import {
-  defaultV,
-  sheet_from_array_of_arrays,
-  Workbook,
-  writeExcel
-} from "/@/utils/boozsoft/excel/excel2";
-import XLSX from "xlsx-js-style";
 import {useHelloPrintStoreWidthOut} from "/@/store/modules/hello-print";
 
 </script>

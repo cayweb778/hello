@@ -10,28 +10,48 @@ function strToJson(str) {
 export const useHelloPrintStore = defineStore({
   id: 'useHelloPrintStore',
   state: (): any => ({
-    showPrint:false,
-    showModals:true,
-    showPreview:false,
+    showPrint: false,
+    showExcel: false,
+    showExcelPreview: false,
+    showExcelModal: false,
+    showModals: true,
+    showPreview: false,
   }),
   getters: {
     getShowModals: (state) => state.showModals,
     getShowPrint: (state) => state.showPrint,
-    getShowPreview: (state) => state.showPreview
+    getShowExcel: (state) => state.showExcel,
+    getShowPreview: (state) => state.showPreview,
+    getShowExcelPreview: (state) => state.showExcelPreview,
+    getShowExcelModal: (state) => state.showExcelModal
   },
   actions: {
-    setShowPrint(e){
-      this.showPrint=e
+    setShowPrint(e) {
+      this.showPrint = e
     },
-    setShowModals(e){
-      this.showModals=e
+    setShowExcelPreview(e) {
+      this.showExcelPreview = e
     },
-    setShowPreview(e){
-      this.showPreview=e
+    setShowExcelModal(e) {
+      this.showExcelModal = e
     },
-    openPreview(){
+    setShowExcel(e) {
+      this.showExcel = e
+    },
+    setShowModals(e) {
+      this.showModals = e
+    },
+    setShowPreview(e) {
+      this.showPreview = e
+    },
+    openPreview() {
       this.setShowModals(false)
       this.setShowPreview(true)
+    },
+    openExcelPreview() {
+      this.setShowExcelModal(false)
+      this.setShowExcelPreview(true)
+
     }
   }
 });
