@@ -4,7 +4,7 @@
       v-bind="$attrs"
       title="收款单"
       @ok="handleOk()"
-      @cancel="handleOk()"
+      @cancel="closeModal()"
       wrapClassName="head-title"
       @register="register"
     >
@@ -206,8 +206,8 @@ async function reloadList(){
     } else {
       item.whxIsum = item.isum
     }
-    item.hxMoney = item.whxIsum
-    item.tempOne = item.whxIsum
+    // item.hxMoney = item.whxIsum
+    // item.tempOne = item.whxIsum
   }))
   const res:any = await useRouteApi(findWhxskd,{schemaName: dynamicTenantId})({year:year.value,cvencode:cvencode.value})
   xhdList.value = res.filter(item => item.isum!='0').map(item => {
@@ -220,14 +220,14 @@ async function reloadList(){
     } else {
       item.whxIsum = item.isum
     }
-    item.hxMoney = item.whxIsum
-    item.tempOne = item.whxIsum
+    // item.hxMoney = item.whxIsum
+    // item.tempOne = item.whxIsum
     return item
   })
   tableDataAll.value.push(...xhdList.value)
   tableData.value = tableDataAll.value.filter(item =>{
     if (hxmxList.value.length>0){
-      return hxmxList.value.map(aa => aa.hxCcode).indexOf(item.ccode) == -1
+      return hxmxList.value.map(aa => aa.sourcecode).indexOf(item.ccode) == -1
     }
     return item
   })
@@ -293,6 +293,16 @@ async function onSearch(){
 
 </script>
 <style scoped lang="less">
+:deep(.vben-basic-table) {
+  .ant-table-wrapper {
+    .ant-table-measure-row{
+      td{
+        padding: 0!important;
+      }
+    }
+  }
+}
+
 .ant-modal-header{
   border: none !important;
 }

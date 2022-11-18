@@ -18,6 +18,7 @@
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" @click="saveData" v-if="status == 1 || status == 2">保存</Button>
           <Button class="actod-btn" @click="giveUp" v-if="status == 1 || status == 2">放弃</Button>
+          <Button class="actod-btn" @click="fentan()" v-if="status == 1 || status == 2">分摊</Button>
           <Button class="actod-btn" @click="startDel" v-if="status == 3 && formItems.id != null">删除</Button>
           <Popover placement="bottom" v-if="status == 3">
             <template #content>
@@ -34,7 +35,7 @@
             </template>
             <Button class="actod-btn">更多</Button>
           </Popover>
-          <Button v-if="status != 3" class="actod-btn">导入</Button>
+<!--          <Button v-if="status != 3" class="actod-btn">导入</Button>-->
           <Button class="actod-btn actod-btn-last" @click="outBefore">退出</Button>
         </div>
         <div :class="status != 3?'status-look':''">
@@ -145,7 +146,7 @@
         <div>
           <span style="font-size: 18px;font-weight: bold;color: #0096c7;">预收冲销明细</span>
           <div v-if="status == 1 || status == 2" style="float: right;">
-            <Button class="ant-btn-sm actod-btn" @click="fentan">分摊</Button>
+<!--            <Button class="ant-btn-sm actod-btn" @click="fentan">分摊</Button>-->
             <Button class="ant-btn-sm actod-btn" @click="openSelectSkd">选单</Button>
             <Button class="ant-btn-sm actod-btn" @click="tableDel">删单</Button>
           </div>
@@ -159,7 +160,7 @@
             @register="registerTable"
             :dataSource="tableData"
           >
-            <template #sourcetype="{ record }">{{ formatHxStyle(record.sourcetype) }}</template>
+            <template #sourcetype="{ record }">{{ formatBusStyle(record.sourcetype) }}</template>
             <template #isum="{ record }">{{ toThousandFilter(record.isum) }}</template>
             <template #whxIsum="{ record }">{{ toThousandFilter(record.whxIsum) }}</template>
             <template #hxMoney="{ record,index }">
@@ -213,7 +214,7 @@
         <div style="margin-top: 10px;">
           <span style="font-size: 18px;font-weight: bold;color: #0096c7;">应收冲销明细</span>
           <div v-if="status == 1 || status == 2" style="float: right;">
-            <Button class="ant-btn-sm actod-btn" @click="fentan1">分摊</Button>
+<!--            <Button class="ant-btn-sm actod-btn" @click="fentan1">分摊</Button>-->
             <Button class="ant-btn-sm actod-btn" @click="openSelectXhd">选单</Button>
             <Button class="ant-btn-sm actod-btn" @click="tableDel1">删单</Button>
           </div>
@@ -812,6 +813,21 @@ function formatCvencode(cvencode){
       str = item.custName
     }
   })
+  return str
+}
+
+function formatBusStyle(busStyle){
+  let str = busStyle
+  //PTSK普通收款，YSK预收款，PTFK普通付款，YFK预付款
+  if (busStyle=='PTSK'){
+    str = '普通收款'
+  } else if (busStyle=='YSK'){
+    str = '预收款'
+  } else if (busStyle=='PTFK'){
+    str = '普通付款'
+  } else if (busStyle=='YFK'){
+    str = '预付款'
+  }
   return str
 }
 
@@ -1685,8 +1701,8 @@ function countTable(){
   getDataSource().forEach(item=>{
     if (item.isum!=null && item.isum!=''){
       isum.value = add(isum.value,item.isum)
-      whxIsum.value = add(whxIsum.value,item.whxIsum)
-      hxMoney.value = add(hxMoney.value,item.hxMoney)
+      whxIsum.value = add(whxIsum.value==null?'':whxIsum.value,item.whxIsum==null?'':item.whxIsum)
+      hxMoney.value = add(hxMoney.value==null?'':hxMoney.value,item.hxMoney==null?'':item.hxMoney)
     }
   })
   isum1.value = 0
@@ -1695,13 +1711,13 @@ function countTable(){
   getDataSource1().forEach(item=>{
     if (item.isum!=null && item.isum!=''){
       isum1.value = add(isum1.value,item.isum)
-      whxIsum1.value = add(whxIsum1.value,item.whxIsum)
-      hxMoney1.value = add(hxMoney1.value,item.hxMoney)
+      whxIsum1.value = add(whxIsum1.value==null?'':whxIsum1.value,item.whxIsum==null?'':item.whxIsum)
+      hxMoney1.value = add(hxMoney1.value==null?'':hxMoney1.value,item.hxMoney==null?'':item.hxMoney)
     }
   })
 }
 //分摊核销
-function fentan(){
+/*function fentan(){
   if(checkRow.value.length>0) {
     tableData.value.forEach(item=>{
       item.hxMoney = ''
@@ -1787,6 +1803,181 @@ function fentan1(){
       content: '请选择需要分摊的数据！'
     })
   }
+}*/
+
+function fentan(){
+  let cxIsum = formItems.value.cxIsum
+  if (cxIsum==null || cxIsum==''){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额不能为空！'
+    })
+    return false
+  }
+  if (cxIsum=='0'){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额不能为零！'
+    })
+    return false
+  }
+  if(tableData.value.filter(item=>item.id!=null&&item.id!='').length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '预收冲销明细不能为空！'
+    })
+    return false
+  }
+  if(tableData1.value.filter(item=>item.id!=null&&item.id!='').length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '应收冲销明细不能为空！'
+    })
+    return false
+  }
+  if(whxIsum.value==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '预收冲销明细的合计为零，不能进行冲销处理，请选择红票对冲！'
+    })
+    return false
+  }
+  if(whxIsum1.value==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '应收冲销明细的合计为零，不能进行冲销处理，请选择红票对冲！'
+    })
+    return false
+  }
+  if(cxIsum.value>0 && whxIsum.value<0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额和预收冲销明细的合计金额正负方向不一致，不能进行冲销处理，请稍后在试！'
+    })
+    return false
+  }
+  if(cxIsum.value>0 && whxIsum1.value<0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额和应收冲销明细的合计金额正负方向不一致，不能进行冲销处理，请稍后在试！'
+    })
+    return false
+  }
+  tableData.value.forEach(item=>{
+    item.hxMoney = ''
+    item.tempOne = ''
+    return item
+  })
+  tableData1.value.forEach(item=>{
+    item.hxMoney = ''
+    item.tempOne = ''
+    return item
+  })
+  if (cxIsum>0) {//冲销金额为正
+    let num1=cxIsum.value
+    tableData.value.forEach(item=>{
+      if (item.isum<0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num1 = sub(num1,item.hxMoney)
+      }
+    })
+    tableData.value.forEach(item=>{
+      if (num1 > 0) {
+        if (item.isum > 0) {
+          if (item.whxIsum <= num1) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          } else {
+            item.hxMoney = num1
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          }
+        }
+      }
+    })
+    let num2=cxIsum.value
+    tableData1.value.forEach(item=>{
+      if (item.isum<0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num2 = sub(num2,item.hxMoney)
+      }
+    })
+    tableData1.value.forEach(item=>{
+      if (num2 > 0) {
+        if (item.isum > 0) {
+          if (item.whxIsum <= num2) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num2 = sub(num2, item.hxMoney)
+          } else {
+            item.hxMoney = num2
+            item.tempOne = item.hxMoney
+            num2 = sub(num2, item.hxMoney)
+          }
+        }
+      }
+    })
+  } else if (cxIsum<0) {//冲销金额为负
+    let num1=cxIsum.value
+    tableData.value.forEach(item=>{
+      if (item.isum>0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num1 = sub(num1,item.hxMoney)
+      }
+    })
+    tableData.value.forEach(item=>{
+      if (num1 < 0) {
+        if (item.isum < 0) {
+          if (item.whxIsum >= num1) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          } else {
+            item.hxMoney = num1
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          }
+        }
+      }
+    })
+    let num2=cxIsum.value
+    tableData1.value.forEach(item=>{
+      if (item.isum>0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num2 = sub(num2,item.hxMoney)
+      }
+    })
+    tableData1.value.forEach(item=>{
+      if (num2 < 0) {
+        if (item.isum < 0) {
+          if (item.whxIsum >= num2) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num2 = sub(num2, item.hxMoney)
+          } else {
+            item.hxMoney = num2
+            item.tempOne = item.hxMoney
+            num2 = sub(num2, item.hxMoney)
+          }
+        }
+      }
+    })
+  }
+  setTableData(tableData.value)
+  setTableData1(tableData1.value)
 }
 
 const tableDataChange =  (r,c) => {
@@ -1980,7 +2171,7 @@ const openSelectSkd = () => {
       dynamicTenantId: dynamicTenantId.value,
       year: dynamicYear.value,
       cvencode: formItems.value.cvencodeZc,
-      list: getDataSource(),
+      list: getDataSource().filter(item=>item.id!=null && item.id!=''),
       arHexiaoAuto: arHexiaoAuto.value,
       arSourceFlag: arSourceFlag.value,
       arCheckFlag: arCheckFlag.value,
@@ -2035,7 +2226,7 @@ const openSelectXhd = () => {
       dynamicTenantId: dynamicTenantId.value,
       year: dynamicYear.value,
       cvencode: formItems.value.cvencodeZr,
-      list: getDataSource1(),
+      list: getDataSource1().filter(item=>item.id!=null && item.id!=''),
       arHexiaoAuto: arHexiaoAuto.value,
       arSourceFlag: arSourceFlag.value,
       arCheckFlag: arCheckFlag.value,

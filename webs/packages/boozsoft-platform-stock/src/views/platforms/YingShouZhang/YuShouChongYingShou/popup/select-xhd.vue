@@ -4,7 +4,7 @@
       v-bind="$attrs"
       title="应收冲应收单选单"
       @ok="handleOk()"
-      @cancel="handleOk()"
+      @cancel="closeModal()"
       wrapClassName="head-title"
       @register="register"
     >
@@ -316,6 +316,16 @@ async function onSearch(){
 
 </script>
 <style scoped lang="less">
+:deep(.vben-basic-table) {
+  .ant-table-wrapper {
+    .ant-table-measure-row{
+      td{
+        padding: 0!important;
+      }
+    }
+  }
+}
+
 .ant-modal-header{
   border: none !important;
 }

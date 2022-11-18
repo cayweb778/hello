@@ -302,6 +302,7 @@ import Query from './popup/query.vue'
 import {findAll as findCustAll} from "/@/api/record/costomer_data/customer";
 import {getPsnList} from "/@/api/record/system/psn";
 import {findDeptByFlag} from "/@/api/record/system/dept";
+import {findArApChongxiaosByCcode} from "/@/api/record/system/ArApChongxiao";
 
 const InputSearch = Input.Search
 const SelectOption = Select.Option
@@ -618,11 +619,20 @@ function addPage(){
 }
 
 //修改收款单
-function editPage(){
+async function editPage(){
   if (checkRow.value.length == 1) {
     let num = 0
     for (let i = 0; i < checkRow.value.length; i++) {
       const item = checkRow.value[i]
+      const res = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.busStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       if (item.bcheck == '1') {
         num++
         createErrorModal({
@@ -652,9 +662,18 @@ function editPage(){
 }
 
 //查看
-function openPage(data){
+async function openPage(data){
   pageParameter.id = data.id
   pageParameter.isEdit = '3'
+  const res = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:data.ccode,billStyle:data.busStyle})
+  if (res.length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '警告',
+      content: '列表单据已发生变化，请刷新当前列表！'
+    })
+    return false
+  }
   router.push({
     path: '/YingShouZhang/ChongXiao/CaoZuo/YuShouChongYingShou',
     query: pageParameter
@@ -666,6 +685,15 @@ async function delList(){
   if (checkRow.value.length > 0) {
     for (let x = 0; x < checkRow.value.length; x++) {
       let chongxiao = checkRow.value[x]
+      const res = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:chongxiao.ccode,billStyle:chongxiao.busStyle})
+      if (res.length==0){
+        createErrorModal({
+          iconType: 'warning',
+          title: '警告',
+          content: '列表单据已发生变化，请刷新当前列表！'
+        })
+        return false
+      }
       //判断存货和应收模块是否结账
       await jiezhang(chongxiao.ddate)
       if(flag.value){
