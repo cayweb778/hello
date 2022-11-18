@@ -590,13 +590,13 @@ async function delList() {
         for (let i = 0; i < checkRow.value.length; i++) {
           const item = checkRow.value[i]
           //验证数据完整性
-          let d = checkData(checkRow.value[i].ccode)
-          if(d.id){
+          let da = checkData(checkRow.value[i].ccode)
+          if(da.id){
             message.error("单据异常不能删除！")
             return
           }
           //已审核不能修改
-          if(d.bcheck ==='1'){
+          if(da.bcheck ==='1'){
             message.error("已审核单据不能删除！")
             return
           }
@@ -925,12 +925,12 @@ const toMxPage = (data) => {
 const toAudit = async () => {
   if (checkRow.value.length == 1) {
     //验证数据完整性
-    let d = await checkData(checkRow.value[0].ccode)
-    if(!d){
+    let da = await checkData(checkRow.value[0].ccode)
+    if(!da){
       message.error("数据异常请刷新页面后操作！")
       return
     }
-    if(d.bcheck === '1'){
+    if(da.bcheck === '1'){
       message.error("已审核请勿重复审核，请刷新页面后操作！")
       return
     }
@@ -982,12 +982,12 @@ const toAuditBack = async () => {
   //判断范围
   if (checkRow.value.length == 1) {
     //验证数据完整性
-    let d = await checkData(checkRow.value[0].ccode)
-    if(!d){
+    let da = await checkData(checkRow.value[0].ccode)
+    if(!da){
       message.error("数据异常请刷新页面后操作！")
       return
     }
-    if(d.bcheck != '1'){
+    if(da.bcheck != '1'){
       message.error("未审核不能弃审，请刷新页面后操作！")
       return
     }

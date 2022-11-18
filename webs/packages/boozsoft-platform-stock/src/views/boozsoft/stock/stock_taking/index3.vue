@@ -2467,7 +2467,7 @@ const loadPrint = (obj) => {
 
 
 const openExcel = async(obj) => {
-  //验证数据完整性
+  //验证数据完整性 
   let d = await checkData(routemsg.value.ccode)
   if(!d){
     message.error("数据异常请刷新页面后操作！")
