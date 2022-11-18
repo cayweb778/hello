@@ -47,7 +47,14 @@ const layoutsStore = usePlatformsStoreWidthOut();
 const newPlatformId=window.localStorage.getItem("newPlatformId")
 layoutsStore.switchPlatform({ id:newPlatformId})
 console.log(window.localStorage)
-console.log(window.top)
+
+function aaaa(){
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i); //获取本地存储的Key
+    window.localStorage.setItem(key,localStorage.getItem(key));//所有value
+  }
+}
+aaaa()
 window?.$wujie.bus.$on("goPlatform", function (id) {
   setCacheShowGdzc(false)
   const layoutsStore = usePlatformsStoreWidthOut();
