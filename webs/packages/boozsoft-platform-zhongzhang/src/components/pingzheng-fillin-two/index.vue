@@ -102,13 +102,13 @@
         </div>
         <div class="acbgead-two" :style="status == 3?{ pointerEvents: 'none'}:{}">
              <div>
-               <Select :options="pingTypeOptions" v-model:value="saveModel['csign']" @change="csignChange" style="min-width: 60px;" />
+               <Select :options="pingTypeOptions" v-model:value="saveModel['csign']" @change="csignChange" :ref="(e)=>resetRef(e,'csign')" @keyup.enter.native="topFocusNext('csign')" style="min-width: 60px;" />
                <span class="title-span">字&nbsp;第</span>
-               <Input style="width: 100px;" v-model:value="saveModel['inoId']"/>
+               <Input style="width: 100px;" v-model:value="saveModel['inoId']" :ref="(e)=>resetRef(e,'inoId')"  @keyup.enter.native="topFocusNext('inoId')"/>
                <span class="title-span">号&ensp;附单据数：</span>
-               <InputNumber style="width: 60px;" :min="0" :controls="false" v-model:value="saveModel['idoc']"/>
+               <InputNumber style="width: 60px;" :min="0" :controls="false" v-model:value="saveModel['idoc']" :ref="(e)=>resetRef(e,'idoc')"  @keyup.enter.native="topFocusNext('idoc')"/>
              </div>
-             <div><span class="title-span">制单日期：</span><DatePicker  v-model:value="saveModel['dbillDate']" value-format="YYYY-MM-DD"/></div>
+             <div><span class="title-span">制单日期：</span><DatePicker  v-model:value="saveModel['dbillDate']" value-format="YYYY-MM-DD" :disabledDate="disabledDate"/></div>
              <div><span class="title-span">本币：</span><span style="font-weight: bold;">人民币</span></div>
              <div>
                <AppstoreOutlined title="找平" @click="toolEventWatch('zp')"/>
@@ -163,7 +163,8 @@
               </div>
             </template>
           </template>
-         <template #ccode="{ record }">
+
+          <template #ccode="{ record }">
             <template v-if="record.editCcode">
               <Select
                 v-model:value="record.tempCcode"
@@ -207,22 +208,24 @@
               </div>
             </template>
           </template>
+
           <template #colum3="{ record }">
-            <div class="topAndDownDiv">
-               <span>{{record?.slTopStr}}</span>
-               <span>{{record?.slDownStr}}</span>
+            <div class="topAndDownDiv" v-if="!hasBlank(record?.number)">
+               <span>{{`${record?.sl} / ${parseFloat(record?.number).toFixed(2)}`}}</span>
+               <span>{{parseFloat(record?.cunitPrice).toFixed(2)}}</span>
             </div>
           </template>
+
           <template #colum4="{ record }">
-             <div class="topAndDownDiv">
-               <span>{{record?.wbTopStr}}</span>
-               <span>{{record?.wbDownStr}}</span>
+             <div class="topAndDownDiv" v-if="!hasBlank(record?.nfrat)">
+               <span>{{`${record?.wb} / ${parseFloat(record?.nfrat).toFixed(2)}`}}</span>
+               <span>{{parseFloat(record?.mdF).toFixed(2)}} %</span>
              </div>
           </template>
 
           <template #colum501="{ record }">
             <template v-if="record.editColum5">
-              <InputNumber  class="colum5" :precision="2" :controls="false" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum5"   @keyup="(e)=>amountWatch(e,record,'colum5')"/>
+              <InputNumber  class="colum5" :precision="4" :controls="false" :min="-9999999999999.99" :max="9999999999999.99" v-model:value="record.tempColum5"   @keyup="(e)=>amountWatch(e,record,'colum5')"/>
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -235,7 +238,7 @@
           <template #colum601="{ record }">
             <template v-if="record.editColum6">
 <!--            :step="0.01"  -->
-              <InputNumber  class="colum6"  :precision="2" :controls="false" :min="-9999999999999.99" :max="9999999999999.99"  v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
+              <InputNumber  class="colum6"  :precision="4" :controls="false" :min="-9999999999999.99" :max="9999999999999.99"  v-model:value="record.tempColum6"  @keyup="(e)=>amountWatch(e,record,'colum6')" />
             </template>
             <template v-else>
               <!-- @click="amountToggle(record,'colum5',true)"-->
@@ -244,6 +247,7 @@
               </div>
             </template>
           </template>
+
           <template #summary>
             <TableSummary fixed>
               <TableSummaryRow >
@@ -260,12 +264,13 @@
                </TableSummaryRow>
             </TableSummary>
           </template>
+
         </BasicTable>
         <div class="acb-centent-tool" :style="{width: 1290+50+'px'}">
           <div><span>制单：</span><span></span>{{saveModel['cbill']}}</div>
         </div>
         <Assist
-          @save="(r)=>focusNext(r,'colum2')"
+          @save="assistReset"
           @register="registerAssist"
         />
       </div>
@@ -293,6 +298,7 @@ import {
 import {BasicTable, useTable} from '/@/components/Table'
 import {SearchOutlined} from '@ant-design/icons-vue';
 import { useRoute } from 'vue-router';
+import moment from "moment";
 /************* 系统块 ***************/
 /*********** 业务块 *************/
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker.vue";
@@ -334,6 +340,7 @@ import {
   findVoucherTypeAuthorList
 } from "/@/api/record/system/financial-settings";
 import {getByStockBalanceTask} from "/@/api/record/stock/stock_balance";
+import {findAll as findAllUnitList} from "/@/api/record/system/unit-mea";
 const {createWarningModal, createConfirm} = useMessage()
 const windowHeight = (window.innerHeight - 300)
 const busDate = useCompanyOperateStoreWidthOut().getLoginDate
@@ -400,8 +407,14 @@ const summaryModel = reactive({
   defaults: [],
   vouchers: []
 })
+const pageRefs = ref({})
+const disabledDateValue = ref('')
+
 const tableLoad = ref(false)
+
 const codeAllList = ref([])
+
+const unitList = ref([])
 
 const dynamicTenant = ref(null)
 
@@ -457,6 +470,7 @@ async function initData() {
   summaryModel.defaults = (await useRouteApi(findAllSummary, {schemaName: dynamicTenant.value?.accountMode})(null) || [])
   summaryModel.vouchers = (await useRouteApi(findAllVoucherSummary, {schemaName: dynamicTenant.value?.accountMode})({ iyear: busDate.substring(0,4)}) || [])
   codeAllList.value = (await useRouteApi(findByLastCodeHierarchyNames, {schemaName: dynamicTenant.value?.accountMode})({iyear: busDate.substring(0,4)}) || [])
+  unitList.value = (await useRouteApi(findAllUnitList, {schemaName: dynamicTenant.value?.accountMode})({}) || [])
   summaryOptions.value = unref(summaryModel.vouchers).map(s=>({value: s,label: s}))
   codeOptions.value = unref(codeAllList.value).map(o=>({value: o.uniqueCode,label:  o.uniqueCode+' '+o.ccodeName}))
 // 凭证类别
@@ -659,6 +673,30 @@ const csignChange = async (v) => {
     saveModel['inoId'] = NumberTool.zeroFill((await useRouteApi(findLastPingZhengInoid, {schemaName: dynamicTenant.value?.accountMode})(parm) || 1),4)
   }
 }
+const resetRef = (e,k) => {
+  pageRefs.value[k+'Ref'] = e
+}
+const topFocusNext = async (t) => {
+  let arr = ['csign','inoId','idoc']
+  let field = arr[arr.findIndex(it => it === t) + 1]
+  if (null != field) {
+    pageRefs.value[field + 'Ref'].focus()
+  }else if (t == arr[arr.length-1]){
+    // 进入表体
+    let list = getDataSource();
+    list[0]['editCdigest'] = list[0]['cdigest']
+    list[0]['editCdigest'] = true
+    toFocus('cdigest')
+  }
+}
+
+const disabledDate = (current) => {
+  // 获取区间最小区间
+  if (!hasBlank(disabledDateValue.value)) {
+    let max = moment(disabledDateValue.value, 'YYYY-MM-DD').endOf('day')
+    return current < max
+  }
+};
 /******************* table 表头业务 ********************/
 
 
@@ -845,6 +883,17 @@ const amountWatch = (a,r,c) => {
     }
   }else if(a.code === 'Enter' || a.code === 'NumpadEnter'){
     amountToggle(r,c,false,true)
+    let v = r[c=='colum5'?'tempColum5':'tempColum6'] || 0
+    if (!hasBlank(r?.number) && v != 0){
+      let b = parseFloat(r?.number) > 0
+      let vv = ( Math.abs(v) / Math.abs(r?.number))
+      r['cunitPrice'] = (b?vv:vv*-1).toFixed(4)
+    }
+    if (!hasBlank(r?.nfrat) && v!=0){
+      let b = parseFloat(r?.nfrat) > 0
+      let vv = ( Math.abs(v) / Math.abs(r?.nfrat))
+      r['mdF'] = (b?vv:vv*-1).toFixed(10)
+    }
   }
 }
 
@@ -970,6 +1019,16 @@ const toolEventWatch = (action) => {
       }
       break;
     case 'cs':
+      for (let row of list) {
+        Object.keys(row).filter(k=> (k == 'editColum5' || k == 'editColum6' ) && row[k] == true).map(k=>{
+          let c = k=='editColum5'?'colum5':'colum6'
+          let key = indexToUpper(c,0)
+          let v = 0
+          if (!hasBlank(row.number)) v = row.number * row.cunitPrice
+          if (!hasBlank(row.nfrat)) v = row.nfrat * row.mdF
+          row['temp'+key]=v
+        })
+      }
       break;
     case 'ye':
       break;
@@ -1029,8 +1088,16 @@ const openAssist = (r) => {
   opeAssistPageM(true, {
     row: r,
     info: codeAllList.value.filter(it=>it.uniqueCode === r.ccode)[0],
-    tenant:  dynamicTenant.value
+    tenant:  dynamicTenant.value,
+    units:unitList.value
   })
+}
+const assistReset = async (r) => {
+  if (!hasBlank(r.number)) // 存在数量核算
+      r['colum5'] = r.number * r.cunitPrice
+  if (!hasBlank(r.nfrat))// 存在外币核算
+      r['colum5'] = r.nfrat * r.mdF
+    focusNext(r,'colum2')
 }
 /******************* table 弹框业务 ********************/
 const checkTheAssembly = async (action) => {
@@ -1127,6 +1194,7 @@ async function dbInteraction(action) {
         list.push({key: buildUUID(),sopen:false,searchVal:null})
       totalCalculate(list)
       setTableData(list)
+      nextTick(()=>topFocusNext('start'))
       break;
   }
 }
@@ -1152,8 +1220,10 @@ async function checkBusDate(date) {
       }
       if (dynamicTenant.value?.target?.ichronological == '1'){
            saveModel['dbillDate'] = await useRouteApi(findPingZhengQjLastDate, { schemaName: dynamicTenant.value.accountMode })({date:date})
+           disabledDateValue.value = saveModel['dbillDate']
       }else {
            saveModel['dbillDate'] = date
+           disabledDateValue.value = ''
       }
     }
   }

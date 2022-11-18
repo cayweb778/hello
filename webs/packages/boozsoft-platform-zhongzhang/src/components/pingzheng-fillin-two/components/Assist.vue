@@ -13,14 +13,18 @@
       </div>
     </template>
     <div class="nc-query-open-content">
-
-
-      <li v-if="showInput" v-for="hsKey in rowStrList ">
-        <span>{{ (hesuanList?.filter(it=>it.key == blend(hsKey,true))[0]?.label || hsKey) }}{{(hsKey == 'mdF' || hsKey == 'nfrat' || hsKey == 'cunitPrice' || hsKey == 'number')?'':'核算'}}：&emsp;</span>
+      <li v-if="showInput" v-for="hsKey in rowStrList">
+        <span>{{ (hesuanList?.filter(it=>it.key == blend(hsKey,true))[0]?.label || hsKey) }}{{(hsKey == 'mdF' || hsKey == 'nfrat' || hsKey == 'cunitPrice' || hsKey == 'number' || hsKey == 'pjCsettle' || hsKey == 'pjId' || hsKey == 'pjUnitName'  || hsKey == 'pjDate' )?'':'核算'}}：&emsp;</span>
         <template v-if="hsKey == 'mdF' || hsKey == 'nfrat' || hsKey == 'cunitPrice' || hsKey == 'number'">
-          <InputNumber v-model:value="formItems[hsKey]"   :ref="(e)=>resetRef(e,hsKey)" :precision="2" :controls="false" :min="hsKey == 'mdF'?0:null"
+          <InputNumber v-model:value="formItems[hsKey]" :ref="(e)=>resetRef(e,hsKey)" :precision="hsKey=='mdF' || hsKey=='number'?10:4" :controls="false" :min="hsKey == 'mdF'?0:null"
                   class="addonAfter-input" @keyup.enter.native="focusNext(hsKey)">
           </InputNumber>
+        </template>
+        <template v-else-if="hsKey == 'pjId' || hsKey == 'pjUnitName'">
+          <Input v-model:value="formItems[hsKey]" :ref="(e)=>resetRef(e,hsKey)" class="addonAfter-input  addonAfter-date" @keyup.enter.native="focusNext(hsKey)"/>
+        </template>
+        <template v-else-if="hsKey=='pjDate'">
+          <DatePicker v-model:value="formItems[hsKey]" :ref="(e)=>resetRef(e,hsKey)"  style="text-align-last: center;" value-format="YYYY-MM-DD" class="addonAfter-input addonAfter-date" @keyup.enter.native="focusNext(hsKey)"/>
         </template>
         <template v-else>
           <Select v-model:value="formItems[hsKey]"  :options="(hesuanList?.filter(it=>it.key == blend(hsKey,true))[0]?.list  || [])" :filter-option="filterOption"  show-search :ref="(e)=>resetRef(e,hsKey)"
@@ -34,11 +38,11 @@
   </BasicModal>
 </template>
 <script setup="props, { content }" lang="ts">
-import {reactive, ref, unref} from 'vue';
+import {nextTick, reactive, ref, unref} from 'vue';
 import {BasicModal, useModalInner} from '/@/components/Modal';
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
 import {AppstoreOutlined} from '@ant-design/icons-vue';
-import {DatePicker, Select, Checkbox, InputNumber, message,Button} from 'ant-design-vue';
+import {DatePicker, Select, Input, InputNumber, message,Button} from 'ant-design-vue';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {BasicTable, useTable} from '/@/components/Table'
@@ -46,7 +50,7 @@ import {findKeyLabelAll} from "/@/api/record/system/fuZhuHeSuan";
 
 const SelectOption = Select.Option;
 
-const emit = defineEmits(['register', 'query']);
+const emit = defineEmits(['register', 'save']);
 
 const {createWarningModal} = useMessage()
 
@@ -56,6 +60,7 @@ const showInput = ref(false);
 const formItems: any = ref({});
 const dynamicTenant = ref(null)
 const kemuInfo = ref(null)
+const unitList = ref(null)
 const rowStrList = ref([])
 const refList = ref({})
 
@@ -64,8 +69,8 @@ const [register, {closeModal, setModalProps}] = useModalInner(async (o) => {
   showOk.value=true
   formItems.value = o.row
   kemuInfo.value = o.info
+  unitList.value = o.units
   dynamicTenant.value = o.tenant
-  // setModalProps({minHeight: 100});
   await assembleHs(o.info)
 });
 
@@ -127,24 +132,28 @@ const assembleHs =async (info) => {
   if (last.indexOf('nfrat') != -1) last.splice(3, 0, "mdF")
   if (last.indexOf('pjCsettle') != -1 ){
     if (dynamicTenant.value?.target?.isettlement=='1'){
-      last.splice(4, 0, "pjId",'pjDate','pjUnitName')
+      last.splice(5, 0, "pjId",'pjUnitName','pjDate')
     }else {
       last = last.filter(it=>it!='pjCsettle')
     }
   }
   rowStrList.value = last
-  hesuanList.value = ((await useRouteApi(findKeyLabelAll,{schemaName:dynamicTenant.value.accountMode})({require: fs.join(),toTarget: 'false'})).map(it=>{
+
+  hesuanList.value = (await useRouteApi(findKeyLabelAll,{schemaName:dynamicTenant.value.accountMode})({require: fs.join(),toTarget: 'false'})).map(it=>{
     it.list = it.list.map(i=>({
       value: i.key,
       label: i.label,
       title:  i.code+' '+i.label
     }))
     return it;
-  }))
+  })
+
   hesuanList.value.push(...[{key:'number',label: '数量'},{key:'cunitPrice',label: '单价'},{key:'nfrat',label: '外币金额'},{key:'mdF',label: '汇率'},])
   if (last.indexOf('pjCsettle') != -1 && dynamicTenant.value?.target?.isettlement=='1') // 结算方式必录
     hesuanList.value.push(...[{key:'pjCsettle',label: '结算方式',list: []},{key:'pjId',label: '票号/结算号'},{key:'pjUnitName',label: '对方单位'},{key:'pjDate',label: '发生日期'}])
+  setModalProps({minHeight: (30*rowStrList.value.length)});
   showInput.value = true
+  nextTick(()=>focusNext('start'))
 }
 
 const blend = (k,b) => {
@@ -187,35 +196,50 @@ const openParameter = ref({
   code: '',
 })
 async function handleOk() {
-  if (rowStrList.value.filter(k=> hasBlank(formItems.value[k])).length > 0) {
+  if (rowStrList.value?.filter(k=> ['pjId','pjUnitName','pjCsettle'].indexOf(k) == -1 && hasBlank(formItems.value[k])).length > 0) {
     createWarningModal({title: '温馨提示', content: '请完善所有辅助核算项内容！'})
   } else {
-    let list = rowStrList.value.filter(k=>k != 'nfrat' && k != 'mdF' && k!='number' && k!= 'cunitPrice').map(k=>hesuanList.value.filter(it=>it.key == blend(k,true))[0]?.list.filter(it=>it.value == formItems.value[k])[0]?.title)
+    if (rowStrList.value.indexOf('number')!=-1 &&rowStrList.value.indexOf('nfrat')!=-1 ){
+     /* if (formItems.value['number']==0 || formItems.value['nfrat'] == 0 ||formItems.value['cunitPrice']==0 || formItems.value['mdF']==0){
+        createWarningModal({title: '温馨提示', content: '数量核算与外币核算所有值不得为0！'})
+        return false;
+      }*/
+      if ((formItems.value['number']>0 && formItems.value['nfrat']<0)||(formItems.value['number']<0 && formItems.value['nfrat']>0)){
+        createWarningModal({title: '温馨提示', content: '数量与外币金额值正负须相同！'})
+        return false;
+      }
+    }
+    let list = rowStrList.value?.filter(k=>k != 'nfrat' && k != 'mdF' && k!='number' && k!= 'cunitPrice' && k!='"pjCsettle"' && k!='pjId' && k!='pjUnitName' && k!='pjDate').map(k=>hesuanList.value.filter(it=>it.key == blend(k,true))[0]?.list.filter(it=>it.value == formItems.value[k])[0]?.title)
     formItems.value['fuzhuStr'] = `${list.join()}`
-    formItems.value['wbTopStr'] = `${showTitle('nfrat')} / ${formItems.value['nfrat']}`
-    formItems.value['wbDownStr'] = `${formItems.value['mdF']} %`
-    formItems.value['slTopStr'] = `${showTitle('number')} / ${formItems.value['number']}`
-    formItems.value['slDownStr'] = `${formItems.value['cunitPrice']}`
+    formItems.value['sl'] = `${showTitle('number')}`
+    formItems.value['wb'] = `${showTitle('nfrat')}`
     emit('save',  unref(formItems.value));
     closeModal();
     return true;
   }
 }
+
+// 计量单位
 const showTitle = (t) => {
   let text = ''
   if (t == 'number'){
-   text = '个' || kemuInfo.value['menterage']
+   text = (unitList.value.filter(it=>it.unitCode == kemuInfo.value['menterage'])[0]?.unitName || '未知')
   }else if(t == 'nfrat'){
     text =  kemuInfo.value['currencyType']
   }
   return text
 }
+
 async function handleClose() {
 }
 
-const focusNext = (t) => {
+const focusNext = async (t) => {
   let field = rowStrList.value[rowStrList.value.findIndex(it => it === t) + 1]
-  if (null != field) refList.value[field + 'Ref'].focus()
+  if (null != field) {
+    refList.value[field + 'Ref'].focus()
+  }else if (t== rowStrList.value[rowStrList.value.length-1]){
+    handleOk()
+  }
 }
 </script>
 
@@ -238,7 +262,7 @@ const focusNext = (t) => {
       text-align: center;
     }
   }
-  :deep(.ant-select-selector), :deep(.ant-picker), .ant-input,:deep(.ant-input-number-input-wrap) {
+  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-number-input-wrap) {
     border: none;
     border-bottom: 1px solid #c9c9c9;
   }
@@ -264,5 +288,9 @@ const focusNext = (t) => {
       border-color: #0096c7;
     }
   }
+  .addonAfter-date{
+    border-bottom: solid 1px rgb(191, 191, 191) !important;
+  }
+
 }
 </style>

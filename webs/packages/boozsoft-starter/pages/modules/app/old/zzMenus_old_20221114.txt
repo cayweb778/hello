@@ -1,7 +1,5 @@
 // 总账
-import {toRoleMenuList} from '../../utils/_sys_role_menu_util';
 import {createMenu, createModel} from '/@/../pages/rbac/utils/mockMenuUtil';
-import {PLATFORM_DevComponents, PLATFORM_ZHONGZHANG, usePlatform} from '../platforms/platformMenus';
 
 const platformId = 1001;
 
@@ -9,7 +7,7 @@ function createPlatformMenu(params) {
     return createMenu({...params, platformId})
 }
 
-export const menus = [
+ const menus = [
 
     createModel({
         id: platformId,
@@ -1769,7 +1767,7 @@ export const menus = [
 ];
 
 
-export const platformMenuIds = {
+ const platformMenuIds = {
     key: 'zhongZhang',
     id: platformId,
     sort: 1,
