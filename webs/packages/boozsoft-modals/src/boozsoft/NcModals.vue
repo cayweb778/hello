@@ -59,5 +59,9 @@ const {useNcModalData} = usePluginStoreWidthOut()
 //   componentName.value=abc1
 //   emit('ok')
 // }
-window.$wujie.bus.$emit("registerNcModals", useNcModalData)
+window.$wujie.bus.$emit("registerNcModals", function(){
+  return {
+    useNcModalData
+  }
+})
 </script>

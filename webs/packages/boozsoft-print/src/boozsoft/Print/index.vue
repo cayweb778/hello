@@ -64,15 +64,19 @@ import {
 } from "/@/utils/boozsoft/excel/excel2";
 import XLSX from "xlsx-js-style";
 window.$wujie.bus.$emit("registerNcDataExport", {
-  usePrint(params,fun){
-    debugger
-   const aaaa= useNewPrintLang(params,fun).getBase64()
-    useNewPrintStoreWidthOut().setPrintBase64(aaaa)
-    window.$wujie.bus.$emit('setCurrentPluginName', 'ncPrint')
-    showPdfPrint.value=false
-    visible.value = true
+  usePrint(){
+    return {
+      tableStyle,
+      print(params,fun){
+        const aaaa= useNewPrintLang(params,fun).getBase64()
+        useNewPrintStoreWidthOut().setPrintBase64(aaaa)
+        window.$wujie.bus.$emit('setCurrentPluginName', 'ncPrint')
+        showPdfPrint.value=false
+        visible.value = true
+      }
+    }
   },
-  tableStyle,
+
   useNewPrintLang,
   useExcel(){
     return {

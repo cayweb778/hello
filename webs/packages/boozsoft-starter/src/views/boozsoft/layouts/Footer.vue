@@ -149,7 +149,7 @@ const changeOpenStatus = () => {
 }
 
 async function goMessage() {
-  let useNcModalData = useGlobalStoreWidthOut().getNcModals
+  let {useNcModalData} =  useNcBusStoreWidthOut().useModals()
   const data = await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
   console.log(data)
 }
@@ -158,11 +158,12 @@ import MyWorker from './abbbb?worker'
 
 
 async function goPrint() {
-  let {usePrint, tableStyle} = useGlobalStoreWidthOut().getNcDataExport
   // const aaaa=new MyWorker()
   // aaaa.postMessage({id})
   // return
-  const data = await usePrint({data: ['l', 'px', 'a4', true]}, (doc) => {
+  // useNcBusStoreWidthOut().usePrint()
+  const {print,tableStyle}=useNcBusStoreWidthOut().usePrint()
+  const data = print({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
     let bbb = []
     for (let i = 0; i < 200; i++) {
@@ -279,6 +280,7 @@ import {save} from '@tauri-apps/api/dialog';
 import {writeBinaryFile,} from '@tauri-apps/api/fs';
 import {path, dialog} from '@tauri-apps/api';
 import {open} from '@tauri-apps/api/shell';
+import {useNcBusStoreWidthOut} from "../../../store/modules/nc-bus";
 
 window.ncSaveFile = async function (e1, filename) {
   // const reader = new FileReader();

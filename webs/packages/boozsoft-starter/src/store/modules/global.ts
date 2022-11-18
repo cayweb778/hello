@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import {store} from '/@/store';
 import {modules} from "../../../pages/menuData";
 import {computed} from "vue";
+import {useNcBusStoreWidthOut} from "./nc-bus";
 
 
 export const useGlobalStore = defineStore({
@@ -45,7 +46,7 @@ export const useGlobalStore = defineStore({
         defineWujieProps(e){
             return {
                 menuModules:modules,
-                globalApiStore:useGlobalStoreWidthOut(),
+                useNcBusStoreWidthOut:useNcBusStoreWidthOut,
                 ...e
             }
         }

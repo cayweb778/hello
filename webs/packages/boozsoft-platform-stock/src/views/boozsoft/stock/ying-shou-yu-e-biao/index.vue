@@ -710,7 +710,7 @@ onMounted(async() => {
 })
 
 //打印
-import {useNewPrint} from "/@/utils/boozsoft/print/print";
+// import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 function printData(){
 
