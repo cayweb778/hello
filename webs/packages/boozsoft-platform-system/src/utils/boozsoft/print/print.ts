@@ -15,16 +15,14 @@ export function usePrint() {
   };
 }
 
-import print from './print.vue';
-import { createApp } from 'vue';
 
 export function useNewPrint(params, fun) {
-  const dom = document.createElement('div');
-  document.body.appendChild(dom);
-  createApp(print, { params, fun }).mount(dom);
+  // const dom = document.createElement('div');
+  // document.body.appendChild(dom);
+  // createApp(print, { params, fun }).mount(dom);
 }
 
 export function savePdf(name, params, fun) {
-  const doc = printDefault(params, fun);
-  doc.save(name);
+  // const doc = printDefault(params, fun);
+  // doc.save(name);
 }
