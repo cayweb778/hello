@@ -2,7 +2,9 @@
 const prompts = require('prompts');
 
 const process = require("child_process");
+
 ~async function () {
+
     const createChoice = (title, disable) => ({title: "⭐️ " + title, value: title, disable: !!disable});
     const arr = [
         ["存货", "start:stock"],
@@ -21,20 +23,21 @@ const process = require("child_process");
     const res = await prompts([
         {
             type: 'multiselect', // 多选
+            name: 'weapons',
+            message: '🚀🚀🚀 模块选择 🚀🚀🚀',
+            instructions: '',
+            hint: '-  ️ 空格选择. 回车确认️ ',
+            choices: [...arr.map(it => createChoice(it[0], null)), createChoice('所有', null),]
+        },
+        {
+            type: 'multiselect', // 多选
             name: 'plugins',
             message: '🚀🚀🚀 插件选择 🚀🚀🚀',
             instructions: '',
             hint: '-  ️ 默认不开启，️ ',
             choices: [...arr2.map(it => createChoice(it[0], null))]
         },
-        {
-            type: 'multiselect', // 多选
-            name: 'weapons',
-            message: '🚀🚀🚀 模块选择 🚀🚀🚀',
-            instructions: '',
-            hint: '-  ️ 空格选择. 回车确认️ ',
-            choices: [...arr.map(it => createChoice(it[0], null)), createChoice('所有', null),]
-        }
+
     ]);
 
     function findA(str) {
@@ -81,4 +84,12 @@ const process = require("child_process");
             shell: true
         });
     })
+    // process.exec("open /Applications/csd.app",function(err,stdout,stderr){
+    //     if(err){
+    //         console.log("子进程启动失败：",err);
+    //         process.exit();
+    //     }else{
+    //         console.log("子进程标准输出：",stdout.toString());
+    //     }
+    // })
 }();
