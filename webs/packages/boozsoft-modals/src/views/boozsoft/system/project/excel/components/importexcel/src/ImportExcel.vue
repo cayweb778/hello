@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import {Upload as AUpload} from 'ant-design-vue'
 import {defineComponent, onMounted, reactive, ref, unref} from 'vue';
-import XLSX from 'xlsx';
-
+// import XLSX from 'xlsx';
+const XLSX=null
 import type { ExcelData } from './types';
 import {useMessage} from "/@/hooks/web/useMessage";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
