@@ -43,8 +43,9 @@ const localMemory = new Memory(DEFAULT_CACHE_TIME);
 const sessionMemory = new Memory(DEFAULT_CACHE_TIME);
 
 function initPersistentMemory() {
-  const localCache = ls.get(APP_LOCAL_CACHE_KEY);
-  console.log(88888888)
+  // const localCache = ls.get(APP_LOCAL_CACHE_KEY);
+  // console.log(88888888)
+  const localCache=window.localStorage.getItem('BOOZSOFTNC__DEVELOPMENT__2.8.0__COMMON__LOCAL__KEY__')
   console.log(getStorageShortName())
   console.log(APP_LOCAL_CACHE_KEY)
   console.log(8888882222)
