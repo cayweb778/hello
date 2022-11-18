@@ -37,6 +37,7 @@
     "devsystem::main": "pnpm start:main",
     "devsystem::system": "pnpm start:system",
     "build": "run-p build:*",
+    "build:docs": "cd packages/boozsoft-docs && pnpm docs:build",
     "build:vite-plugin-ins": "cd packages/vite-plugin-vue-inspector && pnpm build",
     "build:ncpdfviewer": "cd packages/boozsoft-pdfviewer && pnpm build",
     "build:print": "cd packages/boozsoft-print && pnpm build",
@@ -50,7 +51,7 @@
     "build:gdzc": "cd packages/boozsoft-platform-gdzc && pnpm build",
     "build:excelviewer": "cd packages/boozsoft-excelviewer && pnpm build",
     "build:boozsoft-table-design": "cd packages/boozsoft-table-design && pnpm build",
-    "build:docs:": "cd packages/boozsoft-docs && pnpm docs:build",
+
     "build:system": "cd packages/boozsoft-platform-system && pnpm build"
   },
   "devDependencies": {
