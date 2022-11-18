@@ -123,6 +123,10 @@ export default defineConfig({
                             link: "/guide/mode",
                         },
                         {
+                            text: "探索Vben加密策略",
+                            link: "/guide/ddddd2123",
+                        },
+                        {
                             text: "探索微前端",
                             link: "/guide/ddd",
                         },
