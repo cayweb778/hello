@@ -35,7 +35,8 @@ export function createPermissionGuard(router: Router) {
       next();
       return;
     }
-
+    console.log(111233333)
+    console.log(userStore.getToken)
     const token = userStore.getToken;
     if(!token){
       ;(async ()=>{
