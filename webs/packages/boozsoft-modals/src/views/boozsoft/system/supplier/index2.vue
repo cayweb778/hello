@@ -293,7 +293,8 @@ import {tableStyle} from "/@/store/modules/abc-print";
 import { getCusTypeSeeSwitch} from "/@/api/record/system/customer_class";
 import { getCusDataAuthorData } from "/@/api/record/supplier_data/supplier";
 import {findByStockAccountAccId} from "/@/api/record/system/stock-account";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+// import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
 
 const { createConfirm,createWarningModal,createMessage } = useMessage();
   const searchConditonList = ref([

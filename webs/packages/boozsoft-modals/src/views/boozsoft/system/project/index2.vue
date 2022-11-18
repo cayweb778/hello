@@ -292,7 +292,8 @@ import { useProjectStoreWidthOut } from '/@/store/modules/project'
 import {getDeptListById} from "/@/api/record/system/dept";
 import {psnFindAll} from "/@/api/psn/psn";
 import {GetProClassTree, projectClassFindAll} from "/@/api/record/system/project_class";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+// import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
 import {Select as ASelect,Input as AInput,Popover as APopover,Tag as ATag,   Radio as ARadio,
   Table as ATable,  Checkbox as ACheckbox,
   Popconfirm as APopconfirm,

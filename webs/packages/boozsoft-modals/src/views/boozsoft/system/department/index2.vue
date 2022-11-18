@@ -376,7 +376,8 @@ import {usePlatformsStore} from "/@/store/modules/platforms";
 import {psnTypeFindAll} from "/@/api/psn-type/psn-type";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+// import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
 
 const {closeCurrent} = useTabs(router);
 

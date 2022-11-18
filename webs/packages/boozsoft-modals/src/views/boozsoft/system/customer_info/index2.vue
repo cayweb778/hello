@@ -339,7 +339,8 @@ import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 import {getCusDataAuthorData} from "/@/api/record/system/customer";
 import {findByStockAccountAccId} from "/@/api/record/system/stock-account";
-import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+// import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+const DynamicColumn=null
 import {delFindByStock} from "/@/api/record/supplier_data/supplier";
 
 const {createConfirm, createWarningModal, createMessage} = useMessage();

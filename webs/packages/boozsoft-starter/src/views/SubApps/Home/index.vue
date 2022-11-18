@@ -25,7 +25,7 @@ const wujieVueRef = ref()
 const wujieAttrs = ref({
 
   globalData:useCounterStoreWidthOut(),
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/nchome' : '//localhost:3800',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/nchome' : '//81.70.47.206:81/nchome',
   props: {
     menuModules: modules,
     aa: 1,
