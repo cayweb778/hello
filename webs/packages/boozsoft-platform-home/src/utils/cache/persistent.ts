@@ -16,6 +16,7 @@ import {
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { toRaw } from 'vue';
+import {getStorageShortName} from "/@/utils/env";
 
 interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
@@ -44,6 +45,9 @@ const sessionMemory = new Memory(DEFAULT_CACHE_TIME);
 function initPersistentMemory() {
   const localCache = ls.get(APP_LOCAL_CACHE_KEY);
   console.log(88888888)
+  console.log(getStorageShortName())
+  console.log(APP_LOCAL_CACHE_KEY)
+  console.log(8888882222)
   console.log(localCache)
   console.log(window.localStorage)
   const sessionCache = ss.get(APP_SESSION_CACHE_KEY);
