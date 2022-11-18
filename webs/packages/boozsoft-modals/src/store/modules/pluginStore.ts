@@ -43,6 +43,13 @@ function createdComponentData(componentInstance) {
 export const usePluginStore = defineStore({
   id: 'pluginStore',
   state: (): any => ({
+     BaseModal :{
+      DEPT: 'DEPT',
+      PSN: 'PSN',
+      CUSTOM: 'CUSTOM',
+      GYS: 'GYS',
+      SYSTEM_MESSAGE: 'SYSTEM_MESSAGE'
+    },
     components: [],
     // Reference components
     componentsReferenceMap: {},
@@ -56,7 +63,8 @@ export const usePluginStore = defineStore({
     }
   }),
   getters: {
-    getComponentDatas: (state) => state.components
+    getComponentDatas: (state) => state.components,
+    getBaseModal: (state) => state.BaseModal
   },
   actions: {
     async getOrCreateComponent(name2) {
@@ -80,15 +88,8 @@ export const usePluginStore = defineStore({
       window.$wujie.bus.$emit('setCurrentPluginName', 'ncModals')
     },
 
-    async useNcModalData(fnComponentName, params) {
-      const BaseModal = {
-        DEPT: 'DEPT',
-        PSN: 'PSN',
-        CUSTOM: 'CUSTOM',
-        GYS: 'GYS',
-        SYSTEM_MESSAGE: 'SYSTEM_MESSAGE'
-      }
-      const componentName = fnComponentName({To:BaseModal})
+    async useNcModalData(componentName, params) {
+
       this.setShowPluginShadow()
       // Get or Create a Component
       const dyComponent = await this.getOrCreateComponent(componentName)

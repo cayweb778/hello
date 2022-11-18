@@ -13,8 +13,8 @@ const process = require("child_process");
         ["主页", "start:home"],
     ]
     const arr2 = [
+        ["主数据弹出框", "start:modals"],
         ["数据导出控件", "start:print"],
-        ["弹出框控件", "start:modals"],
         ["打印预览控件", "start:pdfviewer"],
         ["excel预览控件", "start:excelviewer"],
         ["表单设计器", "start:boozsoft-table-design"],

@@ -91,6 +91,19 @@ export default defineConfig({
                             text: "快速上手",
                             link: "/guide/start",
                         },
+                        {
+                            text: "微前端",
+                            link: "/guide/nest",
+                        },
+                        {
+                            text: "微服务",
+                            link: "/guide/share",
+                        },
+                        {
+                            text: "租户",
+                            link: "/guide/degrade",
+                        },
+
                         // {
                         //   text: "定制Demo",
                         //   link: "/guide/demo",
@@ -104,6 +117,10 @@ export default defineConfig({
                         {
                             text: "NC控件（弹出框，打印，导出）",
                             link: "/guide/preload",
+                        },
+                        {
+                            text: "账套选择器",
+                            link: "/guide/mode",
                         },
                         {
                             text: "菜单",
@@ -129,18 +146,7 @@ export default defineConfig({
                             text: "演示环境",
                             link: "/guide/plugin",
                         },
-                        {
-                            text: "降级处理",
-                            link: "/guide/degrade",
-                        },
-                        {
-                            text: "应用嵌套",
-                            link: "/guide/nest",
-                        },
-                        {
-                            text: "应用共享",
-                            link: "/guide/share",
-                        },
+
                         {
                             text: "全局变量",
                             link: "/guide/variable",

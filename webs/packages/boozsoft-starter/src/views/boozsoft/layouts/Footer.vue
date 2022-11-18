@@ -40,9 +40,9 @@
 </span>
             <!--            <MessageOutlined style="font-size: 1em"/>-->
           </Badge>
-            <Button @click="goPrint">打印测试</Button>
-            <Button @click="goExcel">excel测试</Button>
-            <Button @click="goMessage">弹出窗测试</Button>
+          <Button @click="goPrint">打印测试</Button>
+          <Button @click="goExcel">excel测试</Button>
+          <Button @click="goMessage">弹出窗测试</Button>
         </div>
       </Col>
       <Col :span="8">
@@ -69,7 +69,7 @@
         </div>
       </Col>
       <Col :span="8" style="min-width:100px">
-<!--        <div @click="downFile">下载</div>-->
+        <!--        <div @click="downFile">下载</div>-->
         <!--        <div style="min-width:57px;padding-top:1px;text-align:center;color:white;font-size:14px;background:black">财务版</div>-->
 
 
@@ -151,8 +151,8 @@ const changeOpenStatus = () => {
 }
 
 async function goMessage() {
-  let {useNcModalData} =  useNcBusStoreWidthOut().useModals()
-  const data = await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
+  let {useNcModalData,To} = useNcBusStoreWidthOut().useModals()
+  const data = await useNcModalData(To.SYSTEM_MESSAGE, {})
   console.log(data)
 }
 
@@ -164,7 +164,7 @@ async function goPrint() {
   // aaaa.postMessage({id})
   // return
   // useNcBusStoreWidthOut().usePrint()
-  const {print,tableStyle}=useNcBusStoreWidthOut().usePrint()
+  const {print, tableStyle} = useNcBusStoreWidthOut().usePrint()
   const data = print({data: ['l', 'px', 'a4', true]}, (doc) => {
     doc.setFont('fuhuiR')
     let bbb = []
@@ -199,8 +199,8 @@ async function goPrint() {
 }
 
 async function goExcel() {
-  let aaa =  useNcBusStoreWidthOut().useExcel().excel(()=>{
-
+  let {excel} = useNcBusStoreWidthOut().useExcel()
+  excel(() => {
   })
   // const excelData = () => {
   //   // console.log("导出成功！")

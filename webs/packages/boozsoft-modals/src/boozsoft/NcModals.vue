@@ -24,7 +24,7 @@ import { usePluginStoreWidthOut} from "/@/store/modules/pluginStore";
 const componentDatas = computed(() => usePluginStoreWidthOut().getComponentDatas)
 
 
-const {useNcModalData} = usePluginStoreWidthOut()
+const {useNcModalData,getBaseModal} = usePluginStoreWidthOut()
 // onMounted(async () => {
 //   const data = await useNcModalData(({To}) => To.SYSTEM_MESSAGE, {})
 // })
@@ -60,7 +60,8 @@ const {useNcModalData} = usePluginStoreWidthOut()
 // }
 window.$wujie.bus.$emit("registerNcModals", function(){
   return {
-    useNcModalData
+    useNcModalData,
+    To:getBaseModal
   }
 })
 </script>
