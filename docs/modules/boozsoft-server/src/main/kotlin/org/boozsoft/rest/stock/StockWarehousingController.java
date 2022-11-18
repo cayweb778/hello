@@ -815,7 +815,7 @@ public class StockWarehousingController {
             endDate=map.get("endDate").toString().substring(0,4)+"-"+map.get("endDate").toString().substring(4)+"-31";
         }
         // 按添加日期
-        return warehousingRepository.findAllQCZGRKD(type,strDate+" 00:00:00",endDate+" 59:59:59").collectList()
+        return warehousingRepository.findAllQCZGRKD(type,strDate,endDate).collectList()
                 .flatMap(list->{
                     if(StrUtil.isNotBlank(bdocumStyle)){
                         list=list.stream().filter(a->a.getBdocumStyle().equals(bdocumStyle)).collect(Collectors.toList());
@@ -1802,7 +1802,7 @@ public class StockWarehousingController {
             String txt="1";
             for (int i = 0; i < list.size(); i++) {
                 String ccode=list.get(i).split(">>>")[0];
-                String bcheck=list.get(i).split(">>>")[1];
+                String bcheck=list.get(i).split(">>>")[1]==null?"0":list.get(i).split(">>>")[1];
                 long count=1;
                 if(dataType.equals("cg")){
                     count = cglist.stream().filter(t -> operation.equals("rowEdit")?t.getCcode().equals(ccode):t.getCcode().equals(ccode)&&t.getBcheck().equals(bcheck)).count();

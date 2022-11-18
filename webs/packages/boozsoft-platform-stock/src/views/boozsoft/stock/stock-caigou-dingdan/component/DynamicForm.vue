@@ -143,12 +143,12 @@ const cmemoRef = ref(null)
 
 // 获得焦点金额去掉格式
 const uninputMoney  = (model,field,val) => {
-  return model[field]=val.replace(/\$\s?|(,*)/g, '')
+  return model[field]=val!==undefined&&!hasBlank(val)?val.replace(/\$\s?|(,*)/g, ''):''
 }
 
 // 失去焦点金额格式化
 const inputMoney   = (model,field,val) => {
-  if(parseFloat(val)<0){
+  if((val==undefined|| hasBlank(val))||parseFloat(val)<0){
     return model[field]=''
   }
   return model[field]=parseFloat(val).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')

@@ -52,7 +52,7 @@ const defaultRows = () => {
       columnType: '1',
       field: 'rate',
       label: '采购税率%',
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: null,
       required: true,
       readonly: false,
@@ -126,7 +126,7 @@ const defaultRows = () => {
     {
       columnType: '1',
       field: 'theDeposit',
-      label: '订金',
+      label: '定金',
       component: 'Input',
       componentProps: null,
       required: false,
@@ -148,7 +148,7 @@ const defaultRows = () => {
   ]
 }
 export const lanMuData = {
-  'menuName': '采购到货单表头栏目',
+  'menuName': '期初到货单表头栏目',
   objects: '',
 }
 export async function GenerateDynamicColumn(schemaName) {

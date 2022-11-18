@@ -2998,7 +2998,7 @@ async function setCGDHD_data() {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGDHD'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'

@@ -659,6 +659,7 @@ import {
 import {getCkPrice} from "/@/api/record/stock/stock_cost";
 import {findByStockXCL} from "/@/api/record/stock/stock-kc-xcl";
 import {
+  deleteByCcodeDaohuo,
   delJiesuansByCcodeRuku,
   getNewStockJiesuanNum,
   saveJiesuanPojo,
@@ -1317,7 +1318,7 @@ const startEdit = async (type) => {
   else {
     if(formItems.value.ccode==undefined){return }
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1372,7 +1373,7 @@ const startDel = async () => {
     })
   } else {
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1469,7 +1470,7 @@ const startDel = async () => {
 
 const startReview = async (b) => {
   // 执行操作前判断单据是否存在
-  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
     return message.error("单据已发生变化,请刷新当前单据！")
@@ -1625,6 +1626,8 @@ const startReview = async (b) => {
       for (let i = 0; i < listdata.length; i++) {
         let stockWaresData = await useRouteApi(findByStockWarehLinecode, {schemaName: dynamicTenantId})(listdata[i].lineCode)
         listdata[i].isumJiesuan = hasBlank(stockWaresData.stockWaresData)?0:stockWaresData.stockWaresData
+        // 删除核算单
+        delJieSuanFun(listdata[i].ccode)
       }
     }
     listdata.map(tx=>{tx.bcheck=bcheck;tx.bcheckUser=bcheckUser;tx.bcheckTime=bcheckTime;return tx})
@@ -1637,6 +1640,11 @@ const startReview = async (b) => {
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
   }
+}
+
+// 删除核算单
+const delJieSuanFun = async (ccode) => {
+  await useRouteApi(delJiesuansByCcodeRuku, {schemaName: dynamicTenantId})(ccode)
 }
 
 const sum = (...arr) => [].concat(...arr).reduce((acc, val) => Number(acc) + Number(val), 0);
@@ -2547,7 +2555,7 @@ const slChange0 = (r) => {
     list=list.filter(jl=>!hasBlank(jl.unitName))
     if (list.length > 0){
       let conversionRate=list.filter(a=>a.id==r.cgUnitId)[0]?.conversionRate
-      r.baseQuantity=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
+      r.baseQuantity=parseFloat(r.cnumber)*parseFloat(conversionRate)
       r.tempSix=r.baseQuantity
 
       let n:any = parseFloat(r.baseQuantity).toFixed(10)
@@ -3091,7 +3099,7 @@ async function setCGDHD_data() {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGDHD'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'

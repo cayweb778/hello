@@ -200,6 +200,327 @@ const dynamicColumnAndDataModel = reactive({
       min: 80,
       align: 'left'
     },
+  ],
+  MX: [
+    {
+      key: '0',
+      name: '状态',
+      nameNew: '状态',
+      check: true,
+      width: 70,
+      max: 100,
+      min: 70,
+      align: 'center'
+    },
+    {
+      key: '1',
+      name: '单据日期',
+      nameNew: '单据日期',
+      check: true,isFixed: true,
+      width: 90,
+      max: 120,
+      min: 90,
+      align: 'center'
+    },
+    {
+      key: '2',
+      name: '单据编号',
+      nameNew: '单据编号',
+      check: true,
+      width: 100,
+      max: 150,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '3',
+      name: '供应商编码',
+      nameNew: '供应商编码',
+      check: true,
+      width: 100,
+      max: 200,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '4',
+      name: '供应商简称',
+      nameNew: '供应商简称',
+      check: true,
+      width: 150,
+      max: 300,
+      min: 100,
+      align: 'left'
+    },{
+      key: '5',
+      name: '结算供应商编码',
+      nameNew: '结算供应商编码',
+      check: true,
+      width: 120,
+      max: 200,
+      min: 120,
+      align: 'left'
+    },
+    {
+      key: '6',
+      name: '结算供应商简称',
+      nameNew: '结算供应商简称',
+      check: true,
+      width: 150,
+      max: 300,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '7',
+      name: '业务员',
+      nameNew: '业务员',
+      check: true,
+      width: 80,
+      max: 150,
+      min: 80,
+      align: 'left'
+    },{
+      key: '8',
+      name: '业务部门',
+      nameNew: '业务部门',
+      check: true,
+      width: 100,
+      max: 200,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '9',
+      name: '库管员',
+      nameNew: '库管员',
+      check: true,
+      width: 80,
+      max: 150,
+      min: 80,
+      align: 'left'
+    },
+    {
+      key: '10',
+      name: '仓储位置',
+      nameNew: '仓储位置',
+      check: true,
+      width: 80,
+      max: 150,
+      min: 80,
+      align: 'left'
+    },
+    {
+      key: '11',
+      name: "条形码",
+      nameNew: "条形码",
+      check: true,
+      width: 150,
+      max: 200,
+      min: 80,
+    },
+    {
+      key: '12',
+      name: '存货编码',
+      nameNew: '存货编码',
+      check: true,
+      isFixed: true,
+      width: 120,
+      max: 200,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '13',
+      name: '存货名称',
+      nameNew: '存货名称',
+      check: true,
+      isFixed: true,
+      width: 200,
+      max: 250,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '14',
+      name: '规格型号',
+      nameNew: '规格型号',
+      check: true,
+      isFixed: true,
+      width: 100,
+      max: 200,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '15',
+      name: '采购单位',
+      nameNew: '采购单位',
+      check: true,
+      isFixed: true,
+      width: 60,
+      max: 100,
+      min: 60,
+      align: 'center'
+    },
+    {
+      key: '16',
+      name: '数量',
+      nameNew: '数量',
+      check: true,
+      isFixed: true,
+      width: 60,
+      max: 150,
+      min: 60,
+      align: 'right'
+    },
+    {
+      key: '17',
+      name: '主计量',
+      nameNew: '主计量',
+      check: true,
+      width: 60,
+      max: 150,
+      min: 60,
+      align: 'center'
+    },
+    {
+      key: '18',
+      name: '主数量',
+      nameNew: '主数量',
+      check: true,
+      width: 120,
+      max: 150,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '19',
+      name: "无税单价",
+      nameNew: "无税单价",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '20',
+      name: "无税金额",
+      nameNew: "无税金额",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '21',
+      name: "批号",
+      nameNew: "批号",
+      check: true,
+      width: 150,
+      max: 200,
+      min: 100,align: 'left'
+    },
+    {
+      key: '22',
+      name: "生产日期",
+      nameNew: "生产日期",
+      check: true,
+      width: 120,
+      max: 150,
+      min: 100,align: 'left'
+    },
+    {
+      key: '23',
+      name: "失效日期",
+      nameNew: "失效日期",
+      check: true,
+      width: 150,
+      max: 200,
+      min: 100,align: 'left'
+    },
+    {
+      key: '24',
+      name: "累计核算主数量",
+      nameNew: "累计核算主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '25',
+      name: "累计到货主数量",
+      nameNew: "累计到货主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '26',
+      name: "累计开票主数量",
+      nameNew: "累计开票主数量",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'right'
+    },
+    {
+      key: '27',
+      name: "来源单号",
+      nameNew: "来源单号",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '28',
+      name: "来源单据日期",
+      nameNew: "来源单据日期",
+      check: true,
+      width: 150,
+      max: 250,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '29',
+      name: '备注',
+      nameNew: '备注',
+      check: true,
+      width: 150,
+      max: 200,
+      min: 100,
+      align: 'left'
+    },
+    {
+      key: '30',
+      name: '经手人',
+      nameNew: '经手人',
+      check: true,
+      width: 80,
+      max: 200,
+      min: 80,
+      align: 'left'
+    },
+    {
+      key: '31',
+      name: '审核人',
+      nameNew: '审核人',
+      check: true,
+      width: 80,
+      max: 200,
+      min: 80,
+      align: 'left'
+    },
   ]
 })
 

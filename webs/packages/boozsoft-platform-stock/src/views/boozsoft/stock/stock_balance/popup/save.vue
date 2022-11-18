@@ -79,6 +79,7 @@
                 <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">主数量:</label>
                 &nbsp;
                 <a-input-number
+                  :min="0"
                      v-model:value="formItems.primaryNumber"
                      @keyup="multiUnitNumber('1')"
                      @step="multiUnitNumber('1')"
@@ -88,6 +89,7 @@
                     <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">数量1:</label>
                     &nbsp;
                     <a-input-number
+                      :min="0"
                       v-model:value="formItems.primaryNumber1"
                       @keyup="multiUnitNumber('2')"
                       @step="multiUnitNumber('2')"
@@ -98,6 +100,7 @@
                    &emsp;
                   <label style="font-size: 13px;font-weight: bold;color: #5a5a5a">数量2:</label>&nbsp;
                   <a-input-number
+                    :min="0"
                     style="margin-left: 3px;"
                     v-model:value="formItems.primaryNumber2"
                     @keyup="multiUnitNumber('3')"
@@ -109,7 +112,7 @@
             <div class="border-div">
               <span>期初金额</span>
               <div style="margin-left: 14px;">
-                <label style="font-size: 13px;font-weight: bold;color: #5a5a5a"> 无税单价:</label>&nbsp;
+                <label style="font-size: 13px;font-weight: bold;color: #5a5a5a"> 主数量单价:</label>&nbsp;
                 <a-input style="width: 140px;" v-model:value="formItems.price"
                          oninput="value=value.replace(/^\D*(\d*(?:\.\d{0,10})?).*$/g, '$1')"
                          onblur="value = value == ''?'0.00':(parseFloat(value).toFixed(2).replace(/\d+/, function (n) {return n.replace(/(\d)(?=(\d{3})+$)/g, function ($1) { return $1 + ','})}));"
@@ -117,7 +120,7 @@
                          @blur="countPrimaryNumber('price')"
                 />
                 &emsp;&emsp;
-                <label style="font-size: 13px;font-weight: bold;color: #5a5a5a"> 无税金额:</label>&nbsp;
+                <label style="font-size: 13px;font-weight: bold;color: #5a5a5a"> 主数量金额:</label>&nbsp;
                 <a-input style="width: 140px;" v-model:value="formItems.money"
                          oninput="value=value.replace(/^\D*(\d*(?:\.\d{0,10})?).*$/g, '$1')"
                          onblur="value = value == ''?'0.00':(parseFloat(value).toFixed(2).replace(/\d+/, function (n) {return n.replace(/(\d)(?=(\d{3})+$)/g, function ($1) { return $1 + ','})}));"
@@ -146,7 +149,7 @@
                 <a-input  style="width: 140px;" v-model:value="formItems.stockRukuNumber"/>
                 &emsp;&emsp;
                 <label style="font-size: 13px;font-weight: bold;color: #5a5a5a"> 入库日期:</label>&nbsp;
-                <a-date-picker style="width: 140px;" placeholder="" v-model:value="formItems.stockRukuDate" />
+                <a-date-picker style="width: 140px;" placeholder="" @change="ddateChenck" v-model:value="formItems.stockRukuDate" />
               </div>
             </div>
           </div>
@@ -229,6 +232,7 @@ const ASelectOption = ASelect.Option;
 const projectClassCtl:any = ref('');
 const projectInfo:any = ref([]);
 const unitName:any = ref('');
+const dynamicTenant:any = ref('');
 
   const [registerStockInfoModalPage, {openModal: openStockInfoModalPage}] = useModal();
   const [registerStockCangKuModalPage, { openModal: openStockCangKuModalPage }] = useModal();
@@ -242,6 +246,7 @@ const unitName:any = ref('');
     }else{
       cangku.cangkuName=''
     }
+    dynamicTenant.value=data.dynamicTenant
     database.value=data.database
     iyear.value=data.iyear
     cangkuFlag.value=data.cangkuFlag
@@ -506,6 +511,13 @@ function formatTimer(value) {
   s = s < 10 ? "0" + s : s;
   return y + "-" + MM + "-" + d + " " + h + ":" + m;
 }
+function formatTimer2(value) {
+  let date:any = new Date(value);
+  let y = date.getFullYear();
+  let MM = date.getMonth() + 1;
+  MM = MM < 10 ? "0" + MM : MM;
+  return y + "" + MM;
+}
 
 
 const dateFormat = 'YYYY-MM-DD';
@@ -589,6 +601,16 @@ async function saveLogData(optAction) {
     optContent:'操作内容【库存期初余额】,【'+stockNum+','+stockName+'】',
   }
   await saveLog(logmap)
+}
+
+const ddateChenck = async (v) => {
+  let iyear=dynamicTenant.value.target.startDate.split('-')[0]
+  let ddate1=dynamicTenant.value.target.startDate.replaceAll('-','')
+  let ddate2=formatTimer2(v)
+  // 入库日期大于账套启用日期
+  if(parseInt(ddate2)>parseInt(ddate1)){
+    formItems.value.stockRukuDate=dayjs((parseInt(iyear)-1)+'12-31')
+  }
 }
 </script>
 <style lang="less" scoped>

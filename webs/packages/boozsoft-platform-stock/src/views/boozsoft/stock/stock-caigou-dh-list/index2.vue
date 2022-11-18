@@ -40,6 +40,10 @@
             </template>
             <Button class="ant-btn ant-btn-me">审核</Button>
           </Popover>
+          <button
+            type="button"
+            class="ant-btn ant-btn-me"
+          ><span>导入</span></button>
           <button type="button" class="ant-btn ant-btn-me" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></button>
         </div>
         <div>
@@ -242,12 +246,12 @@
             </span>
         </template>
         <template #baseQuantity="{ record }">
-          <span v-if="record.bcheck!=='11'">
+          <span v-if="record.bcheck!=='11'" :style="record.cnumber<0?{color:'red'}:{}">
            {{ parseFloat(record.baseQuantity).toFixed(2) }}
           </span>
         </template>
         <template #cnumber="{ record }">
-          <span v-if="record.bcheck!=='11'">
+          <span v-if="record.bcheck!=='11'" :style="record.cnumber<0?{color:'red'}:{}">
            {{ parseFloat(record.cnumber).toFixed(2) }}
           </span>
         </template>
@@ -261,13 +265,13 @@
            {{ parseFloat(record.price)==0?parseFloat(record.price).toFixed(2):toThousandFilter(record.price) }}
           </span>
         </template>
-        <template #icost="{ record }">
+        <template #icost="{ record }" >
           <span v-if="record.bcheck!=='11'">
            {{ parseFloat(record.icost)==0?parseFloat(record.icost).toFixed(2):toThousandFilter(record.icost) }}
           </span>
         </template>
         <template #itaxprice="{ record }">
-          <span v-if="record.bcheck!=='11'">
+          <span v-if="record.bcheck!=='11'" :style="record.cnumber<0?{color:'red'}:{}">
            {{ parseFloat(record.itaxprice)==0?parseFloat(record.itaxprice).toFixed(2):toThousandFilter(record.itaxprice) }}
           </span>
         </template>
@@ -276,8 +280,8 @@
            {{ parseFloat(record.taxprice)==0?parseFloat(record.taxprice).toFixed(2):toThousandFilter(record.taxprice) }}
           </span>
         </template>
-        <template #isum="{ record }">
-          <span v-if="record.bcheck!=='11'">
+        <template #isum="{ record }" >
+          <span v-if="record.bcheck!=='11'" :style="record.cnumber<0?{color:'red'}:{}">
            {{ parseFloat(record.isum)==0?parseFloat(record.isum).toFixed(2):toThousandFilter(record.isum) }}
           </span>
         </template>

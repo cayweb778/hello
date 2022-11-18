@@ -546,9 +546,13 @@ public class StockWareListController {
                 "       sws.dpdate," +
                 "       sws.dvdate," +
                 "       sws.price," +
+                "       sw.method_pay," +
+                "       sw.pay_date," +
                 "       sws.taxprice," +
                 "       sws.cmemo," +
                 "       sws.itaxrate," +
+                "       sws.sourcecode," +
+                "       sws.sourcedate," +
                 "       sws.arrival_date," +
                 "       sws.cnumber,sk.stock_unit_name,sup.cust_code as cvencode,sup.cust_abbname as cvencode_name,sup2.cust_code as cvencode_js,sup2.cust_abbname as cvencode_jsname,\n" +
                 "(case when sws.cg_unit_id=sk.stock_unit_id then sk.stock_barcode else\n" +

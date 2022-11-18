@@ -1000,7 +1000,7 @@ const startEdit = async (type) => {
   else {
     if(formItems.value.ccode==undefined){return }
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1054,7 +1054,7 @@ const startDel = async () => {
     })
   } else {
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'del',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1098,7 +1098,7 @@ const startDel = async () => {
 
 const startReview = async (b) => {
   // 执行操作前判断单据是否存在
-  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
     return message.error("单据已发生变化,请刷新当前单据！")

@@ -61,9 +61,7 @@ public interface StockWarehousingRepository extends ReactiveCrudRepository<Stock
             "(select sum(cast(coalesce(sws.isum_daohuo, '0') as float))\n" +
             "                from stock_warehousings sws\n" +
             "                where sws.ccode = sw.ccode) sws_isum_daohuo," +
-            "(select sum(cast(coalesce(sws.isum_jiesuan, '0') as float))\n" +
-            "                from stock_warehousings sws\n" +
-            "                where sws.ccode = sw.ccode ) sws_isum_jiesuan\n" +
+            "(select count(id) from stock_xy_csource xy where xy.ccode=sw.ccode and xy.xy_bill_style='CGJSD') sws_isum_jiesuan\n" +
             "from stock_warehousing sw where sw.ccode=:ccode and sw.bill_style not in ('HZHCD', 'LZHCD')")
     Mono<StockWarehousingVo> findByCcodeData(String ccode);
 
@@ -217,7 +215,7 @@ public interface StockWarehousingRepository extends ReactiveCrudRepository<Stock
             "         left join supplier sup2 on sup2.id = sw.cvencode_js\n" +
             "\n" +
             "where sw.bill_style =:type \n" +
-            "  and sw.cmaker_time between :strDate and :endDate\n" +
+            "  and sw.ddate between :strDate and :endDate\n" +
             "order by sw.ccode asc")
     Flux<StockWarehousingVo> findAllQCZGRKD(String type,String strDate,String endDate);
     @Query("select count(id) from stock_period where stock_year=:iyear and stock_month=:month ")

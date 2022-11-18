@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="app-container" style="display:flex;">
-      <div style="width: 64px;display: inline-block;float: left">
+      <div style="width: 64px;display: inline-block;float: left;margin-top: 10px;">
         <ReconciliationOutlined style="color: #0096c7;font-size: 60px;"/>
       </div>
       <div style="width: calc( 100% - 74px);display: inline-block;">
@@ -76,7 +76,7 @@
           <div style="float: right; margin-left: 10px">
             <a-select
               v-model:value="pageParameter.searchConditon.requirement"
-              style="width: 100px;font-size: 12px;"
+              style="width: 150px;font-size: 12px;"
             >
               <a-select-option value="stockNum" >存货编码</a-select-option>
               <a-select-option value="stockName" >存货名称</a-select-option>
@@ -585,11 +585,10 @@ async function addFirstFun() {
   }else{
     addFun()
   }
-
-
 }
 async function addFun() {
   openSavePage(true,{
+    dynamicTenant:dynamicTenant.value,
     database:database.value,
     iyear:iyear.value,
     cangkuFlag:cangkuFlag.value,
@@ -601,6 +600,7 @@ function editFun() {
     return createWarningModal({ content: '请选择一条数据进行修改！' });
   }
   openEditPage(true,{
+    dynamicTenant:dynamicTenant.value,
     database:database.value,
     iyear:iyear.value,
     cangkuFlag:cangkuFlag.value,
@@ -745,26 +745,14 @@ async function audit(type) {
     list=list.filter(a=>a.bcheck=='1')
   }
 
-  let text=type=='1'?'审核':'弃审'
-  createConfirm({
-    iconType: 'warning',
-    title: '警告',
-    content: '确认要'+text+'吗？',
-    onOk: async () => {
-      let map={
-        bcheck:type,
-        bcheckUser:useUserStoreWidthOut().getUserInfo.id,
-        bcheckTime:new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "),
-        id:list.map(a=>a.id),
-      }
-      await useRouteApi(auditStockBalance, {schemaName: database})(map)
-      pageReload()
-    },
-    onCancel: async () => {
-      pageReload()
-      return false
-    }
-  })
+  let map={
+    bcheck:type,
+    bcheckUser:useUserStoreWidthOut().getUserInfo.id,
+    bcheckTime:new Date( +new Date() + 8 * 3600 * 1000 ).toJSON().substr(0,19).replace("T"," "),
+    id:list.map(a=>a.id),
+  }
+  await useRouteApi(auditStockBalance, {schemaName: database})(map)
+  pageReload()
 }
 // 行勾选事件
 function selectionChange(a) {

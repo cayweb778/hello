@@ -55,4 +55,8 @@ public class StockWarehTongjiMXVo implements Serializable {
 	private String billNumber;
 	private String billDate;
 	private String cmakerName;
+	private String methodPay;
+	private String payDate;
+	private String sourcecode;
+	private String sourcedate;
 }

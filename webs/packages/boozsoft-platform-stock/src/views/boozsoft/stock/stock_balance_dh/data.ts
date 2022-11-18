@@ -137,6 +137,26 @@ const dynamicColumnAndDataModel = reactive({
       min: 60,
       align: 'center'
     }, {
+      key: '25',
+      name: '累计核算主数量',
+      nameNew: '累计核算主数量',
+      check: true,
+      isFixed: true,
+      width: 130,
+      max: 200,
+      min: 150,
+      align: 'left'
+    },{
+      key: '26',
+      name: '累计退货主数量',
+      nameNew: '累计退货主数量',
+      check: true,
+      isFixed: true,
+      width: 130,
+      max: 200,
+      min: 150,
+      align: 'left'
+    },{
       key: '9',
       name: '累计入库主数量',
       nameNew: '累计入库主数量',

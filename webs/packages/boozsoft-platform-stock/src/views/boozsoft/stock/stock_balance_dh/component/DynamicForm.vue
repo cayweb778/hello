@@ -82,8 +82,7 @@
       <template #rate="{ model, field }">
         <InputNumber v-model:value="model[field]" :min="0" :max="100" ref="rateRef"
                      :formatter="value => `${value}%`"
-                     :parser="value => value.replace('%', '')"
-        />
+                     :parser="value => value.replace('%', '')"  />
       </template>
       <template #ddate="{ model, field }">
         <DatePicker :disabled="props.biandong=='1'" v-model:value="model[field]" ref="ddateRef" @change="dateChange(model[field],model, field)" style="width: 100%;"></DatePicker>
@@ -111,43 +110,6 @@ import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerRefe
 const emit = defineEmits(['register', 'open']);
 const props = defineProps(['datasource', 'formDataFun', 'accId', 'readOnly','biandong','newDateMsg','canzhao','sourceType','dynamicTenant'])
 const { proxy:any } = getCurrentInstance()
-const defaultSchemas = [
-  {
-    field: 'field1',
-    component: 'DatePicker',
-    label: '单据日期：',
-    colProps: {
-      span: 4,
-    },
-    required: true,
-    componentProps: {locale: localeCn},
-    /* slot: 'customSlot',
-     show: ({ values }) => {
-       return !!values.field5;
-     },*/
-  },
-  {
-    field: 'field2',
-    component: 'Input',
-    label: '单据编号：',
-    required: true,
-    colProps: {
-      span: 6,
-    }
-  },
-  {
-    field: 'field3',
-    component: 'Select',
-    label: '供应商：',
-    componentProps: {
-      options: [],
-    },
-    required: true,
-    colProps: {
-      span: 6,
-    }
-  },
-]
 const formElRef = ref(null)
 const ccodeRef = ref(null)
 const ddateRef = ref(null)
@@ -240,7 +202,7 @@ function createItem(it) {
     componentProps: (it['component'] == 'DatePicker' ? {locale: localeCn,disabled: true} : it['component'] == 'Select'?{
       options: it['list'],
     }:it['component'] == 'Input'?{readonly: it['readonly']}:{}),
-    slot: it['component'] == 'Select' || it['field'] == 'rate'|| it['field'] == 'ddate' || it['field']=='payDate' ? it['field'] : null,
+    slot: it['component'] == 'Select' ||it['field'] == 'rate'|| it['field'] == 'ddate' || it['field']=='payDate' ? it['field'] : null,
     show: it['isShow']
   }
 }
@@ -301,7 +263,7 @@ const focusNext = (t) => {
 </script>
 <style lang="less" scoped="scoped">
 .dynamic-form{
-  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper),:deep(#form_item_rate){
+  :deep(.ant-select-selector), :deep(.ant-picker), :deep(.ant-input-affix-wrapper) {
     border: none;
     border-bottom: 1px solid #c9c9c9;
     background-color: white;
@@ -313,6 +275,13 @@ const focusNext = (t) => {
       }
     }
   }
+  :deep(.ant-input-number){
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #c9c9c9;
+    background-color: white;
+    color: black;
+  }
   :deep(.ant-col){
     margin-left: 1em;
     .ant-form-item-label{
@@ -323,7 +292,7 @@ const focusNext = (t) => {
       }
     }
     .ant-form-item:not(.ant-form-item-with-help) {
-      margin-bottom: 0px;
+      margin-bottom: 5px;
     }
   }
   :deep(.ant-col-4){

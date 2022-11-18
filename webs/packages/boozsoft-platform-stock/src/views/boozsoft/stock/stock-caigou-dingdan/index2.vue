@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/cg-dingdan-ist')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/cg-dingdan-list')">查询</Button>
           <!-- 审核后的 -->
           <span v-if="stockWareData.bcheck=='1'">
             <Button v-if="status==3" :disabled="ymPeriod" class="actod-btn" @click="startEdit('add')">新增</Button>
@@ -77,9 +77,9 @@
                 </template>
                 <Button :disabled="ymPeriod" class="actod-btn">联查</Button>
               </Popover>
-              <Popover placement="bottom">
-                <Button :disabled="ymPeriod" class="actod-btn">更多</Button>
-              </Popover>
+<!--              <Popover placement="bottom">-->
+<!--                <Button :disabled="ymPeriod" class="actod-btn">更多</Button>-->
+<!--              </Popover>-->
             </span>
           </span>
           <Button class="actod-btn actod-btn-last" @click="closeCurrent(),giveUp(),router.push('/zhongZhang/home/welcome')">退出</Button>
@@ -1090,7 +1090,7 @@ const startEdit = async (type) => {
   else if(type=='edit'){
     if(formItems.value.ccode==undefined){return }
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1158,7 +1158,7 @@ const startDel = async () => {
     })
   } else {
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1198,7 +1198,7 @@ const startDel = async () => {
 
 const startReview = async (b) => {
   // 执行操作前判断单据是否存在
-  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
     return message.error("单据已发生变化,请刷新当前单据！")
@@ -1313,9 +1313,7 @@ const modelText2 = ref('');
 
 //数据保存
 async function saveData() {
-  let id = formItems.value.id
   formItems.value = formFuns.value.getFormValue()
-  formItems.value.id = id // 制单人
   if(status.value==1){
     formItems.value.ccode =  await generateCode(useCompanyOperateStoreWidthOut().getLoginDate)
   }
@@ -1332,7 +1330,7 @@ async function saveData() {
     list = list.map(it => ObjTool.dels(it, Object.keys(it).map(i => i.startsWith('edit') || i.startsWith('temp')))) //清理辅助字段
     list.forEach((o, i) => {  //转化
       o['iyear'] = dynamicYear.value
-      o['lineCode'] = o['key']
+      o['lineCode'] = o['key']==undefined?randomString(30):o['key']
       o['lineId'] = (i + 1) + ''
       o['isGive'] = '0'
       o['isIndate'] = '0'
@@ -1870,7 +1868,7 @@ const slChange0 = (r) => {
     list=list.filter(jl=>!hasBlank(jl.unitName))
     if (list.length > 0){
       let conversionRate=list.filter(a=>a.id==r.cgUnitId)[0].conversionRate
-      r.baseQuantity=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
+      r.baseQuantity=parseFloat(r.cnumber)*parseFloat(conversionRate)
       r.tempSix=r.baseQuantity
 
       let n:any = parseFloat(r.baseQuantity).toFixed(10)
@@ -2414,7 +2412,7 @@ const setCGDHD_data = async () => {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGDHD'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'
@@ -2521,7 +2519,7 @@ const setCGRKD_data = async () => {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGRKD'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'
@@ -2621,7 +2619,7 @@ const setCGFP_data = () => {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGFP'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'
@@ -2650,6 +2648,7 @@ const copyFun = async () => {
   // 获取最新
   let code = await generateCode(useCompanyOperateStoreWidthOut().getLoginDate)
   formFuns.value.setFormValue({
+    id:null,
     ddate: useCompanyOperateStoreWidthOut().getLoginDate,
     ccode: code,
     cvencode: formItems.value.cvencode,

@@ -57,9 +57,22 @@
             <Button class="ant-btn-me">
               <SyncOutlined :style="{ fontSize: '14px' }" @click="reloadTable"/>
             </Button>
+            <Popover class="ant-btn-default" placement="bottom">
+              <template #content>
+                <span class="group-btn-span-special2" @click="dataType='0';reloadPage()" :style="dataType=='0'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
+                  按汇总显示&emsp;<CheckOutlined v-if="dataType=='0'"/>
+                </span><br/>
+                <span class="group-btn-span-special2" @click="dataType='1';reloadPageMX()" :style="dataType=='1'?{backgroundColor: '#0096c7',color: 'white'}:''" style="width: 200px;cursor: pointer;">
+                  按明细显示&emsp;<CheckOutlined v-if="dataType=='1'"/>
+                </span>
+              </template>
+              <Button>
+                <PicLeftOutlined :style="{ fontSize: '14px' }"/>
+              </Button>
+            </Popover>
             <Popover class="ant-btn-default" placement="bottom" v-model:visible="visible3">
               <template #content>
-                <DynamicColumn :defaultData="initDynamics()['DATA']" :dynamicData="dynamicColumnData" :lanmuInfo="lanMuData" @reload="reloadColumns"/>
+                <DynamicColumn :defaultData="(dataType=='0'?initDynamics()['DATA']:initDynamics()['MX'])" :dynamicData="dataType=='0'?dynamicColumnData:dynamicColumnDataMX" :lanmuInfo="dataType=='0'?lanMuData:lanMuDataMX" @reload="dataType=='0'?reloadColumns():reloadColumnsMX()"/>
                 <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
                       :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
                   <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
@@ -106,6 +119,7 @@
         :scroll="{ x: totalColumnWidth1,y: windowHeight1 }"
         :loading="loadMark"
         @row-click="rowClick"
+        v-show="dataType=='0'"
       >
         <template #ccode="{ record }">
           <a @click="toRouter(record,'list')">{{record.ccode}}</a>
@@ -148,6 +162,96 @@
           </TableSummary>
         </template>
       </BasicTable>
+      <!-- 明细-->
+      <BasicTable
+        ref="tableRef"
+        :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys, onChange: onSelectChange,getCheckboxProps:rowSelection.getCheckboxProps }"
+        :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
+        @register="registerTable"
+        :dataSource="tableData"
+        :scroll="{ x: totalColumnWidth,y: windowHeight }"
+        :loading="loadMark"
+        @row-click="rowClick"
+        v-show="dataType=='1'"
+      >
+        <template #ccode="{ record }">
+          <a @click="toRouter(record,'list')">{{record.ccode}}</a>
+        </template>
+        <template #bcheck="{ record }">
+          <span v-if="record.bcheck!=='11'">
+            <Tag :color="record.bcheck === '1' ? 'green' : 'volcano'">
+              {{ record.bcheck === '1' ? '已审核' : '未审核' }}
+            </Tag>
+          </span>
+        </template>
+        <template #hxIsum="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFilter(record.hxIsum) }}
+          </span>
+        </template>
+        <template #isumFapiao="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFloat(record.isumFapiao) }}
+          </span>
+        </template>
+        <template #isumRuku="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFloat(record.isumRuku) }}
+          </span>
+        </template>
+        <template #isumTuiHuo="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFloat(record.isumTuiHuo) }}
+          </span>
+        </template>
+        <template #isumJiesuan="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFloat(record.isumJiesuan) }}
+          </span>
+        </template>
+        <template #cnumber="{ record }">
+          <span v-if="record.bcheck!=='11'">
+              {{ toThousandFloat(record.cnumber) }}
+          </span>
+        </template>
+        <template #itaxrate="{ record }">
+          <span v-if="record.bcheck!=='11'">
+            {{ toThousandFloat(record.itaxrate) }}
+          </span>
+        </template>
+        <template #baseQuantity="{ record }">
+          <span v-if="record.bcheck!=='11'">
+             {{ toThousandFloat(record.baseQuantity) }}
+          </span>
+        </template>
+        <template #itaxprice="{ record }">
+          <span v-if="record.bcheck!=='11'">
+            {{toThousandFilter(record.itaxprice)}}
+          </span>
+        </template>
+        <template #taxprice="{ record }">
+          {{toThousandFilter(record.taxprice)}}
+        </template>
+        <template #isum="{ record }">
+          {{toThousandFilter(record.isum)}}
+        </template>
+        <template #invoiceStyle="{ record }">
+          {{ hasBlank(record.invoiceStyle)?'':invoiceStyleList.filter(a=>a.value==record.invoiceStyle)[0].label }}
+        </template>
+        <template #methodPay="{ record }">
+          {{ hasBlank(record.methodPay)?'':methodPayList.filter(a=>a.value==record.methodPay)[0].label }}
+        </template>
+        <template #summary>
+          <TableSummary fixed>
+            <TableSummaryRow style="background-color: #cccccc;">
+              <TableSummaryCell class="nc-summary" :index="0" :align="'center'" style="border-right: none;">合</TableSummaryCell>
+              <TableSummaryCell class="nc-summary" :index="1" :align="'center'" style="border-right: none;">计</TableSummaryCell>
+              <TableSummaryCell class="nc-summary" style="border-right: none;" v-for="cell in getCurrSummary()" :index="cell.ind" :align="cell.align"><span class="a-table-font-arial">{{null == summaryTotals[cell.dataIndex]?'':summaryTotals[cell.dataIndex]}}</span></TableSummaryCell>
+            </TableSummaryRow>
+          </TableSummary>
+        </template>
+      </BasicTable>
+
       <div class="pagination-text" :style="{top: (windowHeight1+60)+'px',left:(totalColumnWidth1-600)+'px'}" v-show="showPaginationText">
         {{`共 ${paginationNumber}条记录&emsp;每页 200 条`}}
       </div>
@@ -163,8 +267,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {
   UsbOutlined,
   PrinterOutlined,
-  CloudDownloadOutlined,
-  CloudUploadOutlined,
+  PicLeftOutlined,
   CheckOutlined,
   ProfileOutlined,
   SettingFilled,
@@ -183,7 +286,7 @@ import router from "/@/router";
 import {toThousandFilter} from "/@/views/boozsoft/gdzc/gu-ding-zi-chan-add/calculation";
 import {
   findAllByCcodeAndBillStyle,
-  findAllByStockWarehListCcode,
+  findAllByStockWarehListCcode, findAllStockWarehTongjiMX_CGDHD,
   findCangkuAllList,
   findStockAllList
 } from "/@/api/record/system/stock-wareh";
@@ -538,7 +641,10 @@ async function tablesData1(){
   loadMark.value = false
 }
 const getCurrSummary  = () => {
-  return (getColumns1().filter(it=>it.title != '序号'&& it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
+  return dataType.value=='0'?
+    (getColumns1().filter(it=>it.title != '序号'&& it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
+    :
+    (getColumnsMX().filter(it=>it.title != '序号'&& it.ifShow).map((it,ind)=>{it['ind']=ind+2;return it;}))
 }
 const calculateTotal = () => {
   let list = JsonTool.parseProxy((tableData1.value).filter(it=>!hasBlank(it.ccode)))
@@ -546,7 +652,7 @@ const calculateTotal = () => {
     summaryTotals.value = {}
     return false;
   }
-  let squantity = 0
+  let squantity:any = 0
   let isum = 0
   for (let i = 0; i < list.length; i++) {
     const e = list[i];
@@ -723,6 +829,256 @@ const CrudApi1 = {
       align: 'left',
       ellipsis: true,
     },
+  ],
+  columnsMx: [
+    {
+      title: '状态',
+      dataIndex: 'bcheck',
+      key: 'bcheck',
+      width: 80,
+      align: 'left',
+      ellipsis: true,
+      slots: { customRender: 'bcheck' }
+    },
+    {
+      title: '单据日期',
+      dataIndex: 'ddate',
+      key: 'ddate',
+      width: 100,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '单据编号',
+      key: 'ccode',
+      dataIndex: 'ccode',
+      width: 100,
+      align: 'left',
+      ellipsis: true,slots: { customRender: 'ccode' }
+    },
+    {
+      title: '供应商编码',
+      key: 'cvencode',
+      dataIndex: 'cvencode',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },{
+      title: '供应商简称',
+      dataIndex: 'cvencodeName',
+      key: 'cvencodeName',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '结算供应商编码',
+      dataIndex: 'cvencodeJs',
+      key: 'cvencodeJs',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '结算供应商简称',
+      dataIndex: 'cvencodeJsname',
+      key: 'cvencodeJsname',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '票据类型',
+      key: 'invoiceStyle',
+      dataIndex: 'invoiceStyle',
+      width: 150,
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'invoiceStyle'}
+    },
+    {
+      title: '付款方式',
+      key: 'methodPay',
+      dataIndex: 'methodPay',
+      width: 150,
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'methodPay'}
+    },
+    {
+      title: '预计付款日期',
+      key: 'payDate',
+      dataIndex: 'payDate',
+      width: 150,
+      align: 'right',
+      ellipsis: true,
+    },
+    {
+      title: '业务员',
+      key: 'psnName',
+      dataIndex: 'psnName',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '业务部门',
+      key: 'deptName',
+      dataIndex: 'deptName',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '存货编码',
+      dataIndex: 'stockNum',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '条形码',
+      dataIndex: 'stockBarcode',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '存货名称',
+      dataIndex: 'stockName',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '规格型号',
+      dataIndex: 'stockGgxh',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '采购单位',
+      dataIndex: 'unitName',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '数量',
+      dataIndex: 'cnumber',
+      align: 'left',
+      ellipsis: true,
+      slots: { customRender: 'cnumber' },
+    },
+    {
+      title: '主计量',
+      dataIndex: 'stockUnitName',
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '主数量',
+      dataIndex: 'baseQuantity',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'baseQuantity' },
+    },
+    {
+      title: '累计核算主数量',
+      dataIndex: 'isumJiesuan',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'isumJiesuan' },
+    },
+    {
+      title: '累计退货主数量',
+      dataIndex: 'isumTuiHuo',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'isumTuiHuo' },
+    },
+    {
+      title: '累计入库主数量',
+      dataIndex: 'isumRuku',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'isumRuku' },
+    },{
+      title: '累计开票主数量',
+      dataIndex: 'isumFapiao',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'isumFapiao' },
+    },
+    {
+      title: '税率%',
+      dataIndex: 'itaxrate',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'itaxrate' },
+    },
+    {
+      title: '含税单价',
+      dataIndex: 'taxprice',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'taxprice' },
+    },
+    {
+      title: '价税合计',
+      dataIndex: 'isum',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'isum' },
+    },{
+      title: '累计核销金额',
+      dataIndex: 'hxIsum',
+      align: 'right',
+      ellipsis: true,
+      slots: { customRender: 'hxIsum' },
+    },
+    {
+      title: '批号',
+      key: 'batchId',
+      dataIndex: 'batchId',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },{
+      title: '生产日期',
+      key: 'dpdate',
+      dataIndex: 'dpdate',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },{
+      title: '失效日期',
+      key: 'dvdate',
+      dataIndex: 'dvdate',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '备注',
+      key: 'cmemo',
+      dataIndex: 'cmemo',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '经手人',
+      dataIndex: 'cmakerName',
+      key: 'cmakerName',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
+    {
+      title: '审核人',
+      key: 'buname',
+      dataIndex: 'buname',
+      width: 150,
+      align: 'left',
+      ellipsis: true,
+    },
   ]
 }
 
@@ -835,10 +1191,10 @@ const pageParameter: any = reactive({
 })
 const excelThisData = () =>{
   const arrData:any = []
-  const columns:any = getColumns1().filter(a=>a.ifShow==true)
+  const columns:any = dataType.value=='0'?getColumns1().filter(a=>a.ifShow==true):getColumnsMX().filter(a=>a.ifShow==true)
   columns.forEach((a,index)=>{
-    let temp=tableData1.value[index]
-    if(!hasBlank(temp.id)){
+    let temp=dataType.value=='0'?tableData1.value[index]:tableData.value[index]
+    if(!hasBlank(temp.id) || temp.bcheck!=='11'){
       arrData.push(temp)
     }
   })
@@ -865,16 +1221,28 @@ const excelThisData = () =>{
   let list:any=[]
   arrData.filter(a=>a.bcheck!=='11').forEach((a,index)=>{
     a.bcheck=a.bcheck=='1'?'已审核':'未审核'
-    a.jscustCode=a.jscustCode==null?'':a.jscustCode
-    a.jscustName=a.jscustName==null?'':a.jscustName
+    a.cvencode=a.cvencode==null?'':a.cvencode
+    a.cvencodeJs=a.cvencodeJs==null?'':a.cvencodeJs
+    a.cvencodeName=a.cvencodeName==null?'':a.cvencodeName
+    a.cvencodeJsname=a.cvencodeJsname==null?'':a.cvencodeJsname
+    a.psnName=a.psnName==null?'':a.psnName
     a.personName=a.personName==null?'':a.personName
     a.deptName=a.deptName==null?'':a.deptName
     a.cmemo=a.cmemo==null?'':a.cmemo
     a.cmakerName=a.cmakerName==null?'':a.cmakerName
     a.buname=a.buname==null?'':a.buname
-    a.squantity=toThousandFilter(a.squantity)
+    a.payDate=a.payDate==null?'':a.payDate
+    a.invoiceStyle=invoiceStyleList.value.filter(aa=>aa.value==a.invoiceStyle)[0].label
+    a.methodPay=methodPayList.value.filter(aa=>aa.value==a.methodPay)[0].label
+    a.isumFapiao=toThousandFloat(a.isumFapiao)
+    a.isumRuku=toThousandFloat(a.isumRukuisumRuku)
+    a.isumTuiHuo=toThousandFloat(a.isumTuiHuo)
+    a.isumJiesuan=toThousandFloat(a.isumJiesuan)
+    a.squantity=toThousandFloat(a.squantity)
+    a.baseQuantity=toThousandFloat(a.baseQuantity)
     a.icost=toThousandFilter(a.icost)
     a.isum=toThousandFilter(a.isum)
+    a.hxIsum=toThousandFilter(a.isum)
     list.push(a)
   })
   const sheet =[
@@ -1117,6 +1485,133 @@ function randomString(length) {
   for (var i = length; i > 0; --i)
     result += str[Math.floor(Math.random() * str.length)];
   return result;
+}
+
+// ==========================   明细模式  =========================
+const windowWidth = (window.innerWidth)
+const windowHeight = (window.innerHeight - (320) )
+const totalColumnWidth = ref(0)
+const tableData = ref([])
+const tableDataAll:any = ref([])
+const tableRef: any = ref(null)
+const dynamicColumnDataMX:any = ref({value:[]})
+
+const lanMuDataMX = ref({
+  accId: dynamicTenantId.value,
+  menuName: '期初到货单明细列表',
+  type: '明细',
+  objects: '',
+  username: useUserStoreWidthOut().getUserInfo.username,
+  changeNumber:0
+})
+
+const [registerTable, {
+  reload:rereloadMX,
+  getSelectRows:getSelectRowsMX,
+  deleteSelectRowByKey:deleteSelectRowByKeyMX,
+  getDataSource:getDataSourceMX,
+  setTableData:setTableDataMX,
+  getColumns:getColumnsMX,
+  setColumns:setColumnsMX
+}] = useTable({
+  columns: CrudApi1.columnsMx,
+  bordered: true,
+  showIndexColumn: true,
+  indexColumnProps:{ fixed:true },
+  pagination: {
+    pageSize: 1000,
+    simple:true
+  },
+})
+const reloadPageMX = async () => {
+  loadMark.value = true
+  tableDataAll.value=await useRouteApi(findAllStockWarehTongjiMX_CGDHD,{schemaName: dynamicTenantId})(popData.value)
+  paginationNumber.value=tableDataAll.value.length
+  showPaginationText.value=true
+  calculateTotalMX(tableDataAll.value)
+  tableData.value =replenishTrs(tableDataAll.value)
+  loadMark.value = false
+  reloadColumnsMX()
+}
+const reloadColumnsMX = () => {
+  let newA = CrudApi1.columnsMx
+  newA = assemblyDynamicColumn(dynamicColumnDataMX.value.value,newA)
+  setColumnsMX(newA)
+  initTableMXWidth(newA)
+}
+const calculateTotalMX = (data) => {
+  let list = JsonTool.parseProxy(data)
+  if (list.length == 0){
+    summaryTotals.value = {}
+    return false;
+  }
+
+  let cnumber = 0
+  let baseQuantity = 0
+  let icost = 0
+  let itaxprice = 0
+  let isum = 0
+  let isumJiesuan = 0
+  let isumTuiHuo = 0
+  let isumRuku = 0
+  let isumFapiao = 0
+  let hxIsum = 0
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+    cnumber += parseFloat(e.cnumber || '0')
+    baseQuantity += parseFloat(e.baseQuantity || '0')
+    icost += parseFloat(e.icost || '0')
+    itaxprice += parseFloat(e.itaxprice || '0')
+    isum += parseFloat(e.isum || '0')
+    isumJiesuan += parseFloat(e.isumJiesuan || '0')
+    isumTuiHuo += parseFloat(e.isumTuiHuo || '0')
+    isumFapiao += parseFloat(e.isumFapiao || '0')
+    isumRuku += parseFloat(e.isumRuku || '0')
+    hxIsum += parseFloat(e.hxIsum || '0')
+  }
+  summaryTotals.value={
+    cnumber: toThousandFilter(cnumber),
+    baseQuantity: toThousandFilter(baseQuantity),
+    icost: toThousandFilter(icost),
+    itaxprice: toThousandFilter(itaxprice),
+    isum: toThousandFilter(isum),
+    isumJiesuan: toThousandFilter(isumJiesuan),
+    isumTuiHuo: toThousandFilter(isumTuiHuo),
+    isumFapiao: toThousandFilter(isumFapiao),
+    isumRuku: toThousandFilter(isumRuku),
+    hxIsum: toThousandFilter(hxIsum),
+  }
+}
+const replenishTrs = (list) =>{
+  let l = list.length
+  if(l<50){
+    for (let i =  l; i < 50; i++) {
+      list.push({bcheck:'11'})
+    }
+  }
+  return list
+}
+function initTableMXWidth(thisCs) {
+  let total = 60 + 60 // 选择列与序号列
+  thisCs.forEach(item => {
+    if (item.ifShow == null || item.ifShow)
+      total += parseInt(item.width)
+  })
+
+  if (total > windowWidth) {
+    let f = 0
+    totalColumnWidth.value = Number(windowWidth) - f
+    // tableRef.value.$el.style.setProperty('width', (windowWidth + 52 - f) + 'px')
+  } else {
+    totalColumnWidth.value = total
+    // tableRef.value.$el.style.setProperty('width', (total + 52) + 'px')
+  }
+}
+function toThousandFloat(num: any) {
+  if (hasBlank(num)||parseFloat(num)==0) {
+    return ''
+  }
+  return (+num || 0).toFixed(2)
 }
 </script>
 <style src="./global-menu-index.less" lang="less" scoped></style>

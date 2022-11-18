@@ -81,9 +81,7 @@
                 </template>
                 <Button :disabled="ymPeriod" class="actod-btn">联查</Button>
               </Popover>
-              <Popover placement="bottom">
-                <Button :disabled="ymPeriod" class="actod-btn">更多</Button>
-              </Popover>
+              <Button :disabled="ymPeriod" class="actod-btn" @click="copyFun">复制</Button>
             </span>
           </span>
           <Button class="actod-btn actod-btn-last" @click="closeCurrent(),giveUp(),router.push('/zhongZhang/home/welcome')">退出</Button>
@@ -1278,7 +1276,7 @@ const startEdit = async (type) => {
   else if(type=='edit'){
     if(formItems.value.ccode==undefined){return }
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1509,7 +1507,7 @@ const startDel = async () => {
 
 const startReview = async (b) => {
   // 执行操作前判断单据是否存在
-  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
     return message.error("单据已发生变化,请刷新当前单据！")
@@ -1829,7 +1827,7 @@ const startReview = async (b) => {
           formItems.value.id=null
           formItems.value.ccode=newRuKuNum
           formItems.value.billStyle='CGRKD'
-          formItems.value.bcheck=''
+          formItems.value.bcheck='0'
           formItems.value.bcheckTime=''
           formItems.value.bcheckUser=''
           formItems.value.sourcetype=oldBillStyle
@@ -3153,7 +3151,7 @@ const slChange0 = (r) => {
     list=list.filter(jl=>!hasBlank(jl.unitName))
     if (list.length > 0){
       let conversionRate=list.filter(a=>a.id==r.cgUnitId)[0]?.conversionRate
-      r.baseQuantity=parseFloat(r.tempCnumber)*parseFloat(conversionRate)
+      r.baseQuantity=parseFloat(r.cnumber)*parseFloat(conversionRate)
       r.tempSix=r.baseQuantity
 
       let n:any = parseFloat(r.baseQuantity).toFixed(10)
@@ -3423,6 +3421,7 @@ async function setCGRKD_data() {
         temp.bcheckTime=''
         temp.bcheckUser=''
         temp.isumRuku='0'
+        temp.isumDaohuo=temp.baseQuantity
         temp.isumJiesuan='0'
         temp.sourcetype='CGDHD'
         temp.sourcecode=oldNum
@@ -3454,7 +3453,7 @@ async function setCGRKD_data() {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGRKD'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'
@@ -3678,7 +3677,7 @@ const setCGFP_data = () => {
       formItems.value.id=null
       formItems.value.ccode=newRuKuNum
       formItems.value.billStyle='CGFP'
-      formItems.value.bcheck=''
+      formItems.value.bcheck='0'
       formItems.value.bcheckTime=''
       formItems.value.bcheckUser=''
       formItems.value.bdocumStyle='0'
@@ -3918,6 +3917,7 @@ const copyFun = async () => {
   // 获取最新
   let code = await generateCode(useCompanyOperateStoreWidthOut().getLoginDate)
   formFuns.value.setFormValue({
+    id:null,
     ddate: useCompanyOperateStoreWidthOut().getLoginDate,
     ccode: code,
     cvencode: formItems.value.cvencode,

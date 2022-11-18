@@ -12,7 +12,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/kc-cgDepot-list')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/stock_balance_zg_rk_list')">查询</Button>
           <!-- 审核后的 -->
           <span v-if="stockWareData.bcheck=='1'">
             <Button :disabled="ymPeriod" class="actod-btn" @click="startEdit('add')">新增</Button>
@@ -679,7 +679,7 @@ const pageParameter: any = reactive({
     requirement: '',
     value: '',
   },
-  type: 'QT'
+  type: 'ZG'
 })
 const formItems: any = ref({})
 const jiList: any = ref([])
@@ -1227,7 +1227,7 @@ const startEdit = async (type) => {
   } else {
     if(formItems.value.ccode==undefined){return }
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1288,7 +1288,7 @@ const startDel = async () => {
     })
   } else {
     // 执行操作前判断单据是否存在
-    let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+    let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'del',list:[ccodeBcheck]})
     if(hasBlank(msg)){
       return message.error("单据已发生变化,请刷新当前单据！")
@@ -1330,7 +1330,7 @@ const startDel = async () => {
 
 const startReview = async (b) => {
   // 执行操作前判断单据是否存在
-  let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
+  let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
     return message.error("单据已发生变化,请刷新当前单据！")
@@ -2116,7 +2116,7 @@ const slChange0 = (r) => {
     list = list.filter(jl => !hasBlank(jl.unitName))
     if (list.length > 0) {
       let conversionRate = list.filter(a => a.id == r.cgUnitId)[0]?.conversionRate
-      r.baseQuantity = parseFloat(r.tempCnumber) * parseFloat(conversionRate)
+      r.baseQuantity = parseFloat(r.cnumber) * parseFloat(conversionRate)
       r.tempSix = r.baseQuantity
 
       let n: any = parseFloat(r.baseQuantity).toFixed(10)
