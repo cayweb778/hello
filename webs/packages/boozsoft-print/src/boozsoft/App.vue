@@ -43,16 +43,17 @@ window.$wujie.bus.$emit("registerNcDataExport", {
   useNewPrintLang,
   useExcel(){
     return {
+      XLSX,
+      defaultV,
+      sheet_from_array_of_arrays,
+      Workbook,
+      writeExcel,
       excel(fun){
         window.$wujie.bus.$emit('setCurrentPluginName', 'ncPrint')
         useHelloPrintStoreWidthOut().setShowExcel(true)
         useHelloPrintStoreWidthOut().setShowExcelModal(true)
         useHelloPrintStoreWidthOut().setShowExcelPreview(false)
-        fun(  XLSX,
-          defaultV,
-          sheet_from_array_of_arrays,
-          Workbook,
-          writeExcel)
+        fun(  )
       }
     }
   }
