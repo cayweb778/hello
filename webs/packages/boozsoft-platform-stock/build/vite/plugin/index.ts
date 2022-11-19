@@ -8,12 +8,10 @@ import vueSetupExtend from 'vite-plugin-vue-setup-extend';
 import { configHtmlPlugin } from './html';
 import { configPwaConfig } from './pwa';
 import { configMockPlugin } from './mock';
-import { configCompressPlugin } from './compress';
 import { configStyleImportPlugin } from './styleImport';
 import { configVisualizerConfig } from './visualizer';
 import { configThemePlugin } from './theme';
 import { configSvgIconsPlugin } from './svgSprite';
-import Inspector from "vite-plugin-vue-inspector"
 
 
 import OptimizationPersist from 'vite-plugin-optimize-persist'
@@ -32,8 +30,8 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     vue(),
     // have to
     vueJsx(),
-    PkgConfig(),
-    OptimizationPersist()
+    // PkgConfig(),
+    // OptimizationPersist()
    // support name
    //  vueSetupExtend(),
     // Inspector()
