@@ -2,6 +2,10 @@
   <template v-if="getShow">
     <LoginFormTitle class="enter-x" />
     <Form class="p-4 enter-x" :model="formData" :rules="getFormRules" ref="formRef">
+      <FormItem name="coCode" class="enter-x">
+        <Input size="large" v-model:value="formData.coCode"
+               :placeholder="公司代码/*t('sys.login.userName')*/"/>
+      </FormItem>
       <FormItem name="account" class="enter-x">
         <Input
           size="large"

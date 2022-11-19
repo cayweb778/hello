@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="login-nc">
-      账户密码登录
+      <span>财税达<span style="color: #a67f59;">ERP-NC</span>系统登录</span>
     </div>
     <Form
       class="p-4 enter-x"
@@ -11,6 +11,10 @@
       v-show="getShow"
       @keypress.enter="handleLogin"
     >
+      <FormItem name="coCode" class="enter-x">
+        <Input size="large" v-model:value="formData.coCode"
+               :placeholder="公司代码/*t('sys.login.userName')*/"/>
+      </FormItem>
       <FormItem name="account" class="enter-x">
         <Input size="large" v-model:value="formData.account"
                :placeholder="t('sys.login.userName')"/>
@@ -53,7 +57,7 @@
       </FormItem>
       <div class="enter-x" style="height: 80px;width: auto;padding-top: 5%;">
         <div style="text-align: center;border-top: 1px solid #ededed;padding:5% 10%">
-          <span>湖北万亚软件技术有限公司</span>
+          <span><span style="color: #8b949e;">产品注册单位：</span>湖北万亚软件技术有限公司</span>
         </div>
       </div>
       <!--      <ARow class="enter-x">
@@ -163,6 +167,7 @@ export default defineComponent({
     const rememberMe = ref(false);
 
     const formData = reactive({
+      coCode:'',
       account: '',
       password: '',
     });

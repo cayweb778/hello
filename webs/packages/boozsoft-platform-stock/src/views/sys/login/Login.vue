@@ -56,19 +56,19 @@
             <div
               style="width: 40px;height: 10px;background-color: white;float: left;margin-left: 26px"></div>
             <br>
-            <p style="text-indent: 2em;margin:0">自主可控：支持开源及华为EulerOS操作系统</p>
+            <p style="text-indent: 2em;margin:0">自主可控：支持开源及华为EulerOS操作系统1</p>
             <p style="text-indent: 7em;margin:0">使用开源Postgresql数据库</p>
             <p style="text-indent: 7em;margin:0">不使用任何第三方授权控件</p>
             <p style="text-indent: 7em;">支持国产CPU内核的服务器系统</p>
-            <p style="text-indent: 2em;margin:0">功能特点：意图驱动，智能学习业务流程</p>
-            <p style="text-indent: 7em;margin:0">智能AI，发票智能识别并验真</p>
-            <p style="text-indent: 7em;margin:0">应用商城自由组合应用功能模块</p>
+            <p style="text-indent: 2em;margin:0">功能特点：支持集团财务，集团化业务处理</p>
+            <p style="text-indent: 7em;margin:0">财务业务一体化应用，高效集成</p>
+            <p style="text-indent: 7em;margin:0">随时随地，轻松打理业务</p>
             <div style="text-align: center;padding: 20px;">
               <span><a
                 style="color:white;">手机登录</a></span><span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;</span>
               <span><a
-                style="color:white;">获取授权</a></span><span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-              <span><a style="color:white;">登录账户</a></span>
+                style="color:white;">帮助手册</a></span><span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+              <span><a style="color:white;">官网学习</a></span>
             </div>
           </div>
         </div>
