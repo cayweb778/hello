@@ -21,7 +21,7 @@ import {useCounterStoreWidthOut} from "/@/store/modules/counter";
 
 const wujieVueRef = ref()
 const wujieAttrs = ref({
-  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncauth' : '//81.70.47.206:81/ncauth',
+  url: isProdMode() ? '//'+new URL(window.location.href).host+'/ncauth' : '//localhost:3100',
   props: {
     menuModules: modules,
     aa: 1,

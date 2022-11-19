@@ -32,6 +32,8 @@
     "gen:icon": "esno ./build/generate/icon/index.ts"
   },
   "dependencies": {
+    "vite-plugin-optimize-persist": "^0.1.2",
+    "vite-plugin-package-config": "^0.1.1",
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons-vue": "^6.0.1",
     "@iconify/iconify": "^2.1.0",
