@@ -531,7 +531,7 @@
     <ChangeItems @register="registerItemsPage"/>
     <Lack @register="registerLackPage"/>
     <Refer @register="registerReferModalPage" @throwData="referThrowData"/>
-    <BarCode @register="registerBarCodeModalPage" />
+    <BarCode @register="registerBarCodeModalPage" @throwData="barCodeThrowData"/>
 
   </div>
 </template>
@@ -3261,6 +3261,7 @@ const focusNext =  async (r, c) => {
   r[`${c}`] = r[`temp${t}`];
   // 列表值发生变动 监听调整
   tableDataChange(r,c)
+  console.log(r)
   // 查找下一个
   let list = getDataSource();
   let filters:any = ['bcheck1','isGive','cinvodeType','cinvodeName','cunitid','cunitidF1','cunitidF2','baseQuantity','subQuantity1', 'subQuantity2','price','icost']
@@ -4001,9 +4002,26 @@ const copyFun = async () => {
 // 条形码弹框
 const [registerBarCodeModalPage, {openModal: openBarCodePageM}] = useModal()
 const openCodePage = () => {
+  if(hasBlank(formFuns.value.getFormValue().cvencode)||hasBlank(formFuns.value.getFormValue().cwhcode)){
+    return message.error('请选择供应商和仓库！')
+  }
+
   openBarCodePageM(true, {
-    dynamicTenant:dynamicTenant.value,
+    dynamicTenantId:dynamicTenantId.value,
   })
+}
+// 条形码弹框回调
+const barCodeThrowData = async (map) => {
+  let data=map.barCodeVal
+  let barCodeType=map.barCodeType
+
+  tempType.value=barCodeType=='2'?'one':'three'
+  let temp:any={
+    cinvode:data.stockNum,
+    cnumber:'1'
+  }
+  chChange(temp)
+  setTableData([temp])
 }
 /********** 单据搜索 *********/
 const showSearch=ref(false)
