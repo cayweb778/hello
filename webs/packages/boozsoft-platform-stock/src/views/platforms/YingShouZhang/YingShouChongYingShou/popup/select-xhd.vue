@@ -218,8 +218,8 @@ async function reloadList(){
     } else {
       item.whxIsum = item.isum
     }
-    item.hxMoney = item.whxIsum
-    item.tempOne = item.whxIsum
+    // item.hxMoney = item.whxIsum
+    // item.tempOne = item.whxIsum
     return item
   }))
   const saleList = await useRouteApi(findBySkWhxXhd, {schemaName: dynamicTenantId})({

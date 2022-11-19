@@ -625,7 +625,7 @@ const totalColumnWidth = ref(0)
 const dynamicTenantId:any = ref('')
 const dynamicAccId:any = ref('')
 const dynamicYear:any = ref('')
-const titleContents = ['红票对冲', '红票对冲', '红票对冲']
+const titleContents = ['红字回冲单', '红字回冲单', '红字回冲单']
 const titleValue = ref(1)
 const formRowNum = ref(1)
 

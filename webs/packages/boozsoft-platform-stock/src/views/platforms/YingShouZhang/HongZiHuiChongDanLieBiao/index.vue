@@ -9,7 +9,7 @@
           <b class="noneSpan" style="font-size: 60px;"><ProfileOutlined /></b>
         </div>
         <div class="container-head-title" style="padding-left: 35%;text-align: center;margin-top: 20px;">
-          <b class="noneSpan" style="font-size: 26px;">红字回冲单列表</b>
+          <b class="noneSpan" style="font-size: 26px;">红票对冲列表</b>
           <div style="font-size: 14px;text-align: center;margin-top: 30px;">
             <span style="font-size: 14px;font-weight: bold;">
               期间：2022.01.01 - 2022.12.31
@@ -705,15 +705,15 @@ async function delList(){
     if (num == 0) {
       for (let i = 0; i < checkRow.value.length; i++) {
         const item = checkRow.value[i]
-        let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'红字回冲单',method:'删除',recordNum:item.ccode})
+        let taskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:pageParameter.year,name:'红票对冲',method:'删除',recordNum:item.ccode})
         if(taskData.length==0){
-          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'红字回冲单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
+          await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'红票对冲',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
         } else {
           // 任务不是当前操作员的
           if(String(taskData[0]?.caozuoUnique)!==String(useUserStoreWidthOut().getUserInfo.id)){
-            return createWarningModal({ content: taskData[0]?.username+'正在删除红字回冲单,不能同时进行操作！' });
+            return createWarningModal({ content: taskData[0]?.username+'正在删除红票对冲,不能同时进行操作！' });
           }else{
-            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'红字回冲单',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
+            await useRouteApi(saveTaskApi, { schemaName: dynamicTenantId })({id:taskData[0]?.id,iyear:pageParameter.year,caozuoUnique:useUserStoreWidthOut().getUserInfo.id,functionModule:'红票对冲',method:'删除',recordNum:item.ccode,caozuoModule:'ar'})
           }
         }
         const list = await useRouteApi(findArApHzhcdsByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
@@ -782,7 +782,7 @@ async function delList(){
         await useRouteApi(deleteArApHzhcdById,{schemaName: dynamicTenantId})(item.id)
         await useRouteApi(deleteArApHzhcdsByCcode,{schemaName: dynamicTenantId})({ccode:item.ccode,billStyle:item.billStyle})
         //删除任务锁定
-        await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'红字回冲单',method:'删除',recordNum:item.ccode})
+        await useRouteApi(stockBalanceTaskDelByUserName, { schemaName: dynamicTenantId })({iyear:pageParameter.year,userName:useUserStoreWidthOut().getUserInfo.id,functionModule:'红票对冲',method:'删除',recordNum:item.ccode})
       }
     }
     state.selectedRowKeys = []
@@ -1149,7 +1149,7 @@ const editableData = reactive({});
 const tableRef: any = ref(null)
 const lanMuData = {
   'accId': '',
-  'menuName': '红字回冲单',
+  'menuName': '红票对冲',
   'type': '列表',
   objects: '',
   username: useUserStoreWidthOut().getUserInfo.username,

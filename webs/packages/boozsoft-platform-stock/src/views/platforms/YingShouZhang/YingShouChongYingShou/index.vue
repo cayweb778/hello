@@ -1036,6 +1036,15 @@ const startDel = async () => {
     })
     return false
   } else {
+    const res = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.busStyle})
+    if (res.length==0){
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '列表单据已发生变化，请刷新当前列表！'
+      })
+      return false
+    }
     //判断存货和应收模块是否结账
     await jiezhang()
     if(flag.value){
@@ -1183,7 +1192,8 @@ const startDel = async () => {
 
 const loadMark = ref(false)
 
-function fentan(){
+//分摊核销
+/*function fentan(){
   if(checkRow.value.length>0) {
     tableData.value.forEach(item=>{
       item.hxMoney = ''
@@ -1224,6 +1234,106 @@ function fentan(){
       content: '请选择需要分摊的数据！'
     })
   }
+}*/
+
+function fentan(){
+  let cxIsum = formItems.value.cxIsum
+  if (cxIsum==null || cxIsum==''){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额不能为空！'
+    })
+    return false
+  }
+  if (cxIsum=='0'){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额不能为零！'
+    })
+    return false
+  }
+  if(tableData.value.filter(item=>item.id!=null&&item.id!='').length==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '预收冲销明细不能为空！'
+    })
+    return false
+  }
+  if(whxIsum.value==0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '未核销应收单的合计为零，不能进行冲销处理，请选择红票对冲！'
+    })
+    return false
+  }
+  if(cxIsum.value>0 && whxIsum.value<0){
+    createErrorModal({
+      iconType: 'warning',
+      title: '温馨提示',
+      content: '冲销金额和未核销应收单的合计金额正负方向不一致，不能进行冲销处理，请稍后在试！'
+    })
+    return false
+  }
+  tableData.value.forEach(item=>{
+    item.hxMoney = ''
+    item.tempOne = ''
+    return item
+  })
+  if (cxIsum>0) {//冲销金额为正
+    let num1=cxIsum.value
+    tableData.value.forEach(item=>{
+      if (item.isum<0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num1 = sub(num1,item.hxMoney)
+      }
+    })
+    tableData.value.forEach(item=>{
+      if (num1 > 0) {
+        if (item.isum > 0) {
+          if (item.whxIsum <= num1) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          } else {
+            item.hxMoney = num1
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          }
+        }
+      }
+    })
+  } else if (cxIsum<0) {//冲销金额为负
+    let num1=cxIsum.value
+    tableData.value.forEach(item=>{
+      if (item.isum>0){
+        item.hxMoney = item.whxIsum
+        item.tempOne = item.hxMoney
+        num1 = sub(num1,item.hxMoney)
+      }
+    })
+    tableData.value.forEach(item=>{
+      if (num1 < 0) {
+        if (item.isum < 0) {
+          if (item.whxIsum >= num1) {
+            item.hxMoney = item.whxIsum
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          } else {
+            item.hxMoney = num1
+            item.tempOne = item.hxMoney
+            num1 = sub(num1, item.hxMoney)
+          }
+        }
+      }
+    })
+  }
+  setTableData(tableData.value)
+  countTable()
 }
 
 //数据保存
@@ -1658,8 +1768,8 @@ function countTable(){
   getDataSource().forEach(item=>{
     if (item.isum!=null && item.isum!=''){
       isum.value = add(isum.value,item.isum)
-      whxIsum.value = add(whxIsum.value,item.whxIsum)
-      hxMoney.value = add(hxMoney.value,item.hxMoney)
+      whxIsum.value = add(whxIsum.value==null?'':whxIsum.value,item.whxIsum==null?'':item.whxIsum)
+      hxMoney.value = add(hxMoney.value==null?'':hxMoney.value,item.hxMoney==null?'':item.hxMoney)
     }
   })
 }

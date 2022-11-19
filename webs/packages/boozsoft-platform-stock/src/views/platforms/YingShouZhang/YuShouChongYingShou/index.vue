@@ -1085,6 +1085,15 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    const res = await useRouteApi(findArApChongxiaosByCcode,{schemaName: dynamicTenantId})({ccode:formItems.value.ccode,billStyle:formItems.value.busStyle})
+    if (res.length==0){
+      createErrorModal({
+        iconType: 'warning',
+        title: '警告',
+        content: '列表单据已发生变化，请刷新当前列表！'
+      })
+      return false
+    }
     //判断存货和应收模块是否结账
     await jiezhang()
     if(flag.value){
@@ -1978,6 +1987,7 @@ function fentan(){
   }
   setTableData(tableData.value)
   setTableData1(tableData1.value)
+  countTable()
 }
 
 const tableDataChange =  (r,c) => {
