@@ -124,7 +124,7 @@
             </Popover>
           </div>
           <div class="acttd-right-d-btns" v-else>
-            <Button v-if="status<3" class="acttdrd-btn" @click="pageReload()">
+            <Button v-if="status<3" class="acttdrd-btn" @click="openCodePage()">
               <BarcodeOutlined :style="{ fontSize: '20px',display:'inline-flex' }"/>
             </Button>
           </div>
@@ -531,6 +531,7 @@
     <ChangeItems @register="registerItemsPage"/>
     <Lack @register="registerLackPage"/>
     <Refer @register="registerReferModalPage" @throwData="referThrowData"/>
+    <BarCode @register="registerBarCodeModalPage" />
 
   </div>
 </template>
@@ -557,8 +558,9 @@ import Import from "./popup/import.vue";
 import XySource from './popup/xySource.vue';
 import SySource from './popup/sySource.vue';
 import ChangeItems from './popup/changeItems.vue';
-import Print from '/@/views/boozsoft/stock/stock-caigou-dh/popup/print.vue';
 import DynamicForm from './component/DynamicForm.vue';
+import BarCode from './popup/barCode.vue';
+import Print from '/@/views/boozsoft/stock/stock-caigou-dh/popup/print.vue';
 import Lack from '/@/views/boozsoft/stock/stock_balance/popup/lack.vue';
 import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 import {
@@ -1400,16 +1402,21 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+formItems.value.bcheck
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
+
+
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
     // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
     if(!hasBlank(jzMethod)){
+      loadMark.value=false
       return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     // 任务
@@ -1418,6 +1425,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购到货单,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1495,9 +1503,11 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       },
       onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1506,10 +1516,12 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
 
@@ -1519,6 +1531,7 @@ const startReview = async (b) => {
     for (let i = 0; i < taskData.length; i++) {
       // 任务不是当前操作员的
       if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        loadMark.value=false
         return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购到货单,不能同时进行操作！' });
       }
       await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1528,6 +1541,7 @@ const startReview = async (b) => {
     let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
     console.log('到货单：--->盘点处理-->'+pd)
     if(pd>0){
+      loadMark.value=false
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
   }
@@ -1538,25 +1552,31 @@ const startReview = async (b) => {
     // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'结账'})
     if(!hasBlank(jzMethod)){
+      loadMark.value=false
       return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     let date = useCompanyOperateStoreWidthOut().getLoginDate
     // 日期是否已结账
     let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date.split('-')[0],month:date.split('-')[1]})
     if(temp>0){
+      loadMark.value=false
       return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
     }
     let findByRukuData=await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,ccode:formItems.value.ccode,billStyle:'CGDHD'})
     if(findByRukuData.length>0){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
 
     if(!hasBlank(stockWareData.value.hxIsum)&&parseFloat(stockWareData.value.hxIsum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过应付核销，不能进行取消审核操作，请删除核销单据后继续！')
     }else if(!hasBlank(stockWareData.value.hzhcNum)&&parseFloat(stockWareData.value.hzhcNum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过红字回冲，不能进行取消审核操作，请手动删除红字回冲单据后继续！')
     }else if(stockWareData.value.bworkable=='1'){
+      loadMark.value=false
       return message.error('当前单据已进行过应付款复核，不能进行取消审核操作，请取消单据复核后继续！')
     }
 
@@ -3348,6 +3368,7 @@ function xySourcePop() {
 
 // 生成采购入库单
 async function setCGRKD_data() {
+  loadMark.value=true
   let ddate=''
   if(parseFloat(useCompanyOperateStoreWidthOut().getLoginDate.replaceAll('-',''))<parseFloat(formItems.value.ddate.replaceAll('-',''))){
     ddate=formItems.value.ddate
@@ -3359,6 +3380,7 @@ async function setCGRKD_data() {
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:ddate.split('-')[0],month:ddate.split('-')[1]})
   if(temp>0){
     setTimeout(()=>{
+      loadMark.value=false
       return message.error('当前单据业务期间已经结账，不能进行生单操作，请取消期间结账后继续！！')
     },1000)
   }
@@ -3366,6 +3388,7 @@ async function setCGRKD_data() {
   // 有无 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购到货单',method:'生单'})
   if(!hasBlank(xclTaskData)){
+    loadMark.value=false
     return message.error('当前单据正在被'+xclTaskData.caozuoName+'操作员进行'+xclTaskData.method+'业务处理，任务互斥，请销后再试！')
   }
 
@@ -3387,6 +3410,7 @@ async function setCGRKD_data() {
   let list2:any =JsonTool.parseObj(res.entryList).map(it => resetRow(it))
 
   if(res.sourcetype=='CGRKD'){
+    loadMark.value=false
     return message.error('当前到货单为参照采购入库单生成，不能进行采购入库单循环生单操作！')
   }
 
@@ -3472,6 +3496,7 @@ async function setCGRKD_data() {
       await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
       await contentSwitch('curr','')
       message.success(`生成采购入库单成功！`)
+      loadMark.value=false
       // 跳转入库单页面
       router.push({name:'CaigouRk',params:{type:'info',ccode:newRuKuNum}})
     }
@@ -3479,6 +3504,7 @@ async function setCGRKD_data() {
 }
 // 生成退货单
 async function setCGTHD_data() {
+  loadMark.value=true
   let ddate=''
   if(parseFloat(useCompanyOperateStoreWidthOut().getLoginDate.replaceAll('-',''))<parseFloat(formItems.value.ddate.replaceAll('-',''))){
     ddate=formItems.value.ddate
@@ -3490,6 +3516,7 @@ async function setCGTHD_data() {
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:ddate.split('-')[0],month:ddate.split('-')[1]})
   if(temp>0){
     setTimeout(()=>{
+      loadMark.value=false
       return message.error('当前单据业务期间已经结账，不能进行变更操作，请取消期间结账后继续！！')
     },1000)
   }
@@ -3497,6 +3524,7 @@ async function setCGTHD_data() {
   // 有无 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购到货单',method:'生单'})
   if(!hasBlank(xclTaskData)){
+    loadMark.value=false
     return message.error('当前单据正在被'+xclTaskData.caozuoName+'操作员进行'+xclTaskData.method+'业务处理，任务互斥，请销后再试！')
   }
 
@@ -3536,6 +3564,7 @@ async function setCGTHD_data() {
   currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
   console.log('弃审判断可用量：'+currData)
   if(currData.length>0){
+    loadMark.value=false
     return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
   }
 
@@ -3585,6 +3614,7 @@ async function setCGTHD_data() {
       res.sourcecode=oldNum
       formItems.value.cmakerTime=newDate.value
       res.entryList = JsonTool.json(listarr)
+      loadMark.value=false
       // 跳转入库单页面
       router.push({path:'cg-return',query:{type:'add',ccode:JSON.stringify(res)}})
     }
@@ -3592,6 +3622,7 @@ async function setCGTHD_data() {
 }
 // 生成采购发票
 const setCGFP_data = () => {
+  loadMark.value=true
   let ddate=''
   if(parseFloat(useCompanyOperateStoreWidthOut().getLoginDate.replaceAll('-',''))<parseFloat(formItems.value.ddate.replaceAll('-',''))){
     ddate=formItems.value.ddate
@@ -3692,6 +3723,7 @@ const setCGFP_data = () => {
         data:formItems.value,
         mx:JSON.stringify(listarr)
       }
+      loadMark.value=false
       // 跳转入库单页面
       router.push({path:'cg-bill',query:{type:'cgdd',json:JSON.stringify(dataArr)}})
     }
@@ -3933,7 +3965,7 @@ const copyFun = async () => {
     cmemo: formItems.value.cmemo,
   })
   let list = getDataSource().map(t=>{t.id=null;t.ccode=code;t.sourcecode=null;t.sourcetype=null;t.sourcedetailId=null;t.sourcedate=null;
-    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;return t;})
+    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;t.lineCode=randomString(30);return t;})
   let dLen = list.length
   for (let i = dLen; i < 50; i++) {
     list.push({})
@@ -3942,6 +3974,13 @@ const copyFun = async () => {
   loadMark.value=false
 }
 
+// 条形码弹框
+const [registerBarCodeModalPage, {openModal: openBarCodePageM}] = useModal()
+const openCodePage = () => {
+  openBarCodePageM(true, {
+    dynamicTenant:dynamicTenant.value,
+  })
+}
 /********** 单据搜索 *********/
 const showSearch=ref(false)
 const searchData = ref({

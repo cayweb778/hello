@@ -1287,10 +1287,12 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'del',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
     // 任务
@@ -1304,6 +1306,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if (taskData[i]?.caozuoUnique !== useUserStoreWidthOut().getUserInfo.id) {
+          loadMark.value=false
           return createWarningModal({content: taskData[i]?.username + '正在' + taskData[i]?.method + '期初暂估入库单,不能同时进行操作！'});
         }
       }
@@ -1319,8 +1322,10 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail', '')
       },onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }

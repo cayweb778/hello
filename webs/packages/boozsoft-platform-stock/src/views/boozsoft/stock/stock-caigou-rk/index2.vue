@@ -1372,16 +1372,19 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
     // 有无 整理现存量 任务
     let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
     if(!hasBlank(xclTaskData)){
+      loadMark.value=false
       return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
     }
     // 任务
@@ -1390,6 +1393,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购入库单,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1398,11 +1402,13 @@ const startDel = async () => {
     // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
     if(!hasBlank(jzMethod)){
+      loadMark.value=false
       return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     // 盘点处理
     let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
     if(pd>0){
+      loadMark.value=false
       return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
     }
 
@@ -1429,6 +1435,7 @@ const startDel = async () => {
     // 如果是负数强制转换成正数比较
     currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
+      loadMark.value=false
       return  openLackPage(true,{data:currData,queryType:dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong',dynamicTenantId:dynamicTenantId.value})
     }
 
@@ -1458,9 +1465,11 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       }
       ,onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1469,21 +1478,25 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
 
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){
+    loadMark.value=false
     return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
   }
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
   if(!hasBlank(jzMethod)){
+    loadMark.value=false
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
 
@@ -1491,10 +1504,12 @@ const startReview = async (b) => {
   let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
   console.log('入库单蓝字操作：--->盘点处理-->'+pd)
   if(pd>0){
+    loadMark.value=false
     return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
   }
   // 回冲单不能审核
   if(stockWareData.chengbenHc=='1'){
+    loadMark.value=false
     return message.error('回冲单不能审核！')
   }
 
@@ -1520,6 +1535,7 @@ const startReview = async (b) => {
   if((titleValue.value==1&&!b) || !b){
     let findByRukuData=await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,ccode:formItems.value.ccode,billStyle:'CGRKD'})
     if(findByRukuData.length>0 ){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
@@ -1529,6 +1545,7 @@ const startReview = async (b) => {
     currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     console.log('弃审判断现存量：'+JSON.stringify(currData))
     if(currData.length>0){
+      loadMark.value=false
       return  openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:dynamicTenantId.value})
     }
   }
@@ -1636,6 +1653,7 @@ const startReview = async (b) => {
     saveLogData('审核')
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='CGRKD'
+    loadMark.value=false
     await contentSwitch('curr','')
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -2992,6 +3010,7 @@ const toPrintPage = () => {
 
 // 生成采购到货单
 async function setCGDHD_data() {
+  loadMark.value=true
   let ddate=''
   if(parseFloat(useCompanyOperateStoreWidthOut().getLoginDate.replaceAll('-',''))<parseFloat(formItems.value.ddate.replaceAll('-',''))){
     ddate=formItems.value.ddate
@@ -3003,6 +3022,7 @@ async function setCGDHD_data() {
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:ddate.split('-')[0],month:ddate.split('-')[1]})
   if(temp>0){
     setTimeout(()=>{
+      loadMark.value=false
       return message.error('当前单据业务期间已经结账，不能进行生单操作，请取消期间结账后继续！！')
     },1000)
   }
@@ -3010,6 +3030,7 @@ async function setCGDHD_data() {
   // 有无 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'采购入库单',method:'生单'})
   if(!hasBlank(xclTaskData)){
+    loadMark.value=false
     return message.error('当前单据正在被'+xclTaskData.caozuoName+'操作员进行'+xclTaskData.method+'业务处理，任务互斥，请销后再试！')
   }
 
@@ -3030,7 +3051,15 @@ async function setCGDHD_data() {
   let oldlist = JsonTool.parseObj(res.entryList).map(it => resetRow(it))
   let list2:any =JsonTool.parseObj(res.entryList).map(it => resetRow(it))
 
+  let baseQuantityTotal=sumArr(list.map(t=>t.baseQuantity))
+  let isumDaohuo=sumArr(list.map(t=>t.isumDaohuo))
+  if(parseFloat(baseQuantityTotal)-parseFloat(isumDaohuo)==0){
+    loadMark.value=false
+    return message.error('当前入库单已经全部到货，不能重复到货！')
+  }
+
   if(res.sourcetype=='CGDHD'){
+    loadMark.value=false
     return message.error('当前入库单为参照采购到货单生成，不能进行采购入库单循环生单操作！')
   }
 
@@ -3067,6 +3096,7 @@ async function setCGDHD_data() {
     temp.sourcedetailId=parentLineCode
     temp.sourcedate=oldddate
     temp.cmakerTime=newDate.value
+    temp.isumRuku=temp.baseQuantity
     if(baseQuantity>0){
       listarr.push(temp)
     }
@@ -3118,6 +3148,7 @@ async function setCGDHD_data() {
       await contentSwitch('curr','')
       message.success(`生成采购到货单成功！`)
       tempTaskDel(taskInfo.value?.id)
+      loadMark.value=false
       // 跳转入库单页面
       router.push({name:'StockCaiGouDH',params:{type:'info',ccode:newRuKuNum}})
     }
@@ -3130,7 +3161,7 @@ async function verifyRowXCLData(r) {
     await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({queryType:'xcl',cinvode:r.cinvode,cwhcode:r.cwhcode,iyear:dynamicYear.value,rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       console.log(t)
-        let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+        let conversionRate:any= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
         r.showNumber=parseFloat(t/conversionRate).toFixed(2)
         // oldShowNumber 是红字 选择批次弹框回调携带参数
         if(!hasBlank(r.oldShowNumber)){

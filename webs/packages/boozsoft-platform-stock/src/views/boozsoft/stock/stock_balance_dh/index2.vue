@@ -1486,10 +1486,12 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
@@ -1499,6 +1501,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: '当前单据正在被操作员'+taskData[i]?.username+'正在'+taskData[i]?.method+'任务互斥,不能同时进行操作！' });
         }
       }
@@ -1529,6 +1532,7 @@ const startDel = async () => {
       // 如果是负数强制转换成正数比较;可用量不能等于0
       currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
       if(currData.length>0){
+        loadMark.value=false
         return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
       }
     }
@@ -1543,8 +1547,10 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       },onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1553,22 +1559,26 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
 
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'结账'})
   if(!hasBlank(jzMethod)){
+    loadMark.value=false
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
   let date = useCompanyOperateStoreWidthOut().getLoginDate
   // 日期是否已结账
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date.split('-')[0],month:date.split('-')[1]})
   if(temp>0){
+    loadMark.value=false
     return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
   }
 
@@ -1578,6 +1588,7 @@ const startReview = async (b) => {
     for (let i = 0; i < taskData.length; i++) {
       // 任务不是当前操作员的
       if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        loadMark.value=false
         return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'期初到货单,不能同时进行操作！' });
       }
     }
@@ -1597,15 +1608,19 @@ const startReview = async (b) => {
   if(!b){
     let findByRukuData=await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,billStyle:'QC',ccode:formItems.value.ccode})
     if(findByRukuData.length>0){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
 
     if(stockWareData.value.swsIsumTuihuo !=0){
+      loadMark.value=false
       return message.error('当前单据已进行过应付核销，不能进行取消审核操作，请删除核销单据后继续！')
     }else if(!hasBlank(stockWareData.value.hzhcNum)&&parseFloat(stockWareData.value.hzhcNum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过红字回冲，不能进行取消审核操作，请手动删除红字回冲单据后继续！')
     }else if(stockWareData.value.bworkable=='1'){
+      loadMark.value=false
       return message.error('当前单据已进行过应付款复核，不能进行取消审核操作，请取消单据复核后继续！')
     }
     let list2 = getDataSource().filter(it => !hasBlank(it.cwhcode))
@@ -1666,6 +1681,7 @@ const startReview = async (b) => {
     saveLogData('审核')
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='QC'
+    loadMark.value=false
     await contentSwitch('tail','')
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -3287,7 +3303,7 @@ async function setCGRKD_DATA() {
 
         temp.cnumber=(parseFloat(temp.baseQuantity)-parseFloat(temp.isumRuku))/parseFloat(unitRate?.conversionRate)
         temp.tempCnumber=temp.cnumber
-        console.log(11111)
+
         // 计算主计量....
         slChange0(temp)
 
@@ -3304,6 +3320,7 @@ async function setCGRKD_DATA() {
         temp.sourcecode=oldNum
         temp.sourcedetailId=parentLineCode
         temp.sourcedate=oldddate
+        temp.isumDaohuo=temp.baseQuantity
         listarr.push(temp)
       }
 

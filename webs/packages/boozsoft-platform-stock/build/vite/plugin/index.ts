@@ -30,8 +30,8 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     // have to
     vueJsx(),
    // support name
-    vueSetupExtend(),
-    Inspector()
+   //  vueSetupExtend(),
+    // Inspector()
   ];
 
   // vite-plugin-windicss

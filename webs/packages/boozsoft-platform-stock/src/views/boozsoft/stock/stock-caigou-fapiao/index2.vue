@@ -1298,10 +1298,12 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
@@ -1311,6 +1313,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购发票,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1342,8 +1345,10 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       },onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -2478,7 +2483,7 @@ const copyFun = async () => {
     cmemo: formItems.value.cmemo,
   })
   let list = getDataSource().map(t=>{t.id=null;t.ccode=code;t.sourcecode=null;t.sourcetype=null;t.sourcedetailId=null;t.sourcedate=null;
-    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;return t;})
+    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;t.lineCode=randomString(30);return t;})
   let dLen = list.length
   for (let i = dLen; i < 50; i++) {
     list.push({})

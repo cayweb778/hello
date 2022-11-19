@@ -1301,10 +1301,12 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
@@ -1314,6 +1316,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1351,9 +1354,11 @@ const startDel = async () => {
         tempTaskDel(taskInfo.value?.id)
         message.success('删除成功！')
         canzhao.value=false
+        loadMark.value=false
         formItems.value.czId = ''
         await contentSwitch('tail','')
       },onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1362,10 +1367,12 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
 
@@ -1384,6 +1391,7 @@ const startReview = async (b) => {
     for (let i = 0; i < taskData.length; i++) {
       // 任务不是当前操作员的
       if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        loadMark.value=false
         return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购退货单,不能同时进行操作！' });
       }
     }
@@ -1391,34 +1399,43 @@ const startReview = async (b) => {
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'结账'})
   if(!hasBlank(jzMethod)){
+    loadMark.value=false
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
   let date = useCompanyOperateStoreWidthOut().getLoginDate
   // 日期是否已结账
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:date.split('-')[0],month:date.split('-')[1]})
   if(temp>0){
+    loadMark.value=false
     return message.error('当前业务日期期间已经结账，不能进行单据新增操作，请取消结账后后重试！！')
   }
   // 弃审
   if(!b){
     if(!hasBlank(stockWareData.value.hxIsum)&&parseFloat(stockWareData.value.hxIsum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过应付核销，不能进行取消审核操作，请删除核销单据后继续！')
     }else if(!hasBlank(stockWareData.value.hzhcNum)&&parseFloat(stockWareData.value.hzhcNum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过红字回冲，不能进行取消审核操作，请手动删除红字回冲单据后继续！')
     }else if(stockWareData.value.bworkable=='1'){
+      loadMark.value=false
       return message.error('当前单据已进行过应付款复核，不能进行取消审核操作，请取消单据复核后继续！')
     }
     let findByRukuData=await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,ccode:formItems.value.ccode,billStyle:'CGDHD'})
     if(findByRukuData.length>0){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
 
     if(stockWareData.value.swsIsumTuihuo !=0){
+      loadMark.value=false
       return message.error('当前单据已进行过应付核销，不能进行取消审核操作，请删除核销单据后继续！')
     }else if(!hasBlank(stockWareData.value.hzhcNum)&&parseFloat(stockWareData.value.hzhcNum)!=0){
+      loadMark.value=false
       return message.error('当前单据已进行过红字回冲，不能进行取消审核操作，请手动删除红字回冲单据后继续！')
     }else if(stockWareData.value.bworkable=='1'){
+      loadMark.value=false
       return message.error('当前单据已进行过应付款复核，不能进行取消审核操作，请取消单据复核后继续！')
     }
   }
@@ -1428,6 +1445,7 @@ const startReview = async (b) => {
       let pd= await useRouteApi(getPYRKDAndNoBcheck1, { schemaName: dynamicTenantId })(dynamicYear.value)
       console.log('退货单：--->盘点处理-->'+pd)
       if(pd>0){
+        loadMark.value=false
         return message.error('正在进行盘点处理，不能进行单据新增操作，请销后再试！')
       }else if(pd==0&&dynamicTenant.value.target.apSourceFlag=='1'){
         console.log('退货单：--->入库单保存时修改现存量是否勾选-->'+dynamicTenant.value.target.apSourceFlag)
@@ -1543,6 +1561,7 @@ const startReview = async (b) => {
           let xy={iyear:dynamicYear.value,billStyle:'CGDHD',ccode:oldNum,ccodeDate:oldddate,xyBillStyle:'CGRKD',xyccode:newRuKuNum,xyccodeDate:oldddate}
           await useRouteApi(xyCsourceSave, {schemaName: dynamicTenantId})(xy)
           pageParameter.type='CGDHD'
+          loadMark.value=false
           await contentSwitch('curr','')
         }
       })
@@ -1550,6 +1569,7 @@ const startReview = async (b) => {
     tempTaskDel(taskInfo.value?.id)
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='CGDHD'
+    loadMark.value=false
     await pageReload()
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -2287,7 +2307,7 @@ async function verifyRowXCLData(r,queryType) {
   // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
   await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({queryType:queryType,cinvode:r.cinvode,cwhcode:r.cwhcode,iyear:dynamicYear.value,rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
-      let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
+      let conversionRate:any= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate || '1'
       console.log(t)
       console.log(conversionRate)
       r.showNumber=parseFloat(t/conversionRate).toFixed(2)
