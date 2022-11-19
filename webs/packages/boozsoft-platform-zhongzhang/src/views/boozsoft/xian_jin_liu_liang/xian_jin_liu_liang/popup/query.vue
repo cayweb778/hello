@@ -66,265 +66,212 @@
                   </div>
                 </div>
               </li>
-              <li><span>凭证编号：</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberStart" :allowClear="true" placeholder="" style="width: 200px"/>
-                <span>&emsp;~&emsp;</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberEnd" :allowClear="true" placeholder="" style="width: 200px"/>
-              </li>
-              <li><span>凭证类别：</span>
-                <a-select
-                  v-model:value="modelList['1'].variable.voucherType"
-                  placeholder=""
-                  style="width: 200px"
-                  :allowClear="true">
-                  <a-select-option value="记">记</a-select-option>
-                  <a-select-option value="转">转</a-select-option>
-                </a-select>
-                <span>&emsp;制单人：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="un">未审核</a-select-option>
-                  <a-select-option value="ok">已审核</a-select-option>
-                  <a-select-option value="to">待审核</a-select-option>
-                </a-select>
-              </li>
               <li>
-                <span>凭证摘要：</span>
-                <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
-              </li>
+                <div class="special-border-div">
+                  <span style="color: #5a5a5a">查询条件</span>
+                  <div style="display: inline-block;width: 96%;margin-left: 23px;">
+                    <div style="width: 100%;float: left;">
+                      <span>凭证编号：</span>
+                      <a-input v-model:value="modelList['1'].variable.voucherNumberStart" :allowClear="true" placeholder="" style="width: 200px"/>
+                      <span>&emsp;~&emsp;</span>
+                      <a-input v-model:value="modelList['1'].variable.voucherNumberEnd" :allowClear="true" placeholder="" style="width: 200px"/>
+                    </div>
 
-              <li>
-                <span>流量分配状态：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="1">已分配</a-select-option>
-                  <a-select-option value="0">未分配</a-select-option>
-                </a-select>
+                    <div style="width: 100%;float: left;">
+                      <span>凭证类别：</span>
+                      <a-select
+                        v-model:value="modelList['1'].variable.voucherType"
+                        placeholder=""
+                        style="width: 200px"
+                        :allowClear="true">
+                        <a-select-option value="记">记</a-select-option>
+                        <a-select-option value="转">转</a-select-option>
+                      </a-select>
+                      <span>&emsp;制 单 人：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="un">未审核</a-select-option>
+                        <a-select-option value="ok">已审核</a-select-option>
+                        <a-select-option value="to">待审核</a-select-option>
+                      </a-select>
+                    </div>
+
+                    <div style="width: 100%;float: left;">
+                      <span>凭证摘要：</span>
+                      <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
+                    </div>
+
+                    <div style="width: 100%;float: left;">
+                      <span>分配状态：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="1">已分配</a-select-option>
+                        <a-select-option value="0">未分配</a-select-option>
+                      </a-select>
+
+                      <span>&emsp;流量项目：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="un">未审核</a-select-option>
+                        <a-select-option value="ok">已审核</a-select-option>
+                        <a-select-option value="to">待审核</a-select-option>
+                      </a-select>
+                    </div>
+
+
+                    <div style="width: 100%;float: left;">
+                      <span>凭证摘要：</span>
+                      <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
+
+                      <a-checkbox v-model:checked="ishaveRjz" style="text-align: right;width: 200px;display: flex;">
+                        包含未记账
+                      </a-checkbox>
+                    </div>
+
+                    </div>
+                </div>
               </li>
-              <li>
-                <span>现金流量项目：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="un">未审核</a-select-option>
-                  <a-select-option value="ok">已审核</a-select-option>
-                  <a-select-option value="to">待审核</a-select-option>
-                </a-select>
-              </li>
-              <a-checkbox v-model:checked="ishaveRjz" style="width: 200px">
-                包含未记账
-              </a-checkbox>
             </ul>
           </a-tab-pane>
-         <!-- <a-tab-pane key="0" tab="集团模式">
-            <ul>
-              <li>
-                <span><span style="color: red">*</span>期&emsp;&emsp;间：</span>
-                <a-select
-                  v-model:value="strDate"
-                  show-search
-                  :disabled="dateselflg"
-                  style="width: 227px"
-                  @focus="focusStrDate"
-                  @change="handleChangeStrDate"
-                >
-                  <a-select-option
-                    v-for="item in strDateList"
-                    :key="item.id"
-                    :value="item.value"
-                  >
-                    {{ item.value }}
-                  </a-select-option>
-                </a-select>
-                <span>&emsp;~&emsp;</span>
-                <a-select
-                  v-model:value="endDate"
-                  show-search
-                  :disabled="dateselflg"
-                  style="width: 227px"
-                  @focus="focusEndDate"
-                  @change="handleChangeEndDate"
-                >
-                  <a-select-option
-                    v-for="item in endDateList"
-                    :key="item.id"
-                    :value="item.value"
-                  >
-                    {{ item.value }}
-                  </a-select-option>
-                </a-select>
-              </li>
-              <li><span>凭证编号：</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberStart" :allowClear="true" placeholder="" style="width: 227px"/>
-                <span>&emsp;~&emsp;</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberEnd" :allowClear="true" placeholder="" style="width: 227px"/>
-              </li>
-              <li><span>凭证类别：</span>
-                <a-select
-                  v-model:value="modelList['1'].variable.voucherType"
-                  placeholder=""
-                  style="width: 200px"
-                  :allowClear="true">
-                  <a-select-option value="记">记</a-select-option>
-                  <a-select-option value="转">转</a-select-option>
-                </a-select>
-                <span>&emsp;制单人：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="un">未审核</a-select-option>
-                  <a-select-option value="ok">已审核</a-select-option>
-                  <a-select-option value="to">待审核</a-select-option>
-                </a-select>
-              </li>
-              <li>
-                <span>凭证摘要：</span>
-                <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
-              </li>
 
-              <li>
-                <span>流量分配状态：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="1">已分配</a-select-option>
-                  <a-select-option value="0">未分配</a-select-option>
-                </a-select>
-              </li>
-              <li>
-                <span>现金流量项目：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.preparedMan"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="un">未审核</a-select-option>
-                  <a-select-option value="ok">已审核</a-select-option>
-                  <a-select-option value="to">待审核</a-select-option>
-                </a-select>
-              </li>
-              <a-checkbox v-model:checked="ishaveRjz" style="width: 200px">
-                包含未记账
-              </a-checkbox>
-            </ul>
-          </a-tab-pane>-->
           <a-tab-pane v-if="queryPlan!=null" key="1" tab="个人标准模式">
             <ul>
               <li>
-                <AccountPicker theme="one" @reloadTable="dynamicAdReload"/>
+                <div class="special-border-div">
+                  <span style="color: #5a5a5a">业务范围</span>
+                  <AccountPicker theme="one" @reloadTable="dynamicAdReload" style="display: block;text-align: center;"/>
+                </div>
               </li>
               <li>
-                <span><span style="color: red">*</span>期&emsp;&emsp;间：</span>
-                <a-select
-                  v-model:value="strDate"
-                  show-search
-                  :disabled="dateselflg"
-                  style="width: 200px"
-                  @focus="focusStrDate"
-                  @change="handleChangeStrDate"
-                >
-                  <a-select-option
-                    v-for="item in strDateList"
-                    :key="item.id"
-                    :value="item.value"
-                  >
-                    {{ item.value }}
-                  </a-select-option>
-                </a-select>
-                <span>&emsp;~&emsp;</span>
-                <a-select
-                  v-model:value="endDate"
-                  show-search
-                  :disabled="dateselflg"
-                  style="width: 200px"
-                  @focus="focusEndDate"
-                  @change="handleChangeEndDate"
-                >
-                  <a-select-option
-                    v-for="item in endDateList"
-                    :key="item.id"
-                    :value="item.value"
-                  >
-                    {{ item.value }}
-                  </a-select-option>
-                </a-select>
-              </li>
-              <li><span>凭证编号：</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberStart" :allowClear="true" placeholder="" style="width: 200px"/>
-                <span>&emsp;~&emsp;</span>
-                <a-input v-model:value="modelList['1'].variable.voucherNumberEnd" :allowClear="true" placeholder="" style="width: 200px"/>
-              </li>
-              <li><span>凭证类别：</span>
-                <a-select
-                  v-model:value="modelList['1'].variable.voucherType"
-                  placeholder=""
-                  style="width: 200px"
-                  :allowClear="true">
-                  <a-select-option value="记">记</a-select-option>
-                  <a-select-option value="转">转</a-select-option>
-                </a-select>
-                <span>&emsp;制单人：</span>
-                  <a-select
-                    :allowClear="true"
-                    show-search
-                    v-model:value="modelList['1'].variable.preparedMan"
-                    placeholder=""
-                    style="width: 200px"
-                  >
-                    <a-select-option v-for="(item,index) in userList" :key="index"
-                                     :value="item.psnName">{{ item.psnName }}
-                    </a-select-option>
-                  </a-select>
+                <div class="special-border-div">
+                  <span style="color: #5a5a5a">查询日期</span>
+                  <div>
+                    <span><span style="color: red">*</span>期&emsp;&emsp;间：</span>
+                    <a-select
+                      v-model:value="strDate"
+                      show-search
+                      :disabled="dateselflg"
+                      style="width: 200px"
+                      @focus="focusStrDate"
+                      @change="handleChangeStrDate"
+                    >
+                      <a-select-option
+                        v-for="item in strDateList"
+                        :key="item.id"
+                        :value="item.value"
+                      >
+                        {{ item.value }}
+                      </a-select-option>
+                    </a-select>
+                    <span>&emsp;~&emsp;</span>
+                    <a-select
+                      v-model:value="endDate"
+                      show-search
+                      :disabled="dateselflg"
+                      style="width: 200px"
+                      @focus="focusEndDate"
+                      @change="handleChangeEndDate"
+                    >
+                      <a-select-option
+                        v-for="item in endDateList"
+                        :key="item.id"
+                        :value="item.value"
+                      >
+                        {{ item.value }}
+                      </a-select-option>
+                    </a-select>
+                  </div>
+                </div>
               </li>
               <li>
-                <span>凭证摘要：</span>
-                <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
-              </li>
+                <div class="special-border-div">
+                  <span style="color: #5a5a5a">查询条件</span>
+                  <div style="display: inline-block;width: 96%;margin-left: 23px;">
+                    <div style="width: 100%;float: left;">
+                      <span>凭证编号：</span>
+                      <a-input v-model:value="modelList['1'].variable.voucherNumberStart" :allowClear="true" placeholder="" style="width: 200px"/>
+                      <span>&emsp;~&emsp;</span>
+                      <a-input v-model:value="modelList['1'].variable.voucherNumberEnd" :allowClear="true" placeholder="" style="width: 200px"/>
+                    </div>
 
-              <li>
-                <span>流量分配状态：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.cashProject"
-                  placeholder=""
-                  style="width: 200px"
-                >
-                  <a-select-option value="1">已分配</a-select-option>
-                  <a-select-option value="0">未分配</a-select-option>
-                </a-select>
-              </li>
-              <li>
-                <span>现金流量项目：</span>
-                <a-select
-                  :allowClear="true"
-                  v-model:value="modelList['1'].variable.projectList"
-                  placeholder=""
-                  style="width: 200px"
-                >
+                    <div style="width: 100%;float: left;">
+                      <span>凭证类别：</span>
+                      <a-select
+                        v-model:value="modelList['1'].variable.voucherType"
+                        placeholder=""
+                        style="width: 200px"
+                        :allowClear="true">
+                        <a-select-option value="记">记</a-select-option>
+                        <a-select-option value="转">转</a-select-option>
+                      </a-select>
+                      <span>&emsp;制 单 人：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="un">未审核</a-select-option>
+                        <a-select-option value="ok">已审核</a-select-option>
+                        <a-select-option value="to">待审核</a-select-option>
+                      </a-select>
+                    </div>
 
-                </a-select>
+                    <div style="width: 100%;float: left;">
+                      <span>凭证摘要：</span>
+                      <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
+                    </div>
+
+                    <div style="width: 100%;float: left;">
+                      <span>分配状态：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="1">已分配</a-select-option>
+                        <a-select-option value="0">未分配</a-select-option>
+                      </a-select>
+
+                      <span>&emsp;流量项目：</span>
+                      <a-select
+                        :allowClear="true"
+                        v-model:value="modelList['1'].variable.preparedMan"
+                        placeholder=""
+                        style="width: 200px"
+                      >
+                        <a-select-option value="un">未审核</a-select-option>
+                        <a-select-option value="ok">已审核</a-select-option>
+                        <a-select-option value="to">待审核</a-select-option>
+                      </a-select>
+                    </div>
+
+
+                    <div style="width: 100%;float: left;">
+                      <span>凭证摘要：</span>
+                      <a-input v-model:value="modelList['1'].variable.summary" :allowClear="true"  placeholder="摘要" style="width: 400px"/>
+
+                      <a-checkbox v-model:checked="ishaveRjz" style="text-align: right;width: 200px;display: flex;">
+                        包含未记账
+                      </a-checkbox>
+                    </div>
+
+                  </div>
+                </div>
               </li>
-              <a-checkbox v-model:checked="ishaveRjz" style="width: 200px">
-                包含未记账
-              </a-checkbox>
             </ul>
           </a-tab-pane>
 
