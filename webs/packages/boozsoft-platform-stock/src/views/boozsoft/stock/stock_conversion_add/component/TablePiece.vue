@@ -1535,24 +1535,25 @@ const tableFt = () => {
         v.icost = i
         let s = parseFloat(v.icost/v.cnumber)
         v.price = Math.round(s * 100) / 100
-        if(!hasBlank(v.icost)){
-          v.fyprice = m
-        }
+        v.fyprice = hasBlank(m)?'0':m
       })
     }else{
       let sum = 0
       let sumf = 0
       list.forEach(v=>{
-          let t = parseFloat((i*(v.cnumber/sq)))
-          v.icost = Math.round(t * 100) / 100
+        let t = parseFloat((i*(v.cnumber/sq)))
+        v.icost = Math.round(t * 100) / 100
+        sum = sum + v.icost
 
-          let p = parseFloat(v.icost/v.cnumber)
-          v.price = Math.round(p * 100) / 100
-
+        let p = parseFloat(v.icost/v.cnumber)
+        v.price = Math.round(p * 100) / 100
+        if(hasBlank(m)){
+          v.fyprice = '0'
+        }else {
           let s = parseFloat((m*(v.cnumber/sq)))
           v.fyprice = Math.round(s * 100) / 100
-          sum = sum + v.icost
           sumf = sumf + v.fyprice
+        }
       })
       //分摊结束 如果转换后金额不一致 大就那最后一个金额减 小则加
       if(i != sum){
@@ -1563,7 +1564,7 @@ const tableFt = () => {
         }
       }
 
-      if(m != sumf){
+      if(!hasBlank(m) && m != sumf){
         if(m>sumf){
           list[list.length-1].fyprice = parseFloat(list[list.length-1].fyprice)+(parseFloat(m)-parseFloat(sumf))
         }else{
