@@ -1029,7 +1029,7 @@ public class StockChangeController {
                         .setCpersoncode(map.containsKey("cpersoncode") ? map.get("cpersoncode")==null?null:map.get("cpersoncode").toString() : null) // 业务员
                         //.setCwhcodeUser(map.containsKey("cwhcodeUser") ? map.get("cwhcodeUser")==null?null:map.get("cwhcodeUser").toString() : null) // 库管员
                         .setCmemo(map.containsKey("cmemo") ? map.get("cmemo")==null?null: map.get("cmemo").toString(): null) // 备注
-                        .setFymoney(map.containsKey("fymoney") ? map.get("fymoney").toString() : null)
+                        .setFymoney(map.containsKey("fymoney") ? map.get("fymoney")==null?null: map.get("fymoney").toString(): null)
                         .setCymoney(map.containsKey("cymoney") ? map.get("cymoney").toString() : null);
                 if (bcheckUser != null) {
                     warehousing.setBcheckUser(bcheckUser);

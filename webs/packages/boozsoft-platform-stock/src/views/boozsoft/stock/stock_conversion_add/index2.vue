@@ -1360,7 +1360,8 @@ async function saveData() {
   })
   console.log(formFuns.value.getFormValue()?.fymoney)
   console.log(fymoney)
-  if(formFuns.value.getFormValue()?.fymoney  != fymoney){
+  let fy = hasBlank(formFuns.value.getFormValue()?.fymoney)?'0':formFuns.value.getFormValue()?.fymoney
+  if(fy  != fymoney){
     message.error("转换前后费用金额不一致!")
     let list = getDataSource();
     //计算数量金额总和
@@ -2170,8 +2171,7 @@ const slChange0 = (r) => {
         r.tempSubQuantity1 = r.subQuantity1
         r.tempSubQuantity2 = r.subQuantity2
       }
-    }
-    else{
+    } else{
       r.baseQuantity = "0.0000000000"
       r.subQuantity1 = "0.0000000000"
       r.subQuantity2 = "0.0000000000"
@@ -2353,7 +2353,7 @@ async function verifyRowXCLData(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 
@@ -2372,7 +2372,7 @@ async function verifyRowKylData(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 // 存货成本单价
@@ -2401,7 +2401,7 @@ async function verifyRowXCL(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 
