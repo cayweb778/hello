@@ -24,7 +24,7 @@
           <Button class="actod-btn" @click="startDel" v-if="status == 3 && formItems.id != null">删除</Button>
           <Popover placement="bottom" v-if="formItems.bcheck=='1'">
             <template #content>
-              <span class="group-btn-span-special">&nbsp;生成退款单</span><br/>
+<!--              <span class="group-btn-span-special">&nbsp;生成退款单</span><br/>-->
               <span class="group-btn-span-special">&nbsp;生成记账凭证</span><br/>
             </template>
             <Button class="actod-btn">生单</Button>
