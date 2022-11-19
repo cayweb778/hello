@@ -217,7 +217,7 @@ async function goExcel() {
 
 import {appLocalDataDir} from '@tauri-apps/api/path';
 if(window.__TAURI_POST_MESSAGE__==null){
-  router.push('/login')
+  // router.push('/login')
 }
 const outSystemBefore = async () => {
   // console.log(await appLocalDataDir())

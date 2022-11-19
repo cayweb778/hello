@@ -398,7 +398,7 @@ import {aoaToSheetXlsx} from '/@/components/Excel';
 import {countByTname, save as saveCodeTemplate,} from '/@/api/record/system/code-import-template';
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {findByStockAccountAccId} from "/@/api/record/system/stock-account";
-// import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
+//import DynamicColumn from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicColumn.vue";
 const DynamicColumn=null
 import {findPeriod} from "/@/api/record/generalLedger/data";
 import {findAccvoucherSettingByCcode, findAllApi} from "/@/api/boozsoft/account/AccvoucherSetting";

@@ -283,3 +283,10 @@ export const verifyDataState = defRouteApi(async (params: any) => {
     params,
   };
 });
+export const delXySourceCcodeAndXyBillStyle = defRouteApi(async (params: any) => {
+  return {
+    url: '/stock/warehousing/delXySourceCcodeAndXyBillStyle',
+    method: 'POST',
+    params,
+  };
+});

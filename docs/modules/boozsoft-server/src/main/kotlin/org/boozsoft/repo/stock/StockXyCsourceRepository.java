@@ -155,6 +155,9 @@ public interface StockXyCsourceRepository extends ReactiveCrudRepository<StockXy
 
     @Query("delete from stock_xy_csource where ccode=:ccode and xy_bill_style in ('HZHCD','LZHCD')")
     Mono<Void> delXyHCD(String ccode);
+
+    @Query("delete from stock_xy_csource where ccode=:ccode and xy_bill_style=:xyBillStyle ")
+    Mono<Void> delCcodeAndXyBillStyle(String ccode,String xyBillStyle);
 }
 
 

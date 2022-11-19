@@ -531,7 +531,7 @@
     <ChangeItems @register="registerItemsPage"/>
     <Lack @register="registerLackPage"/>
     <Refer @register="registerReferModalPage" @throwData="referThrowData"/>
-    <BarCode @register="registerBarCodeModalPage" />
+    <BarCode @register="registerBarCodeModalPage" @throwData="barCodeThrowData"/>
 
   </div>
 </template>
@@ -619,7 +619,7 @@ import {
   reviewSetCGRKGMx,
   saveRuKu,
   verifySyCsourceByXyCode,
-  xyCsourceSave, verifyDataState,
+  xyCsourceSave, verifyDataState, delXySourceCcodeAndXyBillStyle,
 } from "/@/api/record/stock/stock-ruku";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import dayjs from "dayjs";
@@ -1452,7 +1452,7 @@ const startDel = async () => {
     // 可用量不足 不足 弹出框提示
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
       return  openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
     }
@@ -2070,6 +2070,8 @@ const startReview = async (b) => {
     loadMark.value=false
     for (let i = 0; i < list.length; i++) {
       await delJieSuanFun(list[i].ccode)
+      // 删除下游单据-核算单
+      await useRouteApi(delXySourceCcodeAndXyBillStyle, {schemaName: dynamicTenantId})({ccode:list[i].ccode,xyBillStyle:'CGJSD'})
     }
     delXyHCDDFun()
     delStockWareHCDFun()
@@ -2947,7 +2949,7 @@ const tableDataChange =  async (r,c) => {
 
           let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
           // 如果是负数强制转换成正数比较;可用量不能等于0
-          currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+          currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
           if(currData.length>0){
             return openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
           }
@@ -3259,6 +3261,7 @@ const focusNext =  async (r, c) => {
   r[`${c}`] = r[`temp${t}`];
   // 列表值发生变动 监听调整
   tableDataChange(r,c)
+  console.log(r)
   // 查找下一个
   let list = getDataSource();
   let filters:any = ['bcheck1','isGive','cinvodeType','cinvodeName','cunitid','cunitidF1','cunitidF2','baseQuantity','subQuantity1', 'subQuantity2','price','icost']
@@ -3561,7 +3564,7 @@ async function setCGTHD_data() {
   // 可用量不足 弹出框提示
   let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
   // 如果是负数强制转换成正数比较;可用量不能等于0
-  currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+  currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
   console.log('弃审判断可用量：'+currData)
   if(currData.length>0){
     loadMark.value=false
@@ -3929,6 +3932,7 @@ async function referThrowData(data) {
     b.isumDaohuo='0'
     b.itaxrate=formFuns.value.getFormValue().rate
     slChange0(b)
+    calcBaseQuantityPrice(b)
   }
   for (let i = data.list.length; i < 50; i++) {
     data.list.push({})
@@ -3938,6 +3942,27 @@ async function referThrowData(data) {
     setTableData(data.list)
     loadMark.value=false
   },800)
+}
+
+// 计算主数据单价
+const calcBaseQuantityPrice = (r) => {
+  if (!hasBlank(r.baseQuantity)) {
+    let n:any = parseFloat(r.baseQuantity).toFixed(10)
+    if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
+    let d:any = hasBlank(r.taxprice)?0:parseFloat(r.taxprice).toFixed(10)
+    r.isum = parseFloat(String(n * d )).toFixed(4)
+    r.tempIsum = r.isum
+
+    let itaxrate:any=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
+    // 无税金额=价税合计÷税率
+    r.tempTen =parseFloat(String(r.isum/itaxrate)).toFixed(4)
+    r.icost =r.tempTen
+    // 无税单价
+    r.tempNine =parseFloat(String(r.icost/n)).toFixed(10)
+    r.price =r.tempNine
+    // 税额=价税合计-无税金额
+    r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):0
+  }
 }
 
 // 复制
@@ -3977,9 +4002,26 @@ const copyFun = async () => {
 // 条形码弹框
 const [registerBarCodeModalPage, {openModal: openBarCodePageM}] = useModal()
 const openCodePage = () => {
+  if(hasBlank(formFuns.value.getFormValue().cvencode)||hasBlank(formFuns.value.getFormValue().cwhcode)){
+    return message.error('请选择供应商和仓库！')
+  }
+
   openBarCodePageM(true, {
-    dynamicTenant:dynamicTenant.value,
+    dynamicTenantId:dynamicTenantId.value,
   })
+}
+// 条形码弹框回调
+const barCodeThrowData = async (map) => {
+  let data=map.barCodeVal
+  let barCodeType=map.barCodeType
+
+  tempType.value=barCodeType=='2'?'one':'three'
+  let temp:any={
+    cinvode:data.stockNum,
+    cnumber:'1'
+  }
+  chChange(temp)
+  setTableData([temp])
 }
 /********** 单据搜索 *********/
 const showSearch=ref(false)

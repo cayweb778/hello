@@ -686,7 +686,7 @@ const jsonData = reactive({
               name: '自定义',
             }
           ]
-       },
+        },
         {
           key: '3-25',
           value: '入库调整单',

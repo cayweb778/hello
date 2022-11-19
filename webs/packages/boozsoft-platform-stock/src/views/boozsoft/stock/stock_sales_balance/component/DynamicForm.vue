@@ -89,9 +89,7 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {SearchOutlined} from '@ant-design/icons-vue';
 import {Select} from "ant-design-vue";
 import {hasBlank} from "/@/api/task-api/tast-bus-api";
-import {
-  manualTypeConversionAttributes
-} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicForm";
+import {changeCust} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicForm";
 
 const emit = defineEmits(['register', 'open']);
 const props = defineProps(['datasource', 'formDataFun', 'accId', 'readOnly'])
@@ -209,16 +207,8 @@ const focusNext = (t) => {
 }
 
 function custChange(v,t) {
-  let custList = selectModel.value['cust']
-  let nextV = v
-  if (t === 1){
-    let e = custList.filter(it=>it.id == v)[0]
-    if (!hasBlank(e.uniqueCodeCcus))nextV = e.uniqueCodeCcus
-  }
-  let model = getFieldsValue()
-  model['cvencodeJs'] = nextV;
-  let priceLevel = custList.filter(it=>it.id == nextV)[0]?.priceLevel
-  cvencodeGrade.value = hasBlank(priceLevel)?'memberprice':manualTypeConversionAttributes(priceLevel);
+  let model = changeCust(v, selectModel.value['cust'],getFieldsValue())
+  cvencodeGrade.value = model['cvencodeGrade']
   setFieldsValue(model)
 }
 </script>

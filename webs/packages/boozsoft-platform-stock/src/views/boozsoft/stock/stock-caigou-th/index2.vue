@@ -1740,7 +1740,7 @@ async function saveData() {
     // 可用量不足 不足 弹出框提示；不能等于0
     let currData=await useRouteApi(verifyStockXCLList, { schemaName: dynamicTenantId })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:titleValue.value,iyear:dynamicYear.value})
     // 如果是负数强制转换成正数比较
-    currData=currData.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData.length>0){
       return openLackPage(true,{data:currData,queryType:'keyong',dynamicTenantId:dynamicTenantId.value})
     }
@@ -2926,6 +2926,7 @@ async function referThrowData(data) {
     b.isumTuiHuo='0'
     b.isumJiesuan='0'
     slChange0(b)
+    calcBaseQuantityPrice(b)
     verifyRowXCLData(b,'keyong')
   }
   calculateTotal()
@@ -2937,7 +2938,26 @@ async function referThrowData(data) {
     setTableData(data.list)
   },500)
 }
+// 计算主数据单价
+const calcBaseQuantityPrice = (r) => {
+  if (!hasBlank(r.baseQuantity)) {
+    let n:any = parseFloat(r.baseQuantity).toFixed(10)
+    if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
+    let d:any = hasBlank(r.taxprice)?0:parseFloat(r.taxprice).toFixed(10)
+    r.isum = parseFloat(String(n * d )).toFixed(4)
+    r.tempIsum = r.isum
 
+    let itaxrate:any=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
+    // 无税金额=价税合计÷税率
+    r.tempTen =parseFloat(String(r.isum/itaxrate)).toFixed(4)
+    r.icost =r.tempTen
+    // 无税单价
+    r.tempNine =parseFloat(String(r.icost/n)).toFixed(10)
+    r.price =r.tempNine
+    // 税额=价税合计-无税金额
+    r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):0
+  }
+}
 const toPrintPage = () => {
   router.push({
     path:'/sz-print-template',

@@ -30,6 +30,13 @@
             ant-click-animating-without-extra-node="false"
             @click="delList()"
           ><span>删除</span></button>
+          <a-popover placement="bottom">
+            <a-button class="ant-btn ant-btn-me"><span>停启</span></a-button>
+            <template #content>
+              <span class="group-btn-span-special2 p_specifics" @click="saveFlag()">启用</span><br/>
+              <span class="group-btn-span-special2 p_specifics" @click="unSaveFlag()">停用</span>
+            </template>
+          </a-popover>
           <button
             type="button"
             class="ant-btn ant-btn-me"
@@ -131,13 +138,29 @@
         @save="saveExcel"
         @register="registerExcelPage"
       />
+      <PageWrapper dense content-full-height fixed-height content-class="flex">
+        <div class="w-1/4 xl:w-1/5" style="width: 300px;min-height: 300px;border: 1px #cccccc solid;margin-right: .2%;margin-bottom: 58px;">
+          <div class="bg-white">
+            <div style="width: 100%; height: 32px;background-color: #d9d9d9;padding-top:5px;font-weight: bold;text-align: center;">费用类型</div>
+            <BasicTree
+              title=""
+              :click-row-to-expand="false"
+              :tree-data="treeData"
+              :replace-fields="{ key: 'id', title: 'value' }"
+              v-model:selectedKeys="selectedKeys"
+              v-model:expandedKeys="expandedKeys"
+              @select="handleSelect"
+            />
+          </div>
+        </div>
+        <div style="width: calc(100% - 300px); float: right;margin-left: 5px;">
       <BasicTable
         :row-selection="{ type: 'checkbox', selectedRowKeys: state.selectedRowKeys,getCheckboxProps:rowSelection.getCheckboxProps, onChange: onSelectChange }"
         @selection-change="selectionChange"
         @row-click="rowClick"
         :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
         @register="registerTable"
-        :dataSource="cardList"
+        :dataSource="tableData"
         :scroll="{ x: totalColumnWidth,y: windowHeight }"
         :loading="loadMark"
       >
@@ -186,11 +209,15 @@
       <div class="pagination-text" v-show="showPaginationText">
         共 {{paginationNumber}} 条记录&nbsp;&nbsp; 每页 200 条
       </div>
+        </div>
+      </PageWrapper>
     </div>
   </div>
 </template>
 <script setup="props, {emit}" lang="ts">
 import { BasicTable, useTable } from '/@/components/Table'
+import {PageWrapper} from '/@/components/Page'
+import {BasicTree} from '/@/components/Tree'
 import Edit from './popup/edit.vue'
 import Excel from './popup/excel.vue'
 import AccountPicker from "/@/boozsoft/components/AccountPicker/AccountPicker-DATA.vue";
@@ -239,8 +266,7 @@ import {
 import {getCurrentAccountName, getThisIndexImg, hasBlank} from "/@/api/task-api/tast-bus-api";
 import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import {useMessage} from "/@/hooks/web/useMessage";
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import {aoaToSheetXlsx} from "/@/components/Excel";
 import {useTabs} from "/@/hooks/web/useTabs";
 import router from "/@/router";
 import {
@@ -261,7 +287,8 @@ const {closeCurrent} = useTabs(router);
 
 const {
   createConfirm,
-  createWarningModal
+  createWarningModal,
+  createErrorModal
 } = useMessage()
 
 const flag = ref('1')
@@ -269,6 +296,68 @@ const flag = ref('1')
 const windowWidth = (document.documentElement.clientWidth - (70 + 280))
 const windowHeight = (window.innerHeight - (300))
 const totalColumnWidth = ref(0)
+
+//树形控件
+const showTree = ref(true)
+const treeData: any = ref([])
+const selectedKeys: any = ref([])
+const expandedKeys: any = ref([])
+const monthList: any = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+const showYearList = ref([])
+async function fetch() {
+  treeData.value = []
+  let classTree:any = []
+  classTree.push({id: 'CGFY', key: 'CGFY', ccode: 'CGFY', value: '采购费用'})
+  classTree.push({id: 'XSFY', key: 'XSFY', ccode: 'XSFY', value: '销售费用'})
+  classTree.push({id: 'SCFY', key: 'SCFY', ccode: 'SCFY', value: '生产费用'})
+  classTree.push({id: 'QTFY', key: 'QTFY', ccode: 'QTFY', value: '其他费用'})
+
+  // function a(deptTree: any) {
+  //   deptTree.forEach((item: any) => {
+  //     if (item.children != null) {
+  //       a(item.children)
+  //     }
+  //     item.value = '[' + item.deptCode + ']  ' + item.deptName
+  //   })
+  // }
+
+  function b(deptTree: any) {
+    let arr: any = []
+    arr.push(deptTree[0].id)
+    return arr
+  }
+
+  // a(classTree)
+  treeData.value = []
+  treeData.value.push({id:'0',key:'0',ccode:'0',value: '全部',children: classTree})
+  // treeData.value.push(...deptTree)
+  // treeData.value = (await getDeptList())
+  // let checks = b(deptTree)
+  let checks = b(treeData.value)
+  selectedKeys.value = checks
+  expandedKeys.value = checks
+}
+const checks:any = ref([])
+async function handleSelect(keys: string, e: any) {
+  let keyStr = keys[0] + ',';
+  if (null != e.selectedNodes && e.selectedNodes.length > 0
+    && null != e.selectedNodes[0].children && e.selectedNodes[0].children.length > 0) {
+    keyStr = getThisNodeStr(e.selectedNodes[0].children, keyStr)
+  }
+  checks.value = keyStr
+  await reloadCurrentPage()
+  console.log(keyStr)
+}
+
+function getThisNodeStr(list,str) {
+  for (const nods of list) {
+    str+=(nods.key+',')
+    if (null != nods.children && nods.children.length > 0){
+      str = getThisNodeStr(nods.children,str)
+    }
+  }
+  return str
+}
 
 const CrudApi = {
   columns: [
@@ -311,7 +400,7 @@ const CrudApi = {
     {
       title: '是否分摊',
       dataIndex: 'isFentan',
-      align: 'left',
+      // align: 'left',
       width: 100,
       ellipsis: true,
       slots: {customRender: 'isFentan'}
@@ -347,12 +436,12 @@ const [registerTable, { reload,getDataSource,setTableData,setColumns,getColumns,
     pageSizeOptions: ['10', '25', '50', '100'],
     showTotal: t => `总共${t}条数据`
   },*/
-  actionColumn: {
+  /*actionColumn: {
     width: 100,
     title: '操作',
     dataIndex: 'action',
     slots: {customRender: 'action'}
-  }
+  }*/
 })
 
 function formatCtype(ctype){
@@ -455,26 +544,32 @@ async function reloadCurrentPage() {
   } else {
     cardList.value = tableDataAll.value
   }
-  let num = 25-(cardList.value.length%25)
-  for (let i=0;i<num;i++){
-    cardList.value.push({})
+  if (checks.value.length>0 && checks.value[0]!='0'){
+    tableData.value = cardList.value.filter(item => checks.value.indexOf(item.ctype)!=-1)
+  } else {
+    tableData.value = cardList.value
   }
-  setPagination({total:cardList.value.length})
+  let num = 25-(tableData.value.length%25)
+  for (let i=0;i<num;i++){
+    tableData.value.push({})
+  }
+  setPagination({total:tableData.value.length})
   len = tableData.value.filter(item=>item.id!=null && item.id!='').length
   paginationNumber.value = len
   showPaginationText.value = true
   loadMark.value = false
 }
 
-function onChangeSwitch(str){
+async function onChangeSwitch(str){
   flag.value = str
-  if (flag.value=='1'){
-    cardList.value = tableDataAll.value.filter(item => item.status=='1')
-  } else if(flag.value=='0'){
-    cardList.value = tableDataAll.value.filter(item => item.status=='0')
-  } else {
-    cardList.value = tableDataAll.value
-  }
+  await reloadCurrentPage()
+  // if (flag.value=='1'){
+  //   tableData.value = tableDataAll.value.filter(item => item.status=='1')
+  // } else if(flag.value=='0'){
+  //   tableData.value = tableDataAll.value.filter(item => item.status=='0')
+  // } else {
+  //   tableData.value = tableDataAll.value
+  // }
 }
 
 onMounted(async() => {
@@ -574,6 +669,76 @@ async function delList() {
   }
 }
 
+//启用
+async function saveFlag(){
+  if (checkRow.value.length > 0) {
+    let num = 0
+    for (let i = 0; i < checkRow.value.length; i++) {
+      const item = checkRow.value[i]
+      if (item.flag == '1') {
+        num++
+        createErrorModal({
+          iconType: 'warning',
+          title: '启用',
+          content: '已有启用项不能进行启用！'
+        })
+        return false
+      }
+    }
+    if (num == 0) {
+      for (let i = 0; i < checkRow.value.length; i++) {
+        const item = checkRow.value[i]
+        await useRouteApi(editFlag, {schemaName: dynamicTenantId})(item)
+      }
+      checkRow.value = []
+      state.selectedRowKeys = []
+      message.success('启用成功！')
+      await reloadCurrentPage()
+    }
+  } else {
+    createWarningModal({
+      iconType: 'warning',
+      title: '启用',
+      content: '请选择需要启用的内容！'
+    })
+  }
+}
+
+//停用
+async function unSaveFlag(){
+  if (checkRow.value.length > 0) {
+    let num = 0
+    for (let i = 0; i < checkRow.value.length; i++) {
+      const item = checkRow.value[i]
+      if (item.flag != '1') {
+        num++
+        createErrorModal({
+          iconType: 'warning',
+          title: '停用',
+          content: '已有停用项不能进行停用！'
+        })
+        return false
+      }
+    }
+    if (num == 0) {
+      for (let i = 0; i < checkRow.value.length; i++) {
+        const item = checkRow.value[i]
+        await useRouteApi(editFlag, {schemaName: dynamicTenantId})(item)
+      }
+      checkRow.value = []
+      state.selectedRowKeys = []
+      message.success('停用成功！')
+      await reloadCurrentPage()
+    }
+  } else {
+    createWarningModal({
+      iconType: 'warning',
+      title: '停用',
+      content: '请选择需要停用的内容！'
+    })
+  }
+}
+
 function onSearch() {
 }
 
@@ -633,6 +798,8 @@ const dynamicAdReload = async (obj) => {
   dynamicTenantId.value = obj.accountMode
   pageParameter.companyName = obj.baseName
   await reloadCurrentPage()
+  await fetch()
+
   loadMark.value = true
   checkRow.value = []
   state.selectedRowKeys = []
@@ -684,7 +851,7 @@ const dynamicAdReload = async (obj) => {
   position: relative;
   :deep(.pagination-text){
     position: absolute;
-    bottom: 6px;
+    bottom: 246px;
     right: 200px;
     font-size: 13px;
     color: black;
@@ -728,6 +895,15 @@ const dynamicAdReload = async (obj) => {
 
 :deep(.ant-input),:deep(.ant-select),:deep(.ant-btn){
   border: 1px solid #c9c9c9;
+}
+
+.bg-white {
+  width: 300px !important;
+  min-height: 300px !important;
+  height: calc(100% - 170px);
+  border: 1px #cccccc solid;
+  background: white !important;
+  margin-right: .2%;
 }
 
 </style>

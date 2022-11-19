@@ -10,8 +10,8 @@ import {useUserStoreWidthOut} from '/@/store/modules/user';
 import {SettingButtonPositionEnum} from '/@/enums/appEnum';
 import {createAsyncComponent} from '/@/utils/factory/createAsyncComponent';
 
-import SessionTimeoutLogin from '/@/views/sys/login/SessionTimeoutLogin.vue';
-
+// import SessionTimeoutLogin from '/@/views/sys/login/SessionTimeoutLogin.vue';
+const SessionTimeoutLogin=null
 import LayoutLockPage from '/@/views/sys/lock/index.vue'
 import SettingDrawer from '../setting/index.vue'
 

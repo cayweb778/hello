@@ -2937,7 +2937,7 @@ async function verifyRowXCLData(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 
@@ -2952,13 +2952,14 @@ async function verifyRowXCL(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 
 // 按行校验存货现存量
 async function verifyRowKylData(r) {
   // 入库保存修改现存量：0可用量  1查现存量 dynamicTenant.value.target?.kcCgrkCheck=='1'?'xcl':'keyong'
+  //
   await useRouteApi(verifyStockRowXCL, {schemaName: dynamicTenantId})({
     queryType:'keyong',
     cinvode:r.cinvode,
@@ -2971,7 +2972,7 @@ async function verifyRowKylData(r) {
     ckBcheck:dynamicTenant.value.target?.kcXsckCheck})
     .then((t)=>{
       let conversionRate= r.unitList.filter(j=>j.value==r.cgUnitId)[0]?.conversionRate
-      r.xcl=parseFloat(t/conversionRate).toFixed(2)
+      r.xcl= hasBlank(conversionRate)? parseFloat(t).toFixed(2):parseFloat(t/conversionRate).toFixed(2)
     })
 }
 

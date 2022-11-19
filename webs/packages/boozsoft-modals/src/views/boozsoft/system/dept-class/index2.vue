@@ -600,10 +600,8 @@ import {
   sheet_from_array_of_arrays,
   Workbook, writeExcel
 } from "/@/api/record/generalLedger/excelExport";
-//import XLSX from "xlsx-js-style";
-const XLSX=null;
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import XLSX from "xlsx-js-style";
+import {aoaToSheetXlsx} from "/@/components/Excel";
 import {useNewPrint} from "/@/utils/boozsoft/print/print";
 import {tableStyle} from "/@/store/modules/abc-print";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";

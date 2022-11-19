@@ -96,8 +96,7 @@ import {
   GetDeptTreeByFlag
 } from '/@/api/record/system/zf-class'
 import {columnProps} from "ant-design-vue/es/table/interface";
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import {aoaToSheetXlsx} from "/@/components/Excel";
 const ASelectOption = ASelect.Option;
 const AInputSearch = AInput.Search;
 const AStatisticCountdown = AStatistic.Countdown;

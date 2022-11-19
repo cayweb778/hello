@@ -380,7 +380,7 @@ export const findByXyCcode = defRouteApi( async ({ccode,year,type})=>{
 })
 export const getDataInfo = defRouteApi( async (ccode)=>{
   return  {
-    url: '/stock/stockTransfers/findStockWareByCcode?ccode='+ccode,
+    url: '/stockTaking/findStockWareByCcode?ccode='+ccode,
     method: 'POST',
     timeout: 10000000,
   }

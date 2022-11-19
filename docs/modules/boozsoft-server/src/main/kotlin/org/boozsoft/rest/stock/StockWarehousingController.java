@@ -1167,7 +1167,7 @@ public class StockWarehousingController {
                 resut.put("master", warehousing);
                 resut.put("sub", entrys);
                 break;
-            case ("QT"):
+            case ("ZG"):
                 warehousing = new StockWarehousing();
                 bcheckUser = map.containsKey("bcheckUser") ? map.get("bcheckUser").toString() : null; // 审核人
                 warehousing.setId(map.containsKey("id") ? map.get("id").toString() : null).setCcode(map.containsKey("ccode") ? map.get("ccode").toString() : null) //单号
@@ -1815,4 +1815,12 @@ public class StockWarehousingController {
             return Mono.just(txt);
         }).map(R::ok);
     }
+
+    @PostMapping("delXySourceCcodeAndXyBillStyle")
+    public Mono<R> delXySourceCcodeAndXyBillStyle(@RequestBody Map map){
+        String ccode=map.get("ccode").toString();
+        String xyBillStyle=map.get("xyBillStyle").toString();
+        return xyCsourceRepository.delCcodeAndXyBillStyle(ccode,xyBillStyle).then(Mono.just(R.ok()));
+    }
+
 }
