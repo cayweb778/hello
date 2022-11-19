@@ -608,7 +608,7 @@ import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import {
   deleteByXyStyleAndBillStyleAndccode,
   delRuKu,
-  delXyCsourceByxyCcodeAndxyBillTypeAndBillTypeAndCcode,
+  delXyCsourceByxyCcodeAndxyBillTypeAndBillTypeAndCcode, delXySourceCcodeAndXyBillStyle,
   findBillByCondition,
   findBillCode,
   findByStockPeriodIsClose,
@@ -1610,8 +1610,8 @@ const startReview = async (b) => {
         jiesuans.quantityDaohuo=jiesuans.quantityRuku
         jiesuansList.push(jiesuans)
 
-        let sourceUnitRate:any=listdata[i].unitList.filter(f=>f.value==sourceData.cgUnitId)[0]?.conversionRate
-        let unitRate:any=listdata[i].unitList.filter(f=>f.value==listdata[i].cgUnitId)[0]?.conversionRate
+        let sourceUnitRate:any=listdata[i].unitList.filter(f=>f.value==sourceData.cgUnitId)[0]?.conversionRate || '1'
+        let unitRate:any=listdata[i].unitList.filter(f=>f.value==listdata[i].cgUnitId)[0]?.conversionRate || '1'
         // 入库单参照到货单单价=（来源单据无税单价 除 来源单据计量单位换算率） 乘 入库单据计量单位换算率
         let price:any=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
         listdata[i].isumJiesuan=listdata[i].baseQuantity
@@ -1645,6 +1645,8 @@ const startReview = async (b) => {
         listdata[i].isumJiesuan = hasBlank(stockWaresData.stockWaresData)?0:stockWaresData.stockWaresData
         // 删除核算单
         delJieSuanFun(listdata[i].ccode)
+        // 删除下游单据-核算单
+        await useRouteApi(delXySourceCcodeAndXyBillStyle, {schemaName: dynamicTenantId})({ccode:formItems.value.ccode,xyBillStyle:'CGJSD'})
       }
     }
     listdata.map(tx=>{tx.bcheck=bcheck;tx.bcheckUser=bcheckUser;tx.bcheckTime=bcheckTime;return tx})
@@ -2805,10 +2807,7 @@ async function referThrowData(data) {
     b.isumRuku='0'
     slChange0(b)
 
-    // 单计量没有换算率
-    if(data.list[i]?.cinvodeInfo?.stockMeasurementType=='多计量'){
-      await resetCanzhaoPrice(b)
-    }
+    calcBaseQuantityPrice(b)
     if(titleValue.value==1){
       // 校验现存量
       verifyRowXCLData(b)
@@ -2832,7 +2831,7 @@ async function resetCanzhaoPrice(record) {
   let price:any=(parseFloat(sourceData.price)/parseFloat(sourceUnitRate))*parseFloat(unitRate)
   record.tempNine=parseFloat(price).toFixed(10)
   record.price=record.tempNine
-  tableDataChange(record,'price')
+  calcBaseQuantityPrice(record)
 }
 
 function openPrint() {
@@ -2959,7 +2958,8 @@ async function editUnitType(record) {
       record.cinvodeInfo = o
       if(canzhao.value){
         // 重新计算参照数量的无税单价
-        await resetCanzhaoPrice(record)
+        // await resetCanzhaoPrice(record)
+        calcBaseQuantityPrice(record)
       }
       calculateTotal()
     },onCancel: () => {
@@ -3188,6 +3188,32 @@ function batchSelectorData(data) {
     setTableData(data)
     loadMark.value=false
   },500)
+}
+
+// 计算主数据单价
+const calcBaseQuantityPrice = (r) => {
+  if (!hasBlank(r.baseQuantity) && !hasBlank(r.price)) {
+    let n:any = parseFloat(r.baseQuantity).toFixed(10)
+    if (titleValue.value != 0 && n > 0) n = 0 - (Math.abs(n))
+    if (titleValue.value == 0 && n < 0) n = 0 - Math.abs(n)
+    let d:any = parseFloat(r.price).toFixed(10)
+    if (titleValue.value != 0 && d > 0) d = 0 - (Math.abs(d))
+    if (titleValue.value == 0 && d < 0) d = Math.abs(d)
+
+    r.icost = titleValue.value == 0?parseFloat(String(n * d)).toFixed(4) + '':parseFloat(String(n * d)).toFixed(4)*-1
+    r.tempTen = r.icost
+    r.price = Math.abs(d)
+
+    // 含税单价
+    let itaxrate=hasBlank(r.itaxrate)?1:1+(r.itaxrate/100)
+    r.taxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
+    r.tempTaxprice=r.price*itaxrate>0?parseFloat(String(r.price*itaxrate)).toFixed(10):null
+    // 价税合计
+    r.isum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
+    r.tempIsum=parseFloat(String(r.icost*itaxrate)).toFixed(4)
+    // 税额=价税合计-无税金额
+    r.itaxprice=r.isum-r.icost>0?parseFloat(String(r.isum-r.icost)).toFixed(4):null
+  }
 }
 /********** 单据搜索 *********/
 const showSearch=ref(false)

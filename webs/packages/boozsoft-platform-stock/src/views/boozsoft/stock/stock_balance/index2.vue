@@ -669,7 +669,7 @@ async function auditAll(type) {
     // 可用量
     let currData2=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
     // 如果是负数强制转换成正数比较;可用量不能等于0
-    currData2=currData2.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData=currData.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData2.length>0){
       return  openLackPage(true,{data:currData2,queryType:'keyong',dynamicTenantId:database.value})
     }
@@ -731,7 +731,7 @@ async function audit(type) {
     // 可用量
     let currData2=await useRouteApi(verifyStockXCLList, { schemaName: database })({queryType:'keyong',list:JSON.stringify(verifylist),rkBcheck:dynamicTenant.value.target?.kcCgrkCheck,ckBcheck:dynamicTenant.value.target?.kcXsckCheck,bdocumStyle:'0',iyear:iyear.value})
     // 如果是负数强制转换成正数比较;可用量不能等于0
-    currData2=currData2.map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
+    currData2=currData2.filter(t=>parseFloat(t.lackBaseQuantity)!=0).map(c=>{c.lackBaseQuantity=Math.abs(parseFloat(c.lackBaseQuantity));return c;})
     if(currData2.length>0){
       return  openLackPage(true,{data:currData2,queryType:'keyong',dynamicTenantId:database.value})
     }

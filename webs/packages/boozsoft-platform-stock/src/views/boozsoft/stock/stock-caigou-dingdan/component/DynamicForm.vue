@@ -91,6 +91,7 @@ import {findByStockPeriodIsClose} from "/@/api/record/stock/stock-ruku";
 import dayjs from "dayjs";
 import {useCompanyOperateStoreWidthOut} from "/@/store/modules/operate-company";
 import {useNcModals} from "/@/views/boozsoft/stock/stock_out_add/otherServerReferences";
+import {useNcBusStoreWidthOut} from "/@/store/modules/nc-bus";
 
 const emit = defineEmits(['register', 'open']);
 const props = defineProps(['datasource', 'formDataFun', 'accId', 'readOnly','dynamicTenant'])
@@ -167,14 +168,17 @@ const inputRate   = (model,field,val) => {
   return model[field]=(temp)+'%'
 }
 
+const {openGysModal} =  useNcModals()
+const {useNcModalData, To} = useNcBusStoreWidthOut().useModals()
 async function testOpenGysModal(model){
-  const {openGysModal} =  useNcModals()
-  const params=props.dynamicTenant
-  const result=await openGysModal(params)
-  if(result.length>0){
-    model.cvencode=result[result.length-1]?.id
-    cvencode(model)
-  }
+  const result = await useNcModalData('GYS', {})
+  console.log(result)
+  // const params=props.dynamicTenant
+  // const result=await openGysModal(params)
+  // if(result.length>0){
+  //   model.cvencode=result[result.length-1]?.id
+  //   cvencode(model)
+  // }
 }
 async function dateChange(data) {
   // 日期是否已结账
