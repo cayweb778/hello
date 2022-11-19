@@ -13,8 +13,10 @@
     >
       <FormItem name="coCode" class="enter-x">
         <Input size="large" v-model:value="formData.coCode"
-               :placeholder="公司代码/*t('sys.login.userName')*/"/>
-      </FormItem><Input size="large" v-model:value="formData.account"
+               placeholder="公司代码"/>
+      </FormItem>
+      <FormItem name="account" class="enter-x">
+        <Input size="large" v-model:value="formData.account"
                :placeholder="t('sys.login.userName')"/>
       </FormItem>
       <FormItem name="password" class="enter-x">

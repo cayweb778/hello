@@ -12,7 +12,7 @@
           <AppLogo :alwaysShowTitle="true" />
         </span>-->
     <div class="enter-x login-img-div">
-      <img :src="booz_nc_logo_png" style="height: 24px;margin-top: 5px;"/>
+      <img :src="booz_nc_logo_png" style="height: 50px;margin-top: 5px;"/>
       <!--      <img :src="nc_logo_png"/>-->
     </div>
     <div class="container relative h-full py-2 mx-auto sm:px-10">
