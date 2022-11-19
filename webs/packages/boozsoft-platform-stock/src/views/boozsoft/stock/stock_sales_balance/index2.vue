@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/xs-dhList')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/stock_balance_dh_list')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" @click="startEdit('edit')" v-if="status == 3 && formItems.bcheck != '1'" :disabled="ymPeriod">修改</Button>
           <Button class="actod-btn" @click="biandong?saveChanges():saveData()" v-if="status == 1 || status == 2">保存</Button>
@@ -734,6 +734,7 @@ import Print from '/@/views/boozsoft/stock/stock_sales_add/popup/print.vue'
 import {verifySyLineCodeExistXyData} from "/@/api/record/stock/stock-xy-source";
 import {saveLog} from "/@/api/record/system/group-sys-login-log";
 import {defaultRows} from "./component/DynamicForm";
+import {changeCust} from "/@/views/boozsoft/stock/stock_sales_add/component/DynamicForm";
 const RadioButton = Radio.Button
 const RadioGroup = Radio.Group
 const InputSearch = Input.Search
@@ -1813,6 +1814,7 @@ const openSelectContent = (o, type) => {
       break;
   }
 }
+
 const openHeadSelectContent = (type) => {
   thisEditType.value = type
   if (status.value == 3) return false
@@ -1834,6 +1836,7 @@ const openHeadSelectContent = (type) => {
       })
       break;
     case 'cpersoncode':
+    case 'deliveryUser':
       openSelectPsnPage(true, {
         dynamicTenantId: dynamicTenantId.value
       })
@@ -1890,13 +1893,8 @@ const modalData = (o) => {
     thisEditObj.value = null
   } else {
     let e = formFuns.value.getFormValue()
-    e[thisEditType.value] = thisEditType.value == 'cvencode' || thisEditType.value == 'cwhcode' ? o[0].id : thisEditType.value == 'cdepcode' ? o.uniqueCode : o.id
-    if (thisEditType.value == 'cvencode'){
-      let nextV = o[0].id
-      let e = custList.value.filter(it=>it.id == nextV )[0]
-      if (!hasBlank(e.uniqueCodeCcus))nextV = e.uniqueCodeCcus
-      e['cvencodeJs'] = nextV;
-    }
+    e[thisEditType.value] = thisEditType.value == 'cvencode' || thisEditType.value == 'cwhcode' ? o[0].id : (thisEditType.value == 'cdepcode' || thisEditType.value == 'deliveryUser') ? o.uniqueCode : o.id
+    if (thisEditType.value == 'cvencode') e = changeCust(o[0].id,custList.value,e)
     formFuns.value.setFormValue(e)
   }
 }

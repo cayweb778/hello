@@ -1909,12 +1909,14 @@ const openSelectContent = (o, type) => {
 }
 
 const {openCustomModal,openDeptModal,openPsnModal} =  useNcModals()
-const openHeadSelectContent = (type) => {
+
+
+const openHeadSelectContent = async (type) => {
   thisEditType.value = type
   if (status.value == 3) return false
   switch (type) {
     case 'cvencode':
-       openCustomModal(dynamicTenant.value).then(res=>modalData(res))
+       // openCustomModal(dynamicTenant.value).then(res=>modalData(res))
       break;
     case 'cdepcode':
       openDeptModal(dynamicTenant.value).then(res=>modalData(res))
