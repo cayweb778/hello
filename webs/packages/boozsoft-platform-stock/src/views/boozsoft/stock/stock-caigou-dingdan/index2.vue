@@ -1157,10 +1157,12 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
@@ -1170,6 +1172,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'采购订单,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1187,8 +1190,10 @@ const startDel = async () => {
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       },onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1197,22 +1202,27 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 弃审
   if(!b){
     if(stockWareData.bcloser=='1'){
+      loadMark.value=false
       return message.error('请先启用单据,再弃审！')
     }
     if(stockWareData.value.biandong>0){
+      loadMark.value=false
       return message.error('已有变更,不能弃审!')
     }
     let findByRukuData=await useRouteApi(verifySyCsourceByXyCode, {schemaName: dynamicTenantId})({year:formItems.value.iyear,ccode:formItems.value.ccode,billStyle:'CGDD'})
     if(findByRukuData.length>0 ){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
@@ -1249,6 +1259,7 @@ const startReview = async (b) => {
     saveLogData('审核')
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='CGDD'
+    loadMark.value=false
     await contentSwitch('curr','')
   }else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -2320,9 +2331,11 @@ function setString(str, len) {
 
 // 生成采购到货单
 const setCGDHD_data = async () => {
+  loadMark.value=true
   //  是否生成过 采购入库单
   let cgrkd= await useRouteApi(findByIyearAndCcodeAndXyBillStyle, {schemaName: dynamicTenantId})({iyear:dynamicYear.value,ccode:formItems.value.ccode,xyBillStyle:'CGRKD'})
   if(!hasBlank(cgrkd)){
+    loadMark.value=false
     return message.error('当前单据已生成采购入库单,不能生成其他类型！！')
   }
 
@@ -2337,6 +2350,7 @@ const setCGDHD_data = async () => {
   let temp=await useRouteApi(findByStockPeriodIsClose, {schemaName: dynamicTenantId})({iyear:ddate.split('-')[0],month:ddate.split('-')[1]})
   if(temp>0){
     setTimeout(()=>{
+      loadMark.value=false
       return message.error('当前单据业务期间已经结账，不能进行变更操作，请取消期间结账后继续！！')
     },1000)
   }
@@ -2427,7 +2441,7 @@ const setCGDHD_data = async () => {
         data:formItems.value,
         mx:JSON.stringify(listarr)
       }
-
+      loadMark.value=false
       // 跳转到货单页面
       router.push({path:'cg-arrive',query:{type:'cgdd',json:JSON.stringify(dataArr)}})
     }
@@ -2435,9 +2449,11 @@ const setCGDHD_data = async () => {
 }
 // 生成采购入库单
 const setCGRKD_data = async () => {
+  loadMark.value=true
   //  是否生成过 采购到货单
   let cgrkd= await useRouteApi(findByIyearAndCcodeAndXyBillStyle, {schemaName: dynamicTenantId})({iyear:dynamicYear.value,ccode:formItems.value.ccode,xyBillStyle:'CGDHD'})
   if(!hasBlank(cgrkd)){
+    loadMark.value=false
     return message.error('当前单据已生成采购到货单,不能生成其他类型！！')
   }
 
@@ -2534,6 +2550,7 @@ const setCGRKD_data = async () => {
         data:formItems.value,
         mx:JSON.stringify(listarr)
       }
+      loadMark.value=false
       // 跳转入库单页面
       router.push({path:'kc-cgDepot',query:{type:'cgdd',json:JSON.stringify(dataArr)}})
     }
@@ -2541,6 +2558,7 @@ const setCGRKD_data = async () => {
 }
 // 生成采购发票
 const setCGFP_data = () => {
+  loadMark.value=true
   let ddate=''
   if(parseFloat(useCompanyOperateStoreWidthOut().getLoginDate.replaceAll('-',''))<parseFloat(formItems.value.ddate.replaceAll('-',''))){
     ddate=formItems.value.ddate
@@ -2634,6 +2652,7 @@ const setCGFP_data = () => {
         data:formItems.value,
         mx:JSON.stringify(listarr)
       }
+      loadMark.value=false
       // 跳转入库单页面
       router.push({path:'cg-bill',query:{type:'cgdd',json:JSON.stringify(dataArr)}})
     }
@@ -2663,7 +2682,7 @@ const copyFun = async () => {
     cmemo: formItems.value.cmemo,
   })
   let list = getDataSource().map(t=>{t.id=null;t.ccode=code;t.sourcecode=null;t.sourcetype=null;t.sourcedetailId=null;t.sourcedate=null;
-    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;return t;})
+    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;t.lineCode=randomString(30);return t;})
   let dLen = list.length
   for (let i = dLen; i < 50; i++) {
     list.push({})

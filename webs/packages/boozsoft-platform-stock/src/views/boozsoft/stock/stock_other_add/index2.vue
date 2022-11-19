@@ -1320,29 +1320,35 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
     if(stockWareData.value.bstyle=='调拨入库'||stockWareData.value.bstyle=='转换入库'||stockWareData.value.bstyle=='盘盈入库'){
+      loadMark.value=false
       message.error('当前单据由关联单据生成,不能直接删除单据，弃审来源单据时将自动删除！')
       return false
     }
     if(formItems.value.bcheck=='1'){
+      loadMark.value=false
       message.error('其他入库单已经审核，不能删除，请弃审单据后重试！')
       return false
     }
     // 有无 整理现存量 任务
     let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
     if(!hasBlank(xclTaskData)){
+      loadMark.value=false
       return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
     }
     // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
     if(!hasBlank(jzMethod)){
+      loadMark.value=false
       return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
 
@@ -1372,6 +1378,7 @@ const startDel = async () => {
       // 如果是负数强制转换成正数比较
       currData=currData.filter(c=>Math.abs(parseFloat(c.lackBaseQuantity))<0)
       if(currData.length>0){
+        loadMark.value=false
         return  openLackPage(true,{data:currData,queryType:'xcl',dynamicTenantId:dynamicTenantId.value})
       }
     }
@@ -1400,9 +1407,11 @@ const startDel = async () => {
         saveLogData('删除')
         message.success('删除成功！')
         formItems.value.czId = ''
+        loadMark.value=false
         await contentSwitch('tail','')
       }
       ,onCancel: () => {
+        loadMark.value=false
         tempTaskDel(taskInfo.value?.id)
         return false
       }
@@ -1411,20 +1420,24 @@ const startDel = async () => {
 }
 
 const startReview = async (b) => {
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg=await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({dataType:'cg',operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 有无 整理现存量 任务
   let xclTaskData= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'整理现存量',method:'整理现存量'})
   if(!hasBlank(xclTaskData)){
+    loadMark.value=false
     return message.error('系统正在进行现存量整理操作，不能进行单据处理，请销后再试！')
   }
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
   if(!hasBlank(jzMethod)){
+    loadMark.value=false
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
 
@@ -1444,6 +1457,7 @@ const startReview = async (b) => {
     let t=list[i]
     let temp=await useRouteApi(getPYRKDAndNoBcheck1, {schemaName: dynamicTenantId})(t.iyear)
     if(temp.length>0){
+      loadMark.value=false
       message.error('存货盘点锁定中，不能审核或弃审当前单据，请确认盘点业务结束后再试！')
       return false
     }
@@ -1507,6 +1521,7 @@ const startReview = async (b) => {
     saveLogData('审核')
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='QTRKD'
+    loadMark.value=false
     await contentSwitch('curr','')
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
@@ -2995,7 +3010,7 @@ const copyFun = async () => {
     cmemo: formItems.value.cmemo
   })
   let list = getDataSource().map(t=>{t.id=null;t.ccode=code;t.sourcecode=null;t.sourcetype=null;t.sourcedetailId=null;t.sourcedate=null;
-    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;return t;})
+    t.isumJiesuan=0;t.isumFapiao=0;t.isumRuku=0;t.hxIsum=0;t.isumDaohuo=0;t.isumTuiHuo=0;t.isumFapiaoMoney=0;t.lineCode=randomString(30);return t;})
   let dLen = list.length
   for (let i = dLen; i < 50; i++) {
     list.push({})

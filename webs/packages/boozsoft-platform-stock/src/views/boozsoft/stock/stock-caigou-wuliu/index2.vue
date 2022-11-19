@@ -1119,6 +1119,7 @@ const startReview = async (b) => {
     message.error('此单据已审核！')
     return false
   }
+  loadMark.value=true
   let a = useUserStoreWidthOut().getUserInfo.id
   if (!hasBlank(a) && !hasBlank(formItems.value.id))  {
     tempTaskSave('新增')
@@ -1138,6 +1139,7 @@ const startReview = async (b) => {
     tempTaskDel(taskInfo.value?.id)
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='CGWLD'
+    loadMark.value=false
     await pageReload()
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')

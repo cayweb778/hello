@@ -977,17 +977,19 @@ const startDel = async () => {
       content: '暂无任何单据！'
     })
   } else {
-
+    loadMark.value=true
     // 执行操作前判断单据是否存在
     let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
     let msg= await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'edit',list:[ccodeBcheck]})
     if(hasBlank(msg)){
+      loadMark.value=false
       return message.error("单据已发生变化,请刷新当前单据！")
     }
 
     // 结账操作
     let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
     if(!hasBlank(jzMethod)){
+      loadMark.value=false
       return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
     }
     // 任务
@@ -996,6 +998,7 @@ const startDel = async () => {
       for (let i = 0; i < taskData.length; i++) {
         // 任务不是当前操作员的
         if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+          loadMark.value=false
           return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'借入借用单,不能同时进行操作！' });
         }
         await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1011,6 +1014,7 @@ const startDel = async () => {
         await useRouteApi(delStockBorrowByccode, {schemaName: dynamicTenantId})({id: formItems.value.id})
         tempTaskDel(taskInfo.value?.id)
         saveLogData('删除')
+        loadMark.value=false
         message.success('删除成功！')
         await contentSwitch('tail','')
       }
@@ -1023,15 +1027,18 @@ const startReview = async (b) => {
     message.error('此单据已审核！')
     return false
   }
+  loadMark.value=true
   // 执行操作前判断单据是否存在
   let ccodeBcheck=formItems.value.ccode+'>>>'+(hasBlank(formItems.value.bcheck)?'0':formItems.value.bcheck)
   let msg= await useRouteApi(verifyDataState, { schemaName: dynamicTenantId })({operation:'audit',list:[ccodeBcheck]})
   if(hasBlank(msg)){
+    loadMark.value=false
     return message.error("单据已发生变化,请刷新当前单据！")
   }
   // 结账操作
   let jzMethod= await useRouteApi(getByStockBalanceTask, { schemaName: dynamicTenantId })({iyear:dynamicYear.value,name:'月末结账',method:'月末结账'})
   if(!hasBlank(jzMethod)){
+    loadMark.value=false
     return message.error('提示：操作员'+jzMethod.caozuoName+'正在对当前账套进行月末结账处理，不能进行单据新增操作，请销后再试！')
   }
   // 任务
@@ -1040,6 +1047,7 @@ const startReview = async (b) => {
     for (let i = 0; i < taskData.length; i++) {
       // 任务不是当前操作员的
       if(taskData[i]?.caozuoUnique!==useUserStoreWidthOut().getUserInfo.id){
+        loadMark.value=false
         return createWarningModal({ content: taskData[i]?.username+'正在'+taskData[i]?.method+'借入借用单,不能同时进行操作！' });
       }
       await useRouteApi(stockBalanceTaskEditNewTime, { schemaName: dynamicTenantId })(taskData[i]?.id)
@@ -1048,6 +1056,7 @@ const startReview = async (b) => {
   if(!b){
     let xyData=await useRouteApi(findByCcodeAndXyBillStyle, {schemaName: dynamicTenantId})({ccode:formItems.value.ccode,xytype:'QTRKD'})
     if(xyData.length>0 ){
+      loadMark.value=false
       message.error('已经生成下游单据,不能弃审！')
       return false;
     }
@@ -1085,6 +1094,7 @@ const startReview = async (b) => {
     saveLogData('审核')
     message.success(`${b?'审核':'弃审'}成功！`)
     pageParameter.type='JRJY'
+    loadMark.value=false
     await contentSwitch('curr','')
   } else {
     if (hasBlank(a)) message.error('获取用户信息异常！')
