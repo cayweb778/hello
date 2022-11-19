@@ -1,268 +1,273 @@
 <template>
-  <div class="app-container">
-    <div class="app-container-top">
-      <div class="app-container-head">
-        <div class="container-head-title" style="float: none;text-align: center;display: revert;margin-left:0px">
-          <b class="noneSpan" >现金流量统计表</b>
-        </div>
-        <div class="ant-btn-group">
-          <button
-            type="button"
-            class="ant-btn ant-btn-me"
+  <div>
+    <div class="app-container">
+      <ProfileOutlined style="color: #0096c7;font-size: 60px;margin-top: 10px;"/>&emsp;
+      <div style="width: 33%;margin-top: 9px;">
+        <AccountPicker theme="one" readonly="" @reloadTable="dynamicAdReload" style="margin-top: 20px;"/>
+      </div>
+      <div style="width: 29.5%;text-align: center;margin-top: 9px;">
+        <span style="font-size: 24px;font-weight: bold;color:rgb(0 150 199)">现金流量统计表</span><br>
+        <span style="color:#666666;font-weight: bold;">期间：</span> <span style="color: #0f0f0f;font-weight: bold;">{{ pageParameter.thisInterval }}</span>
+
+      </div>
+
+      <div style="width: 33%;text-align: right;margin-left: 8px;" >
+        <a-button
+          class="actod-btne"
+          ant-click-animating-without-extra-node="false"
+          @click="openQueryPage()"
+        ><span>查询</span></a-button>
+        <a-popover placement="bottom">
+          <template #content>
+            <span class="group-btn-span-special" @click="exportExcelNow()">导出当前</span><br/>
+            <span class="group-btn-span-special" >条件导出</span>
+          </template>
+          <a-button
+            class="actod-btne"
             ant-click-animating-without-extra-node="false"
-            @click="openQueryPage()"
-          ><span>查询</span></button>
-          <a-popover placement="bottom">
-            <template #content>
-              <span class="group-btn-span-special" @click="exportExcelNow()">导出当前</span><br/>
-              <span class="group-btn-span-special" >条件导出</span>
-            </template>
-            <button
-              type="button"
-              class="ant-btn ant-btn-me"
-              ant-click-animating-without-extra-node="false"
-            ><span>导出</span></button></a-popover>
-          <a-popover placement="bottom">
-            <template #content>
-              <span class="group-btn-span-special" @click="exportPdfNow()">打印当前</span><br/>
-              <span class="group-btn-span-special">条件打印</span>
-            </template>
-            <button
-              type="button"
-              class="ant-btn ant-btn-me"
-              ant-click-animating-without-extra-node="false"
-            ><span>打印</span></button>
-          </a-popover>
-          <button
-            type="button"
-            class="ant-btn ant-btn-me"
+          ><span>导出</span></a-button></a-popover>
+        <a-popover placement="bottom">
+          <template #content>
+            <span class="group-btn-span-special" @click="exportPdfNow()">打印当前</span><br/>
+            <span class="group-btn-span-special">条件打印</span>
+          </template>
+          <a-button
+            class="actod-btne"
             ant-click-animating-without-extra-node="false"
-            @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"
-          ><span>退出</span></button>
-        </div>
-        <div style="clear:both" />
-        <div style="margin-top: .1%;">
-          <div style="display: inline-block;font-size: 14px;float: none;text-align: center;display: revert;">
-            期间：<span style="color: black;font-weight: bold">{{ pageParameter.thisInterval }}</span>
-          </div>
-          <div style="display: inline-block;flfindAllPingZhengListoat: left;margin-left: 1%;font-size: 14px;width: 40%">
-            <AccountPicker theme="one" readonly="" @reloadTable="dynamicAdReload"/>
-          </div>
-          <div style="float: right; margin-left: 10px">
-            <a-button class="ant-btn-default" @click="closeFilterV(),pageReload()">
-              <SyncOutlined :style="{ fontSize: '14px' }" />
-            </a-button>
-            <a-popover class="ant-btn-default" placement="bottom">
-              <template #content>
-                <a-popconfirm
-                  ok-text="保存"
-                  cancel-text="关闭"
-                  @confirm="confirm"
-                  @cancel="cancel"
-                >
-                  <template #icon><b>栏目设置</b><br></template>
-                  <template #title>
-                    <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
-                             childrenColumnName="children" :pagination="false" style="max-height: 500px;overflow-y: auto" class="lanmu-table">
-                      <template #checkBox="{ text, record }">
-                        <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
-                      </template>
-                      <template #widthInput="{ text, record }">
-                        <div class="editable-cell">
-                          <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                            <a-input type="number" v-model:value="editableData[record.key].width"
-                                     @pressEnter="save(record.key,record.min,record.max)" style="width: 80px"/>
-                            <check-outlined class="editable-cell-icon-check"
-                                            @click="save(record.key,record.min,record.max)"/>
-                          </div>
-                          <div v-else class="editable-cell-text-wrapper">
-                            {{ text || ' ' }}
-                            <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                            <span style="float: right;">{{ record.min + '~' + record.max }}</span>
-                          </div>
-                        </div>
-                      </template>
-                      <template #nameInput="{ text, record }">
-                        <div class="editable-cell">
-                          <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
-                            <a-input type="text" v-model:value="editableData[record.key].nameNew"
-                                     @pressEnter="saveName(record.key)" style="width: 100px"/>
-                            <check-outlined class="editable-cell-icon-check"
-                                            @click="saveName(record.key)"/>
-                          </div>
-                          <div v-else class="editable-cell-text-wrapper">
-                            {{ text || ' ' }}
-                            <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
-                          </div>
-                        </div>
-                      </template>
-                      <template #alignRadio="{ text, record }">
-                        <a-radio-group default-value="a" size="small" v-model:value="record.align"
-                                       :disabled="record.align=='' || record.name=='本币金额' || record.name=='原币金额'
-                                        || record.name=='借方' || record.name=='贷方' || record.name=='余额'">
-                          <a-radio-button value="left">
-                            左
-                          </a-radio-button>
-                          <a-radio-button value="center">
-                            中
-                          </a-radio-button>
-                          <a-radio-button value="right">
-                            右
-                          </a-radio-button>
-                        </a-radio-group>
-                      </template>
-                    </a-table>
+          ><span>打印</span></a-button>
+        </a-popover>
+        <a-button class="actod-btn" style="border-right: 1px solid #cccccc;" @click="closeCurrent(),router.push('/zhongZhang/home/welcome')"><span>退出</span></a-button>
+
+        <p/>
+
+        <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 150px;text-align:left;font-size: 12px;" class="special_select">
+          <template v-for="item in searchConditonList.slice(1)">
+            <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
+              {{item.title}}
+            </a-select-option>
+          </template>
+        </a-select>
+        <a-input-search
+          placeholder=""
+          v-model:value="pageParameter.searchConditon.value"
+          @search="pageSearch"
+          style="width: 150px;border-radius: 4px;border: 1px #cccccc solid;"
+        />
+
+        <a-button class="ant-btn-default" @click="closeFilterV(),pageReload()">
+          <SyncOutlined :style="{ fontSize: '14px' }" />
+        </a-button>
+        <a-popover class="ant-btn-default" placement="bottom">
+          <template #content>
+            <a-popconfirm
+              ok-text="保存"
+              cancel-text="关闭"
+              @confirm="confirm"
+              @cancel="cancel"
+            >
+              <template #icon><b>栏目设置</b><br></template>
+              <template #title>
+                <a-table bordered :data-source="dynamicColumnData" :columns="dynamicColumns"
+                         childrenColumnName="children" :pagination="false" style="max-height: 500px;overflow-y: auto" class="lanmu-table">
+                  <template #checkBox="{ text, record }">
+                    <a-checkbox v-model:checked="record.check" :disabled="record.isFixed"/>
                   </template>
-                  <a-button style="width: 120px;margin-bottom: 2px">栏目设置</a-button>
-                </a-popconfirm>
-                <br/>
-                <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
-                      :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
+                  <template #widthInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="number" v-model:value="editableData[record.key].width"
+                                 @pressEnter="save(record.key,record.min,record.max)" style="width: 80px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="save(record.key,record.min,record.max)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                        <span style="float: right;">{{ record.min + '~' + record.max }}</span>
+                      </div>
+                    </div>
+                  </template>
+                  <template #nameInput="{ text, record }">
+                    <div class="editable-cell">
+                      <div v-if="editableData[record.key]" class="editable-cell-input-wrapper">
+                        <a-input type="text" v-model:value="editableData[record.key].nameNew"
+                                 @pressEnter="saveName(record.key)" style="width: 100px"/>
+                        <check-outlined class="editable-cell-icon-check"
+                                        @click="saveName(record.key)"/>
+                      </div>
+                      <div v-else class="editable-cell-text-wrapper">
+                        {{ text || ' ' }}
+                        <edit-outlined class="editable-cell-icon" @click="edit(record.key)"/>
+                      </div>
+                    </div>
+                  </template>
+                  <template #alignRadio="{ text, record }">
+                    <a-radio-group default-value="a" size="small" v-model:value="record.align"
+                                   :disabled="record.align=='' || record.name=='本币金额' || record.name=='原币金额'
+                                        || record.name=='借方' || record.name=='贷方' || record.name=='余额'">
+                      <a-radio-button value="left">
+                        左
+                      </a-radio-button>
+                      <a-radio-button value="center">
+                        中
+                      </a-radio-button>
+                      <a-radio-button value="right">
+                        右
+                      </a-radio-button>
+                    </a-radio-group>
+                  </template>
+                </a-table>
+              </template>
+              <a-button style="width: 120px;margin-bottom: 2px">栏目设置</a-button>
+            </a-popconfirm>
+            <br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MAX'"
+                  :style="pageParameter.showRulesSize==='MAX'?{backgroundColor: '#0096c7',color: 'white'}:''">
                 <SortDescendingOutlined/>&nbsp;大号字体&ensp;<CheckOutlined
-                  v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
-                <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
-                      :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white'}:''">
+              v-if="pageParameter.showRulesSize==='MAX'"/></span><br/>
+            <span class="group-btn-span-special2" @click="pageParameter.showRulesSize = 'MIN'"
+                  :style="pageParameter.showRulesSize==='MIN'?{backgroundColor: '#0096c7',color: 'white'}:''">
                 <SortAscendingOutlined/>&nbsp;小号字体&ensp;<CheckOutlined
-                  v-if="pageParameter.showRulesSize==='MIN'"/></span>
-              </template>
-              <a-button>
-                <SettingFilled :style="{ fontSize: '14px' }"/>
-              </a-button>
-            </a-popover>
+              v-if="pageParameter.showRulesSize==='MIN'"/></span>
+          </template>
+          <a-button>
+            <SettingFilled :style="{ fontSize: '14px' }"/>
+          </a-button>
+        </a-popover>
 
 
-            <a-popover class="ant-btn-default" placement="bottom">
-              <template #content>
-                <span class="group-btn-span-special">导出当前</span><br/>
-                <span class="group-btn-span-special">条件导出</span>
-              </template>
-              <button
-                type="button"
-                class="ant-btn"
-                ant-click-animating-without-extra-node="false"
-              >
-                <UsbOutlined/>
-              </button>
-            </a-popover>
-            <a-popover class="ant-btn-default" placement="bottom">
-              <template #content>
-                <span class="group-btn-span-special">打印当前</span><br/>
-                <span class="group-btn-span-special">条件打印</span>
-              </template>
-              <button
-                type="button"
-                class="ant-btn"
-                ant-click-animating-without-extra-node="false"
-              >
-                <PrinterOutlined/>
-              </button>
+        <a-popover class="ant-btn-default" placement="bottom">
+          <template #content>
+            <span class="group-btn-span-special">导出当前</span><br/>
+            <span class="group-btn-span-special">条件导出</span>
+          </template>
+          <button
+            type="button"
+            class="ant-btn"
+            ant-click-animating-without-extra-node="false"
+          >
+            <UsbOutlined/>
+          </button>
+        </a-popover>
+        <a-popover class="ant-btn-default" placement="bottom">
+          <template #content>
+            <span class="group-btn-span-special">打印当前</span><br/>
+            <span class="group-btn-span-special">条件打印</span>
+          </template>
+          <button
+            type="button"
+            class="ant-btn"
+            ant-click-animating-without-extra-node="false"
+          >
+            <PrinterOutlined/>
+          </button>
 
-            </a-popover>
-            <a-button @click="()=>{if (!visible){visible = true;reloadColumns();}return false}">
-              <FilterFilled :style="{ fontSize: '14px' }"/>
-            </a-button>
-          </div>
-          <div style="float: right; position: relative">
-            <!-- 搜索 -->
-            <!--
-                      <span class="noneSpan" style="font-size: 16px">检索条件：</span>
-            -->
-            <a-select v-model:value="pageParameter.searchConditon.requirement" style="width: 130px;" class="special_select">
-              <template v-for="item in searchConditonList.slice(1)">
-                <a-select-option v-if="item.ifShow == true" :value="item.dataIndex">
-                  {{item.title}}
-                </a-select-option>
-              </template>
-            </a-select>
-            <a-input-search
-              placeholder=""
-              v-model:value="pageParameter.searchConditon.value"
-              @search="pageSearch"
-              style="width: 200px;border-radius: 4px"
-            />
-          </div>
+        </a-popover>
+      </div>
+
+    </div>
+
+    <div class="app-container">
+      <div class="app-container-bottom" >
+        <BasicTable
+          ref="tableRef"
+          :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
+          :scroll="{ x: totalColumnWidth,y: windowHeight }"
+          size="small"
+          @register="registerTable"
+          @fetch-success="fetchSuccess"
+        >
+
+          <template #number="{record,index }">
+              <span slot="number" slot-scope="text,record,index">
+               {{index+1}}
+              </span>
+          </template>
+
+          <template #fx="{record,index }">
+              <span slot="fx" slot-scope="text,record,index">
+               {{fxFormat(record.fx)}}
+              </span>
+          </template>
+
+          <template #money="{ record }">
+            <span style="float: right" @click="goto()">{{ formatMoney(record) }}</span>
+          </template>
+
+          <template #summary>
+            <TableSummary fixed>
+              <TableSummaryRow style="background-color: #cccccc;" v-if="pageParameter.queryMark=='J'">
+                <TableSummaryCell class="nc-summary" :index="0" :align="'left'" :colSpan="3" style="border-right: none;">合计</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.qcMd}}</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.qcMc}}</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.pzMd}}</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.pzMc}}</TableSummaryCell>
+                <TableSummaryCell v-show="ljchecked" class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.ljMd}}</TableSummaryCell>
+                <TableSummaryCell v-show="ljchecked" class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.ljMc}}</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.qmMd}}</TableSummaryCell>
+                <TableSummaryCell class="nc-summary" :index="0" :align="'right'" style="border-right: none;">{{summaryTotals.qmMc}}</TableSummaryCell>
+              </TableSummaryRow>
+            </TableSummary>
+          </template>
+        </BasicTable>
+        <div class="pagination-text" :style="{top: windowHeight+85+'px'}" v-show="showPageNumber">
+          {{`共 ${pageNumber} 条记录&emsp;每页 1000 条`}}
         </div>
+        <a-drawer
+          title="过滤漏斗"
+          placement="right"
+          :closable="true"
+          v-if="visible"
+          :mask="false"
+          :visible="visible"
+          :get-container="false"
+          :wrap-style="{ position: 'absolute' }"
+          @close="visible=false,reloadColumns()"
+        >
+          <ul>
+            <li>
+                <span style="color: black;font-weight: bold">
+                  借方本币：
+                </span>
+              <div>
+                <a-input v-model:value="pageParameter.filterConditon.amountMinJf"  placeholder="" style="width: 95px;font-size: 10px"/>
+                ~
+                <a-input v-model:value="pageParameter.filterConditon.amountMaxJf"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
+              </div>
+            </li>
+            <li style="margin-top: 5%">
+                <span style="color: black;font-weight: bold">
+                  贷方本币：
+                </span>
+              <div>
+                <a-input v-model:value="pageParameter.filterConditon.amountMinDf"  placeholder="" style="width: 95px;font-size: 10px"/>
+                ~
+                <a-input v-model:value="pageParameter.filterConditon.amountMaxDf"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
+              </div>
+            </li>
+            <li style="margin-top: 5%">
+                <span style="color: black;font-weight: bold">
+                  余额本币：
+                </span>
+              <div>
+                <a-input v-model:value="pageParameter.filterConditon.amountMinYe"  placeholder="" style="width: 95px;font-size: 10px"/>
+                ~
+                <a-input v-model:value="pageParameter.filterConditon.amountMaxYe"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
+              </div>
+            </li>
+          </ul>
+          <br/>
+          <a-button type="primary"  style="float: right;" @click="filterSearch">
+            <span style="font-size: 14px">开始</span>
+          </a-button>
+        </a-drawer>
+        <Query
+          @save="loadPage"
+          @register="registerQueryPage"
+        />
       </div>
     </div>
-    <div class="app-container-bottom" :style="{height: (windowHeight+60)+'px'}">
-      <BasicTable
-        ref="tableRef"
-        :class="pageParameter.showRulesSize=='MAX'?'a-table-font-size-16':'a-table-font-size-12'"
-        :scroll="{ x: totalColumnWidth,y: windowHeight }"
-        size="small"
-        @register="registerTable"
-      >
 
-        <template #number="{record,index }">
-            <span slot="number" slot-scope="text,record,index">
-             {{index+1}}
-            </span>
-        </template>
-
-        <template #fx="{record,index }">
-            <span slot="fx" slot-scope="text,record,index">
-             {{fxFormat(record.fx)}}
-            </span>
-        </template>
-
-        <template #money="{ record }">
-          <span style="float: right" @click="goto()">{{ formatMoney(record) }}</span>
-        </template>
-
-      </BasicTable>
-      <a-drawer
-        title="过滤漏斗"
-        placement="right"
-        :closable="true"
-        v-if="visible"
-        :mask="false"
-        :visible="visible"
-        :get-container="false"
-        :wrap-style="{ position: 'absolute' }"
-        @close="visible=false,reloadColumns()"
-      >
-        <ul>
-          <li>
-              <span style="color: black;font-weight: bold">
-                借方本币：
-              </span>
-            <div>
-              <a-input v-model:value="pageParameter.filterConditon.amountMinJf"  placeholder="" style="width: 95px;font-size: 10px"/>
-              ~
-              <a-input v-model:value="pageParameter.filterConditon.amountMaxJf"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
-            </div>
-          </li>
-          <li style="margin-top: 5%">
-              <span style="color: black;font-weight: bold">
-                贷方本币：
-              </span>
-            <div>
-              <a-input v-model:value="pageParameter.filterConditon.amountMinDf"  placeholder="" style="width: 95px;font-size: 10px"/>
-              ~
-              <a-input v-model:value="pageParameter.filterConditon.amountMaxDf"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
-            </div>
-          </li>
-          <li style="margin-top: 5%">
-              <span style="color: black;font-weight: bold">
-                余额本币：
-              </span>
-            <div>
-              <a-input v-model:value="pageParameter.filterConditon.amountMinYe"  placeholder="" style="width: 95px;font-size: 10px"/>
-              ~
-              <a-input v-model:value="pageParameter.filterConditon.amountMaxYe"  placeholder="" style="width: 95px;font-size: 10px;float: right"/>
-            </div>
-          </li>
-        </ul>
-        <br/>
-        <a-button type="primary"  style="float: right;" @click="filterSearch">
-          <span style="font-size: 14px">开始</span>
-        </a-button>
-      </a-drawer>
-      <Query
-        @save="loadPage"
-        @register="registerQueryPage"
-      />
-    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -271,9 +276,20 @@ import { useModal } from '/@/components/Modal'
 import { PageWrapper } from '/@/components/Page'
 
 import {
-  DatePicker as ADatePicker, Select as ASelect, Input as AInput, Popover as APopover, Switch as ASwitch,
-  Radio as ARadio, Upload as AUpload, Pagination as APagination, Popconfirm as APopconfirm, Table as ATable,
-  Checkbox as ACheckbox, message,Drawer as ADrawer
+  DatePicker as ADatePicker,
+  Select as ASelect,
+  Input as AInput,
+  Popover as APopover,
+  Switch as ASwitch,
+  Radio as ARadio,
+  Upload as AUpload,
+  Pagination as APagination,
+  Popconfirm as APopconfirm,
+  Table as ATable,
+  Checkbox as ACheckbox,
+  message,
+  Drawer as ADrawer,
+  Table
 } from "ant-design-vue"
 const ARangePicker=ADatePicker.RangePicker
 const ASelectOption=ASelect.Option
@@ -298,7 +314,7 @@ import {
   SyncOutlined,
   PicLeftOutlined,
   PrinterOutlined,
-  UsbOutlined,
+  UsbOutlined,ProfileOutlined,
   ExclamationCircleOutlined
 } from '@ant-design/icons-vue';
 import { breakNumTidy,findDbLanMuList,saveLanMuList } from '/@/api/record/system/accvoucher'
@@ -329,12 +345,15 @@ import {useRouteApi} from "/@/utils/boozsoft/datasource/datasourceUtil";
 import AccountInfo from "/@/views/boozsoft/system/accvoucher/popup/AccountInfo.vue";
 import {useTabs} from "/@/hooks/web/useTabs";
 import {exportExcel} from "/@/api/record/generalLedger/excelExport";
+import {JsonTool} from "/@/api/task-api/tools/universal-tools";
 const {closeCurrent} = useTabs(router);
 
 const { createConfirm,createWarningModal } = useMessage();
 // 全局常量
 const glStore = useXJTjStore()
-
+const TableSummary = Table.Summary
+const TableSummaryRow = Table.Summary.Row
+const TableSummaryCell = Table.Summary.Cell
 // 页面变量
 const pageParameter = reactive({
   thisInterval:'',
@@ -410,7 +429,7 @@ const val = {
 }
 const visible = ref(false);
 const searchConditonList = ref([])
-const lanMuData = {'accId':'','menuName':'总账','type':'',objects: '',username:useUserStoreWidthOut().getUserInfo.username}
+const lanMuData = {'accId':'','menuName':'现金流量统计','type':'',objects: '',username:useUserStoreWidthOut().getUserInfo.username}
 // 表格参数
 const loadMark = ref(false)
 const tableSelectedRowKeys = ref([])
@@ -428,7 +447,7 @@ const CrudApi = {
 const tableRef = ref(null)
 
 // 组件实例区
-const [registerTable, { reload,setColumns,getColumns,getDataSource }] = useTable({
+const [registerTable, { reload,setTableData,setColumns,getColumns,getPaginationRef,setPagination,getDataSource }] = useTable({
   api: CrudApi.list,
   columns: CrudApi.columns,
   bordered: true,
@@ -438,18 +457,11 @@ const [registerTable, { reload,setColumns,getColumns,getDataSource }] = useTable
   /*  showSummary: true,
     summaryData: [],*/
   showIndexColumn: false , //显示序号列
-  pagination:{ pageSize: 200,showSizeChanger: true, pageSizeOptions: ['200','500','1000','1500'],showTotal: t => `总共${t}条数据` },
-  searchInfo: pageParameter,
-  tableSetting: {
-    // 是否显示刷新按钮
-    redo: true,
-    // 是否显示尺寸调整按钮
-    size: true,
-    // 是否显示字段调整按钮
-    setting: true,
-    // 是否显示全屏按钮
-    fullScreen: true,
-  }
+  pagination: {
+    pageSize: 1000,
+    simple:true
+  },
+  searchInfo: pageParameter
 })
 const [registerQueryPage, { openModal: openQueryPageM }] = useModal()
 
@@ -850,19 +862,19 @@ const reloadColumns = ()=>{
 
 function initTableWidth(thisCs){
   let total = 60
-  thisCs.forEach(item=>{
-    if (item.ifShow== null || item.ifShow)
-      total+= parseInt(item.width)
+  thisCs.forEach(item => {
+    if (item.ifShow == null || item.ifShow)
+      total += parseInt(item.width)
   })
-  if (total > windowWidth){
+  if (total > windowWidth) {
     let f = 0
-    if (visible.value) f=260
-    totalColumnWidth.value = Number(windowWidth)-f
-    tableRef.value.$el.style.setProperty('width',(windowWidth+20-f)+'px')
-  }else {
-    if (visible.value && (windowWidth-260) < total) total-=(total-(windowWidth-260))
+    if (visible.value) f = 260
+    totalColumnWidth.value = Number(windowWidth) - f
+    // tableRef.value.$el.style.setProperty('width', (windowWidth + 20 - f) + 'px')
+  } else {
+    if (visible.value && (windowWidth - 260) < total) total -= (total - (windowWidth - 260))
     totalColumnWidth.value = total
-    tableRef.value.$el.style.setProperty('width',(total+20)+'px')
+    // tableRef.value.$el.style.setProperty('width', (total + 20) + 'px')
   }
 }
 
@@ -876,11 +888,10 @@ const loadPage = (data)=>{
   bzName.value = data.bzName
   pageParameter.ibook = data.ishaveRjz
   databasesName.value = data.accountId
-  console.log(data.dateStart)
   if (data.strDate != '' && data.endDate != '') {
-    pageParameter.thisInterval = data.strDate + ' ~ ' + data.endDate
+    pageParameter.thisInterval = data.strDate.replace('-','.') + ' ~ ' + data.endDate.replace('-','.')
   } else {
-    pageParameter.thisInterval = data.dateStart + ' ~ ' + data.dateEnd
+    pageParameter.thisInterval = data.dateStart.replace('-','.') + ' ~ ' + data.dateEnd.replace('-','.')
   }
 
   if (data.openOne == 1){ // 第一次初始化 + 条件查询
@@ -1006,17 +1017,137 @@ const exportExcelNow = async () => {
   let name = pageParameter.companyName
   exportExcel(sheet, 'xlsx',name+'-现金流量统计表-'+pageParameter.strDate+'-'+pageParameter.endDate)
 }
-</script>
-<style src="../../../../assets/styles/global-menu-index.less" lang="less" ></style>
-<style scoped>
-.app-container-bottom {
-:deep(.ant-table-thead th) {
-  background-color: #d8d8d8 !important;
-  font-weight: bold !important;
-  border-left: 1px solid #d8d8d8 !important;
-  border-bottom: 1px solid #d8d8d8 !important;
-  border-top: 1px solid #d8d8d8 !important;
+
+const showPageNumber=ref(false)
+const pageNumber=ref(0)
+function fetchSuccess(data) {
+  console.log(data)
+  let list=data.items.filter(a=>a.ccode.indexOf('小计')!=-1)
+  pageNumber.value=data.items.length
+  showPageNumber.value=true
+  //calculateTotal(list)
+  if(data.items.length<50){
+    for (let i =  data.items.length; i < 50; i++) {
+      data.items.push({ccode:'temp',})
+    }
+  }
 }
+
+const summaryTotals = ref({})
+const calculateTotal = (datalist) => {
+  let list = JsonTool.parseProxy(datalist)
+  if (list.length == 0){
+    summaryTotals.value = {}
+    return false;
+  }
+  let qcMd = 0
+  let qcMc = 0
+  let qcNum = 0
+  let qcNfrat = 0
+  let pzMd = 0
+
+  for (let i = 0; i < list.length; i++) {
+    const e = list[i];
+
+  }
+  summaryTotals.value={
+
+  }
+}
+</script>
+<style scoped lang="less">
+@import '/@/assets/styles/part-open.less';
+@import '/@/assets/styles/global-menu-index1.less';
+:deep(.ant-select){
+  border: none;
+  background-color: #f1f1f1;
+  color: black;
+}
+
+:deep(.ant-select:not(.ant-select-customize-input) .ant-select-selector){
+  border: 1px #cccccc solid;
+  height: 33px;
+}
+
+// ***************  button样式  ***************
+.actod-btn {
+  color: @Global-Comm-BcOrText-Color;
+  font-size: 14px;
+  border-color: @Global-Border-Color;
+  border-right: none;
+}
+
+.actod-btn-last {
+  border-right: 1px solid @Global-Border-Color;
+}
+
+.actod-btn:hover {
+  background-color: @Global-Comm-BcOrText-Color;
+  color: white;
+}
+// ***************  button样式  ***************
+:deep(.vben-basic-table .ant-pagination) {
+  margin-top: 0px;
+  background-color: #cccccc;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.app-container:nth-of-type(1) {
+  background-color: #f2f2f2;
+  padding: 10px 10px;
+  margin: 10px 10px 5px;
+  display: inline-flex;
+  width: 99%;
+  border-radius: 5px;
+}
+
+.app-container:nth-of-type(2) {
+  padding: 0px;
+  margin: 0px 10px;
+  background: #b4c8e3 !important;
+  margin-top: -6px;
+  position: relative;
+  .pagination-text{
+    position: absolute;
+    bottom: 9px;
+    right: 12%;
+    font-size: 13px;
+    color: black;
+    z-index: 99999999;
+  }
+}
+.a-table-font-size-16 :deep(td),
+.a-table-font-size-16 :deep(th) {
+  font-size: 14% !important;
+  padding: 2px 8px !important;
+  height: 25px;
+  color: black;
+}
+.a-table-font-size-12 :deep(td),
+.a-table-font-size-12 :deep(th) {
+  font-size: 13px !important;
+  padding: 2px 8px !important;
+  height: 25px;
+  color: black;
+}
+
+.bg-white{
+  border: 1px #cccccc solid;
+  background:white ;
+  margin-top: 10px;
+}
+:deep(.ant-tree .ant-tree-node-content-wrapper.ant-tree-node-selected),
+:deep(.ant-table-tbody > tr.ant-table-row-selected > td){
+  background-color: #1488b1;
+  color: white;
+}
+// 合计行
+:deep(.nc-summary){
+  font-weight: bold;
+  border-bottom-color: #9e9e9e;
+  background-color: #cccccc!important;;
+  border-right-color: #cccccc!important;
 }
 </style>
 
