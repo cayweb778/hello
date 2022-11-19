@@ -608,7 +608,7 @@ import DeptModalPop from "/@/views/boozsoft/global/popup/dept/select-dept.vue";
 import StockCangKuModalPop
   from "/@/views/boozsoft/stock/stock_cangku/popup/stockCangKuModalPop.vue";
 import SelectPsn from "/@/views/boozsoft/global/popup/dept/select-psn.vue";
-import StockInfiModalPop from "/@/views/boozsoft/stock/stock_transfer/popup/stockInfoModalPop.vue";
+import StockInfiModalPop from "/@/views/boozsoft/stock/stock_info/popup/stockInfoModalPop.vue";
 import {findAll as findAllJiLang, findUnitInfoList} from "/@/api/record/system/unit-mea";
 import {findCunHuoAllList} from "/@/api/record/stock/stock-caigou";
 import {
