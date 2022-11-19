@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/kc-xsDepot-list')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/kc-out-material-list')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" v-if="status == 3 && formItems.bcheck == '1'">变更</Button>
           <Button class="actod-btn" @click="saveData" v-if="status == 1 || status == 2">保存</Button>

@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/kc-xsDepot-list')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/kc-out-qtDepot-list')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Popover placement="bottom">
             <template #content>

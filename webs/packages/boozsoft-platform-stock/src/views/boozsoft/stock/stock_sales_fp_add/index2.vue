@@ -10,7 +10,7 @@
       <div></div>
       <div>
         <div>
-          <Button class="actod-btn" @click="router.push('/xs-dhList')">查询</Button>
+          <Button class="actod-btn" @click="router.push('/xs-fplist')">查询</Button>
           <Button class="actod-btn" @click="startEdit('add')" v-if="status == 3">新增</Button>
           <Button class="actod-btn" @click="startEdit('edit')" v-if="status == 3 && formItems.id != null && formItems.bcheck != '1'" >修改</Button>
 
