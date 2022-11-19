@@ -34,7 +34,8 @@ import { itemProps } from '../props';
 import BasicMenuItem from './BasicMenuItem.vue';
 import MenuItemContent from './MenuItemContent.vue';
 import {useModal} from "/@/components/Modal";
-import Cashier from "/@/views/boozsoft/xian_jin_liu_liang/chu_na_ping_zheng_qian_zi/ping_zheng_lie_biao/popup/cashier.vue";
+// import Cashier from "/@/views/boozsoft/xian_jin_liu_liang/chu_na_ping_zheng_qian_zi/ping_zheng_lie_biao/popup/cashier.vue";
+const Cashier=null
 import {getCurrentAccountName} from "/@/api/task-api/tast-bus-api";
 export default defineComponent({
   name: 'BasicSubMenuItem',

@@ -79,8 +79,7 @@ import {useUserStoreWidthOut} from "/@/store/modules/user";
 
 import { introduceData, findSettModesInAll } from "/@/api/record/system/group-budget-source";
 
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import {aoaToSheetXlsx} from "/@/components/Excel";
 import {columnProps} from "ant-design-vue/es/table/interface";
 const ASelectOption = ASelect.Option;
 const AInputSearch = AInput.Search;

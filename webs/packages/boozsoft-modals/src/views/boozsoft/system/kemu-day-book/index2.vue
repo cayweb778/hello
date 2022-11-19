@@ -1266,8 +1266,7 @@ const tableReload = () => {
 }
 
 //导出Excel
-//import XLSX from "xlsx-js-style";
-const XLSX=null;
+import XLSX from "xlsx-js-style";
 import {
   sheet_from_array_of_arrays, Workbook,
   writeExcel, defaultV

@@ -98,8 +98,7 @@ import {
 } from '/@/api/record/system/dept-class'
 
 import {columnProps} from "ant-design-vue/es/table/interface";
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import {aoaToSheetXlsx} from "/@/components/Excel";
 const ASelectOption = ASelect.Option;
 const AInputSearch = AInput.Search;
 const AStatisticCountdown = AStatistic.Countdown;

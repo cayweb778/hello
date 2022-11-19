@@ -78,8 +78,7 @@ import {
   deleteSettModes, saveSettModes, findSettModesAll
 } from "/@/api/record/system/group-budget-source";
 import {columnProps} from "ant-design-vue/es/table/interface";
-//import {aoaToSheetXlsx} from "/@/components/Excel";
-const aoaToSheetXlsx=null
+import {aoaToSheetXlsx} from "/@/components/Excel";
 import {customerAddApi, duLiSaveApi} from "/@/api/record/costomer_data/customer";
 const ASelectOption = ASelect.Option;
 const AInputSearch = AInput.Search;
